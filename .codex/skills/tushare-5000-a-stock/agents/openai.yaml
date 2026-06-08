@@ -1,0 +1,4 @@
+interface:
+  display_name: "Tushare 5000 积分 A 股"
+  short_description: "整理 5000 积分可用的 Tushare A 股接口与调用模板"
+  default_prompt: "使用 $tushare-5000-a-stock 帮我选择合适的 Tushare Pro 接口，并生成 A 股数据查询代码。"

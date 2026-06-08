@@ -1,0 +1,7 @@
+interface:
+  display_name: "Stock Sector Analysis"
+  short_description: "Analyze A-share hot sectors."
+  default_prompt: "Use $stock-sector-analysis to summarize current A-share hot sectors with sources and risk notes."
+
+policy:
+  allow_implicit_invocation: true
