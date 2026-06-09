@@ -20,7 +20,14 @@
 7. 对候选池再补近 20/60 日行情或资金数据；重点观察池通常控制在 20-50 只。
 8. 对已有观察池做 T+1/T+3/T+5/T+10/T+20 复盘，标注验证、部分验证、未验证或被证伪。
 9. 保存到 `analysis_records/stock_selection/YYYY-MM/YYYY-MM-DD.md`。当天文件已存在时追加更新版本，不直接覆盖。
-10. 输出摘要，不输出买入、卖出、持有、仓位或目标价。
+10. 保存成功后，使用项目邮件工具发送完整报告正文：
+
+```text
+python -m stock_selection.tools.send_text_email --subject "A股收盘后观察池复盘 YYYY-MM-DD" --body-file <报告文件路径> --env-file "C:\Users\runyu.luo\Documents\codex 教程\.env"
+```
+
+11. 如果邮件发送失败，记录错误摘要，但不要输出 `.env`、邮箱授权码、token 或密码。
+12. 输出摘要，不输出买入、卖出、持有、仓位或目标价。
 
 ## 早盘前情报校准
 
@@ -42,3 +49,10 @@
 7. 更新市场环境预判：进攻、观察、防守或退潮。
 8. 输出今日关注重点、风险提示、需要开盘后验证的数据。不输出买卖指令。
 9. 保存到 `analysis_records/stock_selection_preopen/YYYY-MM/YYYY-MM-DD.md`。当天文件已存在时追加更新版本，不直接覆盖。
+10. 保存成功后，使用项目邮件工具发送完整报告正文：
+
+```text
+python -m stock_selection.tools.send_text_email --subject "A股早盘前情报校准 YYYY-MM-DD" --body-file <报告文件路径> --env-file "C:\Users\runyu.luo\Documents\codex 教程\.env"
+```
+
+11. 如果邮件发送失败，记录错误摘要，但不要输出 `.env`、邮箱授权码、token 或密码。
