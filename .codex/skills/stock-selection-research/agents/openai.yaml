@@ -1,0 +1,7 @@
+interface:
+  display_name: "Stock Selection Research"
+  short_description: "Build traceable A-share watchlists."
+  default_prompt: "Use $stock-selection-research to build a traceable A-share observation watchlist from funds, sectors, news, and risks."
+
+policy:
+  allow_implicit_invocation: true

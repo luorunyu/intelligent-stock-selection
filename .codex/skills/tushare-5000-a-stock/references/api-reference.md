@@ -30,6 +30,23 @@
 
 ## 2. 代码初始化
 
+### 本项目优先入口
+
+在 `D:\Projects\intelligent-stock-selection-system` 项目中，优先使用已验证的项目入口：
+
+```text
+stock_selection/data/tushare_client.py
+```
+
+该入口已经包含项目可用的 `pro` client 和自定义 HTTP 地址设置。使用本项目进行 A 股数据采集、选股观察池、板块复盘或自动化任务时，先沿用这个入口，不要只检查 `TUSHARE_TOKEN` 环境变量。
+
+注意：
+
+- 不要在报告、日志或最终回答里输出真实 token。
+- 如果该文件存在顶层示例调用，导入时可能触发示例输出；生成长期脚本时，建议封装为 `get_pro()` 或在脚本中复用同样初始化方式。
+
+### 通用初始化
+
 ```python
 import tushare as ts
 
@@ -46,6 +63,8 @@ pro = ts.pro_api(os.environ["TUSHARE_TOKEN"])
 ```
 
 ## 3. A 股股票池与交易日历
+
+日常选股和复盘任务的推荐采集顺序见 `usage-strategy.md`。优先按交易日拉横截面，不要对全市场逐票深度循环。
 
 ### `stock_basic`
 
