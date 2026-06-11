@@ -33,12 +33,13 @@ Generate A-share observation candidates that follow verified capital behavior ra
 4. Build the stock universe and apply default filters. Read `references/universe-and-filters.md` when universe details matter.
 5. Collect structured data with `tushare-5000-a-stock` using its 5000-point usage strategy: batch by `trade_date`, cache daily results, screen a candidate pool first, then deep-dive only candidates. Use daily行情, daily_basic, moneyflow, stk_limit, sw_daily, index_member_all, margin/margin_detail, top_list/top_inst, and event-risk interfaces as needed.
 6. For every selected stock or hot theme, build a peer observation group: leaders, high-turnover cores, limit-up cores, slow movers, and possible laggards within the same industry/theme/value-chain mapping.
-7. Collect catalysts from source lists. Read `references/source-list.md` when choosing news, announcements, company, industry, or overseas sources.
-8. Score candidates using `references/scoring-model.md`. Do not invent scores for unavailable data; mark missing evidence.
-9. Produce a watchlist using the output template in `references/output-template.md`.
-10. Save or update records using `references/recording-and-review.md` unless the user explicitly says not to save.
-11. For scheduled runs, follow `references/automation-workflow.md`.
-12. In later analyses, connect new events back to prior candidates: whether the original capital evidence strengthened, faded, or was contradicted.
+7. When a hot theme is clear, use `stock-sector-analysis/references/stock-relationship-map.md` to create or update a stock relationship map. This map must include not only already-moving stocks, but also value-chain peers that are waiting to diffuse or have not started yet.
+8. Collect catalysts from source lists. Read `references/source-list.md` when choosing news, announcements, company, industry, or overseas sources.
+9. Score candidates using `references/scoring-model.md`. Do not invent scores for unavailable data; mark missing evidence.
+10. Produce a watchlist using the output template in `references/output-template.md`.
+11. Save or update records using `references/recording-and-review.md` unless the user explicitly says not to save.
+12. For scheduled runs, follow `references/automation-workflow.md`.
+13. In later analyses, connect new events back to prior candidates and prior relationship-map entries: whether the original capital evidence, company mapping, value-chain position, or financial validation strengthened, faded, was corrected, or was contradicted.
 
 ## Candidate Selection Principles
 
@@ -56,6 +57,7 @@ Use peer groups to catch板块扩散 and补涨 candidates:
 - 龙头确认：identify the stock with strongest limit-up height,成交额,涨幅,辨识度, or company catalyst.
 - 同组映射：include stocks from the same申万行业, concept/theme, supply chain, customer chain, product line, policy beneficiary group, or overseas映射 chain.
 - 补涨候选：mark stocks that lag the leader but show成交放大,换手改善,资金参与, or early price response.
+- 待扩散/未启动：for the same theme, list related companies from upstream, midstream, downstream, and supporting services even if they have not yet moved. They may enter a map/watch state only when the business mapping is explainable and the missing evidence is labeled.
 - 失效条件：remove laggards if the leader weakens,板块成交收缩,扩散失败,同组股票转弱, or the laggard cannot outperform its industry/theme after the observation window.
 - 风险提示：补涨 is a probability observation, not certainty. Avoid treating a slow stock as attractive merely because the leader has risen.
 
@@ -68,6 +70,7 @@ Every watchlist must include:
 - Source links or source names with publication dates.
 - Stock code, name, market, industry/theme, and whether it is sector leader, high-turnover core, rebound candidate, or event-driven candidate.
 - Peer group: related leaders, fast followers, slow movers, and laggard observation candidates with the mapping reason.
+- Relationship map summary: theme, value-chain segment, already-moving companies, waiting-to-diffuse companies, not-yet-moving related companies, corrected/omitted company information from prior maps, and the saved relationship-map report path when generated.
 - Evidence split into market data, capital behavior, sector confirmation, and catalyst.
 - Score, confidence, risk tags, observation conditions, and removal conditions.
 - "For research observation only, not investment advice."

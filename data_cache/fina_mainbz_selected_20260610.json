@@ -1,0 +1,1233 @@
+{
+  "688146.SH": [
+    {
+      "ts_code": "688146.SH",
+      "end_date": "20241231",
+      "bz_item": "三氟甲磺酸系列",
+      "bz_sales": 206427705.89,
+      "bz_profit": 72435065.14,
+      "bz_cost": 133992640.75,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    },
+    {
+      "ts_code": "688146.SH",
+      "end_date": "20241231",
+      "bz_item": "其他业务",
+      "bz_sales": 27097807.41,
+      "bz_profit": NaN,
+      "bz_cost": NaN,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    },
+    {
+      "ts_code": "688146.SH",
+      "end_date": "20241231",
+      "bz_item": "电子特种气体",
+      "bz_sales": 1695134407.59,
+      "bz_profit": 474091043.22,
+      "bz_cost": 1221043364.37,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    }
+  ],
+  "002409.SZ": [
+    {
+      "ts_code": "002409.SZ",
+      "end_date": "20250630",
+      "bz_item": "LDS设备",
+      "bz_sales": 135917064.73,
+      "bz_profit": 60696552.48,
+      "bz_cost": 75220512.25,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    },
+    {
+      "ts_code": "002409.SZ",
+      "end_date": "20250630",
+      "bz_item": "LNG保温复合材料",
+      "bz_sales": 1164528016.74,
+      "bz_profit": 294957152.78,
+      "bz_cost": 869570863.96,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    },
+    {
+      "ts_code": "002409.SZ",
+      "end_date": "20250630",
+      "bz_item": "其他主营业务",
+      "bz_sales": 80524193.69,
+      "bz_profit": 7596250.81,
+      "bz_cost": 72927942.88,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    },
+    {
+      "ts_code": "002409.SZ",
+      "end_date": "20250630",
+      "bz_item": "半导体化学材料、光刻胶及配套试剂",
+      "bz_sales": 2113382620.7,
+      "bz_profit": 705703520.3,
+      "bz_cost": 1407679100.4,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    },
+    {
+      "ts_code": "002409.SZ",
+      "end_date": "20250630",
+      "bz_item": "液化天然气装置",
+      "bz_sales": 339376414.0,
+      "bz_profit": 206104636.55,
+      "bz_cost": 133271777.45,
+      "curr_type": "CNY",
+      "update_flag": "1"
+    },
+    {
+      "ts_code": "002409.SZ",
+      "end_date": "20250630",
+      "bz_item": "球形硅微粉",
+      "bz_sales": 128277094.26,
+      "bz_profit": 19438825.01,
+      "bz_cost": 108838269.25,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    }
+  ],
+  "600206.SH": [
+    {
+      "ts_code": "600206.SH",
+      "end_date": "20250630",
+      "bz_item": "其他主营业务",
+      "bz_sales": 939251.64,
+      "bz_profit": null,
+      "bz_cost": null,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    },
+    {
+      "ts_code": "600206.SH",
+      "end_date": "20250630",
+      "bz_item": "分部抵消",
+      "bz_sales": -49270884.22,
+      "bz_profit": null,
+      "bz_cost": null,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    },
+    {
+      "ts_code": "600206.SH",
+      "end_date": "20250630",
+      "bz_item": "医疗器械材料",
+      "bz_sales": 30032376.6,
+      "bz_profit": null,
+      "bz_cost": null,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    },
+    {
+      "ts_code": "600206.SH",
+      "end_date": "20250630",
+      "bz_item": "稀土材料",
+      "bz_sales": 963108213.59,
+      "bz_profit": null,
+      "bz_cost": null,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    },
+    {
+      "ts_code": "600206.SH",
+      "end_date": "20250630",
+      "bz_item": "红外光学、光纤材料",
+      "bz_sales": 89420553.03,
+      "bz_profit": null,
+      "bz_cost": null,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    },
+    {
+      "ts_code": "600206.SH",
+      "end_date": "20250630",
+      "bz_item": "高纯/超高纯金属材料",
+      "bz_sales": 3061373120.01,
+      "bz_profit": null,
+      "bz_cost": null,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    }
+  ],
+  "600378.SH": [
+    {
+      "ts_code": "600378.SH",
+      "end_date": "20250630",
+      "bz_item": "分部抵消",
+      "bz_sales": -10486300.0,
+      "bz_profit": null,
+      "bz_cost": null,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    },
+    {
+      "ts_code": "600378.SH",
+      "end_date": "20250630",
+      "bz_item": "化工材料",
+      "bz_sales": 1507284500.0,
+      "bz_profit": null,
+      "bz_cost": null,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    },
+    {
+      "ts_code": "600378.SH",
+      "end_date": "20250630",
+      "bz_item": "工程咨询及技术服务",
+      "bz_sales": 900961600.0,
+      "bz_profit": null,
+      "bz_cost": null,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    },
+    {
+      "ts_code": "600378.SH",
+      "end_date": "20250630",
+      "bz_item": "工程技术服务",
+      "bz_sales": 900961600.0,
+      "bz_profit": null,
+      "bz_cost": null,
+      "curr_type": "CNY",
+      "update_flag": "1"
+    },
+    {
+      "ts_code": "600378.SH",
+      "end_date": "20250630",
+      "bz_item": "氟材料",
+      "bz_sales": 4649373600.0,
+      "bz_profit": null,
+      "bz_cost": null,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    },
+    {
+      "ts_code": "600378.SH",
+      "end_date": "20250630",
+      "bz_item": "电子化学品",
+      "bz_sales": 578086000.0,
+      "bz_profit": null,
+      "bz_cost": null,
+      "curr_type": "CNY",
+      "update_flag": "1"
+    }
+  ],
+  "688535.SH": [
+    {
+      "ts_code": "688535.SH",
+      "end_date": "20251231",
+      "bz_item": "其他产品",
+      "bz_sales": 1860699.24,
+      "bz_profit": 572265.83,
+      "bz_cost": 1288433.41,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    },
+    {
+      "ts_code": "688535.SH",
+      "end_date": "20251231",
+      "bz_item": "环氧塑封料",
+      "bz_sales": 428388981.43,
+      "bz_profit": 112880203.03,
+      "bz_cost": 315508778.4,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    },
+    {
+      "ts_code": "688535.SH",
+      "end_date": "20251231",
+      "bz_item": "胶黏剂",
+      "bz_sales": 27806226.47,
+      "bz_profit": 8645271.93,
+      "bz_cost": 19160954.54,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    }
+  ],
+  "003026.SZ": [
+    {
+      "ts_code": "003026.SZ",
+      "end_date": "20250630",
+      "bz_item": "其他业务",
+      "bz_sales": 3266577.18,
+      "bz_profit": 899804.41,
+      "bz_cost": 2366772.77,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    },
+    {
+      "ts_code": "003026.SZ",
+      "end_date": "20250630",
+      "bz_item": "半导体功率芯片及器件",
+      "bz_sales": 68421820.43,
+      "bz_profit": 30754486.04,
+      "bz_cost": 37667334.39,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    },
+    {
+      "ts_code": "003026.SZ",
+      "end_date": "20250630",
+      "bz_item": "半导体单晶硅棒",
+      "bz_sales": 30537315.28,
+      "bz_profit": 9904954.83,
+      "bz_cost": 20632360.45,
+      "curr_type": "CNY",
+      "update_flag": "1"
+    },
+    {
+      "ts_code": "003026.SZ",
+      "end_date": "20250630",
+      "bz_item": "半导体单晶硅片",
+      "bz_sales": 114968609.0,
+      "bz_profit": 49965115.85,
+      "bz_cost": 65003493.15,
+      "curr_type": "CNY",
+      "update_flag": "1"
+    },
+    {
+      "ts_code": "003026.SZ",
+      "end_date": "20250630",
+      "bz_item": "单晶硅棒",
+      "bz_sales": 30537315.28,
+      "bz_profit": 9904954.83,
+      "bz_cost": 20632360.45,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    },
+    {
+      "ts_code": "003026.SZ",
+      "end_date": "20250630",
+      "bz_item": "单晶硅片",
+      "bz_sales": 114968609.0,
+      "bz_profit": 49965115.85,
+      "bz_cost": 65003493.15,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    }
+  ],
+  "002119.SZ": [
+    {
+      "ts_code": "002119.SZ",
+      "end_date": "20251231",
+      "bz_item": "其他业务",
+      "bz_sales": 17111790.99,
+      "bz_profit": 13549849.25,
+      "bz_cost": 3561941.74,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    },
+    {
+      "ts_code": "002119.SZ",
+      "end_date": "20251231",
+      "bz_item": "引线框架产品",
+      "bz_sales": 1322242377.04,
+      "bz_profit": 240937772.64,
+      "bz_cost": 1081304604.4,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    },
+    {
+      "ts_code": "002119.SZ",
+      "end_date": "20251231",
+      "bz_item": "模具及备件",
+      "bz_sales": 488402.24,
+      "bz_profit": 355120.07,
+      "bz_cost": 133282.17,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    },
+    {
+      "ts_code": "002119.SZ",
+      "end_date": "20251231",
+      "bz_item": "电极丝产品",
+      "bz_sales": 315545039.61,
+      "bz_profit": 37768860.78,
+      "bz_cost": 277776178.83,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    },
+    {
+      "ts_code": "002119.SZ",
+      "end_date": "20251231",
+      "bz_item": "键合丝",
+      "bz_sales": 544039268.31,
+      "bz_profit": 18125464.64,
+      "bz_cost": 525913803.67,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    }
+  ],
+  "688456.SH": [
+    {
+      "ts_code": "688456.SH",
+      "end_date": "20241231",
+      "bz_item": "3D打印材料",
+      "bz_sales": 47945789.1,
+      "bz_profit": 13584046.92,
+      "bz_cost": 34361742.18,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    },
+    {
+      "ts_code": "688456.SH",
+      "end_date": "20241231",
+      "bz_item": "先进铜基金属粉体材料",
+      "bz_sales": 1906249390.36,
+      "bz_profit": 137866602.47,
+      "bz_cost": 1768382787.89,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    },
+    {
+      "ts_code": "688456.SH",
+      "end_date": "20241231",
+      "bz_item": "其他业务",
+      "bz_sales": 24971496.1,
+      "bz_profit": 8876037.74,
+      "bz_cost": 16095458.36,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    },
+    {
+      "ts_code": "688456.SH",
+      "end_date": "20241231",
+      "bz_item": "其他主营业务",
+      "bz_sales": 218897956.89,
+      "bz_profit": 20019531.68,
+      "bz_cost": 198878425.21,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    },
+    {
+      "ts_code": "688456.SH",
+      "end_date": "20241231",
+      "bz_item": "微电子类",
+      "bz_sales": 948894542.24,
+      "bz_profit": 57626566.75,
+      "bz_cost": 891267975.49,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    },
+    {
+      "ts_code": "688456.SH",
+      "end_date": "20241231",
+      "bz_item": "电子浆料",
+      "bz_sales": 81939993.2,
+      "bz_profit": 8855266.51,
+      "bz_cost": 73084726.69,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    }
+  ],
+  "688530.SH": [
+    {
+      "ts_code": "688530.SH",
+      "end_date": "20250630",
+      "bz_item": "其他业务",
+      "bz_sales": 29283328.68,
+      "bz_profit": 860900.68,
+      "bz_cost": 28422428.0,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    },
+    {
+      "ts_code": "688530.SH",
+      "end_date": "20250630",
+      "bz_item": "其他产品",
+      "bz_sales": 31223191.59,
+      "bz_profit": 3852770.54,
+      "bz_cost": 27370421.05,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    },
+    {
+      "ts_code": "688530.SH",
+      "end_date": "20250630",
+      "bz_item": "加工服务",
+      "bz_sales": 447273.78,
+      "bz_profit": 284814.68,
+      "bz_cost": 162459.1,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    },
+    {
+      "ts_code": "688530.SH",
+      "end_date": "20250630",
+      "bz_item": "残靶",
+      "bz_sales": 42406738.38,
+      "bz_profit": 1583878.98,
+      "bz_cost": 40822859.4,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    },
+    {
+      "ts_code": "688530.SH",
+      "end_date": "20250630",
+      "bz_item": "溅射靶材",
+      "bz_sales": 114082231.34,
+      "bz_profit": 20133996.53,
+      "bz_cost": 93948234.81,
+      "curr_type": "CNY",
+      "update_flag": "1"
+    },
+    {
+      "ts_code": "688530.SH",
+      "end_date": "20250630",
+      "bz_item": "靶材加工",
+      "bz_sales": 114082231.34,
+      "bz_profit": 20133996.53,
+      "bz_cost": 93948234.81,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    }
+  ],
+  "002636.SZ": [
+    {
+      "ts_code": "002636.SZ",
+      "end_date": "20250630",
+      "bz_item": "PCB",
+      "bz_sales": 94952312.81,
+      "bz_profit": NaN,
+      "bz_cost": NaN,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    },
+    {
+      "ts_code": "002636.SZ",
+      "end_date": "20250630",
+      "bz_item": "其他业务",
+      "bz_sales": 44646140.5,
+      "bz_profit": 32288376.71,
+      "bz_cost": 12357763.79,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    },
+    {
+      "ts_code": "002636.SZ",
+      "end_date": "20250630",
+      "bz_item": "化学制药",
+      "bz_sales": 28920909.81,
+      "bz_profit": NaN,
+      "bz_cost": NaN,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    },
+    {
+      "ts_code": "002636.SZ",
+      "end_date": "20250630",
+      "bz_item": "医疗器械",
+      "bz_sales": 46770948.57,
+      "bz_profit": NaN,
+      "bz_cost": NaN,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    },
+    {
+      "ts_code": "002636.SZ",
+      "end_date": "20250630",
+      "bz_item": "医药",
+      "bz_sales": 28920909.81,
+      "bz_profit": NaN,
+      "bz_cost": NaN,
+      "curr_type": "CNY",
+      "update_flag": "1"
+    },
+    {
+      "ts_code": "002636.SZ",
+      "end_date": "20250630",
+      "bz_item": "覆铜板",
+      "bz_sales": 1835176481.96,
+      "bz_profit": 162111718.02,
+      "bz_cost": 1673064763.94,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    }
+  ],
+  "603002.SH": [
+    {
+      "ts_code": "603002.SH",
+      "end_date": "20250630",
+      "bz_item": "环氧树脂类",
+      "bz_sales": 806614784.62,
+      "bz_profit": null,
+      "bz_cost": null,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    },
+    {
+      "ts_code": "603002.SH",
+      "end_date": "20250630",
+      "bz_item": "覆铜板/半固化片",
+      "bz_sales": 519638910.44,
+      "bz_profit": null,
+      "bz_cost": null,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    }
+  ],
+  "605589.SH": [
+    {
+      "ts_code": "605589.SH",
+      "end_date": "20250630",
+      "bz_item": "其他业务",
+      "bz_sales": 91116848.47,
+      "bz_profit": 32747905.32,
+      "bz_cost": 58368943.15,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    },
+    {
+      "ts_code": "605589.SH",
+      "end_date": "20250630",
+      "bz_item": "其他收入",
+      "bz_sales": 40898329.16,
+      "bz_profit": 23348507.03,
+      "bz_cost": 17549822.13,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    },
+    {
+      "ts_code": "605589.SH",
+      "end_date": "20250630",
+      "bz_item": "合成树脂及复合材料",
+      "bz_sales": 4702968328.3,
+      "bz_profit": 1260002013.63,
+      "bz_cost": 3442966314.67,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    },
+    {
+      "ts_code": "605589.SH",
+      "end_date": "20250630",
+      "bz_item": "生物质产品",
+      "bz_sales": 515739355.08,
+      "bz_profit": 11965440.09,
+      "bz_cost": 503773914.99,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    }
+  ],
+  "605006.SH": [
+    {
+      "ts_code": "605006.SH",
+      "end_date": "20251231",
+      "bz_item": "其他业务",
+      "bz_sales": 34186760.55,
+      "bz_profit": 27067330.39,
+      "bz_cost": 7119430.16,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    },
+    {
+      "ts_code": "605006.SH",
+      "end_date": "20251231",
+      "bz_item": "玻纤类",
+      "bz_sales": 2084112999.31,
+      "bz_profit": 285581694.73,
+      "bz_cost": 1798531304.58,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    },
+    {
+      "ts_code": "605006.SH",
+      "end_date": "20251231",
+      "bz_item": "电力及热力产品",
+      "bz_sales": 366454366.38,
+      "bz_profit": 70759054.67,
+      "bz_cost": 295695311.71,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    }
+  ],
+  "603938.SH": [
+    {
+      "ts_code": "603938.SH",
+      "end_date": "20251231",
+      "bz_item": "其他主营业务",
+      "bz_sales": 64122098.04,
+      "bz_profit": -5427215.34,
+      "bz_cost": 69549313.38,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    },
+    {
+      "ts_code": "603938.SH",
+      "end_date": "20251231",
+      "bz_item": "硅产品",
+      "bz_sales": 298486819.8,
+      "bz_profit": 60816588.66,
+      "bz_cost": 237670231.14,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    },
+    {
+      "ts_code": "603938.SH",
+      "end_date": "20251231",
+      "bz_item": "硅烷偶联剂",
+      "bz_sales": 556174741.71,
+      "bz_profit": 22131999.9,
+      "bz_cost": 534042741.81,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    },
+    {
+      "ts_code": "603938.SH",
+      "end_date": "20251231",
+      "bz_item": "钾产品",
+      "bz_sales": 1178184577.28,
+      "bz_profit": 201999020.29,
+      "bz_cost": 976185556.99,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    }
+  ],
+  "002354.SZ": [
+    {
+      "ts_code": "002354.SZ",
+      "end_date": "20250630",
+      "bz_item": "其他主营业务",
+      "bz_sales": 624470.14,
+      "bz_profit": -66337.46,
+      "bz_cost": 690807.6,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    },
+    {
+      "ts_code": "002354.SZ",
+      "end_date": "20250630",
+      "bz_item": "数字竞技平台",
+      "bz_sales": 19825825.52,
+      "bz_profit": 14353019.01,
+      "bz_cost": 5472806.51,
+      "curr_type": "CNY",
+      "update_flag": "1"
+    },
+    {
+      "ts_code": "002354.SZ",
+      "end_date": "20250630",
+      "bz_item": "数据流量业务",
+      "bz_sales": 967054972.96,
+      "bz_profit": 209817107.24,
+      "bz_cost": 757237865.72,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    },
+    {
+      "ts_code": "002354.SZ",
+      "end_date": "20250630",
+      "bz_item": "游戏",
+      "bz_sales": 19825825.52,
+      "bz_profit": 14353019.01,
+      "bz_cost": 5472806.51,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    }
+  ],
+  "002261.SZ": [
+    {
+      "ts_code": "002261.SZ",
+      "end_date": "20250630",
+      "bz_item": "其他主营业务",
+      "bz_sales": 72443119.31,
+      "bz_profit": 38195301.41,
+      "bz_cost": 34247817.9,
+      "curr_type": "CNY",
+      "update_flag": "1"
+    },
+    {
+      "ts_code": "002261.SZ",
+      "end_date": "20250630",
+      "bz_item": "国产自主品牌(兆翰)服务器及PC",
+      "bz_sales": 284047070.07,
+      "bz_profit": 48116006.33,
+      "bz_cost": 235931063.74,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    },
+    {
+      "ts_code": "002261.SZ",
+      "end_date": "20250630",
+      "bz_item": "智能计算产品",
+      "bz_sales": 284047070.07,
+      "bz_profit": 48116006.33,
+      "bz_cost": 235931063.74,
+      "curr_type": "CNY",
+      "update_flag": "1"
+    },
+    {
+      "ts_code": "002261.SZ",
+      "end_date": "20250630",
+      "bz_item": "版权及其他",
+      "bz_sales": 72443119.31,
+      "bz_profit": 38195301.41,
+      "bz_cost": 34247817.9,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    },
+    {
+      "ts_code": "002261.SZ",
+      "end_date": "20250630",
+      "bz_item": "软件云服务",
+      "bz_sales": 949913316.64,
+      "bz_profit": 125223250.68,
+      "bz_cost": 824690065.96,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    },
+    {
+      "ts_code": "002261.SZ",
+      "end_date": "20250630",
+      "bz_item": "软件服务",
+      "bz_sales": 949913316.64,
+      "bz_profit": 125223250.68,
+      "bz_cost": 824690065.96,
+      "curr_type": "CNY",
+      "update_flag": "1"
+    }
+  ],
+  "000815.SZ": [
+    {
+      "ts_code": "000815.SZ",
+      "end_date": "20250630",
+      "bz_item": "云业务",
+      "bz_sales": 161387439.15,
+      "bz_profit": 70923107.84,
+      "bz_cost": 90464331.31,
+      "curr_type": "CNY",
+      "update_flag": "1"
+    },
+    {
+      "ts_code": "000815.SZ",
+      "end_date": "20250630",
+      "bz_item": "互联网数据中心(IDC)业务收入",
+      "bz_sales": 161387439.15,
+      "bz_profit": 70923107.84,
+      "bz_cost": 90464331.31,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    },
+    {
+      "ts_code": "000815.SZ",
+      "end_date": "20250630",
+      "bz_item": "光伏发电",
+      "bz_sales": 10312325.95,
+      "bz_profit": 4842692.21,
+      "bz_cost": 5469633.74,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    },
+    {
+      "ts_code": "000815.SZ",
+      "end_date": "20250630",
+      "bz_item": "其他业务",
+      "bz_sales": 291926.71,
+      "bz_profit": -111419.45,
+      "bz_cost": 403346.16,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    },
+    {
+      "ts_code": "000815.SZ",
+      "end_date": "20250630",
+      "bz_item": "彩色纸",
+      "bz_sales": 2143284.87,
+      "bz_profit": 694020.45,
+      "bz_cost": 1449264.42,
+      "curr_type": "CNY",
+      "update_flag": "1"
+    },
+    {
+      "ts_code": "000815.SZ",
+      "end_date": "20250630",
+      "bz_item": "特种纸",
+      "bz_sales": 2143284.87,
+      "bz_profit": 694020.45,
+      "bz_cost": 1449264.42,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    }
+  ],
+  "600183.SH": [],
+  "601208.SH": [
+    {
+      "ts_code": "601208.SH",
+      "end_date": "20250630",
+      "bz_item": "光学膜",
+      "bz_sales": 637635430.97,
+      "bz_profit": 81467693.0,
+      "bz_cost": 556167737.97,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    },
+    {
+      "ts_code": "601208.SH",
+      "end_date": "20250630",
+      "bz_item": "其他业务",
+      "bz_sales": 58889070.89,
+      "bz_profit": 222201.98,
+      "bz_cost": 58666868.91,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    },
+    {
+      "ts_code": "601208.SH",
+      "end_date": "20250630",
+      "bz_item": "其他主营业务",
+      "bz_sales": 87278839.04,
+      "bz_profit": 11766344.53,
+      "bz_cost": 75512494.51,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    },
+    {
+      "ts_code": "601208.SH",
+      "end_date": "20250630",
+      "bz_item": "新能源材料",
+      "bz_sales": 662973019.38,
+      "bz_profit": 130293828.17,
+      "bz_cost": 532679191.21,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    },
+    {
+      "ts_code": "601208.SH",
+      "end_date": "20250630",
+      "bz_item": "环保阻燃",
+      "bz_sales": 74165881.42,
+      "bz_profit": 10154456.66,
+      "bz_cost": 64011424.76,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    },
+    {
+      "ts_code": "601208.SH",
+      "end_date": "20250630",
+      "bz_item": "电子",
+      "bz_sales": 688370039.27,
+      "bz_profit": 137382343.28,
+      "bz_cost": 550987695.99,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    }
+  ],
+  "000970.SZ": [
+    {
+      "ts_code": "000970.SZ",
+      "end_date": "20251231",
+      "bz_item": "其他业务",
+      "bz_sales": 263676332.7,
+      "bz_profit": 1632573.27,
+      "bz_cost": 262043759.43,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    },
+    {
+      "ts_code": "000970.SZ",
+      "end_date": "20251231",
+      "bz_item": "磁材产品",
+      "bz_sales": 6376980825.24,
+      "bz_profit": 714361072.84,
+      "bz_cost": 5662619752.4,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    }
+  ],
+  "603011.SH": [
+    {
+      "ts_code": "603011.SH",
+      "end_date": "20250630",
+      "bz_item": "其他业务",
+      "bz_sales": 35581948.43,
+      "bz_profit": 11382667.68,
+      "bz_cost": 24199280.75,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    },
+    {
+      "ts_code": "603011.SH",
+      "end_date": "20250630",
+      "bz_item": "其他主营业务",
+      "bz_sales": 7639640.05,
+      "bz_profit": 6097267.68,
+      "bz_cost": 1542372.37,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    },
+    {
+      "ts_code": "603011.SH",
+      "end_date": "20250630",
+      "bz_item": "定制-机压机",
+      "bz_sales": 146053620.89,
+      "bz_profit": 6521594.12,
+      "bz_cost": 139532026.77,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    },
+    {
+      "ts_code": "603011.SH",
+      "end_date": "20250630",
+      "bz_item": "定制-液压机",
+      "bz_sales": 303844982.32,
+      "bz_profit": 8955820.36,
+      "bz_cost": 294889161.96,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    },
+    {
+      "ts_code": "603011.SH",
+      "end_date": "20250630",
+      "bz_item": "色选机",
+      "bz_sales": 489171712.15,
+      "bz_profit": 223868936.08,
+      "bz_cost": 265302776.07,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    }
+  ],
+  "002585.SZ": [
+    {
+      "ts_code": "002585.SZ",
+      "end_date": "20250630",
+      "bz_item": "PVC功能膜",
+      "bz_sales": 212868879.74,
+      "bz_profit": 38790193.51,
+      "bz_cost": 174078686.23,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    },
+    {
+      "ts_code": "002585.SZ",
+      "end_date": "20250630",
+      "bz_item": "光学膜",
+      "bz_sales": 1183429830.91,
+      "bz_profit": 62050475.61,
+      "bz_cost": 1121379355.3,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    },
+    {
+      "ts_code": "002585.SZ",
+      "end_date": "20250630",
+      "bz_item": "其他业务",
+      "bz_sales": 14016858.46,
+      "bz_profit": NaN,
+      "bz_cost": NaN,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    },
+    {
+      "ts_code": "002585.SZ",
+      "end_date": "20250630",
+      "bz_item": "可变信息材料膜",
+      "bz_sales": 204262013.46,
+      "bz_profit": 48155329.86,
+      "bz_cost": 156106683.6,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    },
+    {
+      "ts_code": "002585.SZ",
+      "end_date": "20250630",
+      "bz_item": "新能源材料膜",
+      "bz_sales": 4331478.39,
+      "bz_profit": -310639.59,
+      "bz_cost": 4642117.98,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    },
+    {
+      "ts_code": "002585.SZ",
+      "end_date": "20250630",
+      "bz_item": "热缩材料膜",
+      "bz_sales": 212868879.74,
+      "bz_profit": 38790193.51,
+      "bz_cost": 174078686.23,
+      "curr_type": "CNY",
+      "update_flag": "1"
+    }
+  ],
+  "688549.SH": [
+    {
+      "ts_code": "688549.SH",
+      "end_date": "20250630",
+      "bz_item": "其他业务",
+      "bz_sales": 11993937.14,
+      "bz_profit": 122007.67,
+      "bz_cost": 11871929.47,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    },
+    {
+      "ts_code": "688549.SH",
+      "end_date": "20250630",
+      "bz_item": "电子特种气体",
+      "bz_sales": 120421461.54,
+      "bz_profit": 19579388.68,
+      "bz_cost": 100842072.86,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    },
+    {
+      "ts_code": "688549.SH",
+      "end_date": "20250630",
+      "bz_item": "通用湿电子化学品",
+      "bz_sales": 434151247.71,
+      "bz_profit": 45310836.81,
+      "bz_cost": 388840410.9,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    }
+  ],
+  "688809.SH": [
+    {
+      "ts_code": "688809.SH",
+      "end_date": "20250630",
+      "bz_item": "2DMEMS探针卡",
+      "bz_sales": 317173558.57,
+      "bz_profit": 232983344.96,
+      "bz_cost": 84190213.61,
+      "curr_type": "CNY",
+      "update_flag": "1"
+    },
+    {
+      "ts_code": "688809.SH",
+      "end_date": "20250630",
+      "bz_item": "与半导体测试相关的材料及设备",
+      "bz_sales": 2355700.0,
+      "bz_profit": NaN,
+      "bz_cost": NaN,
+      "curr_type": "CNY",
+      "update_flag": "1"
+    },
+    {
+      "ts_code": "688809.SH",
+      "end_date": "20250630",
+      "bz_item": "其他(其他)",
+      "bz_sales": 111200.0,
+      "bz_profit": NaN,
+      "bz_cost": NaN,
+      "curr_type": "CNY",
+      "update_flag": "1"
+    },
+    {
+      "ts_code": "688809.SH",
+      "end_date": "20250630",
+      "bz_item": "垂直探针卡",
+      "bz_sales": 2270243.41,
+      "bz_profit": 802746.1,
+      "bz_cost": 1467497.31,
+      "curr_type": "CNY",
+      "update_flag": "1"
+    },
+    {
+      "ts_code": "688809.SH",
+      "end_date": "20250630",
+      "bz_item": "悬臂探针卡",
+      "bz_sales": 30900301.29,
+      "bz_profit": 11744850.68,
+      "bz_cost": 19155450.61,
+      "curr_type": "CNY",
+      "update_flag": "1"
+    },
+    {
+      "ts_code": "688809.SH",
+      "end_date": "20250630",
+      "bz_item": "探针卡维修",
+      "bz_sales": 2720720.3,
+      "bz_profit": 1275025.37,
+      "bz_cost": 1445694.93,
+      "curr_type": "CNY",
+      "update_flag": "1"
+    }
+  ],
+  "688216.SH": [
+    {
+      "ts_code": "688216.SH",
+      "end_date": "20251231",
+      "bz_item": "其他业务",
+      "bz_sales": 32444215.67,
+      "bz_profit": 23003847.09,
+      "bz_cost": 9440368.58,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    },
+    {
+      "ts_code": "688216.SH",
+      "end_date": "20251231",
+      "bz_item": "功率器件封装测试",
+      "bz_sales": 82586248.94,
+      "bz_profit": 9540728.38,
+      "bz_cost": 73045520.56,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    },
+    {
+      "ts_code": "688216.SH",
+      "end_date": "20251231",
+      "bz_item": "晶圆测试",
+      "bz_sales": 7447924.67,
+      "bz_profit": -2710548.71,
+      "bz_cost": 10158473.38,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    },
+    {
+      "ts_code": "688216.SH",
+      "end_date": "20251231",
+      "bz_item": "集成电路封装测试",
+      "bz_sales": 646310187.35,
+      "bz_profit": 11135447.47,
+      "bz_cost": 635174739.88,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    }
+  ],
+  "688662.SH": [
+    {
+      "ts_code": "688662.SH",
+      "end_date": "20250630",
+      "bz_item": "其他主营业务",
+      "bz_sales": 36811213.92,
+      "bz_profit": 9965073.69,
+      "bz_cost": 26846140.23,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    },
+    {
+      "ts_code": "688662.SH",
+      "end_date": "20250630",
+      "bz_item": "半导体热电器件",
+      "bz_sales": 84239941.61,
+      "bz_profit": 25302313.1,
+      "bz_cost": 58937628.51,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    },
+    {
+      "ts_code": "688662.SH",
+      "end_date": "20250630",
+      "bz_item": "半导体热电系统",
+      "bz_sales": 57190897.5,
+      "bz_profit": 9205112.3,
+      "bz_cost": 47985785.2,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    },
+    {
+      "ts_code": "688662.SH",
+      "end_date": "20250630",
+      "bz_item": "热电机应用",
+      "bz_sales": 91414719.9,
+      "bz_profit": 25030802.73,
+      "bz_cost": 66383917.17,
+      "curr_type": "CNY",
+      "update_flag": "0"
+    }
+  ]
+}
