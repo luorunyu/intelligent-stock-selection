@@ -1,0 +1,844 @@
+{
+  "market": {
+    "latest": "20260618",
+    "today_cal": [
+      {
+        "exchange": "SSE",
+        "cal_date": "20260618",
+        "is_open": 1,
+        "pretrade_date": "20260617"
+      }
+    ],
+    "n": 5293,
+    "up": 1969,
+    "down": 3238,
+    "flat": 86,
+    "limit_up": 93,
+    "limit_down": 15,
+    "amount_yi": 33164.21
+  },
+  "counts": {
+    "daily": 5513,
+    "daily_basic": 5507,
+    "moneyflow": 0,
+    "stk_limit": 7415,
+    "stock_basic": 5530,
+    "limit_list_d": 0,
+    "top_list": 0,
+    "margin": 0,
+    "margin_detail": 0,
+    "sw_daily": 0
+  },
+  "amounts": [
+    [
+      "20260618",
+      33164.21,
+      5293
+    ],
+    [
+      "20260617",
+      30986.72,
+      5294
+    ],
+    [
+      "20260616",
+      30705.26,
+      5296
+    ],
+    [
+      "20260615",
+      30376.46,
+      5296
+    ],
+    [
+      "20260612",
+      32215.65,
+      5301
+    ],
+    [
+      "20260611",
+      25603.41,
+      5297
+    ],
+    [
+      "20260610",
+      26287.07,
+      5295
+    ],
+    [
+      "20260609",
+      26508.91,
+      5295
+    ],
+    [
+      "20260608",
+      28051.66,
+      5296
+    ],
+    [
+      "20260605",
+      30803.37,
+      5294
+    ],
+    [
+      "20260604",
+      27603.57,
+      5291
+    ],
+    [
+      "20260603",
+      31302.68,
+      5291
+    ],
+    [
+      "20260602",
+      27933.54,
+      5287
+    ],
+    [
+      "20260601",
+      28778.4,
+      5288
+    ],
+    [
+      "20260529",
+      33198.27,
+      5286
+    ],
+    [
+      "20260528",
+      29667.27,
+      5286
+    ],
+    [
+      "20260527",
+      32360.89,
+      5286
+    ],
+    [
+      "20260526",
+      32414.6,
+      5284
+    ],
+    [
+      "20260525",
+      32077.38,
+      5284
+    ],
+    [
+      "20260522",
+      29041.54,
+      5284
+    ]
+  ],
+  "indices": [
+    {
+      "ts_code": "000001.SH",
+      "trade_date": "20260618",
+      "close": 4090.4813,
+      "open": 4094.2301,
+      "high": 4117.451,
+      "low": 4080.2938,
+      "pre_close": 4108.0762,
+      "change": -17.5949,
+      "pct_chg": -0.4283,
+      "vol": 658116068.0,
+      "amount": 1560473972.7
+    },
+    {
+      "ts_code": "399001.SZ",
+      "trade_date": "20260618",
+      "close": 16030.7024,
+      "open": 15826.7944,
+      "high": 16104.7674,
+      "low": 15825.3165,
+      "pre_close": 15880.9507,
+      "change": 149.7517,
+      "pct_chg": 0.943,
+      "vol": 764106093.0,
+      "amount": 1749615385.7
+    },
+    {
+      "ts_code": "399006.SZ",
+      "trade_date": "20260618",
+      "close": 4252.3903,
+      "open": 4153.6209,
+      "high": 4272.0078,
+      "low": 4153.6209,
+      "pre_close": 4167.0478,
+      "change": 85.3425,
+      "pct_chg": 2.048,
+      "vol": 226559937.0,
+      "amount": 862178853.0
+    },
+    {
+      "ts_code": "000688.SH",
+      "trade_date": "20260618",
+      "close": 1911.5132,
+      "open": 1837.0702,
+      "high": 1937.3012,
+      "low": 1836.0381,
+      "pre_close": 1840.8211,
+      "change": 70.6921,
+      "pct_chg": 3.8402,
+      "vol": 17710999.0,
+      "amount": 209534843.4
+    },
+    {
+      "ts_code": "000300.SH",
+      "trade_date": "20260618",
+      "close": 4941.5986,
+      "open": 4916.0442,
+      "high": 4976.8909,
+      "low": 4916.0442,
+      "pre_close": 4931.3861,
+      "change": 10.2125,
+      "pct_chg": 0.2071,
+      "vol": 334459902.0,
+      "amount": 1021710711.1
+    },
+    {
+      "ts_code": "000905.SH",
+      "trade_date": "20260618",
+      "close": 8673.0899,
+      "open": 8590.4987,
+      "high": 8716.3417,
+      "low": 8587.9818,
+      "pre_close": 8627.0862,
+      "change": 46.0037,
+      "pct_chg": 0.5332,
+      "vol": 239467579.0,
+      "amount": 667474010.7
+    },
+    {
+      "ts_code": "000852.SH",
+      "trade_date": "20260618",
+      "close": 8771.0244,
+      "open": 8666.6378,
+      "high": 8796.4845,
+      "low": 8664.2777,
+      "pre_close": 8704.4677,
+      "change": 66.5567,
+      "pct_chg": 0.7646,
+      "vol": 290062435.0,
+      "amount": 680473865.7
+    },
+    {
+      "ts_code": "899050.BJ",
+      "trade_date": "20260618",
+      "close": 1265.1553,
+      "open": 1275.5668,
+      "high": 1278.9624,
+      "low": 1258.4135,
+      "pre_close": 1280.2455,
+      "change": -15.0902,
+      "pct_chg": -1.1787,
+      "vol": 8168856.0,
+      "amount": 22045162.2
+    }
+  ],
+  "top_industry_avg": [
+    {
+      "industry": "公路",
+      "n": 3,
+      "up": 2,
+      "down": 1,
+      "avg_pct": 5.947399999999999,
+      "amount_yi": 2.86210926,
+      "limit_up": 1,
+      "limit_down": 0
+    },
+    {
+      "industry": "矿物制品",
+      "n": 35,
+      "up": 30,
+      "down": 5,
+      "avg_pct": 4.589345714285715,
+      "amount_yi": 386.7695270317,
+      "limit_up": 3,
+      "limit_down": 1
+    },
+    {
+      "industry": NaN,
+      "n": 9,
+      "up": 5,
+      "down": 2,
+      "avg_pct": 3.2630222222222223,
+      "amount_yi": 10.4968845388,
+      "limit_up": 0,
+      "limit_down": 0
+    },
+    {
+      "industry": "铜",
+      "n": 18,
+      "up": 11,
+      "down": 7,
+      "avg_pct": 3.0515833333333333,
+      "amount_yi": 451.4224212666,
+      "limit_up": 3,
+      "limit_down": 0
+    },
+    {
+      "industry": "半导体",
+      "n": 188,
+      "up": 136,
+      "down": 51,
+      "avg_pct": 2.3313382978723407,
+      "amount_yi": 5405.3794984564,
+      "limit_up": 5,
+      "limit_down": 0
+    },
+    {
+      "industry": "生物制药",
+      "n": 77,
+      "up": 60,
+      "down": 16,
+      "avg_pct": 2.1125857142857143,
+      "amount_yi": 174.9395316365,
+      "limit_up": 1,
+      "limit_down": 0
+    },
+    {
+      "industry": "特种钢",
+      "n": 10,
+      "up": 6,
+      "down": 4,
+      "avg_pct": 2.09538,
+      "amount_yi": 21.2978714429,
+      "limit_up": 1,
+      "limit_down": 0
+    },
+    {
+      "industry": "机床制造",
+      "n": 23,
+      "up": 19,
+      "down": 4,
+      "avg_pct": 1.8166695652173914,
+      "amount_yi": 70.3709641465,
+      "limit_up": 0,
+      "limit_down": 0
+    },
+    {
+      "industry": "机械基件",
+      "n": 132,
+      "up": 72,
+      "down": 58,
+      "avg_pct": 1.3558818181818182,
+      "amount_yi": 663.2580998435,
+      "limit_up": 3,
+      "limit_down": 1
+    },
+    {
+      "industry": "通信设备",
+      "n": 130,
+      "up": 66,
+      "down": 64,
+      "avg_pct": 0.8740530769230769,
+      "amount_yi": 2893.5388099507,
+      "limit_up": 3,
+      "limit_down": 0
+    },
+    {
+      "industry": "纺织机械",
+      "n": 10,
+      "up": 5,
+      "down": 4,
+      "avg_pct": 0.8632,
+      "amount_yi": 45.6323938995,
+      "limit_up": 1,
+      "limit_down": 0
+    },
+    {
+      "industry": "小金属",
+      "n": 66,
+      "up": 31,
+      "down": 33,
+      "avg_pct": 0.8401227272727272,
+      "amount_yi": 1428.6401792208,
+      "limit_up": 7,
+      "limit_down": 0
+    },
+    {
+      "industry": "化学制药",
+      "n": 143,
+      "up": 84,
+      "down": 54,
+      "avg_pct": 0.7877748251748251,
+      "amount_yi": 371.1290863662,
+      "limit_up": 1,
+      "limit_down": 0
+    },
+    {
+      "industry": "元器件",
+      "n": 300,
+      "up": 155,
+      "down": 143,
+      "avg_pct": 0.6215736666666667,
+      "amount_yi": 5029.6958439123,
+      "limit_up": 9,
+      "limit_down": 0
+    },
+    {
+      "industry": "互联网",
+      "n": 75,
+      "up": 43,
+      "down": 31,
+      "avg_pct": 0.6034106666666667,
+      "amount_yi": 391.0255466176,
+      "limit_up": 1,
+      "limit_down": 1
+    },
+    {
+      "industry": "医疗保健",
+      "n": 176,
+      "up": 95,
+      "down": 78,
+      "avg_pct": 0.5658676136363636,
+      "amount_yi": 294.3696748512,
+      "limit_up": 4,
+      "limit_down": 0
+    },
+    {
+      "industry": "航空",
+      "n": 53,
+      "up": 24,
+      "down": 29,
+      "avg_pct": 0.5612754716981132,
+      "amount_yi": 301.15200480889996,
+      "limit_up": 2,
+      "limit_down": 1
+    },
+    {
+      "industry": "IT设备",
+      "n": 76,
+      "up": 33,
+      "down": 41,
+      "avg_pct": 0.48551315789473687,
+      "amount_yi": 535.8223546871,
+      "limit_up": 2,
+      "limit_down": 0
+    },
+    {
+      "industry": "专用机械",
+      "n": 281,
+      "up": 143,
+      "down": 132,
+      "avg_pct": 0.44697010676156584,
+      "amount_yi": 1770.2064686319,
+      "limit_up": 3,
+      "limit_down": 1
+    },
+    {
+      "industry": "旅游服务",
+      "n": 7,
+      "up": 1,
+      "down": 6,
+      "avg_pct": 0.42708571428571435,
+      "amount_yi": 28.493753266700004,
+      "limit_up": 1,
+      "limit_down": 0
+    },
+    {
+      "industry": "染料涂料",
+      "n": 34,
+      "up": 11,
+      "down": 22,
+      "avg_pct": 0.39217352941176475,
+      "amount_yi": 100.4987760961,
+      "limit_up": 1,
+      "limit_down": 0
+    },
+    {
+      "industry": "软件服务",
+      "n": 260,
+      "up": 124,
+      "down": 129,
+      "avg_pct": 0.3247303846153846,
+      "amount_yi": 953.0330973868,
+      "limit_up": 2,
+      "limit_down": 0
+    },
+    {
+      "industry": "运输设备",
+      "n": 46,
+      "up": 16,
+      "down": 30,
+      "avg_pct": 0.2601108695652174,
+      "amount_yi": 89.1161267855,
+      "limit_up": 3,
+      "limit_down": 0
+    },
+    {
+      "industry": "陶瓷",
+      "n": 5,
+      "up": 1,
+      "down": 4,
+      "avg_pct": 0.2133400000000003,
+      "amount_yi": 146.3299260652,
+      "limit_up": 0,
+      "limit_down": 0
+    },
+    {
+      "industry": "装修装饰",
+      "n": 18,
+      "up": 8,
+      "down": 10,
+      "avg_pct": 0.17891666666666659,
+      "amount_yi": 67.6923113242,
+      "limit_up": 1,
+      "limit_down": 0
+    },
+    {
+      "industry": "公共交通",
+      "n": 7,
+      "up": 2,
+      "down": 5,
+      "avg_pct": 0.07838571428571431,
+      "amount_yi": 5.823585246,
+      "limit_up": 0,
+      "limit_down": 0
+    },
+    {
+      "industry": "电器仪表",
+      "n": 103,
+      "up": 50,
+      "down": 53,
+      "avg_pct": 0.055847572815534006,
+      "amount_yi": 311.30430256660003,
+      "limit_up": 0,
+      "limit_down": 0
+    },
+    {
+      "industry": "医药商业",
+      "n": 35,
+      "up": 15,
+      "down": 20,
+      "avg_pct": -0.10398571428571429,
+      "amount_yi": 29.008539824099998,
+      "limit_up": 0,
+      "limit_down": 0
+    },
+    {
+      "industry": "汽车配件",
+      "n": 260,
+      "up": 99,
+      "down": 158,
+      "avg_pct": -0.1498684615384615,
+      "amount_yi": 662.0368629457,
+      "limit_up": 6,
+      "limit_down": 0
+    },
+    {
+      "industry": "出版业",
+      "n": 28,
+      "up": 11,
+      "down": 16,
+      "avg_pct": -0.19633571428571425,
+      "amount_yi": 42.4711271604,
+      "limit_up": 0,
+      "limit_down": 0
+    }
+  ],
+  "top_industry_amount": [
+    {
+      "industry": "半导体",
+      "n": 188,
+      "up": 136,
+      "down": 51,
+      "avg_pct": 2.3313382978723407,
+      "amount_yi": 5405.3794984564,
+      "limit_up": 5,
+      "limit_down": 0
+    },
+    {
+      "industry": "元器件",
+      "n": 300,
+      "up": 155,
+      "down": 143,
+      "avg_pct": 0.6215736666666667,
+      "amount_yi": 5029.6958439123,
+      "limit_up": 9,
+      "limit_down": 0
+    },
+    {
+      "industry": "通信设备",
+      "n": 130,
+      "up": 66,
+      "down": 64,
+      "avg_pct": 0.8740530769230769,
+      "amount_yi": 2893.5388099507,
+      "limit_up": 3,
+      "limit_down": 0
+    },
+    {
+      "industry": "电气设备",
+      "n": 336,
+      "up": 103,
+      "down": 229,
+      "avg_pct": -0.7809092261904761,
+      "amount_yi": 2155.9352811207,
+      "limit_up": 2,
+      "limit_down": 2
+    },
+    {
+      "industry": "专用机械",
+      "n": 281,
+      "up": 143,
+      "down": 132,
+      "avg_pct": 0.44697010676156584,
+      "amount_yi": 1770.2064686319,
+      "limit_up": 3,
+      "limit_down": 1
+    },
+    {
+      "industry": "化工原料",
+      "n": 251,
+      "up": 61,
+      "down": 187,
+      "avg_pct": -0.9808597609561752,
+      "amount_yi": 1556.4768932222,
+      "limit_up": 5,
+      "limit_down": 0
+    },
+    {
+      "industry": "小金属",
+      "n": 66,
+      "up": 31,
+      "down": 33,
+      "avg_pct": 0.8401227272727272,
+      "amount_yi": 1428.6401792208,
+      "limit_up": 7,
+      "limit_down": 0
+    },
+    {
+      "industry": "软件服务",
+      "n": 260,
+      "up": 124,
+      "down": 129,
+      "avg_pct": 0.3247303846153846,
+      "amount_yi": 953.0330973868,
+      "limit_up": 2,
+      "limit_down": 0
+    },
+    {
+      "industry": "机械基件",
+      "n": 132,
+      "up": 72,
+      "down": 58,
+      "avg_pct": 1.3558818181818182,
+      "amount_yi": 663.2580998435,
+      "limit_up": 3,
+      "limit_down": 1
+    },
+    {
+      "industry": "汽车配件",
+      "n": 260,
+      "up": 99,
+      "down": 158,
+      "avg_pct": -0.1498684615384615,
+      "amount_yi": 662.0368629457,
+      "limit_up": 6,
+      "limit_down": 0
+    },
+    {
+      "industry": "IT设备",
+      "n": 76,
+      "up": 33,
+      "down": 41,
+      "avg_pct": 0.48551315789473687,
+      "amount_yi": 535.8223546871,
+      "limit_up": 2,
+      "limit_down": 0
+    },
+    {
+      "industry": "玻璃",
+      "n": 19,
+      "up": 3,
+      "down": 16,
+      "avg_pct": -4.345526315789473,
+      "amount_yi": 518.7562573373,
+      "limit_up": 0,
+      "limit_down": 1
+    },
+    {
+      "industry": "铜",
+      "n": 18,
+      "up": 11,
+      "down": 7,
+      "avg_pct": 3.0515833333333333,
+      "amount_yi": 451.4224212666,
+      "limit_up": 3,
+      "limit_down": 0
+    },
+    {
+      "industry": "火力发电",
+      "n": 31,
+      "up": 0,
+      "down": 31,
+      "avg_pct": -5.953438709677419,
+      "amount_yi": 399.1811627914,
+      "limit_up": 0,
+      "limit_down": 3
+    },
+    {
+      "industry": "证券",
+      "n": 50,
+      "up": 1,
+      "down": 49,
+      "avg_pct": -3.016392,
+      "amount_yi": 395.5821739726,
+      "limit_up": 0,
+      "limit_down": 0
+    },
+    {
+      "industry": "互联网",
+      "n": 75,
+      "up": 43,
+      "down": 31,
+      "avg_pct": 0.6034106666666667,
+      "amount_yi": 391.0255466176,
+      "limit_up": 1,
+      "limit_down": 1
+    },
+    {
+      "industry": "矿物制品",
+      "n": 35,
+      "up": 30,
+      "down": 5,
+      "avg_pct": 4.589345714285715,
+      "amount_yi": 386.7695270317,
+      "limit_up": 3,
+      "limit_down": 1
+    },
+    {
+      "industry": "化学制药",
+      "n": 143,
+      "up": 84,
+      "down": 54,
+      "avg_pct": 0.7877748251748251,
+      "amount_yi": 371.1290863662,
+      "limit_up": 1,
+      "limit_down": 0
+    },
+    {
+      "industry": "银行",
+      "n": 42,
+      "up": 0,
+      "down": 42,
+      "avg_pct": -2.719497619047619,
+      "amount_yi": 323.6920167334,
+      "limit_up": 0,
+      "limit_down": 0
+    },
+    {
+      "industry": "电器仪表",
+      "n": 103,
+      "up": 50,
+      "down": 53,
+      "avg_pct": 0.055847572815534006,
+      "amount_yi": 311.30430256660003,
+      "limit_up": 0,
+      "limit_down": 0
+    },
+    {
+      "industry": "塑料",
+      "n": 76,
+      "up": 24,
+      "down": 52,
+      "avg_pct": -0.9540355263157894,
+      "amount_yi": 310.6711474459,
+      "limit_up": 0,
+      "limit_down": 1
+    },
+    {
+      "industry": "航空",
+      "n": 53,
+      "up": 24,
+      "down": 29,
+      "avg_pct": 0.5612754716981132,
+      "amount_yi": 301.15200480889996,
+      "limit_up": 2,
+      "limit_down": 1
+    },
+    {
+      "industry": "医疗保健",
+      "n": 176,
+      "up": 95,
+      "down": 78,
+      "avg_pct": 0.5658676136363636,
+      "amount_yi": 294.3696748512,
+      "limit_up": 4,
+      "limit_down": 0
+    },
+    {
+      "industry": "建筑工程",
+      "n": 118,
+      "up": 28,
+      "down": 89,
+      "avg_pct": -2.0055,
+      "amount_yi": 276.5597035501,
+      "limit_up": 0,
+      "limit_down": 0
+    },
+    {
+      "industry": "家用电器",
+      "n": 87,
+      "up": 27,
+      "down": 59,
+      "avg_pct": -0.8205988505747126,
+      "amount_yi": 268.8197989032,
+      "limit_up": 0,
+      "limit_down": 0
+    },
+    {
+      "industry": "铝",
+      "n": 29,
+      "up": 7,
+      "down": 22,
+      "avg_pct": -1.7146655172413792,
+      "amount_yi": 223.5587962661,
+      "limit_up": 0,
+      "limit_down": 1
+    },
+    {
+      "industry": "保险",
+      "n": 5,
+      "up": 0,
+      "down": 5,
+      "avg_pct": -6.19314,
+      "amount_yi": 199.08865305,
+      "limit_up": 0,
+      "limit_down": 0
+    },
+    {
+      "industry": "农药化肥",
+      "n": 56,
+      "up": 3,
+      "down": 53,
+      "avg_pct": -1.6835964285714284,
+      "amount_yi": 179.9873000183,
+      "limit_up": 0,
+      "limit_down": 0
+    },
+    {
+      "industry": "生物制药",
+      "n": 77,
+      "up": 60,
+      "down": 16,
+      "avg_pct": 2.1125857142857143,
+      "amount_yi": 174.9395316365,
+      "limit_up": 1,
+      "limit_down": 0
+    },
+    {
+      "industry": "铅锌",
+      "n": 14,
+      "up": 7,
+      "down": 7,
+      "avg_pct": -0.40169999999999995,
+      "amount_yi": 171.9092014871,
+      "limit_up": 0,
+      "limit_down": 0
+    }
+  ]
+}
