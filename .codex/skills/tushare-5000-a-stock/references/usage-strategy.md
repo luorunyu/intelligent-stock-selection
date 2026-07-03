@@ -9,7 +9,7 @@
 - 先粗筛候选池，再对候选池补近 20/60 日历史序列。
 - 低频数据缓存：股票池、行业分类、行业成分、指数基础信息不必每天全量重新拉。
 - 每日数据落盘：同一交易日同一接口尽量只拉一次，后续分析读本地缓存。
-- 自动任务加限频和重试：接口之间轻微 sleep；遇到频率错误或网络错误时退避等待再重试。
+- 自动任务必须走项目统一采集代码，默认限流 90 次/分钟；遇到频率错误或网络错误时退避等待再重试。
 - 盘中实时和分钟级监控不属于 5000 积分常规稳定场景；默认不做。
 
 ## 推荐每日采集顺序
@@ -35,11 +35,13 @@
 
 ## 本地缓存建议
 
-推荐缓存目录可按项目实际结构调整：
+本项目统一缓存目录：
 
 ```text
-data_cache/tushare/YYYYMMDD/<api_name>.parquet
+data_cache/tushare/<api_name>/<trade_date>.parquet
 data_cache/tushare/static/<api_name>.parquet
+data_cache/tushare/_metadata/calls.jsonl
+data_cache/tushare/_metadata/runs.jsonl
 ```
 
 建议缓存：
@@ -57,7 +59,7 @@ data_cache/tushare/static/<api_name>.parquet
 
 ## 限频与重试
 
-- 接口调用之间加入轻微间隔，例如 0.3-1 秒，具体按实际频率限制调整。
+- 接口调用必须通过 `stock_selection.data.tushare_client.call_api` 或 `call_pro_bar`，由 `RateLimiter` 控制在默认 90 次/分钟。
 - 碰到频率限制、网络超时或服务端短暂错误时，不要立刻密集重试；等待 30-60 秒后重试。
 - 对单次返回行数受限的接口，按 `trade_date`、日期区间或候选股票列表分页。
 - 日线数据可能盘后才完整更新；收盘后任务默认放到 16:30 或更晚。

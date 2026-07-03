@@ -25,9 +25,10 @@ description: 当 Codex 需要在 Tushare Pro 个人 5000 积分账户范围内�
 1. 先判断用户要的数据类型：行情、估值、财务、指数、行业、资金流、事件/风险，还是跨资产数据。
 2. 需要接口名、入参模板或字段说明时，读取 `references/api-reference.md`。
 3. 优先选择 5000 积分下稳定可用的 A 股常规接口，再考虑独立权限数据。
-4. 在本项目中，优先读取并沿用 `stock_selection/data/tushare_client.py` 里的 Tushare 初始化方式，包括项目已验证的 `pro` client 和自定义 HTTP 地址。不要把 token 写入报告、日志或最终回答。
-5. 涉及批量选股、每日复盘或自动化任务时，先读取 `references/usage-strategy.md`，按 5000 积分和分钟频率友好的方式调用接口。
-6. 如果当前项目没有可用 client，再使用环境变量或占位 token 方式：
+4. 在本项目中，优先读取本地缓存 `data_cache/tushare/`；缺失数据时，只通过项目统一采集代码补数，不要临时绕过限流直接调用 Tushare。
+5. 统一采集入口是 `stock_selection/data/tushare_client.py`、`stock_selection/data/tushare_collector.py` 和 `scripts/collect_tushare_daily.py`，其中已包含环境变量 token、自定义 HTTP 地址、限流和重试。不要把 token 写入报告、日志或最终回答。
+6. 涉及批量选股、每日复盘或自动化任务时，先读取 `references/usage-strategy.md`，按 5000 积分和分钟频率友好的方式读取缓存或调用统一采集脚本。
+7. 如果当前项目没有可用 client，再使用环境变量或占位 token 方式：
 
 ```python
 import tushare as ts
@@ -35,9 +36,9 @@ import tushare as ts
 pro = ts.pro_api("YOUR_TOKEN")
 ```
 
-7. 用户需要可用于研究/回测的复权行情时，优先使用 `ts.pro_bar(api=pro, ...)`。
-8. 普通 Pro 接口使用 `pro.<api_name>(...)`。
-9. 说明常见限制：很多接口有单次返回行数限制，历史数据通常要按日期或股票代码分页拉取，交易日数据可能在盘后才完整更新。
+8. 用户需要可用于研究/回测的复权行情时，优先通过 `call_pro_bar(...)` 或 collector 的按需采集入口调用 `ts.pro_bar(api=pro, ...)`。
+9. 普通 Pro 接口通过 `call_api(api_name, params)` 或 collector 调用。
+10. 说明常见限制：很多接口有单次返回行数限制，历史数据通常要按日期或股票代码分页拉取，交易日数据可能在盘后才完整更新。
 
 ## 本项目数据入口
 
@@ -47,7 +48,15 @@ pro = ts.pro_api("YOUR_TOKEN")
 stock_selection/data/tushare_client.py
 ```
 
-使用本项目做数据采集、行情分析、选股观察池或复盘时，先检查这个文件的初始化写法，并复用其中的 `pro` client。该文件可能包含示例调用或顶层打印；如果只是生成长期脚本，优先把初始化封装为函数或在新脚本中复用同样的 client 构造方式，避免导入时触发无关示例输出。
+使用本项目做数据采集、行情分析、选股观察池或复盘时，先读本地缓存；缺失时通过统一脚本补数：
+
+```powershell
+python scripts/collect_tushare_daily.py --date latest
+python scripts/collect_tushare_daily.py --static
+python scripts/probe_tushare_apis.py --date latest
+```
+
+项目 client 已改为函数式入口，导入不会触发示例请求。token 使用 `TUSHARE_TOKEN` 环境变量；分钟频率默认由代码限制为 90 次/分钟，可用 `TUSHARE_MAX_CALLS_PER_MINUTE` 调整。
 
 安全规则：
 
@@ -74,20 +83,23 @@ stock_selection/data/tushare_client.py
 做横截面因子、每日观察池和收盘后复盘时，优先按 `trade_date` 拉取全市场数据，再筛候选池：
 
 ```python
-daily_basic = pro.daily_basic(trade_date="20260608")
-moneyflow = pro.moneyflow(trade_date="20260608")
+from stock_selection.data.tushare_cache import read_dataset
+
+daily_basic = read_dataset("daily_basic", "20260608")
+moneyflow = read_dataset("moneyflow", "20260608")
 ```
 
 做单只股票历史序列时，优先按 `ts_code` 加日期区间拉取：
 
 ```python
-bars = ts.pro_bar(
-    api=pro,
-    ts_code="000001.SZ",
-    adj="qfq",
-    start_date="20250101",
-    end_date="20260608",
-)
+from stock_selection.data.tushare_client import call_pro_bar
+
+bars = call_pro_bar({
+    "ts_code": "000001.SZ",
+    "adj": "qfq",
+    "start_date": "20250101",
+    "end_date": "20260608",
+})
 ```
 
 ## 参考文件
