@@ -48,3 +48,17 @@
 - 对翻译和二次转载保持谨慎，优先找原始英文来源或官方披露。
 - 若无法确认公司级催化，输出“公司级催化不明确，主要跟随板块/资金/情绪”。
 - 新闻源不可替代 Tushare 行情数据；行情数据也不可倒推事实催化。
+## Hotspot-Driven External Source Routing
+
+External and overseas sources are selected by the active A-share hotspot, not by a fixed technology watch basket.
+
+- Technology / AI / semiconductor: company IR and filings from NVIDIA, AMD, Broadcom, Marvell, TSMC, ASML, Micron, Microsoft, Amazon, Google, Meta; SEMI and SIA.
+- Innovative drug / healthcare: FDA, EMA, ClinicalTrials.gov, ASCO, ESMO, major pharma company IR, licensing and BD transaction releases, trial readouts, and China NMPA/CDE where available.
+- Resources and commodities: LME, COMEX, CME, ICE, EIA, OPEC, major miner/energy company releases, and domestic futures/price sources.
+- Shipping and trade: SCFI, BDI, major port data, shipping company releases, customs/trade policy sources.
+- Agriculture: USDA, CBOT, domestic agriculture price sources, ministry releases, and weather/supply shock sources.
+- Finance and macro: central bank, treasury, yield, FX, banking, brokerage, insurance, and property-policy sources.
+- Consumer: retail data, brand company filings, channel price data, tourism/box-office/hotel traffic, and domestic policy sources.
+- Military / geopolitics: official policy, defense budget, exchange filings, and high-reliability geopolitical news.
+
+Rule: first identify the A-share hotspot with structured market data, then choose the matching external source route. Overseas news is only a mapping clue and must be verified by A-share price, turnover, breadth, core-stock behavior, and company-level business evidence.

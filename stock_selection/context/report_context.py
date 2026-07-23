@@ -32,6 +32,7 @@ class ReportContext:
     mentioned_themes: list[str]
     mentioned_stocks: list[str]
     judgement_lines: list[dict[str, str]]
+    historical_theme_events: list[dict[str, Any]]
     topic_backtracks: list[dict[str, Any]]
 
     def to_dict(self) -> dict[str, Any]:
@@ -51,6 +52,7 @@ def build_report_context(
     themes: list[str] = []
     stocks: list[str] = []
     judgements: list[dict[str, str]] = []
+    theme_events: list[dict[str, Any]] = []
     reports: list[dict[str, Any]] = []
 
     for path in report_paths:
@@ -58,6 +60,7 @@ def build_report_context(
         codes = sorted(set(STOCK_CODE_RE.findall(text)))
         file_themes = _extract_themes(text)
         file_judgements = _extract_judgement_lines(text, path)
+        theme_events.extend(_extract_theme_events(text, path, file_themes))
         stocks.extend(codes)
         themes.extend(file_themes)
         judgements.extend(file_judgements)
@@ -77,6 +80,7 @@ def build_report_context(
         mentioned_themes=mentioned_themes,
         mentioned_stocks=_unique(stocks),
         judgement_lines=judgements[:80],
+        historical_theme_events=theme_events[:80],
         topic_backtracks=_build_keyword_backtracks(backtrack_paths, mentioned_themes),
     )
 
@@ -162,6 +166,42 @@ def _extract_judgement_lines(text: str, path: Path) -> list[dict[str, str]]:
         if any(word in stripped for word in JUDGEMENT_WORDS):
             rows.append({"date": path.stem, "source": str(path), "line": stripped[:220]})
     return rows
+
+
+def _extract_theme_events(text: str, path: Path, themes: list[str]) -> list[dict[str, Any]]:
+    rows: list[dict[str, Any]] = []
+    active_heading = ""
+    theme_keywords = _keywords_from_themes(themes)
+    for line in text.splitlines():
+        stripped = line.strip()
+        heading_match = THEME_HEADING_RE.match(stripped)
+        if heading_match:
+            active_heading = heading_match.group(1).strip()
+        if not any(word in stripped for word in JUDGEMENT_WORDS):
+            continue
+        matched = [keyword for keyword in theme_keywords if keyword and keyword in stripped]
+        if not matched and active_heading:
+            matched = [keyword for keyword in theme_keywords if keyword and keyword in active_heading]
+        if not matched:
+            continue
+        rows.append(
+            {
+                "date": path.stem,
+                "category": path.parent.parent.name,
+                "source": str(path),
+                "theme": matched[0],
+                "state": _infer_state(stripped),
+                "line": stripped.strip("- ")[:220],
+            }
+        )
+    return _dedupe_events(rows)
+
+
+def _infer_state(text: str) -> str:
+    for state in ["强化", "延续", "修复", "分化", "削弱", "退潮", "证伪", "待验证", "降级"]:
+        if state in text:
+            return state
+    return "提及"
 
 
 def _build_keyword_backtracks(paths: list[Path], themes: list[str]) -> list[dict[str, Any]]:

@@ -1,0 +1,185 @@
+# Seed tags for cross-industry theme discovery.
+#
+# Format:
+#   THEMENAME:
+#     aliases: optional display/search names
+#     tags: labels used for co-occurrence scoring
+#     stocks:
+#       TS_CODE:
+#         name: display name
+#         role: core/related/mapping/weak/invalidated
+#         chain: upstream/midstream/downstream/support
+#         tags: stock-specific tags
+#
+# Keep this file small and factual. Market confirmation comes from Tushare
+# daily data; these seed tags only describe possible relationships.
+
+AI集群网络/交换机:
+  aliases:
+    - AI集群网络
+    - 交换机
+    - 高速互联
+    - 数据中心网络
+  tags:
+    - AI硬件
+    - AI服务器
+    - 数据中心
+    - 交换机
+    - 高速互联
+    - 网络设备
+  stocks:
+    000938.SZ:
+      name: 紫光股份
+      role: core
+      chain: midstream
+      tags: [AI服务器, 网络设备, 交换机, 数据中心]
+    301165.SZ:
+      name: 锐捷网络
+      role: core
+      chain: midstream
+      tags: [交换机, 网络设备, 数据中心网络]
+    002396.SZ:
+      name: 星网锐捷
+      role: related
+      chain: midstream
+      tags: [网络设备, 交换机, 企业网络]
+    301191.SZ:
+      name: 菲菱科思
+      role: related
+      chain: midstream
+      tags: [网络设备, 交换机, 通信设备制造]
+    603118.SH:
+      name: 共进股份
+      role: related
+      chain: midstream
+      tags: [通信设备, 网络终端, 数据中心]
+    000977.SZ:
+      name: 浪潮信息
+      role: related
+      chain: midstream
+      tags: [AI服务器, 算力设备, 数据中心]
+    603019.SH:
+      name: 中科曙光
+      role: related
+      chain: midstream
+      tags: [高性能计算, AI服务器, 数据中心]
+    688629.SH:
+      name: 华丰科技
+      role: related
+      chain: support
+      tags: [连接器, 高速互联, 数据中心]
+    002025.SZ:
+      name: 航天电器
+      role: related
+      chain: support
+      tags: [连接器, 高速互联, 军工电子]
+    002897.SZ:
+      name: 意华股份
+      role: related
+      chain: support
+      tags: [连接器, 通信连接器, 高速互联]
+    300684.SZ:
+      name: 中石科技
+      role: related
+      chain: support
+      tags: [散热, 热管理, 数据中心]
+
+CPO光通信:
+  aliases: [CPO, 光模块, 光通信]
+  tags: [AI硬件, CPO, 光模块, 光通信, 数据中心]
+  stocks:
+    300502.SZ:
+      name: 新易盛
+      role: core
+      chain: midstream
+      tags: [光模块, CPO, 数据中心]
+    300308.SZ:
+      name: 中际旭创
+      role: core
+      chain: midstream
+      tags: [光模块, CPO, 数据中心]
+    300394.SZ:
+      name: 天孚通信
+      role: core
+      chain: midstream
+      tags: [光器件, CPO, 光通信]
+    002281.SZ:
+      name: 光迅科技
+      role: core
+      chain: midstream
+      tags: [光模块, 光器件, CPO]
+    600522.SH:
+      name: 中天科技
+      role: related
+      chain: upstream
+      tags: [光纤光缆, 通信网络]
+    600487.SH:
+      name: 亨通光电
+      role: related
+      chain: upstream
+      tags: [光纤光缆, 通信网络]
+
+高速PCB/覆铜板:
+  aliases: [PCB, 高速PCB, 覆铜板]
+  tags: [AI硬件, PCB, 高速互联, 覆铜板, AI服务器]
+  stocks:
+    002463.SZ:
+      name: 沪电股份
+      role: core
+      chain: midstream
+      tags: [PCB, AI服务器, 高速互联]
+    600183.SH:
+      name: 生益科技
+      role: core
+      chain: upstream
+      tags: [覆铜板, PCB材料, 高速互联]
+    002384.SZ:
+      name: 东山精密
+      role: related
+      chain: midstream
+      tags: [PCB, 电子制造, AI硬件]
+
+存储/半导体:
+  aliases: [存储, 存储芯片, 半导体]
+  tags: [半导体, 存储, DRAM, NAND, 先进封装]
+  stocks:
+    301308.SZ:
+      name: 江波龙
+      role: core
+      chain: midstream
+      tags: [存储, DRAM, NAND]
+    688525.SH:
+      name: 佰维存储
+      role: core
+      chain: midstream
+      tags: [存储, DRAM, NAND]
+    001309.SZ:
+      name: 德明利
+      role: related
+      chain: midstream
+      tags: [存储, 模组]
+    603986.SH:
+      name: 兆易创新
+      role: core
+      chain: midstream
+      tags: [存储, MCU, 半导体]
+    688008.SH:
+      name: 澜起科技
+      role: core
+      chain: midstream
+      tags: [内存接口芯片, AI芯片, 半导体]
+    300223.SZ:
+      name: 北京君正
+      role: related
+      chain: midstream
+      tags: [存储, CPU, 车规芯片]
+    688766.SH:
+      name: 普冉股份
+      role: related
+      chain: midstream
+      tags: [存储, EEPROM, NOR Flash]
+    600584.SH:
+      name: 长电科技
+      role: related
+      chain: support
+      tags: [封测, 先进封装, 半导体]

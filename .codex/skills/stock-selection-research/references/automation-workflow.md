@@ -116,3 +116,21 @@ python -m stock_selection.tools.send_text_email --subject "A股早盘前情报�
 - 如果邮件发送失败，记录错误摘要；不要泄露 `.env`、邮箱授权码、token 或密码。
 
 
+## Hotspot Discovery Gate
+
+After-close automation must treat the project as a hotspot lifecycle tracker:
+
+- First use `hotspot_discovery.market_hotspots`, `hotspot_discovery.industry_hotspots`, and `hotspot_discovery.unseeded_themes` to identify today's active themes from full-market data.
+- Use `hotspot_discovery.seeded_theme_matches` only to validate known historical themes: continuation, repair, weakening, retreat, or falsification.
+- Recent reports are history evidence, not today's theme universe. If an old theme is mentioned repeatedly but lacks current breadth, turnover, leader confirmation, or capital participation, downgrade it to history tracking.
+- If the top 1-3 selected themes are all seeded themes, explicitly list the top non-seeded themes and explain why they were not selected.
+- Track every important theme through lifecycle states: not started, emerging, confirmed, diffusing, diverging, retreating, repair/rebound, returning, or falsified.
+- Select external / overseas sources dynamically by active A-share theme. Do not default to technology sources unless technology is the current confirmed hotspot.
+
+Map-driven discovery requirements:
+
+- Read `hotspot_discovery.relationship_map_context` before selecting related stocks. Use it to identify historical themes, sub-lines, value-chain nodes, pending diffusion, not-started, fallen-behind, downgraded, and falsified companies.
+- Read `hotspot_discovery.theme_stock_roles` before writing candidate roles. Roles must distinguish leaders, middle army / amount cores, diffusers, fast followers, laggards, fallen-behind, and falsified names.
+- Read `hotspot_discovery.theme_rotation_context` before judging old and new themes. The report must explain whether old themes are continuing, diverging, retreating, repairing, returning, or falsified.
+- Do not promote a relationship-map candidate only because it exists in the map. It still needs current market confirmation or a clearly labeled pending-diffusion / not-started status.
+- If a mapped company was previously falsified or downgraded, keep the risk tag unless both company evidence and sustained market confirmation improve.

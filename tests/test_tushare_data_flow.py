@@ -124,6 +124,7 @@ def test_prepare_after_close_falls_back_when_requested_daily_not_ready(tmp_path:
         required_api_names=["trade_cal", "daily", "daily_basic"],
         optional_api_names=[],
         index_codes=["000001.SH"],
+        required_retries=0,
     )
 
     assert manifest.requested_date == "20260703"
@@ -134,6 +135,112 @@ def test_prepare_after_close_falls_back_when_requested_daily_not_ready(tmp_path:
     assert (tmp_path / "daily_basic" / "20260702.parquet").exists()
     assert (tmp_path / "index_daily_selected" / "20260702.parquet").exists()
     assert (tmp_path / "_metadata" / "after_close_20260703.json").exists()
+
+
+def test_prepare_after_close_retries_required_api_before_fallback(tmp_path: Path, monkeypatch):
+    calls: list[tuple[str, str]] = []
+    daily_basic_attempts = {"count": 0}
+
+    def fake_call_api(api_name: str, params: dict[str, str]):
+        if api_name == "trade_cal":
+            return pd.DataFrame({"cal_date": ["20260716"], "is_open": [1]})
+        if api_name == "index_daily":
+            return pd.DataFrame(
+                {
+                    "ts_code": [params["ts_code"]],
+                    "trade_date": [params["trade_date"]],
+                    "close": [1.0],
+                }
+            )
+        raise AssertionError(f"unexpected call_api: {api_name}")
+
+    def fake_caller(api_name: str, params: dict[str, str]):
+        trade_date = params.get("trade_date") or params.get("start_date")
+        calls.append((api_name, str(trade_date)))
+        if api_name == "trade_cal":
+            return pd.DataFrame({"cal_date": [trade_date], "is_open": [1]})
+        if api_name == "daily_basic":
+            daily_basic_attempts["count"] += 1
+            if daily_basic_attempts["count"] == 1:
+                raise TimeoutError("read timeout")
+        return pd.DataFrame({"ts_code": ["000001.SZ"], "trade_date": [trade_date]})
+
+    monkeypatch.setattr("stock_selection.data.after_close.call_api", fake_call_api)
+    monkeypatch.setattr(
+        "stock_selection.data.after_close.TushareCollector",
+        lambda cache_root=None: TushareCollector(cache_root=cache_root, caller=fake_caller),
+    )
+
+    manifest = prepare_after_close_data(
+        "20260716",
+        cache_root=tmp_path,
+        required_api_names=["trade_cal", "daily", "daily_basic"],
+        optional_api_names=[],
+        index_codes=["000001.SH"],
+        required_retries=1,
+        required_retry_wait_seconds=0,
+    )
+
+    assert manifest.trade_date == "20260716"
+    assert manifest.data_ready_for_requested_date is True
+    assert (tmp_path / "daily_basic" / "20260716.parquet").exists()
+    assert daily_basic_attempts["count"] == 2
+    assert manifest.readiness
+    assert manifest.readiness["required_ready"] is True
+    assert manifest.readiness["final_missing_required"] == []
+    assert len(manifest.readiness["attempts"]) == 2
+
+
+def test_prepare_after_close_rechecks_cache_before_required_retry(tmp_path: Path, monkeypatch):
+    daily_basic_attempts = {"count": 0}
+
+    def fake_call_api(api_name: str, params: dict[str, str]):
+        if api_name == "trade_cal":
+            return pd.DataFrame({"cal_date": ["20260716"], "is_open": [1]})
+        if api_name == "index_daily":
+            return pd.DataFrame(
+                {
+                    "ts_code": [params["ts_code"]],
+                    "trade_date": [params["trade_date"]],
+                    "close": [1.0],
+                }
+            )
+        raise AssertionError(f"unexpected call_api: {api_name}")
+
+    def fake_caller(api_name: str, params: dict[str, str]):
+        trade_date = params.get("trade_date") or params.get("start_date")
+        if api_name == "trade_cal":
+            return pd.DataFrame({"cal_date": [trade_date], "is_open": [1]})
+        if api_name == "daily_basic":
+            daily_basic_attempts["count"] += 1
+            path = tmp_path / "daily_basic" / f"{trade_date}.parquet"
+            path.parent.mkdir(parents=True, exist_ok=True)
+            pd.DataFrame({"ts_code": ["000001.SZ"], "trade_date": [trade_date]}).to_parquet(path, index=False)
+            raise TimeoutError("read timeout after concurrent cache write")
+        return pd.DataFrame({"ts_code": ["000001.SZ"], "trade_date": [trade_date]})
+
+    monkeypatch.setattr("stock_selection.data.after_close.call_api", fake_call_api)
+    monkeypatch.setattr(
+        "stock_selection.data.after_close.TushareCollector",
+        lambda cache_root=None: TushareCollector(cache_root=cache_root, caller=fake_caller),
+    )
+
+    manifest = prepare_after_close_data(
+        "20260716",
+        cache_root=tmp_path,
+        required_api_names=["trade_cal", "daily", "daily_basic"],
+        optional_api_names=[],
+        index_codes=["000001.SH"],
+        required_retries=2,
+        required_retry_wait_seconds=0,
+    )
+
+    assert manifest.trade_date == "20260716"
+    assert manifest.data_ready_for_requested_date is True
+    assert daily_basic_attempts["count"] == 1
+    assert manifest.readiness
+    assert manifest.readiness["required_ready"] is True
+    assert manifest.readiness["attempts"][0]["ready"] is True
 
 
 def test_latest_after_close_baseline_reads_newest_manifest(tmp_path: Path):

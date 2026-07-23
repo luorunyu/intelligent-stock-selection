@@ -311,3 +311,34 @@ analysis_records\stock_relationship_map\YYYY-MM\YYYY-MM-DD.md
 ## 说明
 本文仅作研究观察和后续事件跟踪，不构成投资建议。
 ```
+## Map-Driven Structured Inputs
+
+When available, stock relationship map reports must read these structured contexts before writing or updating the map:
+
+1. `hotspot_discovery.market_hotspots`
+2. `hotspot_discovery.relationship_map_context`
+3. `hotspot_discovery.theme_stock_roles`
+4. `hotspot_discovery.map_related_candidates`
+5. `hotspot_discovery.theme_rotation_context`
+
+The map is not only a narrative report. It is a reusable index for future hotspot discovery. Every new report should update node status explicitly:
+
+- 新增节点：
+- 待扩散转启动：
+- 未启动仍未验证：
+- 已异动继续扩散：
+- 核心降级：
+- 掉队：
+- 证伪：
+- 之前遗漏：
+- 之前错误：
+
+Add a role view for each active theme:
+
+| 主题 | 龙头 | 中军 | 扩散 | 快速跟随 | 补涨观察 | 掉队 | 证伪 |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+
+Add a rotation view:
+
+| 来源旧主题 | 旧主题状态 | 当前主题 | 当前状态 | 轮动证据 | 后续验证 |
+| --- | --- | --- | --- | --- | --- |

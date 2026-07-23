@@ -2,6 +2,7 @@
 
 import argparse
 from datetime import datetime
+import json
 from pathlib import Path
 import sys
 
@@ -41,7 +42,12 @@ def main() -> int:
         cache_root=args.cache_root,
         focus_ts_codes=report_context.mentioned_stocks[:80],
     )
-    markdown = render_markdown(report_context=report_context, market_context=market_context)
+    theme_discovery = _load_theme_discovery(Path(args.records_root), market_context.end_date)
+    markdown = render_markdown(
+        report_context=report_context,
+        market_context=market_context,
+        theme_discovery=theme_discovery,
+    )
     output = Path(args.output) if args.output else _default_output_path(Path(args.records_root), market_context.end_date)
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(markdown, encoding="utf-8")
@@ -49,7 +55,7 @@ def main() -> int:
     return 0
 
 
-def render_markdown(*, report_context, market_context) -> str:
+def render_markdown(*, report_context, market_context, theme_discovery: dict | None = None) -> str:
     report = report_context.to_dict()
     market = market_context.to_dict()
     lines = [
@@ -63,6 +69,27 @@ def render_markdown(*, report_context, market_context) -> str:
     ]
     if market_context.missing_datasets:
         lines.append(f"- 缺失数据：{', '.join(market_context.missing_datasets[:20])}")
+    lines.extend(["", "## 多日市场概况"])
+    lines.extend(_market_table(market["market_by_date"]))
+    lines.extend(["", "## 今日全市场热点扫描"])
+    lines.extend(_hotspot_discovery_section(theme_discovery or {}))
+    lines.extend(["", "## 股票关系地图索引命中"])
+    lines.extend(_relationship_map_context_section(theme_discovery or {}))
+    lines.extend(["", "## 今日最强主题的板块内角色"])
+    lines.extend(_stock_role_context_section(theme_discovery or {}))
+    lines.extend(["", "## 今日非种子新热点"])
+    lines.extend(_unseeded_theme_section(theme_discovery or {}))
+    lines.extend(["", "## 热点生命周期追踪"])
+    lines.extend(_theme_lifecycle_section(theme_discovery or {}))
+    lines.extend(["", "## 板块轮动路径"])
+    lines.extend(_theme_rotation_context_section(theme_discovery or {}))
+    lines.extend(["", "## 地图待扩散/未启动节点今日验证"])
+    lines.extend(_map_related_candidates_section(theme_discovery or {}))
+    lines.extend(["", "## 行业多日表现（按最新交易日排序）"])
+    lines.extend(_industry_table(market["industries"][:20]))
+    lines.extend(["", "## 已知种子主题验证（仅作历史主线验证）"])
+    lines.extend(_seeded_theme_section(theme_discovery or {}))
+
     lines.extend(["", "## 最近报告线索"])
     lines.extend(_recent_reports_table(report["recent_reports"]))
     lines.extend(["", "## 最近报告提到的主题"])
@@ -74,20 +101,20 @@ def render_markdown(*, report_context, market_context) -> str:
     else:
         lines.append("- 未抽取到判断关键词。")
 
+    lines.extend(["", "## 历史主题生命周期事件"])
+    lines.extend(_historical_theme_events_section(report.get("historical_theme_events", [])))
+
     lines.extend(["", "## 历史报告关键词回溯（最近30天）"])
     lines.extend(_topic_backtrack_section(report.get("topic_backtracks", [])))
 
-    lines.extend(["", "## 多日市场概况"])
-    lines.extend(_market_table(market["market_by_date"]))
-    lines.extend(["", "## 行业多日表现（按最新交易日排序）"])
-    lines.extend(_industry_table(market["industries"][:20]))
     lines.extend(["", "## 历史报告核心股票近几日表现"])
     lines.extend(_stock_table(market["focus_stocks"][:30]))
     lines.extend(
         [
             "",
             "## 使用提示",
-            "- 判断某个热线时，先看历史报告是否反复提到，再看对应行业和核心股的多日数据是否强化或证伪。",
+            "- 判断今日热点时，先看全市场热点扫描和非种子新热点，再用历史报告验证生命周期，不要让旧主题自动占据今日主线。",
+            "- `seeded_theme_matches` 只表示已知主题是否被当天数据验证，不等同于今日最强主线。",
             "- 如果报告说主题强化，但多日数据表现为放量下跌、上涨占比恶化，应在正式复盘中降级。",
             "- 如果报告只提到故事，但行业和核心股没有成交、宽度或资金确认，应标注为待验证。",
             "- 本文仅作研究观察和后续事件跟踪，不构成投资建议。",
@@ -115,6 +142,29 @@ def _topic_backtrack_section(topics: list[dict]) -> list[str]:
         lines.extend(_keyword_hits_table(group.get("hits", [])))
         lines.append("")
     return lines
+
+
+def _historical_theme_events_section(events: list[dict]) -> list[str]:
+    if not events:
+        return ["- 未抽取到结构化历史主题事件。"]
+    rows = [
+        _row(["日期", "类别", "主题", "状态", "摘要", "路径"]),
+        _row(["---", "---", "---", "---", "---", "---"]),
+    ]
+    for item in events[:20]:
+        rows.append(
+            _row(
+                [
+                    item.get("date", ""),
+                    item.get("category", ""),
+                    item.get("theme", ""),
+                    item.get("state", ""),
+                    item.get("line", ""),
+                    item.get("source", ""),
+                ]
+            )
+        )
+    return rows
 
 
 def _keyword_hits_table(hits: list[dict]) -> list[str]:
@@ -193,6 +243,309 @@ def _stock_table(stocks: list[dict]) -> list[str]:
     return rows
 
 
+def _hotspot_discovery_section(discovery: dict) -> list[str]:
+    if not discovery:
+        return ["- 未找到结构化热点发现记录。"]
+    if discovery.get("error"):
+        return [f"- 热点发现失败：{discovery['error']}"]
+    rows = [
+        f"- 发现交易日：{_dash_date(discovery['trade_date'])}" if discovery.get("trade_date") else "- 发现交易日：-",
+        f"- 发现记录：{discovery.get('output_path') or '-'}",
+    ]
+    hotspots = discovery.get("market_hotspots") or []
+    if not hotspots:
+        rows.append("- 未发现达到阈值的全市场热点候选。")
+        return rows
+    table = [
+        _row(["候选热点", "来源", "种子", "状态", "评分", "均涨", "上涨占比", "涨停", "成交额", "证据"]),
+        _row(["---", "---", "---", "---", "---:", "---:", "---:", "---:", "---:", "---"]),
+    ]
+    for item in hotspots[:12]:
+        table.append(
+            _row(
+                [
+                    item.get("theme", ""),
+                    item.get("source_type", ""),
+                    "是" if item.get("seed_based") else "否",
+                    item.get("status", ""),
+                    f"{float(item.get('score') or 0):.2f}",
+                    _fmt_pct(item.get("latest_avg_pct")),
+                    _fmt_ratio(item.get("latest_up_ratio")),
+                    str(item.get("limit_up", 0)),
+                    _fmt_num(item.get("latest_amount_yi")),
+                    item.get("evidence", ""),
+                ]
+            )
+        )
+    rows.extend(table)
+    return rows
+
+
+def _relationship_map_context_section(discovery: dict) -> list[str]:
+    context = discovery.get("relationship_map_context") or {}
+    if not context:
+        return ["- 未找到股票关系地图索引。"]
+    rows = [
+        f"- 地图来源文件：{len(context.get('source_files') or [])} 个。",
+        f"- 结构化公司节点：{len(context.get('companies') or [])} 个；待扩散：{len(context.get('pending_diffusion') or [])}；未启动：{len(context.get('not_started') or [])}；证伪/降级：{len(context.get('falsified') or [])}。",
+    ]
+    themes = context.get("themes") or []
+    if themes:
+        table = [
+            _row(["地图主题", "公司数", "子线数", "待扩散", "未启动", "证伪"]),
+            _row(["---", "---:", "---:", "---:", "---:", "---:"]),
+        ]
+        for item in themes[:12]:
+            table.append(
+                _row(
+                    [
+                        item.get("theme", ""),
+                        str(item.get("company_count", 0)),
+                        str(item.get("subline_count", 0)),
+                        str(item.get("pending_diffusion", 0)),
+                        str(item.get("not_started", 0)),
+                        str(item.get("falsified", 0)),
+                    ]
+                )
+            )
+        rows.extend(table)
+    return rows
+
+
+def _stock_role_context_section(discovery: dict) -> list[str]:
+    role_sets = discovery.get("theme_stock_roles") or []
+    if not role_sets:
+        return ["- 未生成板块内股票角色分类。"]
+    rows: list[str] = []
+    for item in role_sets[:6]:
+        roles = item.get("roles") or {}
+        rows.append(f"### {item.get('theme', '-')}")
+        rows.append(
+            "- 角色计数：龙头 {leaders}；中军 {middle}; 扩散 {diffusers}; 快速跟随 {followers}; 补涨观察 {laggards}; 掉队 {fallen}; 证伪 {falsified}。".format(
+                leaders=len(roles.get("leaders") or []),
+                middle=len(roles.get("middle_army") or []),
+                diffusers=len(roles.get("diffusers") or []),
+                followers=len(roles.get("fast_followers") or []),
+                laggards=len(roles.get("laggards") or []),
+                fallen=len(roles.get("fallen_behind") or []),
+                falsified=len(roles.get("falsified") or []),
+            )
+        )
+        rows.extend(_role_table(roles))
+        rows.append("")
+    return rows
+
+
+def _role_table(roles: dict) -> list[str]:
+    rows = [
+        _row(["角色", "股票", "涨跌", "成交额", "地图主题", "子线", "地图状态", "评分"]),
+        _row(["---", "---", "---:", "---:", "---", "---", "---", "---:"]),
+    ]
+    role_names = {
+        "leaders": "龙头",
+        "middle_army": "中军",
+        "diffusers": "扩散",
+        "fast_followers": "快速跟随",
+        "laggards": "补涨观察",
+        "fallen_behind": "掉队",
+        "falsified": "证伪",
+    }
+    for key, label in role_names.items():
+        for stock in (roles.get(key) or [])[:4]:
+            rows.append(
+                _row(
+                    [
+                        label,
+                        f"{stock.get('name', '')} {stock.get('ts_code', '')}",
+                        _fmt_pct(stock.get("pct_chg")),
+                        _fmt_num(stock.get("amount_yi")),
+                        stock.get("map_theme", "") or "",
+                        stock.get("subline", "") or "",
+                        stock.get("map_status", "") or "",
+                        _fmt_num(stock.get("role_score")),
+                    ]
+                )
+            )
+    return rows
+
+
+def _theme_rotation_context_section(discovery: dict) -> list[str]:
+    context = discovery.get("theme_rotation_context") or {}
+    if not context:
+        return ["- 未生成主题轮动上下文。"]
+    rows: list[str] = []
+    edges = context.get("rotation_edges") or []
+    if edges:
+        rows.extend([
+            _row(["日期", "旧主题", "新主题", "强度", "证据"]),
+            _row(["---", "---", "---", "---:", "---"]),
+        ])
+        for item in edges[:10]:
+            rows.append(_row([item.get("date", ""), item.get("from_theme", ""), item.get("to_theme", ""), _fmt_num(item.get("strength")), item.get("evidence", "")]))
+    else:
+        rows.append("- 未形成明确轮动边。")
+    transitions = context.get("theme_transitions") or []
+    if transitions:
+        rows.append("")
+        rows.append("- 主题状态变化：" + "；".join(f"{item.get('theme')}={item.get('transition')}" for item in transitions[:10]))
+    return rows
+
+
+def _map_related_candidates_section(discovery: dict) -> list[str]:
+    rows_data = discovery.get("map_related_candidates") or []
+    if not rows_data:
+        return ["- 未发现地图相关候选命中今日热点。"]
+    rows = [
+        _row(["今日热点", "股票", "地图主题", "子线", "产业链", "关系强度", "地图状态"]),
+        _row(["---", "---", "---", "---", "---", "---", "---"]),
+    ]
+    for item in rows_data[:30]:
+        rows.append(
+            _row(
+                [
+                    item.get("hotspot", ""),
+                    f"{item.get('name', '')} {item.get('ts_code', '')}",
+                    item.get("map_theme", ""),
+                    item.get("subline", ""),
+                    item.get("chain", ""),
+                    item.get("relationship_strength", ""),
+                    item.get("market_status", ""),
+                ]
+            )
+        )
+    return rows
+
+
+def _unseeded_theme_section(discovery: dict) -> list[str]:
+    themes = discovery.get("unseeded_themes") or []
+    if not themes:
+        return ["- 未发现非种子新热点，或新热点强度不足。"]
+    rows = [
+        _row(["非种子热点", "状态", "评分", "行业/环节", "均涨", "上涨占比", "涨停", "证据"]),
+        _row(["---", "---", "---:", "---", "---:", "---:", "---:", "---"]),
+    ]
+    for item in themes[:12]:
+        rows.append(
+            _row(
+                [
+                    item.get("theme", ""),
+                    item.get("status", ""),
+                    f"{float(item.get('score') or 0):.2f}",
+                    "、".join(item.get("industries") or []),
+                    _fmt_pct(item.get("latest_avg_pct")),
+                    _fmt_ratio(item.get("latest_up_ratio")),
+                    str(item.get("limit_up", 0)),
+                    item.get("evidence", ""),
+                ]
+            )
+        )
+    return rows
+
+
+def _theme_lifecycle_section(discovery: dict) -> list[str]:
+    lifecycle = discovery.get("theme_lifecycle") or []
+    if not lifecycle:
+        return ["- 未形成热点生命周期记录。"]
+    rows = [
+        _row(["主题", "生命周期状态", "来源", "种子", "评分", "下一步验证"]),
+        _row(["---", "---", "---", "---", "---:", "---"]),
+    ]
+    for item in lifecycle[:15]:
+        rows.append(
+            _row(
+                [
+                    item.get("theme", ""),
+                    item.get("state", ""),
+                    item.get("source_type", ""),
+                    "是" if item.get("seed_based") else "否",
+                    f"{float(item.get('score') or 0):.2f}",
+                    item.get("next_check", ""),
+                ]
+            )
+        )
+    return rows
+
+
+def _seeded_theme_section(discovery: dict) -> list[str]:
+    themes = discovery.get("seeded_theme_matches") or discovery.get("themes") or []
+    if not themes:
+        return ["- 未发现已知种子主题获得当日数据验证。"]
+    rows = [
+        _row(["已知主题", "状态", "评分", "涨跌", "涨停", "均涨", "成交额", "跨行业", "证据"]),
+        _row(["---", "---", "---:", "---:", "---:", "---:", "---:", "---", "---"]),
+    ]
+    for theme in themes[:10]:
+        rows.append(
+            _row(
+                [
+                    theme.get("theme", ""),
+                    theme.get("status", ""),
+                    f"{float(theme.get('score') or 0):.2f}",
+                    f"{theme.get('up', 0)}/{theme.get('down', 0)}",
+                    str(theme.get("limit_up", 0)),
+                    _fmt_pct(theme.get("avg_pct")),
+                    _fmt_num(theme.get("amount_yi")),
+                    "是" if theme.get("cross_industry") else "否",
+                    theme.get("evidence", ""),
+                ]
+            )
+        )
+    return rows
+
+
+def _theme_discovery_section(discovery: dict) -> list[str]:
+    if not discovery:
+        return ["- 未找到结构化主题发现记录。"]
+    if discovery.get("error"):
+        return [f"- 主题发现失败：{discovery['error']}"]
+    themes = discovery.get("themes") or []
+    clusters = discovery.get("tag_clusters") or []
+    lines = [
+        f"- 发现交易日：{_dash_date(discovery['trade_date'])}" if discovery.get("trade_date") else "- 发现交易日：-",
+        f"- 发现记录：{discovery.get('output_path') or '-'}",
+    ]
+    if not themes:
+        lines.append("- 未发现达到阈值的主题候选。")
+    else:
+        rows = [
+            _row(["候选主题", "状态", "评分", "涨跌", "涨停", "均涨", "成交额", "跨行业", "证据"]),
+            _row(["---", "---", "---:", "---:", "---:", "---:", "---:", "---", "---"]),
+        ]
+        for theme in themes[:8]:
+            rows.append(
+                _row(
+                    [
+                        theme["theme"],
+                        theme["status"],
+                        f"{theme['score']:.2f}",
+                        f"{theme['up']}/{theme['down']}",
+                        str(theme["limit_up"]),
+                        _fmt_pct(theme["avg_pct"]),
+                        _fmt_num(theme["amount_yi"]),
+                        "是" if theme.get("cross_industry") else "否",
+                        theme.get("evidence", ""),
+                    ]
+                )
+            )
+        lines.extend(rows)
+    if clusters:
+        lines.append("")
+        lines.append("- 高频标签：" + "、".join(f"{item['tag']}({item['stock_count']}只)" for item in clusters[:10]))
+    lines.append("- 使用提示：标签发现只作为新主题候选，正式报告仍需结合历史记录、主营业务和公司级证据确认。")
+    return lines
+
+
+def _load_theme_discovery(records_root: Path, trade_date: str) -> dict:
+    dashed = _dash_date(trade_date)
+    path = records_root / "theme_discovery" / dashed[:7] / f"{dashed}.json"
+    if not path.exists():
+        return {}
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:
+        return {"error": f"invalid JSON in {path}: {exc}"}
+
+
 def _row(values: list[str]) -> str:
     return "| " + " | ".join(str(value).replace("|", "\\|").replace("\n", " ") for value in values) + " |"
 
@@ -218,6 +571,12 @@ def _fmt_pct(value) -> str:
     if value is None:
         return "-"
     return f"{float(value):+.2f}%"
+
+
+def _fmt_ratio(value) -> str:
+    if value is None:
+        return "-"
+    return f"{float(value):.0%}"
 
 
 def _fmt_num(value) -> str:

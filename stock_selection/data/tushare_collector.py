@@ -70,6 +70,33 @@ class TushareCollector:
         )
         return results
 
+    def collect_missing_daily(
+        self,
+        trade_date: str,
+        *,
+        api_names: list[str],
+        force: bool = False,
+        available_only: bool = True,
+    ) -> list[CollectionResult]:
+        """Collect only requested daily APIs that are not already cached."""
+
+        missing = [
+            api_name
+            for api_name in api_names
+            if force or not dataset_exists(api_name, trade_date, cache_root=self.cache_root)
+        ]
+        if not missing:
+            return [
+                CollectionResult(api_name, "skipped", message="cache exists")
+                for api_name in api_names
+            ]
+        return self.collect_daily(
+            trade_date,
+            api_names=missing,
+            force=force,
+            available_only=available_only,
+        )
+
     def collect_daily_required(
         self,
         trade_date: str,

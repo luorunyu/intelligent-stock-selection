@@ -1,0 +1,7203 @@
+{
+  "trade_date": "20260714",
+  "lookback_dates": [
+    "20260707",
+    "20260708",
+    "20260709",
+    "20260710",
+    "20260713",
+    "20260714"
+  ],
+  "themes": [
+    {
+      "theme": "高速PCB/覆铜板",
+      "aliases": [
+        "PCB",
+        "高速PCB",
+        "覆铜板"
+      ],
+      "score": 23.0,
+      "matched_count": 3,
+      "seed_count": 3,
+      "up": 3,
+      "down": 0,
+      "limit_up": 3,
+      "avg_pct": 10.0,
+      "avg_pre_cum_pct": -3.54,
+      "amount_yi": 481.9,
+      "industries": [
+        "元器件"
+      ],
+      "cross_industry": false,
+      "status": "强势确认",
+      "evidence": "3涨/0跌，涨停或接近涨停3只，均涨+10.00%，成交约481.9亿元",
+      "stocks": [
+        {
+          "ts_code": "002463.SZ",
+          "name": "沪电股份",
+          "industry": "元器件",
+          "pct_chg": 10.0032,
+          "amount_yi": 125.537961328,
+          "turnover_rate": 4.8897,
+          "pre_cum_pct": -3.2368642958221505,
+          "lookback_cum_pct": 6.442545694938162,
+          "role": "core",
+          "chain": "midstream",
+          "active_reasons": [
+            "涨停/接近涨停",
+            "涨幅前列",
+            "高成交"
+          ]
+        },
+        {
+          "ts_code": "600183.SH",
+          "name": "生益科技",
+          "industry": "元器件",
+          "pct_chg": 10.0037,
+          "amount_yi": 117.79525052999999,
+          "turnover_rate": 3.381,
+          "pre_cum_pct": -12.847563790760708,
+          "lookback_cum_pct": -4.129095529697047,
+          "role": "core",
+          "chain": "upstream",
+          "active_reasons": [
+            "涨停/接近涨停",
+            "涨幅前列",
+            "高成交"
+          ]
+        },
+        {
+          "ts_code": "002384.SZ",
+          "name": "东山精密",
+          "industry": "元器件",
+          "pct_chg": 10.0,
+          "amount_yi": 238.56271061,
+          "turnover_rate": 6.8865,
+          "pre_cum_pct": 5.453099556738628,
+          "lookback_cum_pct": 15.998409512412493,
+          "role": "related",
+          "chain": "midstream",
+          "active_reasons": [
+            "涨停/接近涨停",
+            "涨幅前列",
+            "高成交"
+          ]
+        }
+      ],
+      "lookback_dates": [
+        "20260707",
+        "20260708",
+        "20260709",
+        "20260710",
+        "20260713",
+        "20260714"
+      ]
+    },
+    {
+      "theme": "存储/半导体",
+      "aliases": [
+        "存储",
+        "存储芯片",
+        "半导体"
+      ],
+      "score": 16.73,
+      "matched_count": 8,
+      "seed_count": 8,
+      "up": 8,
+      "down": 0,
+      "limit_up": 0,
+      "avg_pct": 5.45,
+      "avg_pre_cum_pct": -16.85,
+      "amount_yi": 1289.39,
+      "industries": [
+        "半导体"
+      ],
+      "cross_industry": false,
+      "status": "局部异动",
+      "evidence": "8涨/0跌，涨停或接近涨停0只，均涨+5.45%，成交约1289.4亿元",
+      "stocks": [
+        {
+          "ts_code": "301308.SZ",
+          "name": "江波龙",
+          "industry": "半导体",
+          "pct_chg": 3.1549,
+          "amount_yi": 88.7532089432,
+          "turnover_rate": 5.9569,
+          "pre_cum_pct": -23.43199212969589,
+          "lookback_cum_pct": -21.01634804939566,
+          "role": "core",
+          "chain": "midstream",
+          "active_reasons": [
+            "高成交"
+          ]
+        },
+        {
+          "ts_code": "688525.SH",
+          "name": "佰维存储",
+          "industry": "半导体",
+          "pct_chg": 5.5613,
+          "amount_yi": 114.42818342,
+          "turnover_rate": 7.0317,
+          "pre_cum_pct": -25.337694398275158,
+          "lookback_cum_pct": -21.185499596846434,
+          "role": "core",
+          "chain": "midstream",
+          "active_reasons": [
+            "高成交"
+          ]
+        },
+        {
+          "ts_code": "001309.SZ",
+          "name": "德明利",
+          "industry": "半导体",
+          "pct_chg": 2.2251,
+          "amount_yi": 119.99055401900002,
+          "turnover_rate": 10.3199,
+          "pre_cum_pct": -22.99688531341898,
+          "lookback_cum_pct": -21.283489008527866,
+          "role": "related",
+          "chain": "midstream",
+          "active_reasons": [
+            "高成交",
+            "高换手"
+          ]
+        },
+        {
+          "ts_code": "603986.SH",
+          "name": "兆易创新",
+          "industry": "半导体",
+          "pct_chg": 6.0258,
+          "amount_yi": 383.37659763,
+          "turnover_rate": 10.1645,
+          "pre_cum_pct": -15.817152908559029,
+          "lookback_cum_pct": -10.744462908522989,
+          "role": "core",
+          "chain": "midstream",
+          "active_reasons": [
+            "高成交",
+            "高换手"
+          ]
+        },
+        {
+          "ts_code": "688008.SH",
+          "name": "澜起科技",
+          "industry": "半导体",
+          "pct_chg": 6.808,
+          "amount_yi": 165.38871448999998,
+          "turnover_rate": 5.557,
+          "pre_cum_pct": -5.914039851474118,
+          "lookback_cum_pct": 0.49133231543752043,
+          "role": "core",
+          "chain": "midstream",
+          "active_reasons": [
+            "高成交"
+          ]
+        },
+        {
+          "ts_code": "300223.SZ",
+          "name": "北京君正",
+          "industry": "半导体",
+          "pct_chg": 9.2128,
+          "amount_yi": 82.1096016961,
+          "turnover_rate": 9.6925,
+          "pre_cum_pct": -24.8339895016767,
+          "lookback_cum_pct": -17.909095286487176,
+          "role": "related",
+          "chain": "midstream",
+          "active_reasons": [
+            "涨幅前列",
+            "高成交"
+          ]
+        },
+        {
+          "ts_code": "688766.SH",
+          "name": "普冉股份",
+          "industry": "半导体",
+          "pct_chg": 6.9652,
+          "amount_yi": 61.10088584,
+          "turnover_rate": 6.5764,
+          "pre_cum_pct": -20.65687010924503,
+          "lookback_cum_pct": -15.13046242609416,
+          "role": "related",
+          "chain": "midstream",
+          "active_reasons": [
+            "高成交"
+          ]
+        },
+        {
+          "ts_code": "600584.SH",
+          "name": "长电科技",
+          "industry": "半导体",
+          "pct_chg": 3.685,
+          "amount_yi": 274.24670381,
+          "turnover_rate": 15.5505,
+          "pre_cum_pct": 4.164276983652093,
+          "lookback_cum_pct": 8.002730590499674,
+          "role": "related",
+          "chain": "support",
+          "active_reasons": [
+            "高成交",
+            "高换手"
+          ]
+        }
+      ],
+      "lookback_dates": [
+        "20260707",
+        "20260708",
+        "20260709",
+        "20260710",
+        "20260713",
+        "20260714"
+      ]
+    },
+    {
+      "theme": "CPO光通信",
+      "aliases": [
+        "CPO",
+        "光模块",
+        "光通信"
+      ],
+      "score": 15.43,
+      "matched_count": 6,
+      "seed_count": 6,
+      "up": 6,
+      "down": 0,
+      "limit_up": 0,
+      "avg_pct": 6.85,
+      "avg_pre_cum_pct": -2.76,
+      "amount_yi": 1315.54,
+      "industries": [
+        "通信设备"
+      ],
+      "cross_industry": false,
+      "status": "局部异动",
+      "evidence": "6涨/0跌，涨停或接近涨停0只，均涨+6.85%，成交约1315.5亿元",
+      "stocks": [
+        {
+          "ts_code": "300502.SZ",
+          "name": "新易盛",
+          "industry": "通信设备",
+          "pct_chg": 10.9893,
+          "amount_yi": 354.303855735,
+          "turnover_rate": 5.1747,
+          "pre_cum_pct": 1.1068091388504397,
+          "lookback_cum_pct": 12.217739715546138,
+          "role": "core",
+          "chain": "midstream",
+          "active_reasons": [
+            "涨幅前列",
+            "高成交"
+          ]
+        },
+        {
+          "ts_code": "300308.SZ",
+          "name": "中际旭创",
+          "industry": "通信设备",
+          "pct_chg": 6.8637,
+          "amount_yi": 462.49945646,
+          "turnover_rate": 3.6081,
+          "pre_cum_pct": 0.8262470018217449,
+          "lookback_cum_pct": 7.746658117285787,
+          "role": "core",
+          "chain": "midstream",
+          "active_reasons": [
+            "高成交"
+          ]
+        },
+        {
+          "ts_code": "300394.SZ",
+          "name": "天孚通信",
+          "industry": "通信设备",
+          "pct_chg": 5.4761,
+          "amount_yi": 127.60497501900001,
+          "turnover_rate": 4.3915,
+          "pre_cum_pct": 9.41350346786134,
+          "lookback_cum_pct": 15.4050963312649,
+          "role": "core",
+          "chain": "midstream",
+          "active_reasons": [
+            "高成交",
+            "前期已有强度"
+          ]
+        },
+        {
+          "ts_code": "002281.SZ",
+          "name": "光迅科技",
+          "industry": "通信设备",
+          "pct_chg": 7.8472,
+          "amount_yi": 113.324251174,
+          "turnover_rate": 6.4532,
+          "pre_cum_pct": 3.3345186260434367,
+          "lookback_cum_pct": 11.443384971666326,
+          "role": "core",
+          "chain": "midstream",
+          "active_reasons": [
+            "涨幅前列",
+            "高成交"
+          ]
+        },
+        {
+          "ts_code": "600522.SH",
+          "name": "中天科技",
+          "industry": "通信设备",
+          "pct_chg": 3.7028,
+          "amount_yi": 98.68893521,
+          "turnover_rate": 6.9571,
+          "pre_cum_pct": -13.970341072667047,
+          "lookback_cum_pct": -10.784834861905757,
+          "role": "related",
+          "chain": "upstream",
+          "active_reasons": [
+            "高成交"
+          ]
+        },
+        {
+          "ts_code": "600487.SH",
+          "name": "亨通光电",
+          "industry": "通信设备",
+          "pct_chg": 6.242,
+          "amount_yi": 159.11827997,
+          "turnover_rate": 9.0665,
+          "pre_cum_pct": -17.24579187041534,
+          "lookback_cum_pct": -12.080274198966666,
+          "role": "related",
+          "chain": "upstream",
+          "active_reasons": [
+            "高成交"
+          ]
+        }
+      ],
+      "lookback_dates": [
+        "20260707",
+        "20260708",
+        "20260709",
+        "20260710",
+        "20260713",
+        "20260714"
+      ]
+    },
+    {
+      "theme": "AI集群网络/交换机",
+      "aliases": [
+        "AI集群网络",
+        "交换机",
+        "高速互联",
+        "数据中心网络"
+      ],
+      "score": 6.74,
+      "matched_count": 7,
+      "seed_count": 11,
+      "up": 0,
+      "down": 7,
+      "limit_up": 0,
+      "avg_pct": -4.92,
+      "avg_pre_cum_pct": 8.97,
+      "amount_yi": 615.73,
+      "industries": [
+        "IT设备",
+        "元器件",
+        "通信设备"
+      ],
+      "cross_industry": true,
+      "status": "待验证",
+      "evidence": "0涨/7跌，涨停或接近涨停0只，均涨-4.92%，成交约615.7亿元，前期累计强度+8.97%，跨静态行业聚类",
+      "stocks": [
+        {
+          "ts_code": "000938.SZ",
+          "name": "紫光股份",
+          "industry": "IT设备",
+          "pct_chg": -3.6979,
+          "amount_yi": 167.490701423,
+          "turnover_rate": 16.2204,
+          "pre_cum_pct": 15.280773989475293,
+          "lookback_cum_pct": 11.017806248118479,
+          "role": "core",
+          "chain": "midstream",
+          "active_reasons": [
+            "高成交",
+            "高换手",
+            "前期已有强度"
+          ]
+        },
+        {
+          "ts_code": "301165.SZ",
+          "name": "锐捷网络",
+          "industry": "通信设备",
+          "pct_chg": -5.778,
+          "amount_yi": 38.8801947828,
+          "turnover_rate": 3.5774,
+          "pre_cum_pct": 2.823634190166424,
+          "lookback_cum_pct": -3.1175153933413857,
+          "role": "core",
+          "chain": "midstream",
+          "active_reasons": [
+            "高成交"
+          ]
+        },
+        {
+          "ts_code": "002396.SZ",
+          "name": "星网锐捷",
+          "industry": "通信设备",
+          "pct_chg": -1.2763,
+          "amount_yi": 51.8513154601,
+          "turnover_rate": 23.5026,
+          "pre_cum_pct": 12.626333464962357,
+          "lookback_cum_pct": 11.188883570949049,
+          "role": "related",
+          "chain": "midstream",
+          "active_reasons": [
+            "高成交",
+            "高换手",
+            "前期已有强度"
+          ]
+        },
+        {
+          "ts_code": "301191.SZ",
+          "name": "菲菱科思",
+          "industry": "通信设备",
+          "pct_chg": -7.2436,
+          "amount_yi": 15.052325290699999,
+          "turnover_rate": 16.8201,
+          "pre_cum_pct": -4.392342791348769,
+          "lookback_cum_pct": -11.317779048914623,
+          "role": "related",
+          "chain": "midstream",
+          "active_reasons": [
+            "高换手"
+          ]
+        },
+        {
+          "ts_code": "000977.SZ",
+          "name": "浪潮信息",
+          "industry": "IT设备",
+          "pct_chg": -0.6317,
+          "amount_yi": 145.325199892,
+          "turnover_rate": 12.0755,
+          "pre_cum_pct": 22.636519776573174,
+          "lookback_cum_pct": 21.861824881144564,
+          "role": "related",
+          "chain": "midstream",
+          "active_reasons": [
+            "高成交",
+            "高换手",
+            "前期已有强度"
+          ]
+        },
+        {
+          "ts_code": "603019.SH",
+          "name": "中科曙光",
+          "industry": "IT设备",
+          "pct_chg": -3.9857,
+          "amount_yi": 120.18691205,
+          "turnover_rate": 8.199,
+          "pre_cum_pct": 12.235656546780248,
+          "lookback_cum_pct": 7.762279983795217,
+          "role": "related",
+          "chain": "midstream",
+          "active_reasons": [
+            "高成交",
+            "前期已有强度"
+          ]
+        },
+        {
+          "ts_code": "688629.SH",
+          "name": "华丰科技",
+          "industry": "元器件",
+          "pct_chg": -11.8093,
+          "amount_yi": 76.94476296,
+          "turnover_rate": 9.1649,
+          "pre_cum_pct": 1.609846005435478,
+          "lookback_cum_pct": -10.389565538884415,
+          "role": "related",
+          "chain": "support",
+          "active_reasons": [
+            "高成交"
+          ]
+        }
+      ],
+      "lookback_dates": [
+        "20260707",
+        "20260708",
+        "20260709",
+        "20260710",
+        "20260713",
+        "20260714"
+      ]
+    }
+  ],
+  "tag_clusters": [
+    {
+      "tag": "PCB",
+      "score": 17.83,
+      "stock_count": 3,
+      "up": 3,
+      "limit_up": 3,
+      "avg_pct": 10.0,
+      "amount_yi": 481.9,
+      "industries": [
+        "元器件"
+      ],
+      "stocks": [
+        {
+          "ts_code": "600183.SH",
+          "name": "生益科技",
+          "pct_chg": 10.0037
+        },
+        {
+          "ts_code": "002463.SZ",
+          "name": "沪电股份",
+          "pct_chg": 10.0032
+        },
+        {
+          "ts_code": "002384.SZ",
+          "name": "东山精密",
+          "pct_chg": 10.0
+        }
+      ]
+    },
+    {
+      "tag": "覆铜板",
+      "score": 17.83,
+      "stock_count": 3,
+      "up": 3,
+      "limit_up": 3,
+      "avg_pct": 10.0,
+      "amount_yi": 481.9,
+      "industries": [
+        "元器件"
+      ],
+      "stocks": [
+        {
+          "ts_code": "600183.SH",
+          "name": "生益科技",
+          "pct_chg": 10.0037
+        },
+        {
+          "ts_code": "002463.SZ",
+          "name": "沪电股份",
+          "pct_chg": 10.0032
+        },
+        {
+          "ts_code": "002384.SZ",
+          "name": "东山精密",
+          "pct_chg": 10.0
+        }
+      ]
+    },
+    {
+      "tag": "AI服务器",
+      "score": 16.0,
+      "stock_count": 10,
+      "up": 3,
+      "limit_up": 3,
+      "avg_pct": -0.44,
+      "amount_yi": 1097.63,
+      "industries": [
+        "IT设备",
+        "元器件",
+        "通信设备"
+      ],
+      "stocks": [
+        {
+          "ts_code": "600183.SH",
+          "name": "生益科技",
+          "pct_chg": 10.0037
+        },
+        {
+          "ts_code": "002463.SZ",
+          "name": "沪电股份",
+          "pct_chg": 10.0032
+        },
+        {
+          "ts_code": "002384.SZ",
+          "name": "东山精密",
+          "pct_chg": 10.0
+        },
+        {
+          "ts_code": "000977.SZ",
+          "name": "浪潮信息",
+          "pct_chg": -0.6317
+        },
+        {
+          "ts_code": "002396.SZ",
+          "name": "星网锐捷",
+          "pct_chg": -1.2763
+        },
+        {
+          "ts_code": "000938.SZ",
+          "name": "紫光股份",
+          "pct_chg": -3.6979
+        },
+        {
+          "ts_code": "603019.SH",
+          "name": "中科曙光",
+          "pct_chg": -3.9857
+        },
+        {
+          "ts_code": "301165.SZ",
+          "name": "锐捷网络",
+          "pct_chg": -5.778
+        },
+        {
+          "ts_code": "301191.SZ",
+          "name": "菲菱科思",
+          "pct_chg": -7.2436
+        },
+        {
+          "ts_code": "688629.SH",
+          "name": "华丰科技",
+          "pct_chg": -11.8093
+        }
+      ]
+    },
+    {
+      "tag": "高速互联",
+      "score": 16.0,
+      "stock_count": 10,
+      "up": 3,
+      "limit_up": 3,
+      "avg_pct": -0.44,
+      "amount_yi": 1097.63,
+      "industries": [
+        "IT设备",
+        "元器件",
+        "通信设备"
+      ],
+      "stocks": [
+        {
+          "ts_code": "600183.SH",
+          "name": "生益科技",
+          "pct_chg": 10.0037
+        },
+        {
+          "ts_code": "002463.SZ",
+          "name": "沪电股份",
+          "pct_chg": 10.0032
+        },
+        {
+          "ts_code": "002384.SZ",
+          "name": "东山精密",
+          "pct_chg": 10.0
+        },
+        {
+          "ts_code": "000977.SZ",
+          "name": "浪潮信息",
+          "pct_chg": -0.6317
+        },
+        {
+          "ts_code": "002396.SZ",
+          "name": "星网锐捷",
+          "pct_chg": -1.2763
+        },
+        {
+          "ts_code": "000938.SZ",
+          "name": "紫光股份",
+          "pct_chg": -3.6979
+        },
+        {
+          "ts_code": "603019.SH",
+          "name": "中科曙光",
+          "pct_chg": -3.9857
+        },
+        {
+          "ts_code": "301165.SZ",
+          "name": "锐捷网络",
+          "pct_chg": -5.778
+        },
+        {
+          "ts_code": "301191.SZ",
+          "name": "菲菱科思",
+          "pct_chg": -7.2436
+        },
+        {
+          "ts_code": "688629.SH",
+          "name": "华丰科技",
+          "pct_chg": -11.8093
+        }
+      ]
+    },
+    {
+      "tag": "DRAM",
+      "score": 13.82,
+      "stock_count": 8,
+      "up": 8,
+      "limit_up": 0,
+      "avg_pct": 5.45,
+      "amount_yi": 1289.39,
+      "industries": [
+        "半导体"
+      ],
+      "stocks": [
+        {
+          "ts_code": "300223.SZ",
+          "name": "北京君正",
+          "pct_chg": 9.2128
+        },
+        {
+          "ts_code": "688766.SH",
+          "name": "普冉股份",
+          "pct_chg": 6.9652
+        },
+        {
+          "ts_code": "688008.SH",
+          "name": "澜起科技",
+          "pct_chg": 6.808
+        },
+        {
+          "ts_code": "603986.SH",
+          "name": "兆易创新",
+          "pct_chg": 6.0258
+        },
+        {
+          "ts_code": "688525.SH",
+          "name": "佰维存储",
+          "pct_chg": 5.5613
+        },
+        {
+          "ts_code": "600584.SH",
+          "name": "长电科技",
+          "pct_chg": 3.685
+        },
+        {
+          "ts_code": "301308.SZ",
+          "name": "江波龙",
+          "pct_chg": 3.1549
+        },
+        {
+          "ts_code": "001309.SZ",
+          "name": "德明利",
+          "pct_chg": 2.2251
+        }
+      ]
+    },
+    {
+      "tag": "NAND",
+      "score": 13.82,
+      "stock_count": 8,
+      "up": 8,
+      "limit_up": 0,
+      "avg_pct": 5.45,
+      "amount_yi": 1289.39,
+      "industries": [
+        "半导体"
+      ],
+      "stocks": [
+        {
+          "ts_code": "300223.SZ",
+          "name": "北京君正",
+          "pct_chg": 9.2128
+        },
+        {
+          "ts_code": "688766.SH",
+          "name": "普冉股份",
+          "pct_chg": 6.9652
+        },
+        {
+          "ts_code": "688008.SH",
+          "name": "澜起科技",
+          "pct_chg": 6.808
+        },
+        {
+          "ts_code": "603986.SH",
+          "name": "兆易创新",
+          "pct_chg": 6.0258
+        },
+        {
+          "ts_code": "688525.SH",
+          "name": "佰维存储",
+          "pct_chg": 5.5613
+        },
+        {
+          "ts_code": "600584.SH",
+          "name": "长电科技",
+          "pct_chg": 3.685
+        },
+        {
+          "ts_code": "301308.SZ",
+          "name": "江波龙",
+          "pct_chg": 3.1549
+        },
+        {
+          "ts_code": "001309.SZ",
+          "name": "德明利",
+          "pct_chg": 2.2251
+        }
+      ]
+    },
+    {
+      "tag": "先进封装",
+      "score": 13.82,
+      "stock_count": 8,
+      "up": 8,
+      "limit_up": 0,
+      "avg_pct": 5.45,
+      "amount_yi": 1289.39,
+      "industries": [
+        "半导体"
+      ],
+      "stocks": [
+        {
+          "ts_code": "300223.SZ",
+          "name": "北京君正",
+          "pct_chg": 9.2128
+        },
+        {
+          "ts_code": "688766.SH",
+          "name": "普冉股份",
+          "pct_chg": 6.9652
+        },
+        {
+          "ts_code": "688008.SH",
+          "name": "澜起科技",
+          "pct_chg": 6.808
+        },
+        {
+          "ts_code": "603986.SH",
+          "name": "兆易创新",
+          "pct_chg": 6.0258
+        },
+        {
+          "ts_code": "688525.SH",
+          "name": "佰维存储",
+          "pct_chg": 5.5613
+        },
+        {
+          "ts_code": "600584.SH",
+          "name": "长电科技",
+          "pct_chg": 3.685
+        },
+        {
+          "ts_code": "301308.SZ",
+          "name": "江波龙",
+          "pct_chg": 3.1549
+        },
+        {
+          "ts_code": "001309.SZ",
+          "name": "德明利",
+          "pct_chg": 2.2251
+        }
+      ]
+    },
+    {
+      "tag": "存储",
+      "score": 13.82,
+      "stock_count": 8,
+      "up": 8,
+      "limit_up": 0,
+      "avg_pct": 5.45,
+      "amount_yi": 1289.39,
+      "industries": [
+        "半导体"
+      ],
+      "stocks": [
+        {
+          "ts_code": "300223.SZ",
+          "name": "北京君正",
+          "pct_chg": 9.2128
+        },
+        {
+          "ts_code": "688766.SH",
+          "name": "普冉股份",
+          "pct_chg": 6.9652
+        },
+        {
+          "ts_code": "688008.SH",
+          "name": "澜起科技",
+          "pct_chg": 6.808
+        },
+        {
+          "ts_code": "603986.SH",
+          "name": "兆易创新",
+          "pct_chg": 6.0258
+        },
+        {
+          "ts_code": "688525.SH",
+          "name": "佰维存储",
+          "pct_chg": 5.5613
+        },
+        {
+          "ts_code": "600584.SH",
+          "name": "长电科技",
+          "pct_chg": 3.685
+        },
+        {
+          "ts_code": "301308.SZ",
+          "name": "江波龙",
+          "pct_chg": 3.1549
+        },
+        {
+          "ts_code": "001309.SZ",
+          "name": "德明利",
+          "pct_chg": 2.2251
+        }
+      ]
+    },
+    {
+      "tag": "CPO",
+      "score": 12.28,
+      "stock_count": 6,
+      "up": 6,
+      "limit_up": 0,
+      "avg_pct": 6.85,
+      "amount_yi": 1315.54,
+      "industries": [
+        "通信设备"
+      ],
+      "stocks": [
+        {
+          "ts_code": "300502.SZ",
+          "name": "新易盛",
+          "pct_chg": 10.9893
+        },
+        {
+          "ts_code": "002281.SZ",
+          "name": "光迅科技",
+          "pct_chg": 7.8472
+        },
+        {
+          "ts_code": "300308.SZ",
+          "name": "中际旭创",
+          "pct_chg": 6.8637
+        },
+        {
+          "ts_code": "600487.SH",
+          "name": "亨通光电",
+          "pct_chg": 6.242
+        },
+        {
+          "ts_code": "300394.SZ",
+          "name": "天孚通信",
+          "pct_chg": 5.4761
+        },
+        {
+          "ts_code": "600522.SH",
+          "name": "中天科技",
+          "pct_chg": 3.7028
+        }
+      ]
+    },
+    {
+      "tag": "光模块",
+      "score": 12.28,
+      "stock_count": 6,
+      "up": 6,
+      "limit_up": 0,
+      "avg_pct": 6.85,
+      "amount_yi": 1315.54,
+      "industries": [
+        "通信设备"
+      ],
+      "stocks": [
+        {
+          "ts_code": "300502.SZ",
+          "name": "新易盛",
+          "pct_chg": 10.9893
+        },
+        {
+          "ts_code": "002281.SZ",
+          "name": "光迅科技",
+          "pct_chg": 7.8472
+        },
+        {
+          "ts_code": "300308.SZ",
+          "name": "中际旭创",
+          "pct_chg": 6.8637
+        },
+        {
+          "ts_code": "600487.SH",
+          "name": "亨通光电",
+          "pct_chg": 6.242
+        },
+        {
+          "ts_code": "300394.SZ",
+          "name": "天孚通信",
+          "pct_chg": 5.4761
+        },
+        {
+          "ts_code": "600522.SH",
+          "name": "中天科技",
+          "pct_chg": 3.7028
+        }
+      ]
+    },
+    {
+      "tag": "光通信",
+      "score": 12.28,
+      "stock_count": 6,
+      "up": 6,
+      "limit_up": 0,
+      "avg_pct": 6.85,
+      "amount_yi": 1315.54,
+      "industries": [
+        "通信设备"
+      ],
+      "stocks": [
+        {
+          "ts_code": "300502.SZ",
+          "name": "新易盛",
+          "pct_chg": 10.9893
+        },
+        {
+          "ts_code": "002281.SZ",
+          "name": "光迅科技",
+          "pct_chg": 7.8472
+        },
+        {
+          "ts_code": "300308.SZ",
+          "name": "中际旭创",
+          "pct_chg": 6.8637
+        },
+        {
+          "ts_code": "600487.SH",
+          "name": "亨通光电",
+          "pct_chg": 6.242
+        },
+        {
+          "ts_code": "300394.SZ",
+          "name": "天孚通信",
+          "pct_chg": 5.4761
+        },
+        {
+          "ts_code": "600522.SH",
+          "name": "中天科技",
+          "pct_chg": 3.7028
+        }
+      ]
+    },
+    {
+      "tag": "光器件",
+      "score": 6.63,
+      "stock_count": 2,
+      "up": 2,
+      "limit_up": 0,
+      "avg_pct": 6.66,
+      "amount_yi": 240.93,
+      "industries": [
+        "通信设备"
+      ],
+      "stocks": [
+        {
+          "ts_code": "002281.SZ",
+          "name": "光迅科技",
+          "pct_chg": 7.8472
+        },
+        {
+          "ts_code": "300394.SZ",
+          "name": "天孚通信",
+          "pct_chg": 5.4761
+        }
+      ]
+    },
+    {
+      "tag": "光纤光缆",
+      "score": 6.24,
+      "stock_count": 2,
+      "up": 2,
+      "limit_up": 0,
+      "avg_pct": 4.97,
+      "amount_yi": 257.81,
+      "industries": [
+        "通信设备"
+      ],
+      "stocks": [
+        {
+          "ts_code": "600487.SH",
+          "name": "亨通光电",
+          "pct_chg": 6.242
+        },
+        {
+          "ts_code": "600522.SH",
+          "name": "中天科技",
+          "pct_chg": 3.7028
+        }
+      ]
+    },
+    {
+      "tag": "通信网络",
+      "score": 6.24,
+      "stock_count": 2,
+      "up": 2,
+      "limit_up": 0,
+      "avg_pct": 4.97,
+      "amount_yi": 257.81,
+      "industries": [
+        "通信设备"
+      ],
+      "stocks": [
+        {
+          "ts_code": "600487.SH",
+          "name": "亨通光电",
+          "pct_chg": 6.242
+        },
+        {
+          "ts_code": "600522.SH",
+          "name": "中天科技",
+          "pct_chg": 3.7028
+        }
+      ]
+    },
+    {
+      "tag": "交换机",
+      "score": 5.5,
+      "stock_count": 7,
+      "up": 0,
+      "limit_up": 0,
+      "avg_pct": -4.92,
+      "amount_yi": 615.73,
+      "industries": [
+        "IT设备",
+        "元器件",
+        "通信设备"
+      ],
+      "stocks": [
+        {
+          "ts_code": "000977.SZ",
+          "name": "浪潮信息",
+          "pct_chg": -0.6317
+        },
+        {
+          "ts_code": "002396.SZ",
+          "name": "星网锐捷",
+          "pct_chg": -1.2763
+        },
+        {
+          "ts_code": "000938.SZ",
+          "name": "紫光股份",
+          "pct_chg": -3.6979
+        },
+        {
+          "ts_code": "603019.SH",
+          "name": "中科曙光",
+          "pct_chg": -3.9857
+        },
+        {
+          "ts_code": "301165.SZ",
+          "name": "锐捷网络",
+          "pct_chg": -5.778
+        },
+        {
+          "ts_code": "301191.SZ",
+          "name": "菲菱科思",
+          "pct_chg": -7.2436
+        },
+        {
+          "ts_code": "688629.SH",
+          "name": "华丰科技",
+          "pct_chg": -11.8093
+        }
+      ]
+    }
+  ],
+  "active_pool": [
+    {
+      "ts_code": "920821.BJ",
+      "name": "则成电子",
+      "industry": "元器件",
+      "market": "北交所",
+      "pct_chg": 29.9687,
+      "amount_yi": 1.7700668184000001,
+      "turnover_rate": 12.6377,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        -6.4331,
+        -3.4656,
+        2.3162,
+        0.6225,
+        -10.2925,
+        29.9687
+      ],
+      "pre_cum_pct": -16.579535870019757,
+      "lookback_cum_pct": 8.420492763701626,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列",
+        "高换手"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "920305.BJ",
+      "name": "云创退",
+      "industry": "软件服务",
+      "market": "北交所",
+      "pct_chg": 29.1667,
+      "amount_yi": 0.1790301983,
+      "turnover_rate": 25.5483,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        -80.6723,
+        -18.8406,
+        28.5714,
+        29.1667
+      ],
+      "pre_cum_pct": -79.8319747411844,
+      "lookback_cum_pct": -73.94962731802143,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列",
+        "高换手"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "920088.BJ",
+      "name": "科力股份",
+      "industry": "石油开采",
+      "market": "北交所",
+      "pct_chg": 24.2054,
+      "amount_yi": 5.2216051892,
+      "turnover_rate": 33.9109,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        -3.3794,
+        11.1324,
+        11.9116,
+        1.1541,
+        3.7018,
+        24.2054
+      ],
+      "pre_cum_pct": 26.053617452382948,
+      "lookback_cum_pct": 56.56539977120205,
+      "active_reasons": [
+        "涨幅前列",
+        "高换手",
+        "前期已有强度"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "920072.BJ",
+      "name": "科莱瑞迪",
+      "industry": "",
+      "market": "北交所",
+      "pct_chg": 23.5102,
+      "amount_yi": 1.6488470932,
+      "turnover_rate": 38.9302,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        -15.3736,
+        -6.9689,
+        1.0545,
+        -2.1231,
+        -9.9265,
+        23.5102
+      ],
+      "pre_cum_pct": -29.859812201893334,
+      "lookback_cum_pct": -13.369713770182868,
+      "active_reasons": [
+        "涨幅前列",
+        "高换手"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "300532.SZ",
+      "name": "今天国际",
+      "industry": "软件服务",
+      "market": "创业板",
+      "pct_chg": 20.0658,
+      "amount_yi": 4.0219653407,
+      "turnover_rate": 9.2831,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        -2.6034,
+        0.0,
+        -1.7296,
+        0.64,
+        -3.3386,
+        20.0658
+      ],
+      "pre_cum_pct": -6.891307219569509,
+      "lookback_cum_pct": 11.79169685636612,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "300164.SZ",
+      "name": "通源石油",
+      "industry": "石油开采",
+      "market": "创业板",
+      "pct_chg": 20.0422,
+      "amount_yi": 27.3022589725,
+      "turnover_rate": 43.9756,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        -2.6992,
+        7.3976,
+        12.9151,
+        -3.4858,
+        6.9977,
+        20.0422
+      ],
+      "pre_cum_pct": 21.850879535705413,
+      "lookback_cum_pct": 46.272476514010584,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列",
+        "高换手",
+        "前期已有强度"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "300566.SZ",
+      "name": "激智科技",
+      "industry": "元器件",
+      "market": "创业板",
+      "pct_chg": 20.0144,
+      "amount_yi": 10.5091720078,
+      "turnover_rate": 14.6919,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        -7.29,
+        -8.5185,
+        5.5746,
+        -9.41,
+        -9.3781,
+        20.0144
+      ],
+      "pre_cum_pct": -26.492318341019093,
+      "lookback_cum_pct": -11.780196903064033,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列",
+        "高换手"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "300937.SZ",
+      "name": "药易购",
+      "industry": "医药商业",
+      "market": "创业板",
+      "pct_chg": 20.0103,
+      "amount_yi": 2.4001178912,
+      "turnover_rate": 17.9184,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        -3.2099,
+        -1.2245,
+        -1.4979,
+        2.517,
+        -1.0742,
+        20.0103
+      ],
+      "pre_cum_pct": -4.49389701252545,
+      "lookback_cum_pct": 14.61716071357717,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列",
+        "高换手"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "688216.SH",
+      "name": "气派科技",
+      "industry": "半导体",
+      "market": "科创板",
+      "pct_chg": 20.0058,
+      "amount_yi": 6.278008689999999,
+      "turnover_rate": 14.8856,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        -0.1327,
+        -4.1191,
+        9.5898,
+        -5.6651,
+        -7.3995,
+        20.0058
+      ],
+      "pre_cum_pct": -8.333369050795458,
+      "lookback_cum_pct": 10.005273803640513,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列",
+        "高换手"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "688192.SH",
+      "name": "迪哲医药",
+      "industry": "生物制药",
+      "market": "科创板",
+      "pct_chg": 20.0043,
+      "amount_yi": 4.36508638,
+      "turnover_rate": 1.8613,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        -6.6465,
+        -2.229,
+        2.4347,
+        1.0372,
+        0.3849,
+        20.0043
+      ],
+      "pre_cum_pct": -5.171811322483977,
+      "lookback_cum_pct": 13.797904025132368,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "300209.SZ",
+      "name": "行云科技",
+      "industry": "互联网",
+      "market": "创业板",
+      "pct_chg": 20.0,
+      "amount_yi": 37.324784673100005,
+      "turnover_rate": 17.7899,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        2.2088,
+        2.1611,
+        1.3077,
+        -4.8595,
+        0.9577,
+        20.0
+      ],
+      "pre_cum_pct": 1.6064277830741158,
+      "lookback_cum_pct": 21.927713339688925,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列",
+        "高成交",
+        "高换手"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "301100.SZ",
+      "name": "风光股份",
+      "industry": "化工原料",
+      "market": "创业板",
+      "pct_chg": 20.0,
+      "amount_yi": 1.048021404,
+      "turnover_rate": 7.5073,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        -3.9139,
+        -2.2403,
+        -0.2778,
+        0.6267,
+        -2.7682,
+        20.0
+      ],
+      "pre_cum_pct": -8.349712071695837,
+      "lookback_cum_pct": 9.980345513964984,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "300912.SZ",
+      "name": "凯龙高科",
+      "industry": "汽车配件",
+      "market": "创业板",
+      "pct_chg": 19.9827,
+      "amount_yi": 2.2387993048,
+      "turnover_rate": 10.332,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        -5.5613,
+        -9.2694,
+        -0.3205,
+        0.9646,
+        -8.1608,
+        19.9827
+      ],
+      "pre_cum_pct": -20.803342070909547,
+      "lookback_cum_pct": -4.977711506913196,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列",
+        "高换手"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "301259.SZ",
+      "name": "艾布鲁",
+      "industry": "环境保护",
+      "market": "创业板",
+      "pct_chg": 19.982,
+      "amount_yi": 4.7049576638,
+      "turnover_rate": 13.2158,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        -3.632,
+        -4.3431,
+        0.9381,
+        -5.1673,
+        -13.0929,
+        19.982
+      ],
+      "pre_cum_pct": -23.313724124349132,
+      "lookback_cum_pct": -7.990272478876581,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列",
+        "高换手"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "920125.BJ",
+      "name": "鸿仕达",
+      "industry": "专用机械",
+      "market": "北交所",
+      "pct_chg": 18.5053,
+      "amount_yi": 2.7199094999,
+      "turnover_rate": 12.7099,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        -8.2564,
+        -9.2604,
+        5.8219,
+        -10.0324,
+        -15.0935,
+        18.5053
+      ],
+      "pre_cum_pct": -32.70616681682193,
+      "lookback_cum_pct": -20.253241104775277,
+      "active_reasons": [
+        "涨幅前列",
+        "高换手"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "688519.SH",
+      "name": "南亚新材",
+      "industry": "元器件",
+      "market": "科创板",
+      "pct_chg": 18.4312,
+      "amount_yi": 35.53864721,
+      "turnover_rate": 4.4284,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        -0.6233,
+        -5.4734,
+        9.9311,
+        -5.475,
+        -6.6867,
+        18.4312
+      ],
+      "pre_cum_pct": -8.91446442096896,
+      "lookback_cum_pct": 7.873692812673405,
+      "active_reasons": [
+        "涨幅前列",
+        "高成交"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "688458.SH",
+      "name": "美芯晟",
+      "industry": "半导体",
+      "market": "科创板",
+      "pct_chg": 18.235,
+      "amount_yi": 3.71731216,
+      "turnover_rate": 10.0926,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        -2.4354,
+        -0.4585,
+        2.0727,
+        -4.362,
+        -5.8453,
+        18.235
+      ],
+      "pre_cum_pct": -10.73554835835222,
+      "lookback_cum_pct": 5.54182439850226,
+      "active_reasons": [
+        "涨幅前列",
+        "高换手"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "300191.SZ",
+      "name": "潜能恒信",
+      "industry": "石油开采",
+      "market": "创业板",
+      "pct_chg": 18.2314,
+      "amount_yi": 10.4221915183,
+      "turnover_rate": 16.7266,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        -1.9978,
+        1.812,
+        4.5977,
+        -7.0542,
+        -2.0976,
+        18.2314
+      ],
+      "pre_cum_pct": -5.031399750225985,
+      "lookback_cum_pct": 12.282705635711322,
+      "active_reasons": [
+        "涨幅前列",
+        "高换手"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "300534.SZ",
+      "name": "陇神戎发",
+      "industry": "中成药",
+      "market": "创业板",
+      "pct_chg": 16.3333,
+      "amount_yi": 8.8894946338,
+      "turnover_rate": 29.8671,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        -3.5526,
+        3.0014,
+        -2.1192,
+        1.4885,
+        20.0,
+        16.3333
+      ],
+      "pre_cum_pct": 18.42114127788261,
+      "lookback_cum_pct": 37.763221546223,
+      "active_reasons": [
+        "涨幅前列",
+        "高换手",
+        "前期已有强度"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "301362.SZ",
+      "name": "民爆光电",
+      "industry": "电气设备",
+      "market": "创业板",
+      "pct_chg": 15.1515,
+      "amount_yi": 12.415417656499999,
+      "turnover_rate": 20.6072,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        -3.1248,
+        -0.825,
+        0.7569,
+        -3.8844,
+        -7.0619,
+        15.1515
+      ],
+      "pre_cum_pct": -13.527644494360569,
+      "lookback_cum_pct": -0.4257855499236074,
+      "active_reasons": [
+        "涨幅前列",
+        "高换手"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "688189.SH",
+      "name": "ST南新",
+      "industry": "化学制药",
+      "market": "科创板",
+      "pct_chg": 15.0972,
+      "amount_yi": 1.36920211,
+      "turnover_rate": 6.7271,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        -5.9724,
+        1.6287,
+        0.9615,
+        1.9048,
+        4.2056,
+        15.0972
+      ],
+      "pre_cum_pct": 2.4502954641463237,
+      "lookback_cum_pct": 17.917421470959404,
+      "active_reasons": [
+        "涨幅前列"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "301526.SZ",
+      "name": "国际复材",
+      "industry": "玻璃",
+      "market": "创业板",
+      "pct_chg": 15.0766,
+      "amount_yi": 74.3250601239,
+      "turnover_rate": 14.1912,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        -0.8854,
+        -7.7916,
+        4.5479,
+        -2.7799,
+        -10.0874,
+        15.0766
+      ],
+      "pre_cum_pct": -16.47816018269902,
+      "lookback_cum_pct": -3.8859064808038246,
+      "active_reasons": [
+        "涨幅前列",
+        "高成交",
+        "高换手"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "301125.SZ",
+      "name": "腾亚精工",
+      "industry": "机械基件",
+      "market": "创业板",
+      "pct_chg": 14.8472,
+      "amount_yi": 1.3998559687,
+      "turnover_rate": 6.4522,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        2.784,
+        -5.8565,
+        -1.2442,
+        -0.3937,
+        -9.4862,
+        14.8472
+      ],
+      "pre_cum_pct": -13.845082157926214,
+      "lookback_cum_pct": -1.0534891960778392,
+      "active_reasons": [
+        "涨幅前列"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "300990.SZ",
+      "name": "同飞股份",
+      "industry": "专用机械",
+      "market": "创业板",
+      "pct_chg": 14.6871,
+      "amount_yi": 18.188607502500002,
+      "turnover_rate": 19.8205,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        -3.4512,
+        -3.1389,
+        7.9738,
+        3.238,
+        -3.7142,
+        14.6871
+      ],
+      "pre_cum_pct": 0.37290386912434137,
+      "lookback_cum_pct": 15.11477263328651,
+      "active_reasons": [
+        "涨幅前列",
+        "高换手"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "688479.SH",
+      "name": "友车科技",
+      "industry": "软件服务",
+      "market": "科创板",
+      "pct_chg": 14.6195,
+      "amount_yi": 2.16266758,
+      "turnover_rate": 7.6525,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        1.908,
+        -5.3347,
+        -0.5419,
+        0.1634,
+        -18.5205,
+        14.6195
+      ],
+      "pre_cum_pct": -21.69370688708504,
+      "lookback_cum_pct": -10.245718365442436,
+      "active_reasons": [
+        "涨幅前列"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "300489.SZ",
+      "name": "光智科技",
+      "industry": "专用机械",
+      "market": "创业板",
+      "pct_chg": 14.3478,
+      "amount_yi": 31.985112146299997,
+      "turnover_rate": 9.3639,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        0.3287,
+        2.0417,
+        0.0448,
+        -4.8507,
+        -9.8039,
+        14.3478
+      ],
+      "pre_cum_pct": -12.099621001064097,
+      "lookback_cum_pct": 0.5121495769452311,
+      "active_reasons": [
+        "涨幅前列",
+        "高成交"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "688183.SH",
+      "name": "生益电子",
+      "industry": "元器件",
+      "market": "科创板",
+      "pct_chg": 14.2059,
+      "amount_yi": 37.150702599999995,
+      "turnover_rate": 3.6949,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        1.0607,
+        -3.247,
+        6.9492,
+        -2.5357,
+        -9.748,
+        14.2059
+      ],
+      "pre_cum_pct": -8.012951335301842,
+      "lookback_cum_pct": 5.054636810956503,
+      "active_reasons": [
+        "涨幅前列",
+        "高成交"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "688069.SH",
+      "name": "德林海",
+      "industry": "环境保护",
+      "market": "科创板",
+      "pct_chg": 13.9841,
+      "amount_yi": 1.71605156,
+      "turnover_rate": 3.0875,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        1.6804,
+        -2.7093,
+        -0.1671,
+        -1.8131,
+        -7.1591,
+        13.9841
+      ],
+      "pre_cum_pct": -9.972508051126027,
+      "lookback_cum_pct": 2.6170264504964624,
+      "active_reasons": [
+        "涨幅前列"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "920010.BJ",
+      "name": "凯添燃气",
+      "industry": "供气供热",
+      "market": "北交所",
+      "pct_chg": 13.9417,
+      "amount_yi": 1.549551138,
+      "turnover_rate": 10.4174,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        -2.3936,
+        5.7221,
+        5.6701,
+        -0.9756,
+        -2.8325,
+        13.9417
+      ],
+      "pre_cum_pct": 4.920280560871193,
+      "lookback_cum_pct": 19.54795131582616,
+      "active_reasons": [
+        "涨幅前列",
+        "高换手"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "920014.BJ",
+      "name": "特瑞斯",
+      "industry": "专用机械",
+      "market": "北交所",
+      "pct_chg": 13.9394,
+      "amount_yi": 0.7813478861,
+      "turnover_rate": 12.6343,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        -2.7879,
+        1.3716,
+        5.7811,
+        1.9767,
+        -5.9293,
+        13.9394
+      ],
+      "pre_cum_pct": 7.997274065196791e-06,
+      "lookback_cum_pct": 13.939409112046096,
+      "active_reasons": [
+        "涨幅前列",
+        "高换手"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "301584.SZ",
+      "name": "建发致新",
+      "industry": "医药商业",
+      "market": "创业板",
+      "pct_chg": 13.7419,
+      "amount_yi": 3.4028499641999996,
+      "turnover_rate": 26.8341,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        -5.1985,
+        0.5484,
+        0.2975,
+        1.5324,
+        4.8685,
+        13.7419
+      ],
+      "pre_cum_pct": 1.7958772428781744,
+      "lookback_cum_pct": 15.784564897717246,
+      "active_reasons": [
+        "涨幅前列",
+        "高换手"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "688048.SH",
+      "name": "长光华芯",
+      "industry": "半导体",
+      "market": "科创板",
+      "pct_chg": 13.7011,
+      "amount_yi": 69.88453726,
+      "turnover_rate": 9.0408,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        -3.4078,
+        0.7275,
+        14.1187,
+        -5.6811,
+        -9.4053,
+        13.7011
+      ],
+      "pre_cum_pct": -5.125730087619173,
+      "lookback_cum_pct": 7.873088507346027,
+      "active_reasons": [
+        "涨幅前列",
+        "高成交"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "301176.SZ",
+      "name": "逸豪新材",
+      "industry": "元器件",
+      "market": "创业板",
+      "pct_chg": 13.4792,
+      "amount_yi": 7.1990834566999995,
+      "turnover_rate": 8.8906,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        -2.6344,
+        -4.8408,
+        2.8627,
+        -3.742,
+        -10.7248,
+        13.4792
+      ],
+      "pre_cum_pct": -18.10037519740948,
+      "lookback_cum_pct": -7.060960971018693,
+      "active_reasons": [
+        "涨幅前列"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "301377.SZ",
+      "name": "鼎泰高科",
+      "industry": "机械基件",
+      "market": "创业板",
+      "pct_chg": 13.2854,
+      "amount_yi": 33.2609216489,
+      "turnover_rate": 7.0883,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        0.5947,
+        -3.2339,
+        2.3252,
+        -3.5407,
+        -6.262,
+        13.2854
+      ],
+      "pre_cum_pct": -9.938177959600669,
+      "lookback_cum_pct": 2.0268953457545535,
+      "active_reasons": [
+        "涨幅前列",
+        "高成交"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "688498.SH",
+      "name": "源杰科技",
+      "industry": "半导体",
+      "market": "科创板",
+      "pct_chg": 13.1241,
+      "amount_yi": 101.47250886,
+      "turnover_rate": 4.8697,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        4.5756,
+        -5.7165,
+        7.9784,
+        -7.847,
+        -1.1684,
+        13.1241
+      ],
+      "pre_cum_pct": -3.036506721841592,
+      "lookback_cum_pct": 9.689079099477183,
+      "active_reasons": [
+        "涨幅前列",
+        "高成交"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "301205.SZ",
+      "name": "联特科技",
+      "industry": "通信设备",
+      "market": "创业板",
+      "pct_chg": 12.8513,
+      "amount_yi": 20.4910006062,
+      "turnover_rate": 9.6585,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        -2.2259,
+        -4.4009,
+        3.1436,
+        -2.7353,
+        -9.616,
+        12.8513
+      ],
+      "pre_cum_pct": -15.244727380446887,
+      "lookback_cum_pct": -4.352573030290263,
+      "active_reasons": [
+        "涨幅前列"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "688257.SH",
+      "name": "新锐股份",
+      "industry": "机械基件",
+      "market": "科创板",
+      "pct_chg": 12.5362,
+      "amount_yi": 17.278672479999997,
+      "turnover_rate": 5.9236,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        -5.7494,
+        -6.26,
+        3.9118,
+        -3.4596,
+        -7.6531,
+        12.5362
+      ],
+      "pre_cum_pct": -18.152511840056274,
+      "lookback_cum_pct": -7.891947029349411,
+      "active_reasons": [
+        "涨幅前列"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "920015.BJ",
+      "name": "锦华新材",
+      "industry": "化工原料",
+      "market": "北交所",
+      "pct_chg": 12.4194,
+      "amount_yi": 4.6272658377,
+      "turnover_rate": 17.6349,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        -6.5695,
+        -4.9569,
+        5.4085,
+        3.6833,
+        9.5794,
+        12.4194
+      ],
+      "pre_cum_pct": 6.346359827417158,
+      "lookback_cum_pct": 19.55393963982339,
+      "active_reasons": [
+        "涨幅前列",
+        "高换手"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "301217.SZ",
+      "name": "铜冠铜箔",
+      "industry": "元器件",
+      "market": "创业板",
+      "pct_chg": 12.0752,
+      "amount_yi": 50.5873270472,
+      "turnover_rate": 4.756,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        0.4509,
+        -7.4713,
+        4.2388,
+        -5.4338,
+        -9.3421,
+        12.0752
+      ],
+      "pre_cum_pct": -16.938209507154035,
+      "lookback_cum_pct": -6.908332181561905,
+      "active_reasons": [
+        "涨幅前列",
+        "高成交"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "300157.SZ",
+      "name": "新锦动力",
+      "industry": "专用机械",
+      "market": "创业板",
+      "pct_chg": 11.5789,
+      "amount_yi": 5.8638432345,
+      "turnover_rate": 19.7595,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        -3.9474,
+        -1.0959,
+        6.9252,
+        1.0363,
+        -2.5641,
+        11.5789
+      ],
+      "pre_cum_pct": -1.6937909330660972e-05,
+      "lookback_cum_pct": 11.57888110086709,
+      "active_reasons": [
+        "涨幅前列",
+        "高换手"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "301099.SZ",
+      "name": "雅创电子",
+      "industry": "元器件",
+      "market": "创业板",
+      "pct_chg": 11.3229,
+      "amount_yi": 10.1291536848,
+      "turnover_rate": 13.1331,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        -5.6144,
+        2.4378,
+        10.4712,
+        2.9729,
+        -14.8536,
+        11.3229
+      ],
+      "pre_cum_pct": -6.350752978991913,
+      "lookback_cum_pct": 4.2530576119498065,
+      "active_reasons": [
+        "涨幅前列",
+        "高换手"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "300483.SZ",
+      "name": "首华燃气",
+      "industry": "石油开采",
+      "market": "创业板",
+      "pct_chg": 11.27,
+      "amount_yi": 7.9276244689,
+      "turnover_rate": 11.0414,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        -3.696,
+        -2.8649,
+        -2.3929,
+        0.5131,
+        -0.8508,
+        11.27
+      ],
+      "pre_cum_pct": -9.005779443971552,
+      "lookback_cum_pct": 1.2492692126928606,
+      "active_reasons": [
+        "涨幅前列",
+        "高换手"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "301511.SZ",
+      "name": "德福科技",
+      "industry": "电气设备",
+      "market": "创业板",
+      "pct_chg": 11.2616,
+      "amount_yi": 31.371075982599997,
+      "turnover_rate": 7.6511,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        -4.4596,
+        -6.5111,
+        2.3864,
+        -3.6945,
+        -11.2942,
+        11.2616
+      ],
+      "pre_cum_pct": -21.874558348954842,
+      "lookback_cum_pct": -13.076383611980734,
+      "active_reasons": [
+        "涨幅前列",
+        "高成交"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "300502.SZ",
+      "name": "新易盛",
+      "industry": "通信设备",
+      "market": "创业板",
+      "pct_chg": 10.9893,
+      "amount_yi": 354.303855735,
+      "turnover_rate": 5.1747,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        0.6333,
+        0.1451,
+        6.7849,
+        -4.1155,
+        -2.017,
+        10.9893
+      ],
+      "pre_cum_pct": 1.1068091388504397,
+      "lookback_cum_pct": 12.217739715546138,
+      "active_reasons": [
+        "涨幅前列",
+        "高成交"
+      ],
+      "seed_themes": [
+        "CPO光通信"
+      ],
+      "tags": [
+        "AI硬件",
+        "CPO",
+        "光模块",
+        "光通信",
+        "数据中心"
+      ],
+      "theme_roles": {
+        "CPO光通信": "core"
+      },
+      "theme_chains": {
+        "CPO光通信": "midstream"
+      }
+    },
+    {
+      "ts_code": "301448.SZ",
+      "name": "开创电气",
+      "industry": "机械基件",
+      "market": "创业板",
+      "pct_chg": 10.747,
+      "amount_yi": 0.7295904199,
+      "turnover_rate": 2.7393,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        -1.7423,
+        -7.8161,
+        -1.139,
+        -0.5376,
+        -7.3102,
+        10.747
+      ],
+      "pre_cum_pct": -17.446108469732735,
+      "lookback_cum_pct": -8.574041746974913,
+      "active_reasons": [
+        "涨幅前列"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "920571.BJ",
+      "name": "国航远洋",
+      "industry": "水运",
+      "market": "北交所",
+      "pct_chg": 10.5469,
+      "amount_yi": 2.4441083567,
+      "turnover_rate": 9.7881,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        -0.9768,
+        -1.9729,
+        2.0126,
+        0.4932,
+        -5.7669,
+        10.5469
+      ],
+      "pre_cum_pct": -6.22715719963457,
+      "lookback_cum_pct": 3.662970757677164,
+      "active_reasons": [
+        "涨幅前列"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "688388.SH",
+      "name": "嘉元科技",
+      "industry": "电气设备",
+      "market": "科创板",
+      "pct_chg": 10.439,
+      "amount_yi": 18.7247077,
+      "turnover_rate": 8.7849,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        -3.7637,
+        -4.943,
+        -0.0857,
+        -3.889,
+        -8.5094,
+        10.439
+      ],
+      "pre_cum_pct": -19.628838828909867,
+      "lookback_cum_pct": -11.238893314259768,
+      "active_reasons": [
+        "涨幅前列"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "300107.SZ",
+      "name": "建新股份",
+      "industry": "化工原料",
+      "market": "创业板",
+      "pct_chg": 10.3943,
+      "amount_yi": 2.2523405249,
+      "turnover_rate": 10.5362,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        -2.6087,
+        -1.4286,
+        -0.3623,
+        4.9091,
+        -3.2929,
+        10.3943
+      ],
+      "pre_cum_pct": -2.956533179756149,
+      "lookback_cum_pct": 7.130455891940457,
+      "active_reasons": [
+        "涨幅前列",
+        "高换手"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "920491.BJ",
+      "name": "奥迪威",
+      "industry": "元器件",
+      "market": "北交所",
+      "pct_chg": 10.2301,
+      "amount_yi": 1.6393328468000001,
+      "turnover_rate": 5.4192,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        0.8784,
+        -8.6738,
+        0.2567,
+        -3.6211,
+        -7.6281,
+        10.2301
+      ],
+      "pre_cum_pct": -17.770278319181777,
+      "lookback_cum_pct": -9.358095561512393,
+      "active_reasons": [
+        "涨幅前列"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "600844.SH",
+      "name": "金煤科技",
+      "industry": "化工原料",
+      "market": "主板",
+      "pct_chg": 10.2041,
+      "amount_yi": 0.7347475800000001,
+      "turnover_rate": 3.3197,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        -3.1496,
+        -0.813,
+        1.6393,
+        2.0161,
+        -3.1621,
+        10.2041
+      ],
+      "pre_cum_pct": -3.5434068503430893,
+      "lookback_cum_pct": 6.2991203712410515,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "301408.SZ",
+      "name": "华人健康",
+      "industry": "医药商业",
+      "market": "创业板",
+      "pct_chg": 10.1767,
+      "amount_yi": 5.1410034258,
+      "turnover_rate": 14.8232,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        -5.5738,
+        -1.25,
+        -0.4923,
+        3.0389,
+        -2.9492,
+        10.1767
+      ],
+      "pre_cum_pct": -7.21310570603867,
+      "lookback_cum_pct": 2.229538165574896,
+      "active_reasons": [
+        "涨幅前列",
+        "高换手"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "000008.SZ",
+      "name": "神州高铁",
+      "industry": "运输设备",
+      "market": "主板",
+      "pct_chg": 10.1695,
+      "amount_yi": 0.319664878,
+      "turnover_rate": 0.4526,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        0.0,
+        0.0,
+        10.1695
+      ],
+      "pre_cum_pct": 0.0,
+      "lookback_cum_pct": 10.16950000000001,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "688309.SH",
+      "name": "恒誉环保",
+      "industry": "环境保护",
+      "market": "科创板",
+      "pct_chg": 10.1664,
+      "amount_yi": 1.4473685500000002,
+      "turnover_rate": 2.9196,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        -5.3077,
+        -4.4041,
+        5.3479,
+        -0.7187,
+        -8.3475,
+        10.1664
+      ],
+      "pre_cum_pct": -13.2256068082516,
+      "lookback_cum_pct": -4.40377489880569,
+      "active_reasons": [
+        "涨幅前列"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "002523.SZ",
+      "name": "天桥起重",
+      "industry": "专用机械",
+      "market": "主板",
+      "pct_chg": 10.1399,
+      "amount_yi": 1.8360495575,
+      "turnover_rate": 4.203,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        -2.623,
+        -2.0202,
+        1.0309,
+        1.7007,
+        -4.3478,
+        10.1399
+      ],
+      "pre_cum_pct": -6.229535693523247,
+      "lookback_cum_pct": 3.2786956166891867,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "002628.SZ",
+      "name": "成都路桥",
+      "industry": "建筑工程",
+      "market": "主板",
+      "pct_chg": 10.1075,
+      "amount_yi": 2.4497663504,
+      "turnover_rate": 6.6663,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        0.5671,
+        -2.0677,
+        1.1516,
+        -1.8975,
+        -10.058,
+        10.1075
+      ],
+      "pre_cum_pct": -12.09830425639895,
+      "lookback_cum_pct": -3.213640359114467,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "600403.SH",
+      "name": "大有能源",
+      "industry": "煤炭开采",
+      "market": "主板",
+      "pct_chg": 10.1075,
+      "amount_yi": 1.87082122,
+      "turnover_rate": 1.5825,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        -5.9813,
+        -4.175,
+        -1.2448,
+        3.1513,
+        -5.2953,
+        10.1075
+      ],
+      "pre_cum_pct": -13.084090096533496,
+      "lookback_cum_pct": -4.299064503040617,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "000078.SZ",
+      "name": "ST海王",
+      "industry": "医药商业",
+      "market": "主板",
+      "pct_chg": 10.0962,
+      "amount_yi": 7.694213560600001,
+      "turnover_rate": 13.1342,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        9.7561,
+        10.0,
+        -6.0606,
+        1.6129,
+        10.0529,
+        10.0962
+      ],
+      "pre_cum_pct": 26.829263681951932,
+      "lookback_cum_pct": 39.63419980180915,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列",
+        "高换手",
+        "前期已有强度"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "603077.SH",
+      "name": "和邦生物",
+      "industry": "化工原料",
+      "market": "主板",
+      "pct_chg": 10.0962,
+      "amount_yi": 6.951543839999999,
+      "turnover_rate": 3.5392,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        -4.2918,
+        -2.2422,
+        -1.3761,
+        0.4651,
+        -3.7037,
+        10.0962
+      ],
+      "pre_cum_pct": -10.729583387277176,
+      "lookback_cum_pct": -1.7166635852234546,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "688163.SH",
+      "name": "赛伦生物",
+      "industry": "生物制药",
+      "market": "科创板",
+      "pct_chg": 10.091,
+      "amount_yi": 0.88278935,
+      "turnover_rate": 2.0632,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        -6.3617,
+        -13.1107,
+        3.478,
+        -1.9459,
+        -3.7113,
+        10.091
+      ],
+      "pre_cum_pct": -20.51065355511331,
+      "lookback_cum_pct": -12.489383605359794,
+      "active_reasons": [
+        "涨幅前列"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "002162.SZ",
+      "name": "悦心健康",
+      "industry": "陶瓷",
+      "market": "主板",
+      "pct_chg": 10.0865,
+      "amount_yi": 1.4941966576,
+      "turnover_rate": 4.3409,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        -2.7701,
+        0.8547,
+        -0.2825,
+        1.6997,
+        -3.3426,
+        10.0865
+      ],
+      "pre_cum_pct": -3.8781449926654554,
+      "lookback_cum_pct": 5.8171859126493475,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "000554.SZ",
+      "name": "泰山石油",
+      "industry": "石油贸易",
+      "market": "主板",
+      "pct_chg": 10.0855,
+      "amount_yi": 2.5359826812,
+      "turnover_rate": 11.0946,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        -2.0478,
+        2.7875,
+        4.7458,
+        -4.0453,
+        -1.3491,
+        10.0855
+      ],
+      "pre_cum_pct": -0.17060948064103743,
+      "lookback_cum_pct": 9.897683700188908,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列",
+        "高换手"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "600759.SH",
+      "name": "ST洲际",
+      "industry": "石油开采",
+      "market": "主板",
+      "pct_chg": 10.0746,
+      "amount_yi": 12.43089807,
+      "turnover_rate": 10.5184,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        -6.0086,
+        10.0457,
+        2.0747,
+        2.439,
+        6.3492,
+        10.0746
+      ],
+      "pre_cum_pct": 15.021457253885373,
+      "lookback_cum_pct": 26.609408986385308,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列",
+        "高换手",
+        "前期已有强度"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "603466.SH",
+      "name": "风语筑",
+      "industry": "文教休闲",
+      "market": "主板",
+      "pct_chg": 10.0474,
+      "amount_yi": 6.7034831200000005,
+      "turnover_rate": 10.1803,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        -2.2689,
+        -4.4712,
+        1.9802,
+        2.3831,
+        -9.0517,
+        10.0474
+      ],
+      "pre_cum_pct": -11.344470200834945,
+      "lookback_cum_pct": -2.4368944997936404,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列",
+        "高换手"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "601101.SH",
+      "name": "昊华能源",
+      "industry": "煤炭开采",
+      "market": "主板",
+      "pct_chg": 10.0465,
+      "amount_yi": 5.650522680000001,
+      "turnover_rate": 3.4229,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        -1.6746,
+        -0.811,
+        -7.6043,
+        -6.3717,
+        1.6068,
+        10.0465
+      ],
+      "pre_cum_pct": -14.274326523385783,
+      "lookback_cum_pct": -5.661896737557736,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "301127.SZ",
+      "name": "武汉天源",
+      "industry": "环境保护",
+      "market": "创业板",
+      "pct_chg": 10.0426,
+      "amount_yi": 6.6208760369999995,
+      "turnover_rate": 5.8004,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        -2.5428,
+        -8.6302,
+        0.7688,
+        -1.6384,
+        -8.7729,
+        10.0426
+      ],
+      "pre_cum_pct": -19.482154636570726,
+      "lookback_cum_pct": -11.396069498102989,
+      "active_reasons": [
+        "涨幅前列"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "603806.SH",
+      "name": "福斯特",
+      "industry": "塑料",
+      "market": "主板",
+      "pct_chg": 10.0369,
+      "amount_yi": 4.13917279,
+      "turnover_rate": 1.0746,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        -0.7984,
+        -5.0973,
+        3.8163,
+        -3.0633,
+        -4.8455,
+        10.0369
+      ],
+      "pre_cum_pct": -9.846964463587494,
+      "lookback_cum_pct": -0.7983944398333165,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "600829.SH",
+      "name": "人民同泰",
+      "industry": "医药商业",
+      "market": "主板",
+      "pct_chg": 10.0367,
+      "amount_yi": 1.02163227,
+      "turnover_rate": 1.9931,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        -3.9616,
+        0.375,
+        -0.7472,
+        2.3839,
+        0.1225,
+        10.0367
+      ],
+      "pre_cum_pct": -1.92087208999987,
+      "lookback_cum_pct": 7.92303574094313,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "603201.SH",
+      "name": "常润股份",
+      "industry": "汽车配件",
+      "market": "主板",
+      "pct_chg": 10.0348,
+      "amount_yi": 1.46989141,
+      "turnover_rate": 5.1935,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        -5.7692,
+        -5.034,
+        -2.3639,
+        0.0734,
+        5.2053,
+        10.0348
+      ],
+      "pre_cum_pct": -8.012731740875711,
+      "lookback_cum_pct": 1.218006654390913,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "600595.SH",
+      "name": "中孚实业",
+      "industry": "铝",
+      "market": "主板",
+      "pct_chg": 10.0346,
+      "amount_yi": 10.23073226,
+      "turnover_rate": 4.2,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        -2.5295,
+        -1.7301,
+        0.3521,
+        4.2105,
+        -2.6936,
+        10.0346
+      ],
+      "pre_cum_pct": -2.5295304524138307,
+      "lookback_cum_pct": 7.251241284808252,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "603730.SH",
+      "name": "岱美股份",
+      "industry": "汽车配件",
+      "market": "主板",
+      "pct_chg": 10.0289,
+      "amount_yi": 5.04306804,
+      "turnover_rate": 2.1015,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        -4.3867,
+        -4.7579,
+        -0.1784,
+        -2.681,
+        -4.775,
+        10.0289
+      ],
+      "pre_cum_pct": -15.759600828805475,
+      "lookback_cum_pct": -7.311215436325547,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "605196.SH",
+      "name": "华通线缆",
+      "industry": "电气设备",
+      "market": "主板",
+      "pct_chg": 10.0174,
+      "amount_yi": 6.4137580000000005,
+      "turnover_rate": 5.2872,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        -9.9828,
+        -9.9466,
+        -0.8041,
+        3.7543,
+        -5.5921,
+        10.0174
+      ],
+      "pre_cum_pct": -21.234909097270116,
+      "lookback_cum_pct": -13.344694881180052,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "603255.SH",
+      "name": "鼎际得",
+      "industry": "化工原料",
+      "market": "主板",
+      "pct_chg": 10.0163,
+      "amount_yi": 1.31470224,
+      "turnover_rate": 6.6364,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        -2.7695,
+        -1.3783,
+        -0.6211,
+        3.125,
+        -7.1212,
+        10.0163
+      ],
+      "pre_cum_pct": -8.725440415230901,
+      "lookback_cum_pct": 0.4168932964583316,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "601969.SH",
+      "name": "海南矿业",
+      "industry": "普钢",
+      "market": "主板",
+      "pct_chg": 10.0128,
+      "amount_yi": 3.0926775,
+      "turnover_rate": 1.8878,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        -3.7427,
+        -1.0936,
+        -2.8256,
+        0.3793,
+        -1.8892,
+        10.0128
+      ],
+      "pre_cum_pct": -8.888978069625797,
+      "lookback_cum_pct": 0.23378633421871076,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "001283.SZ",
+      "name": "豪鹏科技",
+      "industry": "电气设备",
+      "market": "主板",
+      "pct_chg": 10.0118,
+      "amount_yi": 2.8157989831999997,
+      "turnover_rate": 5.9698,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        -3.8091,
+        -3.3972,
+        -1.0787,
+        -2.5082,
+        -5.481,
+        10.0118
+      ],
+      "pre_cum_pct": -15.296623096833706,
+      "lookback_cum_pct": -6.816290408042514,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "603577.SH",
+      "name": "汇金通",
+      "industry": "电气设备",
+      "market": "主板",
+      "pct_chg": 10.011,
+      "amount_yi": 0.93687087,
+      "turnover_rate": 2.8417,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        -3.2091,
+        -0.2139,
+        -0.7503,
+        0.9719,
+        -2.7807,
+        10.011
+      ],
+      "pre_cum_pct": -5.900612142532779,
+      "lookback_cum_pct": 3.519677575878255,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "603619.SH",
+      "name": "中曼石油",
+      "industry": "石油开采",
+      "market": "主板",
+      "pct_chg": 10.0106,
+      "amount_yi": 12.43259876,
+      "turnover_rate": 13.4157,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        -3.5808,
+        3.1131,
+        0.6886,
+        0.6312,
+        -1.8296,
+        10.0106
+      ],
+      "pre_cum_pct": -1.1057862558802034,
+      "lookback_cum_pct": 8.794117905188648,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列",
+        "高换手"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "002536.SZ",
+      "name": "飞龙股份",
+      "industry": "汽车配件",
+      "market": "主板",
+      "pct_chg": 10.0102,
+      "amount_yi": 22.0302982204,
+      "turnover_rate": 7.8043,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        -3.5455,
+        -6.1263,
+        5.8032,
+        0.2847,
+        -6.9833,
+        10.0102
+      ],
+      "pre_cum_pct": -10.63636205958326,
+      "lookback_cum_pct": -1.690883174471669,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "001226.SZ",
+      "name": "拓山重工",
+      "industry": "工程机械",
+      "market": "主板",
+      "pct_chg": 10.0095,
+      "amount_yi": 0.56831705,
+      "turnover_rate": 3.7216,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        -3.0072,
+        -6.7106,
+        1.5479,
+        1.8382,
+        -7.1979,
+        10.0095
+      ],
+      "pre_cum_pct": -13.161710220861433,
+      "lookback_cum_pct": -4.469631605418556,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "603042.SH",
+      "name": "华脉科技",
+      "industry": "通信设备",
+      "market": "主板",
+      "pct_chg": 10.0089,
+      "amount_yi": 0.75280472,
+      "turnover_rate": 2.9472,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        -6.0109,
+        -0.0831,
+        1.6625,
+        -0.0818,
+        -8.4288,
+        10.0089
+      ],
+      "pre_cum_pct": -12.64641468216735,
+      "lookback_cum_pct": -3.9032816812907933,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "603989.SH",
+      "name": "艾华集团",
+      "industry": "元器件",
+      "market": "主板",
+      "pct_chg": 10.0087,
+      "amount_yi": 5.57326299,
+      "turnover_rate": 3.9144,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        -3.7356,
+        -6.2088,
+        4.0622,
+        -7.7108,
+        -10.0,
+        10.0087
+      ],
+      "pre_cum_pct": -21.960550947226487,
+      "lookback_cum_pct": -14.149816609881539,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "002432.SZ",
+      "name": "九安医疗",
+      "industry": "医疗保健",
+      "market": "主板",
+      "pct_chg": 10.0072,
+      "amount_yi": 14.243924264,
+      "turnover_rate": 5.1859,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        -5.6082,
+        -0.2343,
+        -2.097,
+        0.7539,
+        -5.8503,
+        10.0072
+      ],
+      "pre_cum_pct": -12.543452596182158,
+      "lookback_cum_pct": -3.791500984387308,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "605255.SH",
+      "name": "天普股份",
+      "industry": "汽车配件",
+      "market": "主板",
+      "pct_chg": 10.0069,
+      "amount_yi": 0.76068565,
+      "turnover_rate": 0.7201,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        -5.7154,
+        -1.008,
+        2.1481,
+        -3.5641,
+        2.0249,
+        10.0069
+      ],
+      "pre_cum_pct": -6.197142095661046,
+      "lookback_cum_pct": 3.1896160919682393,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "603580.SH",
+      "name": "艾艾精工",
+      "industry": "塑料",
+      "market": "主板",
+      "pct_chg": 10.0065,
+      "amount_yi": 0.20753516,
+      "turnover_rate": 0.4706,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        0.0,
+        0.0,
+        0.0,
+        10.0065
+      ],
+      "pre_cum_pct": 0.0,
+      "lookback_cum_pct": 10.006500000000006,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "002484.SZ",
+      "name": "江海股份",
+      "industry": "元器件",
+      "market": "主板",
+      "pct_chg": 10.0064,
+      "amount_yi": 32.4250933707,
+      "turnover_rate": 4.7759,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        -8.1734,
+        -5.4784,
+        8.1979,
+        -4.2412,
+        -9.6309,
+        10.0064
+      ],
+      "pre_cum_pct": -18.732471426508656,
+      "lookback_cum_pct": -10.600517447330827,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列",
+        "高成交"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "002838.SZ",
+      "name": "道恩股份",
+      "industry": "塑料",
+      "market": "主板",
+      "pct_chg": 10.0064,
+      "amount_yi": 4.5689535574999995,
+      "turnover_rate": 3.256,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        0.4287,
+        -3.689,
+        -0.9497,
+        6.9351,
+        -5.9175,
+        10.0064
+      ],
+      "pre_cum_pct": -3.612956899576081,
+      "lookback_cum_pct": 6.031916181224739,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "002245.SZ",
+      "name": "蔚蓝锂芯",
+      "industry": "电气设备",
+      "market": "主板",
+      "pct_chg": 10.0053,
+      "amount_yi": 34.8902823377,
+      "turnover_rate": 10.6016,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        -7.063,
+        -4.329,
+        3.1674,
+        -6.7251,
+        -0.7837,
+        10.0053
+      ],
+      "pre_cum_pct": -15.109465550901524,
+      "lookback_cum_pct": -6.615912907665877,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列",
+        "高成交",
+        "高换手"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "600183.SH",
+      "name": "生益科技",
+      "industry": "元器件",
+      "market": "主板",
+      "pct_chg": 10.0037,
+      "amount_yi": 117.79525052999999,
+      "turnover_rate": 3.381,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        -2.2687,
+        -3.5219,
+        8.2084,
+        -5.0889,
+        -10.0007,
+        10.0037
+      ],
+      "pre_cum_pct": -12.847563790760708,
+      "lookback_cum_pct": -4.129095529697047,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列",
+        "高成交"
+      ],
+      "seed_themes": [
+        "高速PCB/覆铜板"
+      ],
+      "tags": [
+        "AI服务器",
+        "AI硬件",
+        "PCB",
+        "PCB材料",
+        "覆铜板",
+        "高速互联"
+      ],
+      "theme_roles": {
+        "高速PCB/覆铜板": "core"
+      },
+      "theme_chains": {
+        "高速PCB/覆铜板": "upstream"
+      }
+    },
+    {
+      "ts_code": "001388.SZ",
+      "name": "信通电子",
+      "industry": "电气设备",
+      "market": "主板",
+      "pct_chg": 10.0034,
+      "amount_yi": 1.0175709671,
+      "turnover_rate": 3.7997,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        -4.003,
+        -0.8494,
+        1.986,
+        2.3673,
+        9.9963,
+        10.0034
+      ],
+      "pre_cum_pct": 9.30320381836436,
+      "lookback_cum_pct": 20.237240509130604,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列",
+        "前期已有强度"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "002463.SZ",
+      "name": "沪电股份",
+      "industry": "元器件",
+      "market": "主板",
+      "pct_chg": 10.0032,
+      "amount_yi": 125.537961328,
+      "turnover_rate": 4.8897,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        0.6908,
+        -1.1718,
+        7.0983,
+        -5.7247,
+        -3.6928,
+        10.0032
+      ],
+      "pre_cum_pct": -3.2368642958221505,
+      "lookback_cum_pct": 6.442545694938162,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列",
+        "高成交"
+      ],
+      "seed_themes": [
+        "高速PCB/覆铜板"
+      ],
+      "tags": [
+        "AI服务器",
+        "AI硬件",
+        "PCB",
+        "覆铜板",
+        "高速互联"
+      ],
+      "theme_roles": {
+        "高速PCB/覆铜板": "core"
+      },
+      "theme_chains": {
+        "高速PCB/覆铜板": "midstream"
+      }
+    },
+    {
+      "ts_code": "002636.SZ",
+      "name": "金安国纪",
+      "industry": "元器件",
+      "market": "主板",
+      "pct_chg": 10.0023,
+      "amount_yi": 47.0865889224,
+      "turnover_rate": 7.2777,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        3.3475,
+        -6.3181,
+        6.2427,
+        -2.9329,
+        -9.9959,
+        10.0023
+      ],
+      "pre_cum_pct": -10.135303269923257,
+      "lookback_cum_pct": -1.1467667088907896,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列",
+        "高成交"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "002384.SZ",
+      "name": "东山精密",
+      "industry": "元器件",
+      "market": "主板",
+      "pct_chg": 10.0,
+      "amount_yi": 238.56271061,
+      "turnover_rate": 6.8865,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        5.5288,
+        0.2913,
+        10.0017,
+        -7.2784,
+        -2.3112,
+        10.0
+      ],
+      "pre_cum_pct": 5.453099556738628,
+      "lookback_cum_pct": 15.998409512412493,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列",
+        "高成交"
+      ],
+      "seed_themes": [
+        "高速PCB/覆铜板"
+      ],
+      "tags": [
+        "AI服务器",
+        "AI硬件",
+        "PCB",
+        "电子制造",
+        "覆铜板",
+        "高速互联"
+      ],
+      "theme_roles": {
+        "高速PCB/覆铜板": "related"
+      },
+      "theme_chains": {
+        "高速PCB/覆铜板": "midstream"
+      }
+    },
+    {
+      "ts_code": "001389.SZ",
+      "name": "广合科技",
+      "industry": "元器件",
+      "market": "主板",
+      "pct_chg": 10.0,
+      "amount_yi": 24.8469452169,
+      "turnover_rate": 8.9539,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        -3.8437,
+        -1.5567,
+        1.0028,
+        -4.0565,
+        -3.5148,
+        10.0
+      ],
+      "pre_cum_pct": -11.493823463188523,
+      "lookback_cum_pct": -2.643205809507365,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "600497.SH",
+      "name": "驰宏锌锗",
+      "industry": "铅锌",
+      "market": "主板",
+      "pct_chg": 10.0,
+      "amount_yi": 22.72931937,
+      "turnover_rate": 4.7994,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        -3.814,
+        -7.1567,
+        1.9792,
+        -2.8601,
+        -6.4143,
+        10.0
+      ],
+      "pre_cum_pct": -17.209371616495694,
+      "lookback_cum_pct": -8.930308778145257,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "002379.SZ",
+      "name": "宏桥控股",
+      "industry": "铝",
+      "market": "主板",
+      "pct_chg": 10.0,
+      "amount_yi": 18.2806511136,
+      "turnover_rate": 9.7384,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        -4.4825,
+        -2.3464,
+        0.0,
+        2.1201,
+        10.0346,
+        10.0
+      ],
+      "pre_cum_pct": 4.812168334803624,
+      "lookback_cum_pct": 15.293385168284,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "002975.SZ",
+      "name": "博杰股份",
+      "industry": "专用机械",
+      "market": "主板",
+      "pct_chg": 10.0,
+      "amount_yi": 14.2198757638,
+      "turnover_rate": 8.6032,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        -3.9854,
+        -4.6005,
+        9.9982,
+        -0.4532,
+        -6.2914,
+        10.0
+      ],
+      "pre_cum_pct": -6.0112859920104516,
+      "lookback_cum_pct": 3.387585408788518,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "603065.SH",
+      "name": "宿迁联盛",
+      "industry": "化工原料",
+      "market": "主板",
+      "pct_chg": 10.0,
+      "amount_yi": 12.28267599,
+      "turnover_rate": 12.983,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        9.9946,
+        8.1975,
+        -4.2446,
+        -7.2927,
+        10.0257,
+        10.0
+      ],
+      "pre_cum_pct": 16.241160961687683,
+      "lookback_cum_pct": 27.865277057856463,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列",
+        "高换手",
+        "前期已有强度"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "000968.SZ",
+      "name": "蓝焰控股",
+      "industry": "石油开采",
+      "market": "主板",
+      "pct_chg": 10.0,
+      "amount_yi": 4.6559439456,
+      "turnover_rate": 6.9584,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        -2.8708,
+        2.2989,
+        0.8026,
+        -0.4777,
+        2.4,
+        10.0
+      ],
+      "pre_cum_pct": 2.0734679950550117,
+      "lookback_cum_pct": 12.280814794560513,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "600255.SH",
+      "name": "鑫科材料",
+      "industry": "小金属",
+      "market": "主板",
+      "pct_chg": 10.0,
+      "amount_yi": 4.53611083,
+      "turnover_rate": 8.3239,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        -1.2232,
+        -6.192,
+        -0.6601,
+        0.6645,
+        -7.5908,
+        10.0
+      ],
+      "pre_cum_pct": -14.373124091962875,
+      "lookback_cum_pct": -5.810436501159155,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "002718.SZ",
+      "name": "友邦吊顶",
+      "industry": "其他建材",
+      "market": "主板",
+      "pct_chg": 10.0,
+      "amount_yi": 2.2821740115,
+      "turnover_rate": 2.2588,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        -5.3549,
+        -1.1616,
+        4.4681,
+        0.8923,
+        -4.0661,
+        10.0
+      ],
+      "pre_cum_pct": -5.411647816322295,
+      "lookback_cum_pct": 4.047187402045482,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "000677.SZ",
+      "name": "ST海龙",
+      "industry": "化纤",
+      "market": "主板",
+      "pct_chg": 10.0,
+      "amount_yi": 1.3342039494,
+      "turnover_rate": 9.1469,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        -10.119,
+        2.649,
+        8.3871,
+        -2.381,
+        -2.439,
+        10.0
+      ],
+      "pre_cum_pct": -4.761880262670282,
+      "lookback_cum_pct": 4.761931711062695,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "603186.SH",
+      "name": "华正新材",
+      "industry": "元器件",
+      "market": "主板",
+      "pct_chg": 9.9988,
+      "amount_yi": 35.83366373,
+      "turnover_rate": 13.2416,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        -0.7881,
+        -3.896,
+        6.0782,
+        -5.2263,
+        -10.0,
+        9.9988
+      ],
+      "pre_cum_pct": -13.729618594239511,
+      "lookback_cum_pct": -5.103615698240338,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列",
+        "高成交",
+        "高换手"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "000636.SZ",
+      "name": "风华高科",
+      "industry": "元器件",
+      "market": "主板",
+      "pct_chg": 9.9981,
+      "amount_yi": 73.3132949961,
+      "turnover_rate": 11.4974,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        4.7179,
+        -0.9141,
+        6.3427,
+        -6.8891,
+        -9.9983,
+        9.9981
+      ],
+      "pre_cum_pct": -7.5319492504216985,
+      "lookback_cum_pct": 1.7130989315718992,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列",
+        "高成交",
+        "高换手"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "603516.SH",
+      "name": "淳中科技",
+      "industry": "IT设备",
+      "market": "主板",
+      "pct_chg": 9.997,
+      "amount_yi": 2.2851232500000003,
+      "turnover_rate": 1.0349,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        -3.0484,
+        -4.2576,
+        0.307,
+        -1.2057,
+        -6.9377,
+        9.997
+      ],
+      "pre_cum_pct": -14.395577392722725,
+      "lookback_cum_pct": -5.837703264673221,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "002128.SZ",
+      "name": "电投能源",
+      "industry": "煤炭开采",
+      "market": "主板",
+      "pct_chg": 9.9958,
+      "amount_yi": 6.879688701799999,
+      "turnover_rate": 1.2222,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        -2.743,
+        -3.1107,
+        -1.1558,
+        3.9411,
+        -1.2083,
+        9.9958
+      ],
+      "pre_cum_pct": -4.356459217388819,
+      "lookback_cum_pct": 5.2038778321594314,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "605133.SH",
+      "name": "嵘泰股份",
+      "industry": "汽车配件",
+      "market": "主板",
+      "pct_chg": 9.9905,
+      "amount_yi": 4.0182646,
+      "turnover_rate": 4.4093,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        -4.8515,
+        -2.9218,
+        1.2098,
+        -1.4577,
+        -6.716,
+        9.9905
+      ],
+      "pre_cum_pct": -14.063812465505876,
+      "lookback_cum_pct": -5.478357649872246,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "603137.SH",
+      "name": "恒尚节能",
+      "industry": "装修装饰",
+      "market": "主板",
+      "pct_chg": 9.9898,
+      "amount_yi": 11.31431716,
+      "turnover_rate": 20.1848,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        9.9789,
+        9.9856,
+        9.9956,
+        6.1508,
+        10.0187,
+        9.9898
+      ],
+      "pre_cum_pct": 55.38542982270018,
+      "lookback_cum_pct": 70.9081234911283,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列",
+        "高换手",
+        "前期已有强度"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "603197.SH",
+      "name": "保隆科技",
+      "industry": "汽车配件",
+      "market": "主板",
+      "pct_chg": 9.9889,
+      "amount_yi": 1.66832339,
+      "turnover_rate": 2.6883,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        -3.1854,
+        -1.8551,
+        -1.1412,
+        1.0462,
+        -3.8558,
+        9.9889
+      ],
+      "pre_cum_pct": -8.74282872236174,
+      "lookback_cum_pct": 0.3727588593902542,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "002357.SZ",
+      "name": "富临运业",
+      "industry": "公共交通",
+      "market": "主板",
+      "pct_chg": 9.9881,
+      "amount_yi": 2.2358717814,
+      "turnover_rate": 8.1572,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        -2.5556,
+        -2.0525,
+        4.4237,
+        -0.1115,
+        -6.1384,
+        9.9881
+      ],
+      "pre_cum_pct": -6.555711125095598,
+      "lookback_cum_pct": 2.777597892018724,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "002250.SZ",
+      "name": "联化科技",
+      "industry": "化工原料",
+      "market": "主板",
+      "pct_chg": 9.9854,
+      "amount_yi": 3.436586431,
+      "turnover_rate": 2.6334,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        -4.1131,
+        -5.1609,
+        1.0753,
+        1.7021,
+        -4.3236,
+        9.9854
+      ],
+      "pre_cum_pct": -10.561092095089887,
+      "lookback_cum_pct": -1.6302593851529767,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "605028.SH",
+      "name": "世茂能源",
+      "industry": "供气供热",
+      "market": "主板",
+      "pct_chg": 9.985,
+      "amount_yi": 0.17760916000000002,
+      "turnover_rate": 0.5058,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        -4.6228,
+        -3.8409,
+        2.9957,
+        -1.7544,
+        -5.8741,
+        9.985
+      ],
+      "pre_cum_pct": -12.64730602908668,
+      "lookback_cum_pct": -3.9251395360909824,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "000703.SZ",
+      "name": "恒逸石化",
+      "industry": "化纤",
+      "market": "主板",
+      "pct_chg": 9.9849,
+      "amount_yi": 12.5083848001,
+      "turnover_rate": 2.3198,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        -7.1146,
+        -2.695,
+        -0.9475,
+        1.0302,
+        -3.7145,
+        9.9849
+      ],
+      "pre_cum_pct": -12.911631102265886,
+      "lookback_cum_pct": -4.215944556196027,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "603489.SH",
+      "name": "八方股份",
+      "industry": "电气设备",
+      "market": "主板",
+      "pct_chg": 9.9834,
+      "amount_yi": 0.31136136999999997,
+      "turnover_rate": 0.5057,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        -3.2361,
+        -3.6384,
+        -1.7544,
+        -1.0481,
+        -5.6885,
+        9.9834
+      ],
+      "pre_cum_pct": -14.509222738844018,
+      "lookback_cum_pct": -5.974336481753772,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "003001.SZ",
+      "name": "中岩大地",
+      "industry": "建筑工程",
+      "market": "主板",
+      "pct_chg": 9.9796,
+      "amount_yi": 2.6281091454000003,
+      "turnover_rate": 15.3841,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        -4.1698,
+        0.0777,
+        0.3106,
+        9.9845,
+        3.6594,
+        9.9796
+      ],
+      "pre_cum_pct": 9.67981619349132,
+      "lookback_cum_pct": 20.625423130336973,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列",
+        "高换手",
+        "前期已有强度"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "603367.SH",
+      "name": "辰欣药业",
+      "industry": "化学制药",
+      "market": "主板",
+      "pct_chg": 9.9782,
+      "amount_yi": 3.57973807,
+      "turnover_rate": 5.4551,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        -3.7938,
+        -0.2976,
+        -1.4179,
+        3.5579,
+        0.3655,
+        9.9782
+      ],
+      "pre_cum_pct": -1.7179002470473548,
+      "lookback_cum_pct": 8.08888423050178,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "605189.SH",
+      "name": "富春染织",
+      "industry": "纺织",
+      "market": "主板",
+      "pct_chg": 9.9768,
+      "amount_yi": 3.0910131599999997,
+      "turnover_rate": 9.4363,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        -4.0237,
+        -5.1546,
+        -0.7246,
+        1.9708,
+        -7.4445,
+        9.9768
+      ],
+      "pre_cum_pct": -14.709633773815511,
+      "lookback_cum_pct": -6.200384516161527,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "000036.SZ",
+      "name": "华联控股",
+      "industry": "全国地产",
+      "market": "主板",
+      "pct_chg": 9.9762,
+      "amount_yi": 2.8379579437,
+      "turnover_rate": 4.529,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        -2.8037,
+        -1.9231,
+        -0.4902,
+        0.9852,
+        2.6829,
+        9.9762
+      ],
+      "pre_cum_pct": -1.6355490747243628,
+      "lookback_cum_pct": 8.177485278482965,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "600664.SH",
+      "name": "哈药股份",
+      "industry": "化学制药",
+      "market": "主板",
+      "pct_chg": 9.973,
+      "amount_yi": 17.42338841,
+      "turnover_rate": 17.4819,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        -3.4591,
+        0.6515,
+        -0.9709,
+        10.1307,
+        10.089,
+        9.973
+      ],
+      "pre_cum_pct": 16.66665689794824,
+      "lookback_cum_pct": 28.30182259038063,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列",
+        "高换手",
+        "前期已有强度"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "002532.SZ",
+      "name": "天山铝业",
+      "industry": "铝",
+      "market": "主板",
+      "pct_chg": 9.9641,
+      "amount_yi": 26.5403105131,
+      "turnover_rate": 5.5284,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        -2.1533,
+        -2.5528,
+        -3.6134,
+        4.686,
+        -0.2686,
+        9.9641
+      ],
+      "pre_cum_pct": -4.048287448344556,
+      "lookback_cum_pct": 5.512437142014948,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "603012.SH",
+      "name": "创力集团",
+      "industry": "专用机械",
+      "market": "主板",
+      "pct_chg": 9.9617,
+      "amount_yi": 3.39454438,
+      "turnover_rate": 6.2268,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        -3.7296,
+        -1.937,
+        1.4815,
+        0.4866,
+        -5.2058,
+        9.9617
+      ],
+      "pre_cum_pct": -8.741201368843488,
+      "lookback_cum_pct": 0.34972637439643073,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "600746.SH",
+      "name": "江苏索普",
+      "industry": "化工原料",
+      "market": "主板",
+      "pct_chg": 9.9617,
+      "amount_yi": 0.32761598000000003,
+      "turnover_rate": 0.4891,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        -2.5547,
+        -1.1236,
+        -1.8939,
+        1.7375,
+        -0.9488,
+        9.9617
+      ],
+      "pre_cum_pct": -4.74443503213643,
+      "lookback_cum_pct": 4.7446385832672355,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "600293.SH",
+      "name": "三峡新材",
+      "industry": "玻璃",
+      "market": "主板",
+      "pct_chg": 9.9602,
+      "amount_yi": 1.57663916,
+      "turnover_rate": 5.0817,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        -2.3077,
+        -2.7559,
+        2.834,
+        9.8425,
+        -10.0358,
+        9.9602
+      ],
+      "pre_cum_pct": -3.4615201088255554,
+      "lookback_cum_pct": 6.1539055652952035,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "600354.SH",
+      "name": "敦煌种业",
+      "industry": "种植业",
+      "market": "主板",
+      "pct_chg": 9.9593,
+      "amount_yi": 1.72327452,
+      "turnover_rate": 6.0586,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        -2.3952,
+        -0.409,
+        -0.616,
+        2.2727,
+        -0.6061,
+        9.9593
+      ],
+      "pre_cum_pct": -1.7964484402991587,
+      "lookback_cum_pct": 7.983937870186142,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "600227.SH",
+      "name": "赤天化",
+      "industry": "农药化肥",
+      "market": "主板",
+      "pct_chg": 9.9585,
+      "amount_yi": 3.6071293,
+      "turnover_rate": 10.9911,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        -3.6,
+        -0.4149,
+        1.25,
+        5.3498,
+        -5.8594,
+        9.9585
+      ],
+      "pre_cum_pct": -3.5999837764674414,
+      "lookback_cum_pct": 6.000011839153041,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列",
+        "高换手"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "603222.SH",
+      "name": "济民健康",
+      "industry": "医疗保健",
+      "market": "主板",
+      "pct_chg": 9.9558,
+      "amount_yi": 4.94914292,
+      "turnover_rate": 10.0053,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        -0.2304,
+        6.2356,
+        10.0,
+        -2.3715,
+        -8.502,
+        9.9558
+      ],
+      "pre_cum_pct": 4.147586262757885,
+      "lookback_cum_pct": 14.516311655905545,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列",
+        "高换手"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "002243.SZ",
+      "name": "力合科创",
+      "industry": "广告包装",
+      "market": "主板",
+      "pct_chg": 9.9518,
+      "amount_yi": 0.46698504999999996,
+      "turnover_rate": 0.5662,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        -3.5821,
+        0.0,
+        -0.4644,
+        2.0218,
+        -5.0305,
+        9.9518
+      ],
+      "pre_cum_pct": -7.014926196167015,
+      "lookback_cum_pct": 2.2387623786428446,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "000759.SZ",
+      "name": "中百集团",
+      "industry": "超市连锁",
+      "market": "主板",
+      "pct_chg": 9.9349,
+      "amount_yi": 5.0182034908,
+      "turnover_rate": 11.4481,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        -3.125,
+        10.017,
+        1.5432,
+        1.2158,
+        -7.8078,
+        9.9349
+      ],
+      "pre_cum_pct": 0.9868556364219572,
+      "lookback_cum_pct": 11.01979875704484,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列",
+        "高换手"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "002141.SZ",
+      "name": "贤丰控股",
+      "industry": "农业综合",
+      "market": "主板",
+      "pct_chg": 9.9138,
+      "amount_yi": 4.39120203,
+      "turnover_rate": 8.7074,
+      "volume_ratio": null,
+      "limit_up_hit": true,
+      "pct_path": [
+        3.5398,
+        -4.2735,
+        -4.4643,
+        -3.7383,
+        -9.9029,
+        9.9138
+      ],
+      "pre_cum_pct": -17.876106404920257,
+      "lookback_cum_pct": -9.734507841691242,
+      "active_reasons": [
+        "涨停/接近涨停",
+        "涨幅前列"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "002490.SZ",
+      "name": "山东墨龙",
+      "industry": "化工机械",
+      "market": "主板",
+      "pct_chg": 9.5642,
+      "amount_yi": 9.4549833537,
+      "turnover_rate": 19.9589,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        -0.9375,
+        9.9369,
+        10.043,
+        0.1304,
+        7.5521,
+        9.5642
+      ],
+      "pre_cum_pct": 29.062489435227846,
+      "lookback_cum_pct": 41.4062840497919,
+      "active_reasons": [
+        "涨幅前列",
+        "高换手",
+        "前期已有强度"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "300285.SZ",
+      "name": "国瓷材料",
+      "industry": "陶瓷",
+      "market": "创业板",
+      "pct_chg": 9.3735,
+      "amount_yi": 58.1480647352,
+      "turnover_rate": 10.2751,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        -0.6243,
+        -10.3484,
+        2.9431,
+        -8.2921,
+        -13.6167,
+        9.3735
+      ],
+      "pre_cum_pct": -27.343909159864978,
+      "lookback_cum_pct": -20.533490484964922,
+      "active_reasons": [
+        "涨幅前列",
+        "高成交",
+        "高换手"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "002938.SZ",
+      "name": "鹏鼎控股",
+      "industry": "元器件",
+      "market": "主板",
+      "pct_chg": 9.2835,
+      "amount_yi": 65.6302501949,
+      "turnover_rate": 2.763,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        -3.0014,
+        -1.2334,
+        4.4802,
+        3.2397,
+        -2.2037,
+        9.2835
+      ],
+      "pre_cum_pct": 1.0598671356256029,
+      "lookback_cum_pct": 10.441759901161408,
+      "active_reasons": [
+        "涨幅前列",
+        "高成交"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "601600.SH",
+      "name": "中国铝业",
+      "industry": "铝",
+      "market": "主板",
+      "pct_chg": 9.2478,
+      "amount_yi": 47.74370724999999,
+      "turnover_rate": 4.2121,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        -2.5943,
+        -0.9685,
+        -0.978,
+        3.0864,
+        -2.8743,
+        9.2478
+      ],
+      "pre_cum_pct": -4.363217238018146,
+      "lookback_cum_pct": 4.481081158244415,
+      "active_reasons": [
+        "涨幅前列",
+        "高成交"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "300223.SZ",
+      "name": "北京君正",
+      "industry": "半导体",
+      "market": "创业板",
+      "pct_chg": 9.2128,
+      "amount_yi": 82.1096016961,
+      "turnover_rate": 9.6925,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        -8.6166,
+        -6.8426,
+        9.5831,
+        -6.8299,
+        -13.5198,
+        9.2128
+      ],
+      "pre_cum_pct": -24.8339895016767,
+      "lookback_cum_pct": -17.909095286487176,
+      "active_reasons": [
+        "涨幅前列",
+        "高成交"
+      ],
+      "seed_themes": [
+        "存储/半导体"
+      ],
+      "tags": [
+        "CPU",
+        "DRAM",
+        "NAND",
+        "先进封装",
+        "半导体",
+        "存储",
+        "车规芯片"
+      ],
+      "theme_roles": {
+        "存储/半导体": "related"
+      },
+      "theme_chains": {
+        "存储/半导体": "midstream"
+      }
+    },
+    {
+      "ts_code": "300408.SZ",
+      "name": "三环集团",
+      "industry": "元器件",
+      "market": "创业板",
+      "pct_chg": 9.0161,
+      "amount_yi": 85.88619063200001,
+      "turnover_rate": 3.9328,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        -1.2206,
+        -6.8357,
+        2.5914,
+        -5.0519,
+        -12.0031,
+        9.0161
+      ],
+      "pre_cum_pct": -21.117527111487266,
+      "lookback_cum_pct": -14.005404473386074,
+      "active_reasons": [
+        "涨幅前列",
+        "高成交"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "601208.SH",
+      "name": "东材科技",
+      "industry": "化工原料",
+      "market": "主板",
+      "pct_chg": 9.0119,
+      "amount_yi": 41.80585491,
+      "turnover_rate": 7.9725,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        -3.8517,
+        -5.4688,
+        2.6552,
+        -6.4577,
+        -9.3756,
+        9.0119
+      ],
+      "pre_cum_pct": -20.904655387549298,
+      "lookback_cum_pct": -13.77666202641985,
+      "active_reasons": [
+        "涨幅前列",
+        "高成交"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "003030.SZ",
+      "name": "祖名股份",
+      "industry": "食品",
+      "market": "主板",
+      "pct_chg": 8.9803,
+      "amount_yi": 3.0830792967,
+      "turnover_rate": 15.2152,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        -3.0213,
+        -5.1777,
+        0.6478,
+        -0.4138,
+        10.0185,
+        8.9803
+      ],
+      "pre_cum_pct": 1.4042156390216665,
+      "lookback_cum_pct": 10.510618416052742,
+      "active_reasons": [
+        "涨幅前列",
+        "高换手"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "300214.SZ",
+      "name": "日科化学",
+      "industry": "化工原料",
+      "market": "创业板",
+      "pct_chg": 8.9431,
+      "amount_yi": 11.867146377000001,
+      "turnover_rate": 20.1239,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        0.0,
+        20.0,
+        8.9431
+      ],
+      "pre_cum_pct": 19.999999999999996,
+      "lookback_cum_pct": 30.731719999999996,
+      "active_reasons": [
+        "涨幅前列",
+        "高换手",
+        "前期已有强度"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "600176.SH",
+      "name": "中国巨石",
+      "industry": "玻璃",
+      "market": "主板",
+      "pct_chg": 8.7572,
+      "amount_yi": 124.00462988,
+      "turnover_rate": 5.9154,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        -5.9709,
+        -6.5667,
+        4.7092,
+        -5.1107,
+        -10.0,
+        8.7572
+      ],
+      "pre_cum_pct": -21.43871812442667,
+      "lookback_cum_pct": -14.558949548018962,
+      "active_reasons": [
+        "涨幅前列",
+        "高成交"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "002851.SZ",
+      "name": "麦格米特",
+      "industry": "电气设备",
+      "market": "主板",
+      "pct_chg": 8.4882,
+      "amount_yi": 86.09595057770001,
+      "turnover_rate": 11.2278,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        -1.3457,
+        -2.989,
+        10.0014,
+        1.3785,
+        -1.9161,
+        8.4882
+      ],
+      "pre_cum_pct": 4.683636378483613,
+      "lookback_cum_pct": 13.569392801562042,
+      "active_reasons": [
+        "涨幅前列",
+        "高成交",
+        "高换手"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "300759.SZ",
+      "name": "康龙化成",
+      "industry": "化学制药",
+      "market": "创业板",
+      "pct_chg": 8.3627,
+      "amount_yi": 44.0312811378,
+      "turnover_rate": 8.8697,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        -0.098,
+        -0.8505,
+        2.2105,
+        9.5546,
+        0.4125,
+        8.3627
+      ],
+      "pre_cum_pct": 11.372667459551899,
+      "lookback_cum_pct": 20.68642952119184,
+      "active_reasons": [
+        "涨幅前列",
+        "高成交",
+        "前期已有强度"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "000807.SZ",
+      "name": "云铝股份",
+      "industry": "铝",
+      "market": "主板",
+      "pct_chg": 8.3261,
+      "amount_yi": 47.2032856747,
+      "turnover_rate": 5.6445,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        -2.1416,
+        -0.3126,
+        -1.9265,
+        5.7561,
+        -0.3888,
+        8.3261
+      ],
+      "pre_cum_pct": 0.7867992094972909,
+      "lookback_cum_pct": 9.178408898479251,
+      "active_reasons": [
+        "涨幅前列",
+        "高成交"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "001378.SZ",
+      "name": "德冠新材",
+      "industry": "塑料",
+      "market": "主板",
+      "pct_chg": 8.2909,
+      "amount_yi": 3.0703046698,
+      "turnover_rate": 17.1988,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        -4.5023,
+        0.2095,
+        0.7318,
+        6.3311,
+        -4.0508,
+        8.2909
+      ],
+      "pre_cum_pct": -1.6509732641257435,
+      "lookback_cum_pct": 6.503046193518847,
+      "active_reasons": [
+        "涨幅前列",
+        "高换手"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "600105.SH",
+      "name": "永鼎股份",
+      "industry": "通信设备",
+      "market": "主板",
+      "pct_chg": 8.1442,
+      "amount_yi": 59.13530847,
+      "turnover_rate": 8.6902,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        -1.998,
+        -2.9969,
+        6.4733,
+        -3.1978,
+        -8.3605,
+        8.1442
+      ],
+      "pre_cum_pct": -10.209744895168015,
+      "lookback_cum_pct": -2.897046938920289,
+      "active_reasons": [
+        "涨幅前列",
+        "高成交"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "603083.SH",
+      "name": "剑桥科技",
+      "industry": "通信设备",
+      "market": "主板",
+      "pct_chg": 8.0455,
+      "amount_yi": 51.337523389999994,
+      "turnover_rate": 9.6201,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        0.3256,
+        -3.6562,
+        6.3214,
+        -1.4406,
+        -6.9165,
+        8.0455
+      ],
+      "pre_cum_pct": -5.718392253290572,
+      "lookback_cum_pct": 1.8670344979709208,
+      "active_reasons": [
+        "涨幅前列",
+        "高成交"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "603993.SH",
+      "name": "洛阳钼业",
+      "industry": "小金属",
+      "market": "主板",
+      "pct_chg": 8.0071,
+      "amount_yi": 54.97052176,
+      "turnover_rate": 1.796,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        -3.3861,
+        -0.9045,
+        -1.9395,
+        1.8034,
+        -3.6571,
+        8.0071
+      ],
+      "pre_cum_pct": -7.919080443233451,
+      "lookback_cum_pct": -0.5460691334035928,
+      "active_reasons": [
+        "涨幅前列",
+        "高成交"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "002281.SZ",
+      "name": "光迅科技",
+      "industry": "通信设备",
+      "market": "主板",
+      "pct_chg": 7.8472,
+      "amount_yi": 113.324251174,
+      "turnover_rate": 6.4532,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        6.047,
+        -2.1924,
+        9.9995,
+        -2.1133,
+        -7.4748,
+        7.8472
+      ],
+      "pre_cum_pct": 3.3345186260434367,
+      "lookback_cum_pct": 11.443384971666326,
+      "active_reasons": [
+        "涨幅前列",
+        "高成交"
+      ],
+      "seed_themes": [
+        "CPO光通信"
+      ],
+      "tags": [
+        "AI硬件",
+        "CPO",
+        "光器件",
+        "光模块",
+        "光通信",
+        "数据中心"
+      ],
+      "theme_roles": {
+        "CPO光通信": "core"
+      },
+      "theme_chains": {
+        "CPO光通信": "midstream"
+      }
+    },
+    {
+      "ts_code": "000657.SZ",
+      "name": "中钨高新",
+      "industry": "小金属",
+      "market": "主板",
+      "pct_chg": 7.8287,
+      "amount_yi": 53.3292976632,
+      "turnover_rate": 5.0633,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        -4.4991,
+        -3.7611,
+        2.7586,
+        -1.6844,
+        -7.161,
+        7.8287
+      ],
+      "pre_cum_pct": -13.795650025208428,
+      "lookback_cum_pct": -7.046970078731918,
+      "active_reasons": [
+        "涨幅前列",
+        "高成交"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "603459.SH",
+      "name": "红板科技",
+      "industry": "元器件",
+      "market": "主板",
+      "pct_chg": 7.5697,
+      "amount_yi": 14.91713128,
+      "turnover_rate": 20.6112,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        -5.4572,
+        -3.733,
+        8.5774,
+        -2.9318,
+        -3.5146,
+        7.5697
+      ],
+      "pre_cum_pct": -7.448403637205125,
+      "lookback_cum_pct": -0.442525447330655,
+      "active_reasons": [
+        "涨幅前列",
+        "高换手"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "920267.BJ",
+      "name": "鑫汇科",
+      "industry": "元器件",
+      "market": "北交所",
+      "pct_chg": 7.5529,
+      "amount_yi": 0.8106627965,
+      "turnover_rate": 17.5238,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        0.7813,
+        0.3524,
+        -1.9663,
+        29.9427,
+        -8.7652,
+        7.5529
+      ],
+      "pre_cum_pct": 17.54266267297031,
+      "lookback_cum_pct": 26.420542441997075,
+      "active_reasons": [
+        "涨幅前列",
+        "高换手",
+        "前期已有强度"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "600488.SH",
+      "name": "津药药",
+      "industry": "化学制药",
+      "market": "主板",
+      "pct_chg": 7.4751,
+      "amount_yi": 11.39641909,
+      "turnover_rate": 16.9439,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        -8.4404,
+        10.02,
+        -3.643,
+        5.482,
+        8.7814,
+        7.4751
+      ],
+      "pre_cum_pct": 11.376046288528174,
+      "lookback_cum_pct": 19.701517124641942,
+      "active_reasons": [
+        "涨幅前列",
+        "高换手",
+        "前期已有强度"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "603538.SH",
+      "name": "美诺华",
+      "industry": "化学制药",
+      "market": "主板",
+      "pct_chg": 7.4242,
+      "amount_yi": 35.1505076,
+      "turnover_rate": 31.4778,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        5.0986,
+        -10.0,
+        0.3217,
+        10.0107,
+        6.8653,
+        7.4242
+      ],
+      "pre_cum_pct": 11.559346257348157,
+      "lookback_cum_pct": 19.841735242186196,
+      "active_reasons": [
+        "涨幅前列",
+        "高成交",
+        "高换手",
+        "前期已有强度"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "688766.SH",
+      "name": "普冉股份",
+      "industry": "半导体",
+      "market": "科创板",
+      "pct_chg": 6.9652,
+      "amount_yi": 61.10088584,
+      "turnover_rate": 6.5764,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        -6.5777,
+        -2.2535,
+        9.8084,
+        -7.7513,
+        -14.2248,
+        6.9652
+      ],
+      "pre_cum_pct": -20.65687010924503,
+      "lookback_cum_pct": -15.13046242609416,
+      "active_reasons": [
+        "高成交"
+      ],
+      "seed_themes": [
+        "存储/半导体"
+      ],
+      "tags": [
+        "DRAM",
+        "EEPROM",
+        "NAND",
+        "NOR Flash",
+        "先进封装",
+        "半导体",
+        "存储"
+      ],
+      "theme_roles": {
+        "存储/半导体": "related"
+      },
+      "theme_chains": {
+        "存储/半导体": "midstream"
+      }
+    },
+    {
+      "ts_code": "688627.SH",
+      "name": "精智达",
+      "industry": "专用机械",
+      "market": "科创板",
+      "pct_chg": 6.9588,
+      "amount_yi": 37.38709368,
+      "turnover_rate": 8.5676,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        1.1634,
+        3.2394,
+        10.1837,
+        -7.3918,
+        -5.1068,
+        6.9588
+      ],
+      "pre_cum_pct": 1.1278504886720997,
+      "lookback_cum_pct": 8.165135348477804,
+      "active_reasons": [
+        "高成交"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "300308.SZ",
+      "name": "中际旭创",
+      "industry": "通信设备",
+      "market": "创业板",
+      "pct_chg": 6.8637,
+      "amount_yi": 462.49945646,
+      "turnover_rate": 3.6081,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        2.0911,
+        0.5749,
+        5.898,
+        -8.4459,
+        1.2816,
+        6.8637
+      ],
+      "pre_cum_pct": 0.8262470018217449,
+      "lookback_cum_pct": 7.746658117285787,
+      "active_reasons": [
+        "高成交"
+      ],
+      "seed_themes": [
+        "CPO光通信"
+      ],
+      "tags": [
+        "AI硬件",
+        "CPO",
+        "光模块",
+        "光通信",
+        "数据中心"
+      ],
+      "theme_roles": {
+        "CPO光通信": "core"
+      },
+      "theme_chains": {
+        "CPO光通信": "midstream"
+      }
+    },
+    {
+      "ts_code": "688008.SH",
+      "name": "澜起科技",
+      "industry": "半导体",
+      "market": "科创板",
+      "pct_chg": 6.808,
+      "amount_yi": 165.38871448999998,
+      "turnover_rate": 5.557,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        -5.7615,
+        -2.3894,
+        15.6383,
+        -6.2071,
+        -5.6965,
+        6.808
+      ],
+      "pre_cum_pct": -5.914039851474118,
+      "lookback_cum_pct": 0.49133231543752043,
+      "active_reasons": [
+        "高成交"
+      ],
+      "seed_themes": [
+        "存储/半导体"
+      ],
+      "tags": [
+        "AI芯片",
+        "DRAM",
+        "NAND",
+        "先进封装",
+        "内存接口芯片",
+        "半导体",
+        "存储"
+      ],
+      "theme_roles": {
+        "存储/半导体": "core"
+      },
+      "theme_chains": {
+        "存储/半导体": "midstream"
+      }
+    },
+    {
+      "ts_code": "000100.SZ",
+      "name": "TCL科技",
+      "industry": "元器件",
+      "market": "主板",
+      "pct_chg": 6.6528,
+      "amount_yi": 56.807382876700004,
+      "turnover_rate": 5.6032,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        1.3487,
+        -4.1825,
+        6.3492,
+        -4.4776,
+        -6.0547,
+        6.6528
+      ],
+      "pre_cum_pct": -7.32181324508735,
+      "lookback_cum_pct": -1.1561188366565278,
+      "active_reasons": [
+        "高成交"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "920222.BJ",
+      "name": "益坤电气",
+      "industry": "",
+      "market": "北交所",
+      "pct_chg": 6.5828,
+      "amount_yi": 0.5406889856,
+      "turnover_rate": 18.7479,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        -6.1287,
+        -3.0831,
+        -2.7695,
+        -1.1162,
+        -7.1623,
+        6.5828
+      ],
+      "pre_cum_pct": -18.79469801028758,
+      "lookback_cum_pct": -13.449115390908794,
+      "active_reasons": [
+        "高换手"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "300475.SZ",
+      "name": "香农芯创",
+      "industry": "元器件",
+      "market": "创业板",
+      "pct_chg": 6.4991,
+      "amount_yi": 115.26865382,
+      "turnover_rate": 11.5875,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        -7.8,
+        -0.0982,
+        9.7874,
+        1.1269,
+        -20.0,
+        6.4991
+      ],
+      "pre_cum_pct": -18.188676999618757,
+      "lookback_cum_pct": -12.871677306500985,
+      "active_reasons": [
+        "高成交",
+        "高换手"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "002185.SZ",
+      "name": "华天科技",
+      "industry": "半导体",
+      "market": "主板",
+      "pct_chg": 6.4235,
+      "amount_yi": 210.832391468,
+      "turnover_rate": 25.2527,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        9.9799,
+        -1.6416,
+        10.0139,
+        6.6582,
+        -4.6622,
+        6.4235
+      ],
+      "pre_cum_pct": 21.012912276607665,
+      "lookback_cum_pct": 28.786176696695563,
+      "active_reasons": [
+        "高成交",
+        "高换手",
+        "前期已有强度"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "300476.SZ",
+      "name": "胜宏科技",
+      "industry": "元器件",
+      "market": "创业板",
+      "pct_chg": 6.3258,
+      "amount_yi": 117.123369812,
+      "turnover_rate": 4.7703,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        -2.6813,
+        -1.8461,
+        6.0931,
+        -8.3249,
+        0.3713,
+        6.3258
+      ],
+      "pre_cum_pct": -6.749334426563158,
+      "lookback_cum_pct": -0.850483823718684,
+      "active_reasons": [
+        "高成交"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "600989.SH",
+      "name": "宝丰能源",
+      "industry": "化工原料",
+      "market": "主板",
+      "pct_chg": 6.3224,
+      "amount_yi": 38.93605495,
+      "turnover_rate": 2.453,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        -3.5021,
+        -0.5395,
+        -0.8876,
+        1.0945,
+        1.9685,
+        6.3224
+      ],
+      "pre_cum_pct": -1.940414659383105,
+      "lookback_cum_pct": 4.259304564192057,
+      "active_reasons": [
+        "高成交"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "600487.SH",
+      "name": "亨通光电",
+      "industry": "通信设备",
+      "market": "主板",
+      "pct_chg": 6.242,
+      "amount_yi": 159.11827997,
+      "turnover_rate": 9.0665,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        -4.3853,
+        -4.8584,
+        4.0281,
+        -2.8354,
+        -10.0013,
+        6.242
+      ],
+      "pre_cum_pct": -17.24579187041534,
+      "lookback_cum_pct": -12.080274198966666,
+      "active_reasons": [
+        "高成交"
+      ],
+      "seed_themes": [
+        "CPO光通信"
+      ],
+      "tags": [
+        "AI硬件",
+        "CPO",
+        "光模块",
+        "光纤光缆",
+        "光通信",
+        "数据中心",
+        "通信网络"
+      ],
+      "theme_roles": {
+        "CPO光通信": "related"
+      },
+      "theme_chains": {
+        "CPO光通信": "upstream"
+      }
+    },
+    {
+      "ts_code": "601899.SH",
+      "name": "紫金矿业",
+      "industry": "铜",
+      "market": "主板",
+      "pct_chg": 6.2135,
+      "amount_yi": 107.25809967000001,
+      "turnover_rate": 1.8461,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        -2.3338,
+        -0.9413,
+        0.9503,
+        0.3621,
+        -1.2987,
+        6.2135
+      ],
+      "pre_cum_pct": -3.253081430258309,
+      "lookback_cum_pct": 2.758288355072591,
+      "active_reasons": [
+        "高成交"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "603162.SH",
+      "name": "海通发展",
+      "industry": "水运",
+      "market": "主板",
+      "pct_chg": 6.1265,
+      "amount_yi": 7.06831024,
+      "turnover_rate": 16.0821,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        -2.5278,
+        -4.7718,
+        0.2179,
+        10.0,
+        0.0,
+        6.1265
+      ],
+      "pre_cum_pct": 2.3256064230181117,
+      "lookback_cum_pct": 8.5945847005243,
+      "active_reasons": [
+        "高换手"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "002436.SZ",
+      "name": "兴森科技",
+      "industry": "元器件",
+      "market": "主板",
+      "pct_chg": 6.1039,
+      "amount_yi": 47.315862110599994,
+      "turnover_rate": 7.8397,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        -6.7565,
+        -4.3097,
+        9.9975,
+        -7.4691,
+        -6.3944,
+        6.1039
+      ],
+      "pre_cum_pct": -14.992368589329963,
+      "lookback_cum_pct": -9.803587775654066,
+      "active_reasons": [
+        "高成交"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "603259.SH",
+      "name": "药明康德",
+      "industry": "化学制药",
+      "market": "主板",
+      "pct_chg": 6.0462,
+      "amount_yi": 93.26276585999999,
+      "turnover_rate": 3.0361,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        -3.7977,
+        -2.4514,
+        4.9133,
+        1.8419,
+        -2.4818,
+        6.0462
+      ],
+      "pre_cum_pct": -2.220184512404866,
+      "lookback_cum_pct": 3.691778691606107,
+      "active_reasons": [
+        "高成交"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "603986.SH",
+      "name": "兆易创新",
+      "industry": "半导体",
+      "market": "主板",
+      "pct_chg": 6.0258,
+      "amount_yi": 383.37659763,
+      "turnover_rate": 10.1645,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        -5.2408,
+        -2.7145,
+        10.0005,
+        -7.7605,
+        -10.0,
+        6.0258
+      ],
+      "pre_cum_pct": -15.817152908559029,
+      "lookback_cum_pct": -10.744462908522989,
+      "active_reasons": [
+        "高成交",
+        "高换手"
+      ],
+      "seed_themes": [
+        "存储/半导体"
+      ],
+      "tags": [
+        "DRAM",
+        "MCU",
+        "NAND",
+        "先进封装",
+        "半导体",
+        "存储"
+      ],
+      "theme_roles": {
+        "存储/半导体": "core"
+      },
+      "theme_chains": {
+        "存储/半导体": "midstream"
+      }
+    },
+    {
+      "ts_code": "300821.SZ",
+      "name": "东岳硅材",
+      "industry": "化工原料",
+      "market": "创业板",
+      "pct_chg": 5.9763,
+      "amount_yi": 36.9972142475,
+      "turnover_rate": 13.9664,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        5.8129,
+        13.4764,
+        14.7126,
+        -11.1111,
+        -18.6944,
+        5.9763
+      ],
+      "pre_cum_pct": -0.45412212361348736,
+      "lookback_cum_pct": 5.495038175912992,
+      "active_reasons": [
+        "高成交",
+        "高换手"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "603110.SH",
+      "name": "东方材料",
+      "industry": "染料涂料",
+      "market": "主板",
+      "pct_chg": 5.9675,
+      "amount_yi": 7.66185211,
+      "turnover_rate": 16.5308,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        -6.6396,
+        2.4673,
+        -0.4721,
+        10.0095,
+        -1.7249,
+        5.9675
+      ],
+      "pre_cum_pct": 2.935818559244874,
+      "lookback_cum_pct": 9.078513531767808,
+      "active_reasons": [
+        "高换手"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "002156.SZ",
+      "name": "通富微电",
+      "industry": "半导体",
+      "market": "主板",
+      "pct_chg": 5.8448,
+      "amount_yi": 178.252155532,
+      "turnover_rate": 16.013,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        3.0674,
+        -3.8118,
+        9.9985,
+        -1.6905,
+        3.6927,
+        5.8448
+      ],
+      "pre_cum_pct": 11.166402499041062,
+      "lookback_cum_pct": 17.66385639230501,
+      "active_reasons": [
+        "高成交",
+        "高换手",
+        "前期已有强度"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "688525.SH",
+      "name": "佰维存储",
+      "industry": "半导体",
+      "market": "科创板",
+      "pct_chg": 5.5613,
+      "amount_yi": 114.42818342,
+      "turnover_rate": 7.0317,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        -6.5318,
+        -6.7718,
+        5.719,
+        -7.2527,
+        -12.6152,
+        5.5613
+      ],
+      "pre_cum_pct": -25.337694398275158,
+      "lookback_cum_pct": -21.185499596846434,
+      "active_reasons": [
+        "高成交"
+      ],
+      "seed_themes": [
+        "存储/半导体"
+      ],
+      "tags": [
+        "DRAM",
+        "NAND",
+        "先进封装",
+        "半导体",
+        "存储"
+      ],
+      "theme_roles": {
+        "存储/半导体": "core"
+      },
+      "theme_chains": {
+        "存储/半导体": "midstream"
+      }
+    },
+    {
+      "ts_code": "300394.SZ",
+      "name": "天孚通信",
+      "industry": "通信设备",
+      "market": "创业板",
+      "pct_chg": 5.4761,
+      "amount_yi": 127.60497501900001,
+      "turnover_rate": 4.3915,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        2.9916,
+        0.6514,
+        10.5096,
+        -0.14,
+        -4.356,
+        5.4761
+      ],
+      "pre_cum_pct": 9.41350346786134,
+      "lookback_cum_pct": 15.4050963312649,
+      "active_reasons": [
+        "高成交",
+        "前期已有强度"
+      ],
+      "seed_themes": [
+        "CPO光通信"
+      ],
+      "tags": [
+        "AI硬件",
+        "CPO",
+        "光器件",
+        "光模块",
+        "光通信",
+        "数据中心"
+      ],
+      "theme_roles": {
+        "CPO光通信": "core"
+      },
+      "theme_chains": {
+        "CPO光通信": "midstream"
+      }
+    },
+    {
+      "ts_code": "000989.SZ",
+      "name": "九芝堂",
+      "industry": "中成药",
+      "market": "主板",
+      "pct_chg": 5.4566,
+      "amount_yi": 10.4944907702,
+      "turnover_rate": 16.1521,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        -3.0879,
+        0.6127,
+        -1.5834,
+        0.9901,
+        10.049,
+        5.4566
+      ],
+      "pre_cum_pct": 6.650787920238832,
+      "lookback_cum_pct": 12.470294813894567,
+      "active_reasons": [
+        "高换手"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "002428.SZ",
+      "name": "云南锗业",
+      "industry": "小金属",
+      "market": "主板",
+      "pct_chg": 5.0316,
+      "amount_yi": 56.273698033100004,
+      "turnover_rate": 9.4411,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        4.4535,
+        -10.0,
+        4.0202,
+        -2.6413,
+        -10.004,
+        5.0316
+      ],
+      "pre_cum_pct": -14.319663399646787,
+      "lookback_cum_pct": -10.008571583263414,
+      "active_reasons": [
+        "高成交"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "920189.BJ",
+      "name": "康美特",
+      "industry": "",
+      "market": "北交所",
+      "pct_chg": 4.8148,
+      "amount_yi": 3.6833427757,
+      "turnover_rate": 15.7786,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        400.6143,
+        -23.362,
+        -3.2981,
+        -10.596,
+        4.8148
+      ],
+      "pre_cum_pct": 231.69534039518288,
+      "lookback_cum_pct": 247.66580764453016,
+      "active_reasons": [
+        "高换手",
+        "前期已有强度"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "601869.SH",
+      "name": "长飞光纤",
+      "industry": "通信设备",
+      "market": "主板",
+      "pct_chg": 4.7948,
+      "amount_yi": 51.83496756,
+      "turnover_rate": 3.2836,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        -2.8918,
+        -4.4645,
+        7.6244,
+        -5.9443,
+        -7.9898,
+        4.7948
+      ],
+      "pre_cum_pct": -13.59228453193355,
+      "lookback_cum_pct": -9.449207390670688,
+      "active_reasons": [
+        "高成交"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "002837.SZ",
+      "name": "英维克",
+      "industry": "专用机械",
+      "market": "主板",
+      "pct_chg": 4.7029,
+      "amount_yi": 37.2855655594,
+      "turnover_rate": 4.8073,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        -3.7402,
+        1.1643,
+        5.1997,
+        -3.071,
+        -8.9203,
+        4.7029
+      ],
+      "pre_cum_pct": -9.559686143584411,
+      "lookback_cum_pct": -5.306368623231039,
+      "active_reasons": [
+        "高成交"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "600513.SH",
+      "name": "联环药业",
+      "industry": "化学制药",
+      "market": "主板",
+      "pct_chg": 4.5775,
+      "amount_yi": 8.79915158,
+      "turnover_rate": 17.7608,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        -6.5831,
+        -2.5624,
+        -2.5606,
+        10.0142,
+        10.0065,
+        4.5775
+      ],
+      "pre_cum_pct": 7.338055349470829,
+      "lookback_cum_pct": 12.251454833092845,
+      "active_reasons": [
+        "高换手"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "002475.SZ",
+      "name": "立讯精密",
+      "industry": "元器件",
+      "market": "主板",
+      "pct_chg": 4.5609,
+      "amount_yi": 83.5054431463,
+      "turnover_rate": 1.901,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        0.6361,
+        -1.28,
+        3.1855,
+        -3.5991,
+        -5.0853,
+        4.5609
+      ],
+      "pre_cum_pct": -6.2023008019557295,
+      "lookback_cum_pct": -1.924281539232131,
+      "active_reasons": [
+        "高成交"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "601138.SH",
+      "name": "工业富联",
+      "industry": "通信设备",
+      "market": "主板",
+      "pct_chg": 3.9949,
+      "amount_yi": 91.14464714,
+      "turnover_rate": 0.7167,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        0.2988,
+        3.4964,
+        5.3325,
+        -4.6886,
+        -4.8136,
+        3.9949
+      ],
+      "pre_cum_pct": -0.801952660039551,
+      "lookback_cum_pct": 3.1609101331445233,
+      "active_reasons": [
+        "高成交"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "300136.SZ",
+      "name": "信维通信",
+      "industry": "元器件",
+      "market": "创业板",
+      "pct_chg": 3.9277,
+      "amount_yi": 60.3208665722,
+      "turnover_rate": 8.6354,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        -0.2882,
+        -3.7687,
+        10.9368,
+        -0.331,
+        -13.1515,
+        3.9277
+      ],
+      "pre_cum_pct": -7.857293150710087,
+      "lookback_cum_pct": -4.238204053790529,
+      "active_reasons": [
+        "高成交"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "002916.SZ",
+      "name": "深南电路",
+      "industry": "元器件",
+      "market": "主板",
+      "pct_chg": 3.9127,
+      "amount_yi": 86.757863244,
+      "turnover_rate": 3.2995,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        -6.3835,
+        -2.3708,
+        9.9993,
+        -3.7419,
+        -7.608,
+        3.9127
+      ],
+      "pre_cum_pct": -10.588433101008343,
+      "lookback_cum_pct": -7.090026722951503,
+      "active_reasons": [
+        "高成交"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "603318.SH",
+      "name": "水发燃气",
+      "industry": "供气供热",
+      "market": "主板",
+      "pct_chg": 3.7427,
+      "amount_yi": 8.74038279,
+      "turnover_rate": 21.5858,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        -6.7207,
+        -2.9814,
+        -0.5122,
+        0.0,
+        10.0386,
+        3.7427
+      ],
+      "pre_cum_pct": -0.9270339042262377,
+      "lookback_cum_pct": 2.780969997840299,
+      "active_reasons": [
+        "高换手"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "600522.SH",
+      "name": "中天科技",
+      "industry": "通信设备",
+      "market": "主板",
+      "pct_chg": 3.7028,
+      "amount_yi": 98.68893521,
+      "turnover_rate": 6.9571,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        -1.5823,
+        -5.0984,
+        5.0825,
+        -2.6092,
+        -9.9978,
+        3.7028
+      ],
+      "pre_cum_pct": -13.970341072667047,
+      "lookback_cum_pct": -10.784834861905757,
+      "active_reasons": [
+        "高成交"
+      ],
+      "seed_themes": [
+        "CPO光通信"
+      ],
+      "tags": [
+        "AI硬件",
+        "CPO",
+        "光模块",
+        "光纤光缆",
+        "光通信",
+        "数据中心",
+        "通信网络"
+      ],
+      "theme_roles": {
+        "CPO光通信": "related"
+      },
+      "theme_chains": {
+        "CPO光通信": "upstream"
+      }
+    },
+    {
+      "ts_code": "600584.SH",
+      "name": "长电科技",
+      "industry": "半导体",
+      "market": "主板",
+      "pct_chg": 3.685,
+      "amount_yi": 274.24670381,
+      "turnover_rate": 15.5505,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        6.2046,
+        -6.8126,
+        9.9989,
+        -2.3281,
+        -2.0374,
+        3.685
+      ],
+      "pre_cum_pct": 4.164276983652093,
+      "lookback_cum_pct": 8.002730590499674,
+      "active_reasons": [
+        "高成交",
+        "高换手"
+      ],
+      "seed_themes": [
+        "存储/半导体"
+      ],
+      "tags": [
+        "DRAM",
+        "NAND",
+        "先进封装",
+        "半导体",
+        "存储",
+        "封测"
+      ],
+      "theme_roles": {
+        "存储/半导体": "related"
+      },
+      "theme_chains": {
+        "存储/半导体": "support"
+      }
+    },
+    {
+      "ts_code": "002594.SZ",
+      "name": "比亚迪",
+      "industry": "汽车整车",
+      "market": "主板",
+      "pct_chg": 3.679,
+      "amount_yi": 48.83296438160001,
+      "turnover_rate": 1.5691,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        -1.4622,
+        1.7853,
+        -1.0592,
+        3.6031,
+        -3.3556,
+        3.679
+      ],
+      "pre_cum_pct": -0.6397249454830556,
+      "lookback_cum_pct": 3.0157395737726356,
+      "active_reasons": [
+        "高成交"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "000988.SZ",
+      "name": "华工科技",
+      "industry": "专用机械",
+      "market": "主板",
+      "pct_chg": 3.6307,
+      "amount_yi": 110.72337983300001,
+      "turnover_rate": 7.2593,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        2.5985,
+        -3.9651,
+        7.7966,
+        -0.5849,
+        -2.423,
+        3.6307
+      ],
+      "pre_cum_pct": 3.0326756722872217,
+      "lookback_cum_pct": 6.773483027920957,
+      "active_reasons": [
+        "高成交"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "603501.SH",
+      "name": "豪威集团",
+      "industry": "半导体",
+      "market": "主板",
+      "pct_chg": 3.5711,
+      "amount_yi": 40.841323009999996,
+      "turnover_rate": 3.3087,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        2.5361,
+        1.4981,
+        6.1317,
+        -3.6681,
+        -0.6976,
+        3.5711
+      ],
+      "pre_cum_pct": 5.659779299868339,
+      "lookback_cum_pct": 9.432995678445932,
+      "active_reasons": [
+        "高成交"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "600288.SH",
+      "name": "大恒科技",
+      "industry": "元器件",
+      "market": "主板",
+      "pct_chg": 3.2452,
+      "amount_yi": 15.906198119999999,
+      "turnover_rate": 22.1802,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        9.9717,
+        10.0322,
+        -1.9287,
+        -1.4303,
+        0.6046,
+        3.2452
+      ],
+      "pre_cum_pct": 17.68034709989912,
+      "lookback_cum_pct": 21.49930972398504,
+      "active_reasons": [
+        "高换手",
+        "前期已有强度"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "300604.SZ",
+      "name": "长川科技",
+      "industry": "半导体",
+      "market": "创业板",
+      "pct_chg": 3.1915,
+      "amount_yi": 111.019548791,
+      "turnover_rate": 6.8818,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        0.1086,
+        4.2355,
+        17.8992,
+        -5.7995,
+        -7.6836,
+        3.1915
+      ],
+      "pre_cum_pct": 6.986743447450827,
+      "lookback_cum_pct": 10.401225364576216,
+      "active_reasons": [
+        "高成交"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "301308.SZ",
+      "name": "江波龙",
+      "industry": "半导体",
+      "market": "创业板",
+      "pct_chg": 3.1549,
+      "amount_yi": 88.7532089432,
+      "turnover_rate": 5.9569,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        -7.9055,
+        -5.6044,
+        4.6043,
+        -5.2258,
+        -11.1572,
+        3.1549
+      ],
+      "pre_cum_pct": -23.43199212969589,
+      "lookback_cum_pct": -21.01634804939566,
+      "active_reasons": [
+        "高成交"
+      ],
+      "seed_themes": [
+        "存储/半导体"
+      ],
+      "tags": [
+        "DRAM",
+        "NAND",
+        "先进封装",
+        "半导体",
+        "存储"
+      ],
+      "theme_roles": {
+        "存储/半导体": "core"
+      },
+      "theme_chains": {
+        "存储/半导体": "midstream"
+      }
+    },
+    {
+      "ts_code": "002842.SZ",
+      "name": "翔鹭钨业",
+      "industry": "小金属",
+      "market": "主板",
+      "pct_chg": 2.8518,
+      "amount_yi": 24.0657447093,
+      "turnover_rate": 23.7408,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        -7.2589,
+        -4.2717,
+        0.6098,
+        -2.6171,
+        5.1485,
+        2.8518
+      ],
+      "pre_cum_pct": -8.538428333913561,
+      "lookback_cum_pct": -5.930127233140103,
+      "active_reasons": [
+        "高换手"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "000725.SZ",
+      "name": "京东方A",
+      "industry": "元器件",
+      "market": "主板",
+      "pct_chg": 2.7818,
+      "amount_yi": 202.952390995,
+      "turnover_rate": 8.3036,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        -2.3196,
+        0.6596,
+        6.8152,
+        -6.8712,
+        -10.0132,
+        2.7818
+      ],
+      "pre_cum_pct": -11.984633279893364,
+      "lookback_cum_pct": -9.536221808473444,
+      "active_reasons": [
+        "高成交"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "300857.SZ",
+      "name": "协创数据",
+      "industry": "IT设备",
+      "market": "创业板",
+      "pct_chg": 2.6633,
+      "amount_yi": 50.931271880900006,
+      "turnover_rate": 4.0142,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        -5.137,
+        0.9738,
+        4.0427,
+        -4.9254,
+        -5.4432,
+        2.6633
+      ],
+      "pre_cum_pct": -10.406924973924603,
+      "lookback_cum_pct": -8.020792606755144,
+      "active_reasons": [
+        "高成交"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "688200.SH",
+      "name": "华峰测控",
+      "industry": "半导体",
+      "market": "科创板",
+      "pct_chg": 2.454,
+      "amount_yi": 39.159568709999995,
+      "turnover_rate": 3.8838,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        4.4835,
+        7.6584,
+        8.87,
+        -6.9982,
+        -3.1683,
+        2.454
+      ],
+      "pre_cum_pct": 10.28406535126065,
+      "lookback_cum_pct": 12.990436314980581,
+      "active_reasons": [
+        "高成交",
+        "前期已有强度"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "001248.SZ",
+      "name": "华润新能",
+      "industry": "",
+      "market": "主板",
+      "pct_chg": 2.4502,
+      "amount_yi": 24.8036608347,
+      "turnover_rate": 17.622,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        0.7621,
+        -12.7499,
+        -8.483,
+        -1.8945,
+        -9.931,
+        2.4502
+      ],
+      "pre_cum_pct": -28.905891088097533,
+      "lookback_cum_pct": -27.163943231538102,
+      "active_reasons": [
+        "高换手"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "920081.BJ",
+      "name": "欧伦电气",
+      "industry": "",
+      "market": "北交所",
+      "pct_chg": 2.3982,
+      "amount_yi": 1.8912241408,
+      "turnover_rate": 27.0677,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        21.5301,
+        -14.866,
+        2.3982
+      ],
+      "pre_cum_pct": 3.463435333999998,
+      "lookback_cum_pct": 5.94469544017997,
+      "active_reasons": [
+        "高换手"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "001309.SZ",
+      "name": "德明利",
+      "industry": "半导体",
+      "market": "主板",
+      "pct_chg": 2.2251,
+      "amount_yi": 119.99055401900002,
+      "turnover_rate": 10.3199,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        -8.984,
+        -3.0552,
+        4.3006,
+        -7.031,
+        -10.0003,
+        2.2251
+      ],
+      "pre_cum_pct": -22.99688531341898,
+      "lookback_cum_pct": -21.283489008527866,
+      "active_reasons": [
+        "高成交",
+        "高换手"
+      ],
+      "seed_themes": [
+        "存储/半导体"
+      ],
+      "tags": [
+        "DRAM",
+        "NAND",
+        "先进封装",
+        "半导体",
+        "存储",
+        "模组"
+      ],
+      "theme_roles": {
+        "存储/半导体": "related"
+      },
+      "theme_chains": {
+        "存储/半导体": "midstream"
+      }
+    },
+    {
+      "ts_code": "300433.SZ",
+      "name": "蓝思科技",
+      "industry": "元器件",
+      "market": "创业板",
+      "pct_chg": 1.9985,
+      "amount_yi": 43.915610318,
+      "turnover_rate": 2.233,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        1.0524,
+        -11.1861,
+        1.4767,
+        -6.6125,
+        -9.418,
+        1.9985
+      ],
+      "pre_cum_pct": -22.95852939877634,
+      "lookback_cum_pct": -21.418855608810894,
+      "active_reasons": [
+        "高成交"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "920136.BJ",
+      "name": "永励精密",
+      "industry": "",
+      "market": "北交所",
+      "pct_chg": 1.9743,
+      "amount_yi": 1.068713703,
+      "turnover_rate": 23.2645,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        76.3485,
+        -24.9118,
+        -14.6886,
+        1.9743
+      ],
+      "pre_cum_pct": 12.966723491819998,
+      "lookback_cum_pct": 15.197025513718998,
+      "active_reasons": [
+        "高换手",
+        "前期已有强度"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    },
+    {
+      "ts_code": "688017.SH",
+      "name": "绿的谐波",
+      "industry": "机械基件",
+      "market": "科创板",
+      "pct_chg": 1.9393,
+      "amount_yi": 43.42015784,
+      "turnover_rate": 6.2252,
+      "volume_ratio": null,
+      "limit_up_hit": false,
+      "pct_path": [
+        2.4428,
+        -15.9266,
+        4.4194,
+        -0.7523,
+        -6.2938,
+        1.9393
+      ],
+      "pre_cum_pct": -16.36077070141786,
+      "lookback_cum_pct": -14.738755127630455,
+      "active_reasons": [
+        "高成交"
+      ],
+      "seed_themes": [],
+      "tags": [],
+      "theme_roles": {},
+      "theme_chains": {}
+    }
+  ],
+  "output_path": "analysis_records\\theme_discovery\\2026-07\\2026-07-14.json",
+  "missing_datasets": []
+}

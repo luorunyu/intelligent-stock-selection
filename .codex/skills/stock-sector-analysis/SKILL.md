@@ -23,6 +23,8 @@ description: 分析 A 股当前或近期热门板块、行业和概念轮动、�
 - 记录文件格式：`analysis_records\sector_analysis\YYYY-MM\YYYY-MM-DD.md`
 - 结构化数据入口：同项目 `tushare-5000-a-stock` skill。
 
+
+
 ## 工作流程
 
 1. 确认分析日期、分析区间和交易状态。对“今天”“昨天”“上周”等相对时间写出准确日期。
@@ -51,7 +53,7 @@ description: 分析 A 股当前或近期热门板块、行业和概念轮动、�
 15. 需要保存和复盘规则时，读取 `references/recording-and-review.md`。
 16. 当用户需要熟悉市场公司、发现隐藏关联、拆产业链、寻找待扩散公司，或报告涉及明确热门主题时，读取 `references/stock-relationship-map.md`，生成独立“股票关系地图”报告：
    - 保存到 `analysis_records\stock_relationship_map\YYYY-MM\YYYY-MM-DD.md`。
-   - 报告必须按“主题/主线 -> 产业链环节 -> 相关公司 -> 证据与验证”组织。
+   - 报告必须按“主线 -> 子线 -> 产业链环节 -> 相关公司 -> 证据与验证”组织。
    - 必须包含已异动、待扩散、未启动、掉队、证伪五类公司。
    - 每家代表公司说明主营业务、产品、客户、上游、下游、题材、催化、财务验证、市场验证和信息缺口。
    - 生成前读取最近 5 篇股票关系地图、最近 5 篇板块分析和最近 5 篇观察池记录。

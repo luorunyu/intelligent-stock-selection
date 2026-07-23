@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import asdict, dataclass, replace
 from datetime import date, timedelta
 from pathlib import Path
+import time
 from typing import Any
 
 import pandas as pd
@@ -44,6 +45,7 @@ class AfterCloseManifest:
     cache_root: str
     results: list[dict[str, Any]]
     notes: list[str]
+    readiness: dict[str, Any] | None = None
 
 
 @dataclass(frozen=True)
@@ -71,6 +73,7 @@ class AfterCloseReportContext:
     notes: list[str]
     dataset_paths: dict[str, str]
     missing_datasets: list[str]
+    readiness: dict[str, Any] | None = None
 
 
 def prepare_after_close_data(
@@ -83,6 +86,8 @@ def prepare_after_close_data(
     optional_api_names: list[str] | None = None,
     index_codes: list[str] | None = None,
     available_only: bool = False,
+    required_retries: int = 3,
+    required_retry_wait_seconds: float = 60.0,
 ) -> AfterCloseManifest:
     """Collect the latest complete after-close Tushare bundle into formal cache."""
 
@@ -92,25 +97,37 @@ def prepare_after_close_data(
     if not open_dates:
         raise RuntimeError(f"no open trading days found before {req_date}")
 
-    required = list(required_api_names or DEFAULT_REQUIRED_APIS)
-    optional = list(optional_api_names or DEFAULT_OPTIONAL_APIS)
-    idx_codes = list(index_codes or DEFAULT_INDEX_CODES)
+    required = list(DEFAULT_REQUIRED_APIS if required_api_names is None else required_api_names)
+    optional = list(DEFAULT_OPTIONAL_APIS if optional_api_names is None else optional_api_names)
+    idx_codes = list(DEFAULT_INDEX_CODES if index_codes is None else index_codes)
     notes: list[str] = []
     selected_date: str | None = None
     selected_results: list[CollectionResult] = []
+    selected_readiness: dict[str, Any] | None = None
 
     for candidate in reversed(open_dates):
-        results = collector.collect_daily(
+        retries_for_candidate = required_retries if candidate == req_date else 0
+        results, readiness = _collect_candidate_with_required_retry(
+            collector,
             candidate,
             api_names=required + [api for api in optional if api not in required],
+            required_api_names=required,
             force=force,
             available_only=available_only,
+            cache_root=cache_root,
+            required_retries=retries_for_candidate,
+            required_retry_wait_seconds=required_retry_wait_seconds,
         )
         if _required_ready(candidate, required, results, cache_root=cache_root):
             selected_date = candidate
             selected_results = results
+            selected_readiness = readiness
             break
-        notes.append(f"{candidate}: required daily bundle not ready")
+        missing_required = readiness.get("final_missing_required") or []
+        if missing_required:
+            notes.append(f"{candidate}: required daily bundle not ready ({', '.join(missing_required)})")
+        else:
+            notes.append(f"{candidate}: required daily bundle not ready")
 
     if selected_date is None:
         raise RuntimeError(f"no complete daily/daily_basic bundle found before {req_date}")
@@ -134,6 +151,7 @@ def prepare_after_close_data(
             for result in _enrich_cached_results(selected_results, selected_date, cache_root=cache_root)
         ],
         notes=notes,
+        readiness=selected_readiness,
     )
     write_json(f"after_close_{req_date}.json", asdict(manifest), cache_root=cache_root)
     return manifest
@@ -191,6 +209,7 @@ def build_after_close_report_context(
         notes=list(payload.get("notes") or []),
         dataset_paths=dataset_paths,
         missing_datasets=missing,
+        readiness=payload.get("readiness"),
     )
 
 
@@ -276,6 +295,126 @@ def collect_index_daily_selected(
     return CollectionResult(api_name, "ok", rows=int(combined.shape[0]), path=str(path))
 
 
+def _collect_candidate_with_required_retry(
+    collector: TushareCollector,
+    trade_date: str,
+    *,
+    api_names: list[str],
+    required_api_names: list[str],
+    force: bool,
+    available_only: bool,
+    cache_root: str | Path | None,
+    required_retries: int,
+    required_retry_wait_seconds: float,
+) -> tuple[list[CollectionResult], dict[str, Any]]:
+    results = collector.collect_daily(
+        trade_date,
+        api_names=api_names,
+        force=force,
+        available_only=available_only,
+    )
+    by_name = {result.api_name: result for result in results}
+    attempts: list[dict[str, Any]] = []
+    waited_seconds = 0.0
+
+    attempts.append(
+        _readiness_attempt(
+            attempt=0,
+            trade_date=trade_date,
+            required_api_names=required_api_names,
+            results=list(by_name.values()),
+            cache_root=cache_root,
+        )
+    )
+
+    for attempt in range(1, max(required_retries, 0) + 1):
+        missing = _missing_required_apis(trade_date, required_api_names, cache_root=cache_root)
+        if not missing:
+            break
+        if required_retry_wait_seconds > 0:
+            time.sleep(required_retry_wait_seconds)
+            waited_seconds += required_retry_wait_seconds
+
+        missing = _missing_required_apis(trade_date, required_api_names, cache_root=cache_root)
+        if missing:
+            retry_results = collector.collect_missing_daily(
+                trade_date,
+                api_names=missing,
+                force=force,
+                available_only=available_only,
+            )
+            by_name.update({result.api_name: result for result in retry_results})
+
+        attempts.append(
+            _readiness_attempt(
+                attempt=attempt,
+                trade_date=trade_date,
+                required_api_names=required_api_names,
+                results=list(by_name.values()),
+                cache_root=cache_root,
+            )
+        )
+
+    final_missing = _missing_required_apis(trade_date, required_api_names, cache_root=cache_root)
+    ordered_results = [by_name[name] for name in api_names if name in by_name]
+    readiness = {
+        "trade_date": trade_date,
+        "required_api_names": required_api_names,
+        "required_ready": not final_missing,
+        "required_retries": max(required_retries, 0),
+        "required_retry_wait_seconds": required_retry_wait_seconds,
+        "waited_seconds": waited_seconds,
+        "cache_rechecked": len(attempts) > 1,
+        "attempts": attempts,
+        "final_missing_required": final_missing,
+        "fallback_reason": None if not final_missing else f"required APIs still missing: {', '.join(final_missing)}",
+    }
+    return ordered_results, readiness
+
+
+def _readiness_attempt(
+    *,
+    attempt: int,
+    trade_date: str,
+    required_api_names: list[str],
+    results: list[CollectionResult],
+    cache_root: str | Path | None,
+) -> dict[str, Any]:
+    return {
+        "attempt": attempt,
+        "ready": not _missing_required_apis(trade_date, required_api_names, cache_root=cache_root),
+        "missing_required": _missing_required_apis(trade_date, required_api_names, cache_root=cache_root),
+        "results": [
+            {
+                "api_name": result.api_name,
+                "status": result.status,
+                "rows": result.rows,
+                "message": result.message,
+            }
+            for result in results
+            if result.api_name in required_api_names
+        ],
+    }
+
+
+def _missing_required_apis(
+    trade_date: str,
+    required_api_names: list[str],
+    *,
+    cache_root: str | Path | None,
+) -> list[str]:
+    missing: list[str] = []
+    for api_name in required_api_names:
+        try:
+            data = read_dataset(api_name, trade_date, cache_root=cache_root)
+        except Exception:
+            missing.append(api_name)
+            continue
+        if data.empty:
+            missing.append(api_name)
+    return missing
+
+
 def _open_dates(requested_date: str, lookback_days: int, *, cache_root: str | Path | None) -> list[str]:
     end = _parse_date(requested_date)
     start = (end - timedelta(days=lookback_days)).strftime("%Y%m%d")
@@ -295,18 +434,7 @@ def _required_ready(
     *,
     cache_root: str | Path | None,
 ) -> bool:
-    by_name = {result.api_name: result for result in results}
-    for api_name in required_api_names:
-        result = by_name.get(api_name)
-        if result is None or result.status == "failed" or result.status == "empty":
-            return False
-        try:
-            data = read_dataset(api_name, trade_date, cache_root=cache_root)
-        except Exception:
-            return False
-        if data.empty:
-            return False
-    return True
+    return not _missing_required_apis(trade_date, required_api_names, cache_root=cache_root)
 
 
 def _parse_date(value: str) -> date:
