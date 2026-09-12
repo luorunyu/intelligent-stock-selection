@@ -1,3 +1,5 @@
+"""为热点主题中的股票划分龙头、中军、扩散、跟随、补涨、掉队和证伪角色。"""
+
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass, field
@@ -8,6 +10,7 @@ from stock_selection.context.relationship_map_context import related_map_entries
 
 @dataclass(frozen=True)
 class ThemeStockRoles:
+    """单个热点主题的角色分组、待验证候选和角色判断证据。"""
     theme: str
     source_type: str
     roles: dict[str, list[dict[str, Any]]]
@@ -37,6 +40,7 @@ def classify_hotspot_stock_roles(
     relationship_map_context: dict[str, Any] | None = None,
     max_active: int = 20,
 ) -> ThemeStockRoles:
+    """融合当日活跃股票和历史地图，给一个热点主题内的公司分配观察角色。"""
     map_context = relationship_map_context or {}
     map_entries = related_map_entries_for_hotspot(hotspot, map_context, limit=80)
     hotspot_codes = {str(stock.get("ts_code")) for stock in hotspot.get("stocks") or [] if stock.get("ts_code")}
@@ -46,6 +50,7 @@ def classify_hotspot_stock_roles(
     active_by_code = {str(stock.get("ts_code")): stock for stock in active_pool if stock.get("ts_code")}
 
     candidates: list[dict[str, Any]] = []
+    # 市场数据决定当前角色；地图只补充业务关系、待扩散与已证伪信息。
     for code in hotspot_codes:
         active = active_by_code.get(code, {})
         map_entry = map_by_code.get(code, {})
@@ -86,6 +91,7 @@ def classify_market_hotspot_roles(
     relationship_map_context: dict[str, Any] | None = None,
     limit: int = 8,
 ) -> list[dict[str, Any]]:
+    """为多个市场热点逐一计算角色分组，供报告直接引用。"""
     rows: list[dict[str, Any]] = []
     for hotspot in market_hotspots[:limit]:
         rows.append(
@@ -104,6 +110,7 @@ def summarize_map_related_candidates(
     relationship_map_context: dict[str, Any] | None = None,
     limit_per_theme: int = 20,
 ) -> list[dict[str, Any]]:
+    """汇总热点对应的历史地图公司，突出待扩散、未启动、掉队和证伪节点。"""
     context = relationship_map_context or {}
     rows: list[dict[str, Any]] = []
     seen: set[tuple[str, str]] = set()
@@ -132,6 +139,7 @@ def summarize_map_related_candidates(
 
 
 def _candidate_row(code: str, *, active: dict[str, Any], map_entry: dict[str, Any]) -> dict[str, Any]:
+    """合并行情和地图字段，构成可评分的单个角色候选行。"""
     pct = _num(active.get("pct_chg"))
     amount = _num(active.get("amount_yi"))
     turnover = _num(active.get("turnover_rate"))
@@ -165,6 +173,7 @@ def _candidate_row(code: str, *, active: dict[str, Any], map_entry: dict[str, An
 
 
 def _classify_role(row: dict[str, Any], hotspot: dict[str, Any]) -> str:
+    """按市场强度与地图状态给候选分配互斥的主题角色。"""
     map_status = str(row.get("map_status") or "")
     relationship = str(row.get("relationship_strength") or "")
     role_in_map = str(row.get("role_in_map") or "")

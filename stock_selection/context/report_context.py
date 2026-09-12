@@ -1,5 +1,6 @@
 ﻿from __future__ import annotations
 
+# 模块职责：从历史报告提取主题、个股、判断语句和关键词回溯，供当天复盘校正历史叙事。
 from dataclasses import dataclass, asdict
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -28,6 +29,7 @@ KEYWORD_STOPWORDS = {
 
 @dataclass(frozen=True)
 class ReportContext:
+    """最近报告与主题历史回溯的结构化索引。"""
     recent_reports: list[dict[str, Any]]
     mentioned_themes: list[str]
     mentioned_stocks: list[str]
@@ -46,6 +48,7 @@ def build_report_context(
     end_date: str | None = None,
     topic_lookback_days: int = 30,
 ) -> ReportContext:
+    """扫描三类历史报告，提取近期线索及近 30 天主题关键词命中。"""
     root = Path(records_root)
     report_paths = _recent_report_paths(root, limit)
     backtrack_paths = _backtrack_report_paths(root, end_date=end_date, days=topic_lookback_days)
@@ -55,6 +58,7 @@ def build_report_context(
     theme_events: list[dict[str, Any]] = []
     reports: list[dict[str, Any]] = []
 
+    # 历史文本只作为线索；后续必须由正式行情缓存验证，不能直接当作当天结论。
     for path in report_paths:
         text = path.read_text(encoding="utf-8")
         codes = sorted(set(STOCK_CODE_RE.findall(text)))
@@ -86,6 +90,7 @@ def build_report_context(
 
 
 def _recent_report_paths(root: Path, limit: int) -> list[Path]:
+    """跨板块、观察池和关系地图目录返回最近若干报告路径。"""
     paths: list[Path] = []
     for category in ["stock_selection", "sector_analysis", "stock_relationship_map"]:
         directory = root / category
@@ -95,6 +100,7 @@ def _recent_report_paths(root: Path, limit: int) -> list[Path]:
 
 
 def _backtrack_report_paths(root: Path, *, end_date: str | None, days: int) -> list[Path]:
+    """按日期窗口返回用于主题关键词回溯的历史报告。"""
     paths: list[Path] = []
     for category in ["stock_selection", "sector_analysis", "stock_relationship_map"]:
         directory = root / category
@@ -118,6 +124,7 @@ def _backtrack_report_paths(root: Path, *, end_date: str | None, days: int) -> l
 
 
 def _extract_themes(text: str) -> list[str]:
+    """从 Markdown 标题和常见主题字段抽取去重后的主题词。"""
     themes: list[str] = []
     for line in text.splitlines():
         stripped = line.strip()
@@ -158,6 +165,7 @@ def _extract_themes(text: str) -> list[str]:
 
 
 def _extract_judgement_lines(text: str, path: Path) -> list[dict[str, str]]:
+    """提取包含强化、分化、退潮等判断词的历史原文行。"""
     rows: list[dict[str, str]] = []
     for line in text.splitlines():
         stripped = line.strip("- ").strip()
@@ -169,6 +177,7 @@ def _extract_judgement_lines(text: str, path: Path) -> list[dict[str, str]]:
 
 
 def _extract_theme_events(text: str, path: Path, themes: list[str]) -> list[dict[str, Any]]:
+    """把主题相关判断行转换为带日期和状态的历史事件。"""
     rows: list[dict[str, Any]] = []
     active_heading = ""
     theme_keywords = _keywords_from_themes(themes)

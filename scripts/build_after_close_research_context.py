@@ -1,4 +1,6 @@
-﻿from __future__ import annotations
+﻿"""生成盘后多日研究上下文：把正式行情统计、历史报告和热点发现汇成 Markdown。"""
+
+from __future__ import annotations
 
 import argparse
 from datetime import datetime
@@ -16,6 +18,7 @@ from stock_selection.context.report_context import build_report_context
 
 
 def parse_args() -> argparse.Namespace:
+    """定义上下文截止日、回看窗口、报告数量和输出位置。"""
     parser = argparse.ArgumentParser(description="Build multi-day research context for after-close stock selection.")
     parser.add_argument("--date", default=None, help="End date in YYYYMMDD or YYYY-MM-DD. Defaults to latest cached date.")
     parser.add_argument("--lookback", type=int, default=5, help="Number of cached trading days to summarize.")
@@ -28,8 +31,10 @@ def parse_args() -> argparse.Namespace:
 
 
 def main() -> int:
+    """读取历史文本与多日缓存，渲染研究上下文并写入 research_context 目录。"""
     args = parse_args()
     end_date = _compact_date(args.date) if args.date else None
+    # 历史报告提供主题生命周期线索；正式缓存负责验证近期行情和成交事实。
     report_context = build_report_context(
         records_root=args.records_root,
         limit=args.recent_reports,
@@ -50,14 +55,17 @@ def main() -> int:
     )
     output = Path(args.output) if args.output else _default_output_path(Path(args.records_root), market_context.end_date)
     output.parent.mkdir(parents=True, exist_ok=True)
+    # 该文件是后续报告生成的输入，不替代当天正式观察池和关系地图。
     output.write_text(markdown, encoding="utf-8")
     print(markdown)
     return 0
 
 
 def render_markdown(*, report_context, market_context, theme_discovery: dict | None = None) -> str:
+    """按固定章节把历史、市场、热点和关系地图上下文渲染为 Markdown。"""
     report = report_context.to_dict()
     market = market_context.to_dict()
+    # 先输出可追溯的数据范围，再分别呈现“当日发现”和“历史验证”，避免两者混淆。
     lines = [
         f"# 收盘后多日研究上下文 - {_dash_date(market_context.end_date)}",
         "",
@@ -125,6 +133,7 @@ def render_markdown(*, report_context, market_context, theme_discovery: dict | N
 
 
 def _recent_reports_table(reports: list[dict]) -> list[str]:
+    """将最近报告索引渲染为 Markdown 表格。"""
     if not reports:
         return ["- 未找到最近报告。"]
     rows = [_row(["日期", "类别", "主题线索", "股票数", "路径"]), _row(["---", "---", "---", "---:", "---"])]
@@ -134,6 +143,7 @@ def _recent_reports_table(reports: list[dict]) -> list[str]:
 
 
 def _topic_backtrack_section(topics: list[dict]) -> list[str]:
+    """按主题关键词分组渲染最近 30 天历史命中段落。"""
     if not topics:
         return ["- 未抽取到关键词回溯线索。"]
     lines: list[str] = []
@@ -145,6 +155,7 @@ def _topic_backtrack_section(topics: list[dict]) -> list[str]:
 
 
 def _historical_theme_events_section(events: list[dict]) -> list[str]:
+    """将解析出的历史主题事件渲染为时间线表格。"""
     if not events:
         return ["- 未抽取到结构化历史主题事件。"]
     rows = [
@@ -168,6 +179,7 @@ def _historical_theme_events_section(events: list[dict]) -> list[str]:
 
 
 def _keyword_hits_table(hits: list[dict]) -> list[str]:
+    """渲染某个关键词对应的报告原文命中表格。"""
     if not hits:
         return ["- 无事件线索。"]
     rows = [_row(["日期", "类别", "摘要", "路径"]), _row(["---", "---", "---", "---"])]
@@ -186,6 +198,7 @@ def _keyword_hits_table(hits: list[dict]) -> list[str]:
 
 
 def _market_table(market_by_date: dict[str, dict]) -> list[str]:
+    """渲染多日市场宽度、成交额和涨跌停统计。"""
     rows = [_row(["日期", "上涨/下跌", "平均涨跌幅", "成交额(亿元)", "涨停/跌停"]), _row(["---", "---:", "---:", "---:", "---:"])]
     for trade_date, item in market_by_date.items():
         if not item:
@@ -203,6 +216,7 @@ def _market_table(market_by_date: dict[str, dict]) -> list[str]:
 
 
 def _industry_table(industries: list[dict]) -> list[str]:
+    """渲染行业强度、成交、资金和多日价格路径。"""
     if not industries:
         return ["- 无行业统计。"]
     rows = [_row(["行业", "最新涨跌", "上涨占比", "成交额", "资金净额(万)", "涨停/跌停", "成交趋势", "数据状态", "多日涨跌路径"]), _row(["---", "---:", "---:", "---:", "---:", "---:", "---", "---", "---"])]
@@ -224,6 +238,7 @@ def _industry_table(industries: list[dict]) -> list[str]:
 
 
 def _stock_table(stocks: list[dict]) -> list[str]:
+    """渲染历史报告核心股票在最近窗口内的验证数据。"""
     if not stocks:
         return ["- 最近报告股票未在正式缓存中形成可统计样本。"]
     rows = [_row(["股票", "行业", "最新涨跌", "区间涨跌", "成交额", "换手", "资金净额(万)", "多日涨跌路径"]), _row(["---", "---", "---:", "---:", "---:", "---:", "---:", "---"])]

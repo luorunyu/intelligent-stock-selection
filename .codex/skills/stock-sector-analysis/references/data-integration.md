@@ -1,6 +1,6 @@
 # 数据入口联合判断规则
 
-当需要把项目级 `tushare-5000-a-stock` skill 的数据入口与新闻信息联合判断时，使用本文件。结构化行情数据只使用 Tushare，不使用 AKShare。
+当需要把项目级 `tushare-10000-a-stock` skill 的数据入口与新闻信息联合判断时，使用本文件。结构化行情数据只使用 Tushare，不使用 AKShare。
 
 ## 目标
 
@@ -8,7 +8,7 @@
 
 ## 推荐数据入口
 
-优先使用同项目的 `tushare-5000-a-stock` skill 获取接口说明和代码模板。常用接口如下：
+优先使用同项目的 `tushare-10000-a-stock` skill 获取接口说明和代码模板。常用接口如下：
 
 - `trade_cal`：确认分析区间内哪些日期是交易日。
 - `index_daily`、`index_dailybasic`：获取指数涨跌、市场成交环境和指数估值/成交指标。

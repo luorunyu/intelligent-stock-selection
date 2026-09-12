@@ -1,3 +1,5 @@
+"""从正式全市场缓存发现当日热点，并与历史主题/关系地图交叉验证。"""
+
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass, field
@@ -31,6 +33,7 @@ GENERIC_TAGS = {"AI硬件", "半导体", "数据中心", "通信设备", "网络
 
 @dataclass(frozen=True)
 class ThemeDiscoveryResult:
+    """一次主题发现的完整输出：活跃股票、热点、生命周期和地图关联。"""
     trade_date: str
     lookback_dates: list[str]
     themes: list[dict[str, Any]] = field(default_factory=list)
@@ -65,6 +68,7 @@ def discover_active_themes(
     min_theme_score: float = 6.0,
     write: bool = False,
 ) -> ThemeDiscoveryResult:
+    """以全市场当日强度为起点，识别热点并补充历史主题、角色和轮动上下文。"""
     root = Path(cache_root) if cache_root is not None else DEFAULT_CACHE_ROOT
     dates = cached_trade_dates(cache_root=root, api_name="daily")
     if not dates:
@@ -75,6 +79,7 @@ def discover_active_themes(
     end_index = dates.index(end_date)
     lookback_dates = dates[max(0, end_index - lookback + 1) : end_index + 1]
 
+    # 种子主题只用于验证已知主线；当天热点必须先由全市场数据独立发现。
     seeds = load_theme_seeds(seed_path or DEFAULT_SEED_PATH)
     active_pool = build_active_pool(
         end_date,
@@ -104,6 +109,7 @@ def discover_active_themes(
         seeded_theme_matches=seeded_theme_matches,
     )
     theme_lifecycle = build_theme_lifecycle(market_hotspots)
+    # 历史地图只补全产业链和待验证公司，不可反向把旧主题强推为当天热点。
     relationship_map_context = build_relationship_map_context(
         records_root=records_root,
         end_date=end_date,
@@ -148,6 +154,7 @@ def discover_active_themes(
             "relationship_map_context enriches related candidates and roles; it does not override current market confirmation.",
         ],
     )
+    # JSON 是后续轮动与地图复盘的结构化基线；不写盘时仅返回内存结果。
     if write:
         output_path = write_theme_discovery(result, records_root=records_root)
         result = ThemeDiscoveryResult(
@@ -173,6 +180,7 @@ def discover_active_themes(
 
 
 def load_theme_seeds(path: str | Path = DEFAULT_SEED_PATH) -> dict[str, Any]:
+    """加载人工维护的已知主题标签；缺 PyYAML 时使用简化解析器兜底。"""
     seed_path = Path(path)
     if not seed_path.exists():
         return {}
@@ -194,12 +202,14 @@ def build_active_pool(
     top_n_pct: int = 120,
     top_n_amount: int = 120,
 ) -> list[dict[str, Any]]:
+    """以涨幅、成交额、涨停和换手筛出当日活跃股票，并补充多日涨跌路径。"""
     latest = _daily_snapshot(trade_date, cache_root=cache_root)
     latest = latest[latest["ts_code"].notna()].copy()
     latest["amount_yi"] = latest["amount"].astype(float) / 100000.0
     latest["limit_up_hit"] = _limit_up_mask(latest)
     latest["active_reason"] = ""
 
+    # 多维取并集，避免只看涨幅而漏掉高成交额或高换手的市场核心。
     candidates: set[str] = set()
     candidates.update(latest.nlargest(top_n_pct, "pct_chg")["ts_code"].tolist())
     candidates.update(latest.nlargest(top_n_amount, "amount")["ts_code"].tolist())
@@ -250,6 +260,7 @@ def build_active_pool(
 
 
 def build_stock_tag_index(seeds: dict[str, Any]) -> dict[str, dict[str, Any]]:
+    """把主题种子文件从“主题→股票”反转为“股票→主题/标签/角色”索引。"""
     index: dict[str, dict[str, Any]] = {}
     for theme_name, theme in seeds.items():
         theme_tags = list(theme.get("tags") or [])
@@ -285,6 +296,7 @@ def build_stock_tag_index(seeds: dict[str, Any]) -> dict[str, dict[str, Any]]:
 
 
 def enrich_active_pool(active_pool: list[dict[str, Any]], stock_index: dict[str, dict[str, Any]]) -> list[dict[str, Any]]:
+    """为活跃股票补充人工维护的主题标签、产业链位置和历史角色。"""
     enriched: list[dict[str, Any]] = []
     for item in active_pool:
         code = item["ts_code"]
@@ -304,6 +316,7 @@ def score_seed_themes(
     *,
     lookback_dates: list[str],
 ) -> list[dict[str, Any]]:
+    """以已匹配种子股票的涨停、上涨广度、成交和前期强度给旧主题评分。"""
     by_code = {item["ts_code"]: item for item in active_pool}
     rows: list[dict[str, Any]] = []
     for theme_name, theme in seeds.items():
@@ -353,6 +366,7 @@ def score_seed_themes(
 
 
 def score_tag_clusters(active_pool: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """聚合同标签活跃股票，识别非泛化标签形成的可能子主题。"""
     clusters: dict[str, list[dict[str, Any]]] = {}
     for item in active_pool:
         for tag in item.get("tags") or []:
@@ -392,6 +406,7 @@ def discover_industry_hotspots(
     lookback_dates: list[str],
     cache_root: str | Path | None = None,
 ) -> list[dict[str, Any]]:
+    """以申万行业为单位计算广度、成交、涨停和多日路径，发现行业热点。"""
     latest = _daily_snapshot(trade_date, cache_root=cache_root)
     if latest.empty or "industry" not in latest.columns:
         return []
@@ -469,6 +484,7 @@ def discover_unseeded_themes(
     industry_hotspots: list[dict[str, Any]],
     seeded_theme_matches: list[dict[str, Any]],
 ) -> list[dict[str, Any]]:
+    """从行业热点和行业族群中找与已知种子重叠较低的新主题候选。"""
     seeded_codes = {
         stock["ts_code"]
         for theme in seeded_theme_matches
@@ -515,6 +531,7 @@ def rank_market_hotspots(
     unseeded_themes: list[dict[str, Any]],
     seeded_theme_matches: list[dict[str, Any]],
 ) -> list[dict[str, Any]]:
+    """合并新主题、种子验证和行业热点，形成按分数排序的当日主题候选。"""
     rows: list[dict[str, Any]] = []
     for item in unseeded_themes:
         rows.append(
@@ -571,6 +588,7 @@ def rank_market_hotspots(
 
 
 def build_theme_lifecycle(market_hotspots: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """用涨跌广度、涨停和评分给当日热点标记萌芽、扩散、分化或退潮状态。"""
     rows: list[dict[str, Any]] = []
     for item in market_hotspots:
         avg_pct = _none_zero(item.get("latest_avg_pct"))
@@ -637,6 +655,7 @@ def write_theme_discovery(
     *,
     records_root: str | Path = "analysis_records",
 ) -> Path:
+    """按交易日将主题发现结果写入可供后续自动化复用的 JSON。"""
     dashed = _dash_date(result.trade_date)
     path = Path(records_root) / "theme_discovery" / dashed[:7] / f"{dashed}.json"
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -647,6 +666,7 @@ def write_theme_discovery(
 
 
 def _daily_snapshot(trade_date: str, *, cache_root: str | Path | None) -> pd.DataFrame:
+    """合并日线、每日指标和股票静态信息，构成主题发现的基础横截面。"""
     daily = read_dataset("daily", trade_date, cache_root=cache_root)
     basic = _read_optional_dataset("daily_basic", trade_date, cache_root=cache_root)
     stock = _read_optional_dataset("stock_basic", trade_date, cache_root=cache_root)
@@ -672,6 +692,7 @@ def _read_optional_dataset(api_name: str, trade_date: str, *, cache_root: str | 
 
 
 def _attach_limit_and_moneyflow(data: pd.DataFrame, trade_date: str, *, cache_root: str | Path | None) -> pd.DataFrame:
+    """按可用性合并资金流和涨停名单；缺失时保留原始横截面。"""
     result = data.copy()
     money = _read_optional_dataset("moneyflow", trade_date, cache_root=cache_root)
     if not money.empty and {"ts_code", "net_mf_amount"}.issubset(money.columns):

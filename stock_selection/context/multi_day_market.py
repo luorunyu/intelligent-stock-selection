@@ -1,5 +1,6 @@
 ﻿from __future__ import annotations
 
+# 模块职责：把最近多个交易日的正式缓存汇总为市场、行业和重点股票验证上下文。
 from dataclasses import dataclass, asdict
 from pathlib import Path
 from typing import Any
@@ -12,6 +13,7 @@ from stock_selection.data.tushare_cache import read_dataset
 
 @dataclass(frozen=True)
 class MultiDayMarketContext:
+    """盘后报告使用的多日市场事实：日期、宽度、行业和重点个股。"""
     end_date: str
     trade_dates: list[str]
     market_by_date: dict[str, dict[str, Any]]
@@ -30,6 +32,7 @@ def build_multi_day_market_context(
     cache_root: str | Path | None = None,
     focus_ts_codes: list[str] | None = None,
 ) -> MultiDayMarketContext:
+    """读取最近缓存日并聚合市场宽度、行业表现和历史提及股票的多日路径。"""
     dates = _recent_dates(end_date=end_date, lookback=lookback, cache_root=cache_root)
     missing: list[str] = []
     daily_by_date: dict[str, pd.DataFrame] = {}
@@ -38,6 +41,7 @@ def build_multi_day_market_context(
     money_by_date: dict[str, pd.DataFrame] = {}
     limit_by_date: dict[str, pd.DataFrame] = {}
 
+    # 每日数据独立读取，单个可选接口缺失只记录缺口，不中断整段复盘。
     for trade_date in dates:
         daily_by_date[trade_date] = _read_optional("daily", trade_date, cache_root=cache_root, missing=missing)
         stock_by_date[trade_date] = _read_optional("stock_basic", trade_date, cache_root=cache_root, missing=missing)
@@ -69,6 +73,7 @@ def build_multi_day_market_context(
 
 
 def _recent_dates(*, end_date: str | None, lookback: int, cache_root: str | Path | None) -> list[str]:
+    """从正式 daily 缓存中截取截止日以前的最近交易日序列。"""
     all_dates = cached_trade_dates(cache_root=cache_root, api_name="daily")
     if end_date:
         compact = end_date.replace("-", "")
@@ -77,6 +82,7 @@ def _recent_dates(*, end_date: str | None, lookback: int, cache_root: str | Path
 
 
 def _read_optional(api_name: str, trade_date: str, *, cache_root: str | Path | None, missing: list[str]) -> pd.DataFrame:
+    """读取可选缓存；失败时记录缺口并返回空表，保持上游统计可继续。"""
     try:
         return read_dataset(api_name, trade_date, cache_root=cache_root)
     except Exception:
@@ -85,6 +91,7 @@ def _read_optional(api_name: str, trade_date: str, *, cache_root: str | Path | N
 
 
 def _merged_daily(daily: pd.DataFrame, stock: pd.DataFrame, limit_list: pd.DataFrame) -> pd.DataFrame:
+    """按代码合并日线、股票静态信息和涨跌停信息，供横截面统计使用。"""
     if daily.empty:
         return pd.DataFrame()
     data = daily.copy()
@@ -99,6 +106,7 @@ def _merged_daily(daily: pd.DataFrame, stock: pd.DataFrame, limit_list: pd.DataF
 
 
 def _market_stats(data: pd.DataFrame) -> dict[str, Any]:
+    """从全市场横截面计算上涨/下跌、平均涨跌、成交额和涨跌停宽度。"""
     if data.empty:
         return {}
     pct = data["pct_chg"].astype(float)
@@ -121,6 +129,7 @@ def _industry_summaries(
     money_by_date: dict[str, pd.DataFrame],
     limit_by_date: dict[str, pd.DataFrame],
 ) -> list[dict[str, Any]]:
+    """按行业聚合最新表现，并补充多日价格与成交趋势。"""
     if not dates:
         return []
     daily_stats: dict[str, dict[str, dict[str, Any]]] = {}
@@ -176,6 +185,7 @@ def _focus_stock_summaries(
     money_by_date: dict[str, pd.DataFrame],
     focus_ts_codes: list[str],
 ) -> list[dict[str, Any]]:
+    """为历史报告提及的股票提取多日价格、成交、换手和资金验证数据。"""
     if not dates or not focus_ts_codes:
         return []
     unique_codes = list(dict.fromkeys(focus_ts_codes))
@@ -240,6 +250,7 @@ def _round_or_none(value) -> float | None:
 
 
 def _amount_trend(values: list[float]) -> str:
+    """用首尾成交额比较给出放量、缩量或平稳的简短标签。"""
     if len(values) < 2:
         return "待观察"
     if values[-1] >= values[0] * 1.2:
@@ -250,6 +261,7 @@ def _amount_trend(values: list[float]) -> str:
 
 
 def _industry_state(stats: dict[str, Any]) -> str:
+    """根据涨跌幅、上涨占比和涨停数给行业标记强弱状态。"""
     avg = stats["avg_pct"]
     up_ratio = stats["up_ratio"]
     amount = stats["amount_yi"]

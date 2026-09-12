@@ -1,3 +1,5 @@
+"""盘后正式数据管线：确认交易日、采集完整数据包、写 manifest 并提供报告上下文。"""
+
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass, replace
@@ -38,6 +40,7 @@ DEFAULT_INDEX_CODES = [
 
 @dataclass(frozen=True)
 class AfterCloseManifest:
+    """一次盘后数据准备的可落盘清单，记录请求日、实际交易日和接口结果。"""
     requested_date: str
     trade_date: str
     is_requested_date_open: bool
@@ -50,7 +53,7 @@ class AfterCloseManifest:
 
 @dataclass(frozen=True)
 class LatestAfterCloseBaseline:
-    """Read-only baseline for pre-open workflows."""
+    """盘前工作流只读使用的最近一次正式盘后基线。"""
 
     manifest_path: str | None
     requested_date: str | None
@@ -62,6 +65,7 @@ class LatestAfterCloseBaseline:
 
 @dataclass(frozen=True)
 class AfterCloseReportContext:
+    """报告阶段使用的数据路径、缺口与日期回退信息。"""
     requested_date: str
     trade_date: str
     report_date: str
@@ -89,7 +93,7 @@ def prepare_after_close_data(
     required_retries: int = 3,
     required_retry_wait_seconds: float = 60.0,
 ) -> AfterCloseManifest:
-    """Collect the latest complete after-close Tushare bundle into formal cache."""
+    """采集最近完整盘后数据包；请求日不完整时回退到最近可用交易日。"""
 
     req_date = requested_date or date.today().strftime("%Y%m%d")
     collector = TushareCollector(cache_root=cache_root)
@@ -105,6 +109,7 @@ def prepare_after_close_data(
     selected_results: list[CollectionResult] = []
     selected_readiness: dict[str, Any] | None = None
 
+    # 从请求日向前尝试；只有 required 接口全部非空落库的日期才可用于正式报告。
     for candidate in reversed(open_dates):
         retries_for_candidate = required_retries if candidate == req_date else 0
         results, readiness = _collect_candidate_with_required_retry(
@@ -132,6 +137,7 @@ def prepare_after_close_data(
     if selected_date is None:
         raise RuntimeError(f"no complete daily/daily_basic bundle found before {req_date}")
 
+    # 个股横截面完整后，再补主要宽基指数，供市场环境门控使用。
     index_result = collect_index_daily_selected(
         selected_date,
         idx_codes,
@@ -153,6 +159,7 @@ def prepare_after_close_data(
         notes=notes,
         readiness=selected_readiness,
     )
+    # 清单按“请求日期”命名，保留当天是否回退和最终实际交易日的证据。
     write_json(f"after_close_{req_date}.json", asdict(manifest), cache_root=cache_root)
     return manifest
 
@@ -163,7 +170,7 @@ def build_after_close_report_context(
     cache_root: str | Path | None = None,
     required_dataset_names: list[str] | None = None,
 ) -> AfterCloseReportContext:
-    """Build the report-stage context from a formal after-close manifest."""
+    """从正式 manifest 构建报告上下文，并逐项检查所需缓存是否存在。"""
 
     payload = asdict(manifest) if isinstance(manifest, AfterCloseManifest) else dict(manifest)
     req_date = str(payload["requested_date"])
@@ -186,6 +193,7 @@ def build_after_close_report_context(
 
     dataset_paths: dict[str, str] = {}
     missing: list[str] = []
+    # 报告生成器只能读取这里列出的正式路径；缺失项必须显式暴露而非猜测数据。
     for api_name in required:
         path = _existing_dataset_path(root, api_name, trade_date)
         if path is None:
@@ -214,7 +222,7 @@ def build_after_close_report_context(
 
 
 def latest_after_close_manifest(*, cache_root: str | Path | None = None) -> dict[str, Any]:
-    """Return the newest formal after-close manifest without collecting data."""
+    """不采集数据，只读取最新盘后 manifest，并附带其真实文件路径。"""
 
     metadata_dir = metadata_path("placeholder", cache_root=cache_root).parent
     manifests = sorted(metadata_dir.glob("after_close_*.json"))
@@ -231,7 +239,7 @@ def latest_after_close_manifest(*, cache_root: str | Path | None = None) -> dict
 
 
 def latest_complete_cached_trade_date(*, cache_root: str | Path | None = None) -> str | None:
-    """Return the latest cached date where the required daily bundle exists."""
+    """扫描 daily 与 daily_basic 的共同日期，返回最近完整缓存日。"""
 
     root = Path(cache_root) if cache_root is not None else DEFAULT_CACHE_ROOT
     daily_dir = root / "daily"
@@ -246,7 +254,7 @@ def latest_complete_cached_trade_date(*, cache_root: str | Path | None = None) -
 
 
 def latest_after_close_baseline(*, cache_root: str | Path | None = None) -> LatestAfterCloseBaseline:
-    """Resolve the newest formal after-close baseline for pre-open automation."""
+    """为盘前任务定位最新正式基线；缺 manifest 时降级为缓存扫描。"""
 
     root = str(Path(cache_root) if cache_root is not None else DEFAULT_CACHE_ROOT)
     manifest = latest_after_close_manifest(cache_root=cache_root)
@@ -277,6 +285,7 @@ def collect_index_daily_selected(
     cache_root: str | Path | None = None,
     force: bool = False,
 ) -> CollectionResult:
+    """采集指定交易日的主要宽基指数，并合并为单一正式缓存表。"""
     api_name = "index_daily_selected"
     from stock_selection.data.tushare_cache import dataset_exists, write_dataset
 
@@ -284,6 +293,7 @@ def collect_index_daily_selected(
         return CollectionResult(api_name, "skipped", message="cache exists")
 
     frames: list[pd.DataFrame] = []
+    # 指数接口按代码返回，合并后可避免报告阶段逐指数联网查询。
     for ts_code in index_codes:
         data = call_api("index_daily", {"ts_code": ts_code, "trade_date": trade_date})
         if isinstance(data, pd.DataFrame) and not data.empty:
@@ -307,6 +317,7 @@ def _collect_candidate_with_required_retry(
     required_retries: int,
     required_retry_wait_seconds: float,
 ) -> tuple[list[CollectionResult], dict[str, Any]]:
+    """采集一个候选日并只对缺失必需接口重试，返回结果和就绪性证据。"""
     results = collector.collect_daily(
         trade_date,
         api_names=api_names,
@@ -327,6 +338,7 @@ def _collect_candidate_with_required_retry(
         )
     )
 
+    # 首次采集后重新读盘确认；盘后数据延迟时才等待并补采缺失接口。
     for attempt in range(1, max(required_retries, 0) + 1):
         missing = _missing_required_apis(trade_date, required_api_names, cache_root=cache_root)
         if not missing:
@@ -380,6 +392,7 @@ def _readiness_attempt(
     results: list[CollectionResult],
     cache_root: str | Path | None,
 ) -> dict[str, Any]:
+    """将某次就绪性检查整理为可写入 manifest 的审计记录。"""
     return {
         "attempt": attempt,
         "ready": not _missing_required_apis(trade_date, required_api_names, cache_root=cache_root),
@@ -403,6 +416,7 @@ def _missing_required_apis(
     *,
     cache_root: str | Path | None,
 ) -> list[str]:
+    """读取必需缓存并返回缺失或空表的接口名。"""
     missing: list[str] = []
     for api_name in required_api_names:
         try:
@@ -416,6 +430,7 @@ def _missing_required_apis(
 
 
 def _open_dates(requested_date: str, lookback_days: int, *, cache_root: str | Path | None) -> list[str]:
+    """从交易所日历取得请求日前的开市日，供盘后回退逐日尝试。"""
     end = _parse_date(requested_date)
     start = (end - timedelta(days=lookback_days)).strftime("%Y%m%d")
     cal = call_api(
@@ -434,14 +449,17 @@ def _required_ready(
     *,
     cache_root: str | Path | None,
 ) -> bool:
+    """判断候选交易日的必需数据集是否均已可读且非空。"""
     return not _missing_required_apis(trade_date, required_api_names, cache_root=cache_root)
 
 
 def _parse_date(value: str) -> date:
+    """把 YYYYMMDD 转换为日期对象，供回溯窗口计算。"""
     return date(int(value[:4]), int(value[4:6]), int(value[6:8]))
 
 
 def _dataset_date(path: Path) -> str | None:
+    """从缓存文件名提取合法交易日。"""
     value = path.stem
     return value if len(value) == 8 and value.isdigit() else None
 
@@ -452,6 +470,7 @@ def _enrich_cached_results(
     *,
     cache_root: str | Path | None,
 ) -> list[CollectionResult]:
+    """为“缓存已存在”的结果补充真实路径和行数，方便 manifest 审计。"""
     enriched: list[CollectionResult] = []
     root = Path(cache_root) if cache_root is not None else DEFAULT_CACHE_ROOT
     for result in results:
@@ -472,6 +491,7 @@ def _enrich_cached_results(
 
 
 def _existing_dataset_path(cache_root: Path, api_name: str, trade_date: str) -> Path | None:
+    """按 Parquet 优先、CSV 兼容的顺序寻找某接口缓存文件。"""
     for suffix in [".parquet", ".csv"]:
         path = cache_root / api_name / f"{trade_date}{suffix}"
         if path.exists():
@@ -480,4 +500,5 @@ def _existing_dataset_path(cache_root: Path, api_name: str, trade_date: str) -> 
 
 
 def _format_dash_date(value: str) -> str:
+    """将 YYYYMMDD 格式化为报告使用的 YYYY-MM-DD。"""
     return f"{value[:4]}-{value[4:6]}-{value[6:8]}"

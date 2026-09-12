@@ -1,3 +1,5 @@
+"""命令行入口：准备盘后复盘所需的正式 Tushare 数据包与清单。"""
+
 from __future__ import annotations
 
 import argparse
@@ -14,6 +16,7 @@ from stock_selection.data.after_close import prepare_after_close_data
 
 
 def parse_args() -> argparse.Namespace:
+    """定义请求日期、缓存目录和补数策略。"""
     parser = argparse.ArgumentParser(description="Prepare formal after-close Tushare cache bundle.")
     parser.add_argument("--date", default=None, help="Requested date in YYYYMMDD. Defaults to today.")
     parser.add_argument("--cache-root", default=None, help="Override cache root.")
@@ -24,6 +27,7 @@ def parse_args() -> argparse.Namespace:
 
 
 def main() -> int:
+    """采集最新完整交易日的数据，并以 JSON 输出 manifest 供后续流程使用。"""
     args = parse_args()
     manifest = prepare_after_close_data(
         args.date,

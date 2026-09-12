@@ -18,7 +18,7 @@
 
 以下来源是优先参考对象，包括但不限于这些网站。实际分析时应根据可访问性、发布时间、数据完整性和交叉验证需要选择来源。
 
-- 项目级结构化数据：`tushare-5000-a-stock` skill 指导下的 `trade_cal`、`index_daily`、`index_dailybasic`、`stock_basic`、`daily`、`daily_basic`、`stk_limit`、`sw_daily`、`index_member_all`、`moneyflow`、`moneyflow_hsgt`、`hk_hold`、`top_list`、`top_inst`、`margin`、`margin_detail` 等接口。
+- 项目级结构化数据：`tushare-10000-a-stock` skill 指导下的 `trade_cal`、`index_daily`、`index_dailybasic`、`stock_basic`、`daily`、`daily_basic`、`stk_limit`、`sw_daily`、`index_member_all`、`moneyflow`、`moneyflow_hsgt`、`hk_hold`、`top_list`、`top_inst`、`margin`、`margin_detail` 等接口。
 - 官方市场数据：上海证券交易所、深圳证券交易所、北京证券交易所、中国证券登记结算有限责任公司等。
 - 综合财经新闻：新浪财经、证券时报、中国证券报、上海证券报、证券日报、第一财经、财联社、每日经济新闻、中新经纬等。
 - 公司级催化：上市公司公告、交易所披露文件、互动易、上证 e 互动、公司官网、投资者关系活动记录、业绩说明会纪要等。

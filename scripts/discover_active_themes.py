@@ -1,3 +1,5 @@
+"""命令行入口：从已缓存的全市场数据识别当日活跃主题。"""
+
 from __future__ import annotations
 
 import argparse
@@ -14,6 +16,7 @@ from stock_selection.context.theme_discovery import discover_active_themes
 
 
 def parse_args() -> argparse.Namespace:
+    """定义主题发现使用的日期、样本规模、阈值和写盘开关。"""
     parser = argparse.ArgumentParser(description="Discover active cross-industry themes from cached A-share data.")
     parser.add_argument("--date", default=None, help="Trade date in YYYYMMDD or YYYY-MM-DD. Defaults to latest cached date.")
     parser.add_argument("--cache-root", default=None, help="Override formal Tushare cache root.")
@@ -28,7 +31,9 @@ def parse_args() -> argparse.Namespace:
 
 
 def main() -> int:
+    """运行热点发现并输出 JSON，供人工阅读或其他自动化步骤消费。"""
     args = parse_args()
+    # 主题发现只读取正式缓存；--write 才会额外沉淀可回溯的 JSON 记录。
     result = discover_active_themes(
         args.date,
         cache_root=args.cache_root,

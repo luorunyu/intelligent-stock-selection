@@ -1,3 +1,5 @@
+"""把历史股票关系地图 Markdown 解析为可查询的公司、主题和待扩散节点索引。"""
+
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass, field
@@ -13,6 +15,7 @@ HEADING_RE = re.compile(r"^#{1,6}\s+(.+)$")
 
 @dataclass(frozen=True)
 class RelationshipMapContext:
+    """历史地图中的公司卡片、主题索引和状态分组。"""
     end_date: str | None
     source_files: list[str]
     themes: list[dict[str, Any]]
@@ -38,12 +41,14 @@ def build_relationship_map_context(
     lookback: int = 20,
     recent_limit: int = 8,
 ) -> RelationshipMapContext:
+    """读取最近关系地图，合并公司卡片和更新记录，供热点发现补全映射。"""
     root = Path(records_root) / "stock_relationship_map"
     paths = _relationship_map_paths(root, end_date=end_date, lookback=lookback, limit=recent_limit)
     companies: list[dict[str, Any]] = []
     updates: list[dict[str, Any]] = []
     gaps: list[str] = []
 
+    # 地图是历史辅助证据，不得覆盖当天由全市场数据发现的热点。
     for path in paths:
         try:
             text = path.read_text(encoding="utf-8")
@@ -82,6 +87,7 @@ def build_relationship_map_context(
 
 
 def parse_relationship_map_text(text: str, *, source_path: str | Path | None = None) -> dict[str, list[dict[str, Any]]]:
+    """解析一份关系地图 Markdown，提取公司卡片和历史更新行。"""
     source = str(source_path) if source_path is not None else ""
     source_date = _path_date(Path(source)) if source else None
     companies: list[dict[str, Any]] = []
@@ -92,6 +98,7 @@ def parse_relationship_map_text(text: str, *, source_path: str | Path | None = N
     current_section = ""
     current_card: dict[str, Any] | None = None
 
+    # 解析遵循报告模板的标题与字段标签；无法识别的原文保持忽略，避免臆造结构。
     for raw_line in text.splitlines():
         line = raw_line.strip()
         if not line:
@@ -159,6 +166,7 @@ def parse_relationship_map_text(text: str, *, source_path: str | Path | None = N
 
 
 def related_map_entries_for_hotspot(hotspot: dict[str, Any], context: dict[str, Any], *, limit: int = 40) -> list[dict[str, Any]]:
+    """按主题/标签匹配热点与历史地图，返回最相关的公司和待验证节点。"""
     terms = _hotspot_terms(hotspot)
     companies = context.get("companies") or []
     rows: list[dict[str, Any]] = []

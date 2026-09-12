@@ -1,3 +1,5 @@
+"""命令行入口：探测当前 Tushare 令牌可调用的接口并保存权限结果。"""
+
 from __future__ import annotations
 
 import argparse
@@ -14,6 +16,7 @@ from stock_selection.data.tushare_permissions import probe_available_apis
 
 
 def parse_args() -> argparse.Namespace:
+    """定义待探测日期、接口范围和缓存目录。"""
     parser = argparse.ArgumentParser(description="Probe Tushare API availability for the configured token.")
     parser.add_argument("--date", default="latest", help="Trade date in YYYYMMDD, or latest.")
     parser.add_argument("--api", action="append", dest="apis", help="Probe only this API. Repeatable.")
@@ -22,8 +25,10 @@ def parse_args() -> argparse.Namespace:
 
 
 def main() -> int:
+    """确定交易日后逐接口探测，输出可用性和样本行数。"""
     args = parse_args()
     trade_date = args.date
+    # 使用交易日历而非自然日，避免周末或节假日探测空数据。
     if trade_date == "latest":
         trade_date = TushareCollector(cache_root=args.cache_root).latest_trade_date()
 

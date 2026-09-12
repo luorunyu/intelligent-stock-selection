@@ -1,0 +1,7 @@
+[stock-sector-analysis]
+市场当前在交易什么主线，为什么涨，是否有扩散和催化确认，分析报告在 analysis_records/sector_analysis，
+主题明确的时候还会生成关系地图
+
+[stock-selection-research]
+在已经确认主线中，哪些个股适合纳入后续研究观察，分析报告在analysis_records/sector_selection
+包括评分证据，风险，观察剔除条件

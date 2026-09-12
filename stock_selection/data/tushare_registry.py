@@ -1,3 +1,5 @@
+"""Tushare 接口注册表：集中声明采集频率、缓存方式和最小调用参数。"""
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -10,6 +12,7 @@ CacheMode = Literal["trade_date", "static", "on_demand"]
 
 @dataclass(frozen=True)
 class TushareApiSpec:
+    """单个接口的采集调度与缓存元数据。"""
     name: str
     frequency: Frequency
     cache_mode: CacheMode
@@ -59,6 +62,7 @@ _SPECS_BY_NAME = {spec.name: spec for spec in ALL_API_SPECS}
 
 
 def get_spec(api_name: str) -> TushareApiSpec:
+    """按名称取得接口声明；未知名称立即报错以防写入错误缓存目录。"""
     try:
         return _SPECS_BY_NAME[api_name]
     except KeyError as exc:
@@ -70,6 +74,7 @@ def iter_specs(
     *,
     enabled_only: bool = False,
 ) -> tuple[TushareApiSpec, ...]:
+    """按频率及默认启用状态筛选接口声明。"""
     specs = ALL_API_SPECS
     if frequency is not None:
         specs = tuple(spec for spec in specs if spec.frequency == frequency)
@@ -79,6 +84,7 @@ def iter_specs(
 
 
 def default_params(api_name: str, trade_date: str | None = None) -> dict[str, str]:
+    """返回权限探测和常规采集可使用的最小安全参数。"""
     if api_name == "stock_basic":
         return {
             "exchange": "",

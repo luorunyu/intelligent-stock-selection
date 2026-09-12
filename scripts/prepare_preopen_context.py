@@ -1,3 +1,5 @@
+"""盘前入口：只读取最近一次正式盘后基线，生成隔夜校准上下文。"""
+
 from __future__ import annotations
 
 import argparse
@@ -16,6 +18,7 @@ from stock_selection.data.after_close import latest_after_close_baseline
 
 
 def parse_args() -> argparse.Namespace:
+    """定义盘前报告日期、缓存目录和历史记录读取数量。"""
     parser = argparse.ArgumentParser(
         description="Build read-only pre-open context from formal after-close records."
     )
@@ -27,12 +30,15 @@ def parse_args() -> argparse.Namespace:
 
 
 def main() -> int:
+    """定位盘后基线、关联昨日报告，并输出不拉取全市场数据的盘前上下文。"""
     args = parse_args()
     report_date = _normal_date(args.date or date.today().strftime("%Y%m%d"))
     records_root = Path(args.records_root)
+    # 盘前只能复用正式盘后结果，避免在开盘前触发全市场采集。
     baseline = latest_after_close_baseline(cache_root=args.cache_root)
     trade_date_dash = _dash_date(baseline.trade_date) if baseline.trade_date else None
 
+    # 输出中只给出报告生成所需的基线、记录路径和风险缺口，不生成盘后观察池。
     payload = {
         "report_date": report_date,
         "mode": "preopen_read_only_context",
@@ -94,6 +100,7 @@ def main() -> int:
 
 
 def _normal_date(value: str) -> str:
+    """校验日期并转换为报告目录使用的 YYYY-MM-DD。"""
     compact = value.replace("-", "")
     if len(compact) != 8 or not compact.isdigit():
         raise ValueError(f"invalid date: {value}")
@@ -101,10 +108,12 @@ def _normal_date(value: str) -> str:
 
 
 def _dash_date(value: str | None) -> str | None:
+    """为可选交易日提供安全的横杠日期转换。"""
     return _normal_date(value) if value else None
 
 
 def _dated_record_path(records_root: Path, category: str, report_date: str | None) -> str | None:
+    """返回指定日期的正式报告路径；文件不存在时返回空值。"""
     if not report_date:
         return None
     path = records_root / category / report_date[:7] / f"{report_date}.md"
@@ -112,6 +121,7 @@ def _dated_record_path(records_root: Path, category: str, report_date: str | Non
 
 
 def _recent_records(root: Path, limit: int) -> list[str]:
+    """按修改时间列出一类报告的最近文件。"""
     if not root.exists():
         return []
     files = sorted(root.glob("*/*.md"), key=lambda path: path.stat().st_mtime, reverse=True)
@@ -119,6 +129,7 @@ def _recent_records(root: Path, limit: int) -> list[str]:
 
 
 def _information_gaps(baseline, records_root: Path, trade_date: str | None) -> list[str]:
+    """汇总盘后基线或昨日正式报告缺失时的披露提示。"""
     gaps: list[str] = []
     if not baseline.trade_date:
         gaps.append("No formal after-close baseline was found in data_cache/tushare.")

@@ -10,6 +10,7 @@ __pycache__/
 
 /data/
 /data_cache/
+/automation_outputs/
 *.parquet
 *.csv
 *.db

@@ -1,7 +1,4 @@
 interface:
-  display_name: "Stock Selection Research"
-  short_description: "Build traceable A-share watchlists."
-  default_prompt: "Use $stock-selection-research to build a traceable A-share observation watchlist from funds, sectors, news, and risks."
-
-policy:
-  allow_implicit_invocation: true
+  display_name: "A 股观察池研究"
+  short_description: "基于资金、板块、新闻和风险构建可追溯的 A 股观察池"
+  default_prompt: "使用 $stock-selection-research，基于资金、板块、新闻和风险构建可追溯的 A 股观察池。"

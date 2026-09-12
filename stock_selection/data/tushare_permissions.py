@@ -1,3 +1,5 @@
+"""探测并缓存当前 Tushare 令牌可用的接口，供批量采集跳过无权限项。"""
+
 from __future__ import annotations
 
 from datetime import datetime
@@ -13,6 +15,7 @@ PERMISSIONS_FILE = "available_apis.json"
 
 
 def load_available_apis(*, cache_root: str | Path | None = None) -> dict[str, Any]:
+    """读取最近一次权限探测结果；首次运行时返回空字典。"""
     return read_json(PERMISSIONS_FILE, cache_root=cache_root)
 
 
@@ -22,10 +25,12 @@ def probe_available_apis(
     api_names: list[str] | None = None,
     cache_root: str | Path | None = None,
 ) -> dict[str, Any]:
+    """用最小参数逐接口试调，记录可用性、样本行数或失败原因。"""
     names = api_names or [spec.name for spec in iter_specs(enabled_only=True)]
     checked_at = datetime.now().isoformat(timespec="seconds")
     results: dict[str, Any] = {}
 
+    # 单个接口失败不应阻断整次探测；结果会成为后续采集的可用性过滤器。
     for api_name in names:
         try:
             params = default_params(api_name, trade_date)
@@ -48,4 +53,3 @@ def probe_available_apis(
 
     write_json(PERMISSIONS_FILE, results, cache_root=cache_root)
     return results
-

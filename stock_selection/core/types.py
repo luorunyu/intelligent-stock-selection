@@ -1,4 +1,4 @@
-"""Shared result containers."""
+"""跨模块传递的结果容器，统一约束选股和回测的输出结构。"""
 
 from __future__ import annotations
 
@@ -10,7 +10,7 @@ import pandas as pd
 
 @dataclass
 class SelectionResult:
-    """Unified output returned by strategies."""
+    """选股策略的统一输出：入选结果、评分、信号、理由与元数据。"""
 
     selected: pd.DataFrame
     scores: pd.DataFrame = field(default_factory=pd.DataFrame)
@@ -21,7 +21,7 @@ class SelectionResult:
 
 @dataclass
 class BacktestResult:
-    """Unified output returned by the backtesting engine."""
+    """回测引擎的统一输出：净值、持仓、交易、指标和附加报告。"""
 
     equity_curve: pd.DataFrame
     positions: pd.DataFrame = field(default_factory=pd.DataFrame)

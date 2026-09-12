@@ -12,7 +12,7 @@
 ## 来源优先级
 
 1. A 股法定披露和日历：交易所公告、巨潮资讯网、公司公告、定期报告披露计划。
-2. Tushare 可用财务和事件接口：`disclosure_date`、`forecast`、`express`、`fina_indicator`、`income`、`balancesheet`、`cashflow`、`fina_mainbz` 等。按项目级 `tushare-5000-a-stock` skill 权限边界使用。
+2. Tushare 可用财务和事件接口：`disclosure_date`、`forecast`、`express`、`fina_indicator`、`income`、`balancesheet`、`cashflow`、`fina_mainbz` 等。按项目级 `tushare-10000-a-stock` skill 权限边界使用。
 3. 海外公司官方 IR：公司 earnings release、shareholder letter、presentation、10-Q/10-K、8-K、earnings call transcript。
 4. 海外监管和交易所：SEC EDGAR、NASDAQ、NYSE，以及公司所在市场的法定披露入口。
 5. 权威财经新闻：Reuters、AP、CNBC、Financial Times、Wall Street Journal、MarketWatch、Bloomberg 公开报道等。新闻用于补充市场反应和分析师预期，不替代原始披露。

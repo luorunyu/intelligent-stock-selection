@@ -1,3 +1,5 @@
+"""根据连续 theme_discovery 记录识别主题延续、轮动、修复与退潮路径。"""
+
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass, field
@@ -10,6 +12,7 @@ from stock_selection.context.relationship_map_context import build_relationship_
 
 @dataclass(frozen=True)
 class ThemeRotationContext:
+    """主题时间线、状态转换、轮动边和历史地图节点变化。"""
     end_date: str
     source_files: list[str]
     theme_timeline: list[dict[str, Any]]
@@ -33,6 +36,7 @@ def build_theme_rotation_context(
     records_root: str | Path = "analysis_records",
     lookback: int = 20,
 ) -> ThemeRotationContext:
+    """加载近期主题发现记录，并汇总主题状态变化及与历史地图的关系。"""
     records = _load_theme_discovery_records(Path(records_root), end_date=end_date, lookback=lookback)
     timeline = _theme_timeline(records)
     transitions = _theme_transitions(timeline)
@@ -61,6 +65,7 @@ def build_theme_rotation_context(
 
 
 def _load_theme_discovery_records(records_root: Path, *, end_date: str, lookback: int) -> list[dict[str, Any]]:
+    """读取截止日以前指定窗口内的主题发现 JSON，跳过损坏记录。"""
     root = records_root / "theme_discovery"
     if not root.exists():
         return []
@@ -78,6 +83,7 @@ def _load_theme_discovery_records(records_root: Path, *, end_date: str, lookback
 
 
 def _theme_timeline(records: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """把各日热点展开为按主题排列的时间线。"""
     rows: list[dict[str, Any]] = []
     for record in records:
         payload = record["payload"]
@@ -101,6 +107,7 @@ def _theme_timeline(records: list[dict[str, Any]]) -> list[dict[str, Any]]:
 
 
 def _theme_transitions(timeline: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """比较相邻主题状态，生成新出现、强化、退潮、回归等转换事件。"""
     by_theme: dict[str, list[dict[str, Any]]] = {}
     for item in timeline:
         theme = str(item.get("theme") or "")
@@ -132,6 +139,7 @@ def _theme_transitions(timeline: list[dict[str, Any]]) -> list[dict[str, Any]]:
 
 
 def _rotation_edges(rising: list[dict[str, Any]], fading: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """把同日上升和走弱主题配对为候选轮动关系，而非因果结论。"""
     rows: list[dict[str, Any]] = []
     latest_rising = rising[:5]
     latest_fading = fading[:5]

@@ -1,86 +1,86 @@
 ---
 name: stock-selection-research
-description: Build traceable A-share stock observation watchlists on top of project skills `tushare-5000-a-stock` and `stock-sector-analysis`. Use when Codex needs to screen A-share candidates for manual observation, follow capital flows and market-confirmed themes, connect later events back to prior candidates, score candidates with transparent evidence, maintain watchlist records, review follow-up performance, or explain why a candidate entered or left the observation pool. Exclude ST stocks by default, do not provide buy/sell/hold instructions or target prices.
+description: 基于项目级 `tushare-10000-a-stock` 和 `stock-sector-analysis` 构建可追溯的 A 股观察池。当需要筛选供人工观察的 A 股候选、跟踪资金行为和经市场确认的主线、将后续事件关联到历史候选、以透明证据评分、维护观察池记录、复盘后续表现，或解释个股进入/退出观察池的原因时使用。默认排除 ST 股，不提供买入、卖出、持有、仓位或目标价。
 ---
 
-# Stock Selection Research
+# A 股观察池研究
 
-## Goal
+## 目标
 
-Generate A-share observation candidates that follow verified capital behavior rather than unsupported narratives. Use this skill to create a reproducible watchlist for manual review and later event analysis, with every candidate backed by structured market data, source links, scoring, risk tags, and review conditions.
+生成以已验证资金行为为核心、而非无依据叙事的 A 股观察候选。用本 skill 建立可复现的人工观察池和后续事件分析记录；每个候选均须具备结构化行情数据、来源链接、评分、风险标签和复盘条件。
 
-## Required Skill Order
+## 必须遵循的 skill 顺序
 
-1. Use project skill `tushare-5000-a-stock` for structured A-share data and Tushare permission boundaries.
-2. Use project skill `stock-sector-analysis` when current sectors, themes, news catalysts, or historical sector records matter.
-3. Use this skill to turn the data and sector context into a traceable observation pool.
+1. 使用项目 skill `tushare-10000-a-stock` 获取 A 股结构化数据，并确认 Tushare 权限边界。
+2. 当前行业、题材、新闻催化或历史板块记录相关时，使用 `stock-sector-analysis`。
+3. 使用本 skill 将数据和板块背景整理为可追溯观察池。
 
-## Default Boundaries
+## 默认边界
 
-- Market: A shares.
-- Purpose: manual observation and later event analysis, not automated trading advice.
-- Default exclusion: ST stocks and stocks currently suspended.
-- Do not exclude STAR Market, ChiNext, BSE, new stocks, or low-priced stocks unless the user asks.
-- Follow capital first: price strength,成交 confirmation,资金 participation,板块扩散,龙虎榜/融资融券/北向等 evidence outrank narrative-only stories.
-- Separate facts from inference. Announcements, exchange filings, company official records, and published data are facts; market mapping, concept association, and source interpretation are inference.
-- Do not output buy, sell, hold, position size, target price, or guaranteed outcome language.
+- 市场：A 股。
+- 用途：人工观察和后续事件分析，不是自动化交易建议。
+- 默认排除：ST 股和当前停牌股。
+- 除非用户明确要求，不排除科创板、创业板、北交所、新股或低价股。
+- 资金优先：价格强度、成交确认、资金参与、板块扩散、龙虎榜/融资融券/北向等证据，优先级高于只有叙事的逻辑。
+- 分开陈述事实与推断：公告、交易所披露、公司官方记录和已发布数据属于事实；市场映射、概念关联和来源解读属于推断。
+- 不输出买入、卖出、持有、仓位、目标价或保证结果的表述。
 
-## Workflow
+## 工作流程
 
-1. Confirm the analysis date and latest valid trading day. For relative dates, write exact dates.
-2. Read recent sector analysis records if available, especially the latest 5 records and any records mentioning the same theme or stock.
-3. Judge market regime before selecting stocks. Read `references/market-regime.md` when deciding whether current conditions support attack, observation, defense, or retreat.
-4. Build the stock universe and apply default filters. Read `references/universe-and-filters.md` when universe details matter.
-5. Collect structured data with `tushare-5000-a-stock` using its 5000-point usage strategy: batch by `trade_date`, cache daily results, screen a candidate pool first, then deep-dive only candidates. Use daily行情, daily_basic, moneyflow, stk_limit, sw_daily, index_member_all, margin/margin_detail, top_list/top_inst, and event-risk interfaces as needed.
-6. For every selected stock or hot theme, build a peer observation group: leaders, high-turnover cores, limit-up cores, slow movers, and possible laggards within the same industry/theme/value-chain mapping.
-7. When a hot theme is clear, use `stock-sector-analysis/references/stock-relationship-map.md` to create or update a stock relationship map. This map must include not only already-moving stocks, but also value-chain peers that are waiting to diffuse or have not started yet.
-8. Collect catalysts from source lists. Read `references/source-list.md` when choosing news, announcements, company, industry, or overseas sources.
-9. Score candidates using `references/scoring-model.md`. Do not invent scores for unavailable data; mark missing evidence.
-10. Produce a watchlist using the output template in `references/output-template.md`.
-11. Save or update records using `references/recording-and-review.md` unless the user explicitly says not to save.
-12. For scheduled runs, follow `references/automation-workflow.md`.
-13. In later analyses, connect new events back to prior candidates and prior relationship-map entries: whether the original capital evidence, company mapping, value-chain position, or financial validation strengthened, faded, was corrected, or was contradicted.
+1. 确认分析日期和最近有效交易日；涉及相对日期时写出准确日期。
+2. 读取近期板块分析记录（如有），尤其是最近 5 篇以及提及相同主题或个股的记录。
+3. 选股前先判断市场环境。判断当前是否支持进攻、观察、防守或退潮时，读取 `references/market-regime.md`。
+4. 建立股票池并应用默认过滤；需要明确股票池范围时，读取 `references/universe-and-filters.md`。
+5. 通过 `tushare-10000-a-stock` 按 10000 积分调用策略采集结构化数据：按 `trade_date` 批量拉取、缓存每日结果、先粗筛候选池、再对候选深挖。按需使用日线行情、`daily_basic`、`moneyflow`、`stk_limit`、`sw_daily`、`index_member_all`、`margin`/`margin_detail`、`top_list`/`top_inst` 和事件风险接口。
+6. 对每只入选股票或热门主题建立同组观察：龙头、高成交额核心、涨停核心、慢速跟随者，以及相同行业/题材/产业链映射下可能的补涨候选。
+7. 热门主题明确时，读取 `stock-sector-analysis/references/stock-relationship-map.md`，创建或更新股票关系地图。地图不仅包含已异动股票，也必须包含待扩散和未启动的产业链同伴。
+8. 从来源清单收集催化；选择新闻、公告、公司、行业或海外来源时，读取 `references/source-list.md`。
+9. 按 `references/scoring-model.md` 给候选评分。不可为缺失数据虚构分数，必须标注证据缺口。
+10. 按 `references/output-template.md` 输出观察池。
+11. 除非用户明确不保存，否则按 `references/recording-and-review.md` 保存或更新记录。
+12. 定时任务按 `references/automation-workflow.md` 执行。
+13. 后续分析需把新事件关联到历史候选和历史关系地图：原始资金证据、公司映射、产业链位置或财务验证是增强、减弱、被修正还是被证伪。
 
-## Candidate Selection Principles
+## 候选筛选原则
 
-- Prefer candidates where market behavior confirms the story: strong relative performance, expanded成交, active换手, rising sector breadth, visible leaders, and fresh catalysts.
-- When a leader confirms a theme, add related stocks to a peer observation group instead of analyzing the leader alone. Slow movers can be observation candidates only when the theme is still active, sector breadth is expanding or stable, their business relation is real, and risk tags do not dominate.
-- Penalize one-stock themes, old news reused as new logic, high-position acceleration without成交 support, and company-level catalyst gaps.
-- Treat资金流 as corroborating evidence, not a standalone truth, because vendor口径 can differ.
-- Give each candidate an observation reason and a falsification condition. Example: "sector remains strong but this stock fails to outperform its sector for 3 trading days" is a valid observation condition.
-- If a stock is selected mainly because of资金 or情绪 and no company catalyst is found, label it clearly as "资金/情绪驱动， company-level catalyst unclear".
+- 优先选择市场行为已验证逻辑的候选：相对强势、成交放大、换手活跃、板块宽度提升、龙头清晰且催化较新。
+- 龙头确认主题后，应将相关股票纳入同组观察，而非只分析龙头。慢速跟随者只有在主题仍活跃、板块宽度扩散或稳定、业务关系真实且风险标签不占主导时，才可作为观察候选。
+- 对单股带动的主题、用旧新闻包装新逻辑、无成交支撑的高位加速，以及公司级催化缺失进行扣分。
+- 资金流仅作相互印证的证据，不单独定性，因为不同供应商口径可能不同。
+- 每个候选都要给出观察理由和证伪条件。例如：“板块保持强势，但该股连续 3 个交易日无法跑赢所属板块”是有效观察条件。
+- 若个股主要因资金或情绪入选、未找到公司级催化，须清楚标注“资金/情绪驱动，公司级催化不明确”。
 
-## Peer Observation Groups
+## 同组观察
 
-Use peer groups to catch板块扩散 and补涨 candidates:
+使用同组观察捕捉板块扩散和补涨候选：
 
-- 龙头确认：identify the stock with strongest limit-up height,成交额,涨幅,辨识度, or company catalyst.
-- 同组映射：include stocks from the same申万行业, concept/theme, supply chain, customer chain, product line, policy beneficiary group, or overseas映射 chain.
-- 补涨候选：mark stocks that lag the leader but show成交放大,换手改善,资金参与, or early price response.
-- 待扩散/未启动：for the same theme, list related companies from upstream, midstream, downstream, and supporting services even if they have not yet moved. They may enter a map/watch state only when the business mapping is explainable and the missing evidence is labeled.
-- 失效条件：remove laggards if the leader weakens,板块成交收缩,扩散失败,同组股票转弱, or the laggard cannot outperform its industry/theme after the observation window.
-- 风险提示：补涨 is a probability observation, not certainty. Avoid treating a slow stock as attractive merely because the leader has risen.
+- 龙头确认：识别涨停高度、成交额、涨幅、辨识度或公司级催化最强的个股。
+- 同组映射：纳入同一申万行业、概念/题材、供应链、客户链、产品线、政策受益组或海外映射链上的股票。
+- 补涨候选：标记相对龙头滞涨、但已出现成交放大、换手改善、资金参与或初步价格响应的股票。
+- 待扩散/未启动：同一主题中，即使尚未异动，也列出上游、中游、下游和配套服务相关公司。只有业务映射可解释且证据缺口已标注时，才可进入地图/观察状态。
+- 失效条件：龙头走弱、板块成交收缩、扩散失败、同组股票转弱，或观察期后候选仍不能跑赢所属行业/主题时，剔除补涨候选。
+- 风险提示：补涨只是概率观察，不是确定性结论；不能仅因龙头上涨，就把慢速股票视为有吸引力。
 
-## Required Output
+## 必须输出的内容
 
-Every watchlist must include:
+每份观察池必须包含：
 
-- Analysis date and latest trading day.
-- Data interfaces and date ranges used.
-- Source links or source names with publication dates.
-- Stock code, name, market, industry/theme, and whether it is sector leader, high-turnover core, rebound candidate, or event-driven candidate.
-- Peer group: related leaders, fast followers, slow movers, and laggard observation candidates with the mapping reason.
-- Relationship map summary: theme, value-chain segment, already-moving companies, waiting-to-diffuse companies, not-yet-moving related companies, corrected/omitted company information from prior maps, and the saved relationship-map report path when generated.
-- Evidence split into market data, capital behavior, sector confirmation, and catalyst.
-- Score, confidence, risk tags, observation conditions, and removal conditions.
-- "For research observation only, not investment advice."
+- 分析日期和最近交易日。
+- 使用的数据接口和日期区间。
+- 带发布时间的来源链接或来源名称。
+- 股票代码、名称、市场、行业/主题，以及其是否属于板块龙头、高成交额核心、反弹候选或事件驱动候选。
+- 同组：相关龙头、快速跟随、慢速跟随、补涨观察候选及其映射理由。
+- 关系地图摘要：主题、产业链环节、已异动公司、待扩散公司、未启动相关公司、历史地图中被修正/遗漏的公司信息，以及生成时的关系地图保存路径。
+- 将证据拆分为行情数据、资金行为、板块确认和催化。
+- 评分、置信度、风险标签、观察条件和剔除条件。
+- “仅作研究观察，不构成投资建议。”
 
-## References
+## 参考文件
 
-- `references/universe-and-filters.md`: stock pool, default exclusions, data quality and risk filters.
-- `references/market-regime.md`: market environment gate for attack, observation, defense, and retreat.
-- `references/scoring-model.md`: candidate scoring, confidence labels, risk deductions, and ranking rules.
-- `references/source-list.md`: China and overseas source priority for news, announcements, industry data, and macro context.
-- `references/output-template.md`: watchlist and single-stock event analysis output templates.
-- `references/recording-and-review.md`: save paths, review cadence, and follow-up verification rules.
-- `references/automation-workflow.md`: scheduled close-after and pre-open task workflows.
+- `references/universe-and-filters.md`：股票池、默认排除项、数据质量和风险过滤规则。
+- `references/market-regime.md`：进攻、观察、防守和退潮的市场环境门控。
+- `references/scoring-model.md`：候选评分、置信度标签、风险扣分和排序规则。
+- `references/source-list.md`：新闻、公告、行业数据和宏观背景的中国及海外来源优先级。
+- `references/output-template.md`：观察池和单股事件分析输出模板。
+- `references/recording-and-review.md`：保存路径、复盘节奏和后续验证规则。
+- `references/automation-workflow.md`：盘后与盘前定时任务工作流。

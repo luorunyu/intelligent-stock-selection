@@ -1,4 +1,4 @@
-"""Shared column names used across the project."""
+"""项目统一字段名：让行情校验、策略和报告使用同一套列名约定。"""
 
 DATE_COL = "date"
 SYMBOL_COL = "symbol"
@@ -22,4 +22,3 @@ REQUIRED_PRICE_COLUMNS = [
 ]
 
 PRICE_COLUMNS = [OPEN_COL, HIGH_COL, LOW_COL, CLOSE_COL]
-

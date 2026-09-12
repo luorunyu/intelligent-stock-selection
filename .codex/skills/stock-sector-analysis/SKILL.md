@@ -1,6 +1,6 @@
 ---
 name: stock-sector-analysis
-description: 分析 A 股当前或近期热门板块、行业和概念轮动、市场宽度、板块成交额、资金流信号、龙头股表现、热点个股、公司级上涨催化剂、新闻催化和历史判断验证。用户询问当前热门板块、市场主线、板块轮动、股票交易信息汇总、行业强弱、概念板块活跃度、热点个股上涨逻辑、新闻驱动的股票板块分析，或需要把 Tushare 数据入口与新闻联合判断时使用；只使用项目级 tushare-5000-a-stock skill 作为结构化行情数据入口，不使用 AKShare。不提供个性化投资建议。
+description: 分析 A 股当前或近期热门板块、行业和概念轮动、市场宽度、板块成交额、资金流信号、龙头股表现、热点个股、公司级上涨催化剂、新闻催化和历史判断验证。用户询问当前热门板块、市场主线、板块轮动、股票交易信息汇总、行业强弱、概念板块活跃度、热点个股上涨逻辑、新闻驱动的股票板块分析，或需要把 Tushare 数据入口与新闻联合判断时使用；只使用项目级 tushare-10000-a-stock skill 作为结构化行情数据入口，不使用 AKShare。不提供个性化投资建议。
 ---
 
 # 股票热门板块分析
@@ -21,7 +21,7 @@ description: 分析 A 股当前或近期热门板块、行业和概念轮动、�
 
 - 历史记录目录：`D:\Projects\intelligent-stock-selection-system\analysis_records\sector_analysis`
 - 记录文件格式：`analysis_records\sector_analysis\YYYY-MM\YYYY-MM-DD.md`
-- 结构化数据入口：同项目 `tushare-5000-a-stock` skill。
+- 结构化数据入口：同项目 `tushare-10000-a-stock` skill。
 
 
 
@@ -29,7 +29,7 @@ description: 分析 A 股当前或近期热门板块、行业和概念轮动、�
 
 1. 确认分析日期、分析区间和交易状态。对“今天”“昨天”“上周”等相对时间写出准确日期。
 2. 读取 `analysis_records\sector_analysis` 下已有记录。优先读取最近 5 篇、本周记录，以及与用户指定板块或个股相关的历史记录；如果该目录无可读记录，继续读取最近 5 篇 `analysis_records\stock_selection` 和 `analysis_records\stock_relationship_map` 作为交叉复盘来源，并明确说明 `sector_analysis` 记录缺口。
-3. 读取同项目 `tushare-5000-a-stock` skill，确认可用接口、入参和权限边界。需要接口映射和联合判断规则时，读取 `references/data-integration.md`。
+3. 读取同项目 `tushare-10000-a-stock` skill，确认可用接口、入参和权限边界。需要接口映射和联合判断规则时，读取 `references/data-integration.md`。
 4. 汇总市场整体环境：主要指数涨跌、成交额、上涨/下跌家数、涨停/跌停情绪、宏观或新闻背景。
 5. 用 Tushare 数据确认行情强度：
    - 行业或板块涨跌幅、近 3/5/10/20 日表现。

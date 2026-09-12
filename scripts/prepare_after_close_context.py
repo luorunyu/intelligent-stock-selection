@@ -1,3 +1,5 @@
+"""盘后主入口：准备正式缓存，并组装观察池报告所需的结构化上下文。"""
+
 from __future__ import annotations
 
 import argparse
@@ -17,6 +19,7 @@ from stock_selection.context.theme_discovery import discover_active_themes
 
 
 def parse_args() -> argparse.Namespace:
+    """定义盘后缓存、历史记录和必要接口重试参数。"""
     parser = argparse.ArgumentParser(
         description="Prepare formal after-close cache and emit report-generation context."
     )
@@ -38,9 +41,11 @@ def parse_args() -> argparse.Namespace:
 
 
 def main() -> int:
+    """依次准备完整盘后数据、构建报告上下文、发现热点并输出 JSON。"""
     args = parse_args()
     requested_date = _compact_date(args.date or date.today().strftime("%Y%m%d"))
     records_root = Path(args.records_root)
+    # 第一步只接受完整的正式缓存；若请求日未落库，会由底层选择最近完整交易日。
     manifest = prepare_after_close_data(
         requested_date,
         cache_root=args.cache_root,
@@ -52,12 +57,14 @@ def main() -> int:
     )
     context = build_after_close_report_context(manifest, cache_root=args.cache_root)
     report_date = context.report_date
+    # 热点发现是报告输入的一部分，同时写入可复盘的 theme_discovery JSON。
     hotspot_discovery = _theme_discovery_payload(
         context.trade_date,
         cache_root=args.cache_root,
         records_root=records_root,
     )
 
+    # 把数据路径、热点、历史记录和最终输出路径集中交给报告生成器，避免其自行猜测来源。
     payload = {
         "mode": "after_close_formal_cache_context",
         "rules": [
@@ -98,6 +105,7 @@ def main() -> int:
 
 
 def _compact_date(value: str) -> str:
+    """校验并统一日期为 YYYYMMDD，供缓存和接口使用。"""
     compact = value.replace("-", "")
     if len(compact) != 8 or not compact.isdigit():
         raise ValueError(f"invalid date: {value}")
@@ -105,6 +113,7 @@ def _compact_date(value: str) -> str:
 
 
 def _recent_records(root: Path, limit: int) -> list[str]:
+    """按修改时间返回某类报告的最近文件路径。"""
     if not root.exists():
         return []
     files = sorted(root.glob("*/*.md"), key=lambda path: path.stat().st_mtime, reverse=True)
@@ -112,6 +121,7 @@ def _recent_records(root: Path, limit: int) -> list[str]:
 
 
 def _information_gaps(context) -> list[str]:
+    """将缺失缓存和日期回退原因转换为报告可直接披露的提示。"""
     gaps: list[str] = []
     if context.missing_datasets:
         gaps.append("Missing formal cache datasets: " + ", ".join(context.missing_datasets))
@@ -127,6 +137,7 @@ def _information_gaps(context) -> list[str]:
 
 
 def _theme_discovery_payload(trade_date: str, *, cache_root: str | None, records_root: Path) -> dict:
+    """运行热点发现并裁剪大字段，保证报告上下文足够而不过大。"""
     try:
         result = discover_active_themes(
             trade_date,
@@ -135,6 +146,7 @@ def _theme_discovery_payload(trade_date: str, *, cache_root: str | None, records
             write=True,
         )
         payload = result.to_dict()
+        # 完整主题结果会写入 JSON；传给模型的上下文只保留高优先级样本以控制体积。
         payload["active_pool"] = payload.get("active_pool", [])[:60]
         payload["market_hotspots"] = payload.get("market_hotspots", [])[:20]
         payload["industry_hotspots"] = payload.get("industry_hotspots", [])[:20]

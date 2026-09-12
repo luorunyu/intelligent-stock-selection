@@ -310,7 +310,7 @@ fina_mainbz：主营业务构成
 ```text
 stock-sector-analysis：识别热门板块、龙头、扩散、催化和历史验证
 stock-selection-research：生成观察池、评分、同组补涨和后续复盘
-tushare-5000-a-stock：提供结构化行情和财务数据入口
+tushare-10000-a-stock：提供结构化行情和财务数据入口
 ```
 
 本地图模块补充的是：

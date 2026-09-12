@@ -1,4 +1,4 @@
-"""Input DataFrame validation and normalization."""
+"""行情 DataFrame 的字段校验和标准化，阻止错误数据进入研究流程。"""
 
 from __future__ import annotations
 
@@ -14,8 +14,9 @@ from stock_selection.core.schema import (
 
 
 def normalize_price_frame(df: pd.DataFrame) -> pd.DataFrame:
-    """Return a validated, sorted copy of a long-form daily price frame."""
+    """校验长表行情后复制、规范日期/代码类型，并按股票和日期排序。"""
 
+    # 先拒绝缺列、重复或不合理价格，避免排序后掩盖源数据问题。
     validate_price_frame(df)
     out = df.copy()
     out[DATE_COL] = pd.to_datetime(out[DATE_COL])
@@ -24,12 +25,13 @@ def normalize_price_frame(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def validate_price_frame(df: pd.DataFrame) -> None:
-    """Validate required columns and obvious data issues."""
+    """验证必需字段、主键唯一性、价格正值和成交量非负等基础约束。"""
 
     missing = [col for col in REQUIRED_PRICE_COLUMNS if col not in df.columns]
     if missing:
         raise ValueError(f"Missing required columns: {missing}")
 
+    # 日期和代码共同构成日线长表主键；重复行会使后续收益计算失真。
     duplicated = df.duplicated([DATE_COL, SYMBOL_COL])
     if duplicated.any():
         sample = df.loc[duplicated, [DATE_COL, SYMBOL_COL]].head(5).to_dict("records")
@@ -52,7 +54,7 @@ def validate_price_frame(df: pd.DataFrame) -> None:
 
 
 def filter_as_of(df: pd.DataFrame, as_of_date: str | pd.Timestamp | None) -> pd.DataFrame:
-    """Return rows visible on or before as_of_date."""
+    """返回截止某日当时可见的行，用于避免回测或复盘的未来数据泄露。"""
 
     if as_of_date is None:
         return df
