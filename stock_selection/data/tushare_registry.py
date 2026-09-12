@@ -80,10 +80,7 @@ def iter_specs(
         specs = tuple(spec for spec in specs if spec.frequency == frequency)
     if enabled_only:
         specs = tuple(spec for spec in specs if spec.enabled_by_default)
-    return specs
-
-
-def default_params(api_name: str, trade_date: str | None = None) -> dict[str, str]:
+    return specsdef default_params(api_name: str, trade_date: str | None = None) -> dict[str, str]:
     """返回权限探测和常规采集可使用的最小安全参数。"""
     if api_name == "stock_basic":
         return {
