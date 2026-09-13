@@ -150,8 +150,7 @@ def _theme_discovery_payload(trade_date: str, *, cache_root: str | None, records
         payload["active_pool"] = payload.get("active_pool", [])[:60]
         payload["market_hotspots"] = payload.get("market_hotspots", [])[:20]
         payload["industry_hotspots"] = payload.get("industry_hotspots", [])[:20]
-        payload["unseeded_themes"] = payload.get("unseeded_themes", [])[:20]
-        payload["seeded_theme_matches"] = payload.get("seeded_theme_matches", [])[:20]
+        payload["dynamic_clusters"] = payload.get("dynamic_clusters", [])[:20]
         payload["theme_lifecycle"] = payload.get("theme_lifecycle", [])[:20]
         payload["theme_stock_roles"] = payload.get("theme_stock_roles", [])[:8]
         payload["map_related_candidates"] = payload.get("map_related_candidates", [])[:80]
@@ -163,12 +162,13 @@ def _theme_discovery_payload(trade_date: str, *, cache_root: str | None, records
             payload["theme_rotation_context"]["theme_timeline"] = payload["theme_rotation_context"].get("theme_timeline", [])[-80:]
             payload["theme_rotation_context"]["theme_transitions"] = payload["theme_rotation_context"].get("theme_transitions", [])[:40]
         payload["prompt_hint"] = (
-            "Use hotspot_discovery.market_hotspots and hotspot_discovery.unseeded_themes first "
-            "to identify today's active themes. Then use relationship_map_context to complete related "
+            "Use hotspot_discovery.industry_hotspots and hotspot_discovery.dynamic_clusters first "
+            "to identify today's active formal-industry hotspots and unnamed co-movement clusters. "
+            "For every candidate retain the SW2021 l1/l2/l3 classification; do not assign a concept name "
+            "without candidate-company business or announcement evidence. Then use relationship_map_context to complete related "
             "companies, value-chain nodes, pending diffusion, not-started, downgraded, and falsified names. "
             "Use theme_stock_roles for leader/middle-army/diffuser/follower/laggard/falsified roles, and "
-            "theme_rotation_context for old-theme retreat, repair, return, and cross-theme rotation. Treat "
-            "seeded_theme_matches as known-theme validation only."
+            "theme_rotation_context for old-theme retreat, repair, return, and cross-theme rotation."
         )
         return payload
     except Exception as exc:
@@ -176,8 +176,7 @@ def _theme_discovery_payload(trade_date: str, *, cache_root: str | None, records
             "trade_date": trade_date,
             "market_hotspots": [],
             "industry_hotspots": [],
-            "unseeded_themes": [],
-            "seeded_theme_matches": [],
+            "dynamic_clusters": [],
             "theme_lifecycle": [],
             "relationship_map_context": {},
             "theme_stock_roles": [],

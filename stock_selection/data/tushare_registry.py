@@ -48,6 +48,7 @@ ON_DEMAND_API_SPECS: tuple[TushareApiSpec, ...] = (
     TushareApiSpec("balancesheet", "on_demand", "on_demand", "Balance sheet", False),
     TushareApiSpec("cashflow", "on_demand", "on_demand", "Cash-flow statement", False),
     TushareApiSpec("fina_indicator", "on_demand", "on_demand", "Financial indicators", False),
+    TushareApiSpec("fina_mainbz", "on_demand", "on_demand", "Main business composition", False),
     TushareApiSpec("forecast", "on_demand", "on_demand", "Earnings forecast", False),
     TushareApiSpec("express", "on_demand", "on_demand", "Earnings express", False),
     TushareApiSpec("dividend", "on_demand", "on_demand", "Dividend records", False),
@@ -80,7 +81,10 @@ def iter_specs(
         specs = tuple(spec for spec in specs if spec.frequency == frequency)
     if enabled_only:
         specs = tuple(spec for spec in specs if spec.enabled_by_default)
-    return specsdef default_params(api_name: str, trade_date: str | None = None) -> dict[str, str]:
+    return specs
+
+
+def default_params(api_name: str, trade_date: str | None = None) -> dict[str, str]:
     """返回权限探测和常规采集可使用的最小安全参数。"""
     if api_name == "stock_basic":
         return {

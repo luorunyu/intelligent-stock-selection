@@ -85,8 +85,8 @@ def render_markdown(*, report_context, market_context, theme_discovery: dict | N
     lines.extend(_relationship_map_context_section(theme_discovery or {}))
     lines.extend(["", "## 今日最强主题的板块内角色"])
     lines.extend(_stock_role_context_section(theme_discovery or {}))
-    lines.extend(["", "## 今日非种子新热点"])
-    lines.extend(_unseeded_theme_section(theme_discovery or {}))
+    lines.extend(["", "## 今日未命名动态共振簇"])
+    lines.extend(_dynamic_cluster_section(theme_discovery or {}))
     lines.extend(["", "## 热点生命周期追踪"])
     lines.extend(_theme_lifecycle_section(theme_discovery or {}))
     lines.extend(["", "## 板块轮动路径"])
@@ -95,9 +95,6 @@ def render_markdown(*, report_context, market_context, theme_discovery: dict | N
     lines.extend(_map_related_candidates_section(theme_discovery or {}))
     lines.extend(["", "## 行业多日表现（按最新交易日排序）"])
     lines.extend(_industry_table(market["industries"][:20]))
-    lines.extend(["", "## 已知种子主题验证（仅作历史主线验证）"])
-    lines.extend(_seeded_theme_section(theme_discovery or {}))
-
     lines.extend(["", "## 最近报告线索"])
     lines.extend(_recent_reports_table(report["recent_reports"]))
     lines.extend(["", "## 最近报告提到的主题"])
@@ -121,8 +118,8 @@ def render_markdown(*, report_context, market_context, theme_discovery: dict | N
         [
             "",
             "## 使用提示",
-            "- 判断今日热点时，先看全市场热点扫描和非种子新热点，再用历史报告验证生命周期，不要让旧主题自动占据今日主线。",
-            "- `seeded_theme_matches` 只表示已知主题是否被当天数据验证，不等同于今日最强主线。",
+            "- 判断今日热点时，先看申万三级行业热点和未命名动态共振簇；历史报告只能验证生命周期，不能把旧主题自动变成今日主线。",
+            "- 每个候选必须保留申万一级、二级、三级归属；未取得公司主营或公告证据前，不给共振簇分配 CPO、PCB 等概念名称。",
             "- 如果报告说主题强化，但多日数据表现为放量下跌、上涨占比恶化，应在正式复盘中降级。",
             "- 如果报告只提到故事，但行业和核心股没有成交、宽度或资金确认，应标注为待验证。",
             "- 本文仅作研究观察和后续事件跟踪，不构成投资建议。",
@@ -266,27 +263,28 @@ def _hotspot_discovery_section(discovery: dict) -> list[str]:
     rows = [
         f"- 发现交易日：{_dash_date(discovery['trade_date'])}" if discovery.get("trade_date") else "- 发现交易日：-",
         f"- 发现记录：{discovery.get('output_path') or '-'}",
+        f"- 申万映射股票数：{(discovery.get('taxonomy') or {}).get('mapped_stocks', 0)}。",
     ]
     hotspots = discovery.get("market_hotspots") or []
     if not hotspots:
         rows.append("- 未发现达到阈值的全市场热点候选。")
         return rows
     table = [
-        _row(["候选热点", "来源", "种子", "状态", "评分", "均涨", "上涨占比", "涨停", "成交额", "证据"]),
-        _row(["---", "---", "---", "---", "---:", "---:", "---:", "---:", "---:", "---"]),
+        _row(["候选热点", "申万一级", "申万二级", "申万三级", "来源", "状态", "评分", "均涨", "成交额", "证据"]),
+        _row(["---", "---", "---", "---", "---", "---", "---:", "---:", "---:", "---"]),
     ]
     for item in hotspots[:12]:
         table.append(
             _row(
                 [
                     item.get("theme", ""),
+                    ((item.get("formal_industry") or {}).get("l1") or {}).get("name", ""),
+                    ((item.get("formal_industry") or {}).get("l2") or {}).get("name", ""),
+                    ((item.get("formal_industry") or {}).get("l3") or {}).get("name", ""),
                     item.get("source_type", ""),
-                    "是" if item.get("seed_based") else "否",
                     item.get("status", ""),
                     f"{float(item.get('score') or 0):.2f}",
                     _fmt_pct(item.get("latest_avg_pct")),
-                    _fmt_ratio(item.get("latest_up_ratio")),
-                    str(item.get("limit_up", 0)),
                     _fmt_num(item.get("latest_amount_yi")),
                     item.get("evidence", ""),
                 ]
@@ -353,8 +351,8 @@ def _stock_role_context_section(discovery: dict) -> list[str]:
 
 def _role_table(roles: dict) -> list[str]:
     rows = [
-        _row(["角色", "股票", "涨跌", "成交额", "地图主题", "子线", "地图状态", "评分"]),
-        _row(["---", "---", "---:", "---:", "---", "---", "---", "---:"]),
+        _row(["角色", "股票", "申万一级/二级/三级", "涨跌", "成交额", "地图主题", "子线", "地图状态", "评分"]),
+        _row(["---", "---", "---", "---:", "---:", "---", "---", "---", "---:"]),
     ]
     role_names = {
         "leaders": "龙头",
@@ -372,6 +370,7 @@ def _role_table(roles: dict) -> list[str]:
                     [
                         label,
                         f"{stock.get('name', '')} {stock.get('ts_code', '')}",
+                        " > ".join(part for part in [stock.get("sw_l1_name", ""), stock.get("sw_l2_name", ""), stock.get("sw_l3_name", "")] if part),
                         _fmt_pct(stock.get("pct_chg")),
                         _fmt_num(stock.get("amount_yi")),
                         stock.get("map_theme", "") or "",
@@ -431,25 +430,28 @@ def _map_related_candidates_section(discovery: dict) -> list[str]:
     return rows
 
 
-def _unseeded_theme_section(discovery: dict) -> list[str]:
-    themes = discovery.get("unseeded_themes") or []
+def _dynamic_cluster_section(discovery: dict) -> list[str]:
+    themes = discovery.get("dynamic_clusters") or []
     if not themes:
-        return ["- 未发现非种子新热点，或新热点强度不足。"]
+        return ["- 未发现达到强度条件的未命名动态共振簇。"]
     rows = [
-        _row(["非种子热点", "状态", "评分", "行业/环节", "均涨", "上涨占比", "涨停", "证据"]),
+        _row(["动态共振簇", "状态", "评分", "申万一级/二级", "三级行业", "均涨", "上涨占比", "证据"]),
         _row(["---", "---", "---:", "---", "---:", "---:", "---:", "---"]),
     ]
     for item in themes[:12]:
+        formal = item.get("formal_industry") or {}
+        l1 = (formal.get("l1") or {}).get("name", "")
+        l2 = (formal.get("l2") or {}).get("name", "")
         rows.append(
             _row(
                 [
                     item.get("theme", ""),
                     item.get("status", ""),
                     f"{float(item.get('score') or 0):.2f}",
+                    f"{l1} > {l2}",
                     "、".join(item.get("industries") or []),
                     _fmt_pct(item.get("latest_avg_pct")),
                     _fmt_ratio(item.get("latest_up_ratio")),
-                    str(item.get("limit_up", 0)),
                     item.get("evidence", ""),
                 ]
             )
@@ -462,8 +464,8 @@ def _theme_lifecycle_section(discovery: dict) -> list[str]:
     if not lifecycle:
         return ["- 未形成热点生命周期记录。"]
     rows = [
-        _row(["主题", "生命周期状态", "来源", "种子", "评分", "下一步验证"]),
-        _row(["---", "---", "---", "---", "---:", "---"]),
+        _row(["行业/动态簇", "生命周期状态", "来源", "评分", "下一步验证"]),
+        _row(["---", "---", "---", "---:", "---"]),
     ]
     for item in lifecycle[:15]:
         rows.append(
@@ -472,36 +474,8 @@ def _theme_lifecycle_section(discovery: dict) -> list[str]:
                     item.get("theme", ""),
                     item.get("state", ""),
                     item.get("source_type", ""),
-                    "是" if item.get("seed_based") else "否",
                     f"{float(item.get('score') or 0):.2f}",
                     item.get("next_check", ""),
-                ]
-            )
-        )
-    return rows
-
-
-def _seeded_theme_section(discovery: dict) -> list[str]:
-    themes = discovery.get("seeded_theme_matches") or discovery.get("themes") or []
-    if not themes:
-        return ["- 未发现已知种子主题获得当日数据验证。"]
-    rows = [
-        _row(["已知主题", "状态", "评分", "涨跌", "涨停", "均涨", "成交额", "跨行业", "证据"]),
-        _row(["---", "---", "---:", "---:", "---:", "---:", "---:", "---", "---"]),
-    ]
-    for theme in themes[:10]:
-        rows.append(
-            _row(
-                [
-                    theme.get("theme", ""),
-                    theme.get("status", ""),
-                    f"{float(theme.get('score') or 0):.2f}",
-                    f"{theme.get('up', 0)}/{theme.get('down', 0)}",
-                    str(theme.get("limit_up", 0)),
-                    _fmt_pct(theme.get("avg_pct")),
-                    _fmt_num(theme.get("amount_yi")),
-                    "是" if theme.get("cross_industry") else "否",
-                    theme.get("evidence", ""),
                 ]
             )
         )
@@ -513,40 +487,37 @@ def _theme_discovery_section(discovery: dict) -> list[str]:
         return ["- 未找到结构化主题发现记录。"]
     if discovery.get("error"):
         return [f"- 主题发现失败：{discovery['error']}"]
-    themes = discovery.get("themes") or []
-    clusters = discovery.get("tag_clusters") or []
+    themes = discovery.get("industry_hotspots") or []
+    taxonomy = discovery.get("taxonomy") or {}
     lines = [
         f"- 发现交易日：{_dash_date(discovery['trade_date'])}" if discovery.get("trade_date") else "- 发现交易日：-",
         f"- 发现记录：{discovery.get('output_path') or '-'}",
+        f"- 申万映射：{taxonomy.get('mapped_stocks', 0)} 只股票，来源 {taxonomy.get('source', '-')}。",
     ]
     if not themes:
         lines.append("- 未发现达到阈值的主题候选。")
     else:
         rows = [
-            _row(["候选主题", "状态", "评分", "涨跌", "涨停", "均涨", "成交额", "跨行业", "证据"]),
-            _row(["---", "---", "---:", "---:", "---:", "---:", "---:", "---", "---"]),
+            _row(["申万一级", "申万二级", "申万三级", "状态", "评分", "均涨", "成交额", "证据"]),
+            _row(["---", "---", "---", "---", "---:", "---:", "---:", "---"]),
         ]
         for theme in themes[:8]:
             rows.append(
                 _row(
                     [
-                        theme["theme"],
-                        theme["status"],
-                        f"{theme['score']:.2f}",
-                        f"{theme['up']}/{theme['down']}",
-                        str(theme["limit_up"]),
-                        _fmt_pct(theme["avg_pct"]),
-                        _fmt_num(theme["amount_yi"]),
-                        "是" if theme.get("cross_industry") else "否",
+                        ((theme.get("formal_industry") or {}).get("l1") or {}).get("name", ""),
+                        ((theme.get("formal_industry") or {}).get("l2") or {}).get("name", ""),
+                        ((theme.get("formal_industry") or {}).get("l3") or {}).get("name", ""),
+                        theme.get("status", ""),
+                        f"{float(theme.get('score') or 0):.2f}",
+                        _fmt_pct(theme.get("latest_avg_pct")),
+                        _fmt_num(theme.get("latest_amount_yi")),
                         theme.get("evidence", ""),
                     ]
                 )
             )
         lines.extend(rows)
-    if clusters:
-        lines.append("")
-        lines.append("- 高频标签：" + "、".join(f"{item['tag']}({item['stock_count']}只)" for item in clusters[:10]))
-    lines.append("- 使用提示：标签发现只作为新主题候选，正式报告仍需结合历史记录、主营业务和公司级证据确认。")
+    lines.append("- 使用提示：申万三级热点是正式分类；跨三级共振须保留为未命名簇，直到主营业务、公告或公司资料提供可追溯的共同证据。")
     return lines
 
 

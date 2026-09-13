@@ -97,7 +97,6 @@ def _theme_timeline(records: list[dict[str, Any]]) -> list[dict[str, Any]]:
                     "score": _num(item.get("score")),
                     "state": _state_from_hotspot(item),
                     "source_type": item.get("source_type"),
-                    "seed_based": bool(item.get("seed_based")),
                     "latest_avg_pct": item.get("latest_avg_pct") if "latest_avg_pct" in item else item.get("avg_pct"),
                     "latest_amount_yi": item.get("latest_amount_yi") if "latest_amount_yi" in item else item.get("amount_yi"),
                     "limit_up": item.get("limit_up", 0),

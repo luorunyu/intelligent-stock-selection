@@ -97,6 +97,13 @@ def prepare_after_close_data(
 
     req_date = requested_date or date.today().strftime("%Y%m%d")
     collector = TushareCollector(cache_root=cache_root)
+    # 申万目录和成分股是低频静态数据：缺失时先补齐，已有缓存则跳过，不在盘后逐股请求。
+    # 热点发现随后据此为每只活跃股附上 SW2021 一级、二级、三级归属。
+    collector.collect_static(
+        api_names=["stock_basic", "index_classify", "index_member_all"],
+        force=force,
+        available_only=available_only,
+    )
     open_dates = _open_dates(req_date, lookback_days, cache_root=cache_root)
     if not open_dates:
         raise RuntimeError(f"no open trading days found before {req_date}")

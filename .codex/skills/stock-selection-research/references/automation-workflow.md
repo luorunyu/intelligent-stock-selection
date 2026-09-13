@@ -30,7 +30,7 @@ python scripts/build_after_close_research_context.py --date <after_close.trade_d
 报告规则：
 - 读取最近 5 篇 `analysis_records/sector_analysis`、`analysis_records/stock_selection`、`analysis_records/stock_relationship_map`，检查历史观察池验证、历史地图更新、之前遗漏、之前错误和公司信息变化。
 - 对当天最强 1-3 个主线及其子线执行历史报告关键词回溯，默认最近 30 天；每条主线必须基于历史命中段落输出“主题历史路径”，说明启动、强化、分化、退潮、修复、证伪中能被历史报告支持的关键节点。
-- 如果当天是修复行情，必须说明它是首次修复、二次修复，还是退潮后的弱反抽；例如 PCB、CPO、半导体设备材料不能只看最近 5 篇报告，要回查其上一轮主线、第一次退潮和本次修复路径。
+- 如果当天是修复行情，必须说明它是首次修复、二次修复，还是退潮后的弱反抽；对动态确认的主题，要回查其上一轮主线、第一次退潮和本次修复路径，不能仅根据熟悉概念名称作判断。
 - 使用 `market-regime.md` 输出市场环境门控：指数、成交额、市场宽度、涨停跌停、短线情绪、板块扩散、外部扰动，以及当前状态：进攻 / 观察 / 防守 / 退潮。
 - 识别热门板块、题材、龙头、成交额核心、快速跟随、补涨观察、待扩散观察和未启动但相关候选；同组股票必须说明映射关系和失效条件。
 - 对候选股给出观察分层、评分、证据、风险标签、观察条件、剔除条件和信息缺口。
@@ -120,10 +120,10 @@ python -m stock_selection.tools.send_text_email --subject "A股早盘前情报�
 
 After-close automation must treat the project as a hotspot lifecycle tracker:
 
-- First use `hotspot_discovery.market_hotspots`, `hotspot_discovery.industry_hotspots`, and `hotspot_discovery.unseeded_themes` to identify today's active themes from full-market data.
-- Use `hotspot_discovery.seeded_theme_matches` only to validate known historical themes: continuation, repair, weakening, retreat, or falsification.
+- First use `hotspot_discovery.industry_hotspots` and `hotspot_discovery.dynamic_clusters` to identify today's active formal-industry hotspots and unnamed co-movement clusters from full-market data.
+- Every selected candidate and cluster must show its Tushare SW2021 level-1, level-2, and level-3 classification. `stock_basic.industry` is only a supplemental basic field, not a substitute for SW2021.
 - Recent reports are history evidence, not today's theme universe. If an old theme is mentioned repeatedly but lacks current breadth, turnover, leader confirmation, or capital participation, downgrade it to history tracking.
-- If the top 1-3 selected themes are all seeded themes, explicitly list the top non-seeded themes and explain why they were not selected.
+- A dynamic cluster must remain unnamed until candidate-company main-business, announcement, or official company evidence supports a shared product/technology relationship. Do not promote a historical CPO, PCB, or other concept label merely because it is familiar.
 - Track every important theme through lifecycle states: not started, emerging, confirmed, diffusing, diverging, retreating, repair/rebound, returning, or falsified.
 - Select external / overseas sources dynamically by active A-share theme. Do not default to technology sources unless technology is the current confirmed hotspot.
 

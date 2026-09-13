@@ -21,7 +21,6 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--date", default=None, help="Trade date in YYYYMMDD or YYYY-MM-DD. Defaults to latest cached date.")
     parser.add_argument("--cache-root", default=None, help="Override formal Tushare cache root.")
     parser.add_argument("--records-root", default="analysis_records", help="Analysis records root.")
-    parser.add_argument("--seed-path", default=None, help="Override theme seed tag YAML path.")
     parser.add_argument("--lookback", type=int, default=6, help="Cached trading days to compare.")
     parser.add_argument("--top-n-pct", type=int, default=120)
     parser.add_argument("--top-n-amount", type=int, default=120)
@@ -38,7 +37,6 @@ def main() -> int:
         args.date,
         cache_root=args.cache_root,
         records_root=args.records_root,
-        seed_path=args.seed_path,
         lookback=args.lookback,
         top_n_pct=args.top_n_pct,
         top_n_amount=args.top_n_amount,

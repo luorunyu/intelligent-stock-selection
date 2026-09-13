@@ -48,7 +48,8 @@
 | `context/multi_day_market.py` | 汇总多日市场宽度、行业统计和历史核心股票的行情验证。 |
 | `context/report_context.py` | 从历史报告提取主题、股票、判断语句和关键词回溯。 |
 | `context/relationship_map_context.py` | 解析历史关系地图 Markdown，建立公司、主题、产业链和状态索引。 |
-| `context/theme_discovery.py` | 用全市场数据发现热点，输出行业热点、新主题、种子主题验证、角色和生命周期。 |
+| `context/theme_discovery.py` | 用全市场数据和 Tushare SW2021 申万一级、二级、三级映射发现正式行业热点与未命名动态共振簇；不维护主题种子或预设股票。 |
+| `data/industry_taxonomy.py` | 从 `index_classify`、`index_member_all` 静态缓存生成每只股票的申万一级、二级、三级映射，并显式报告映射缺口。 |
 | `context/theme_rotation.py` | 对连续主题发现记录做时间线、状态转换和轮动候选分析。 |
 | `context/theme_stock_roles.py` | 将热点内股票划分为龙头、中军、扩散、跟随、补涨、掉队和证伪角色。 |
 | `context/__init__.py` | 上下文包标识文件。 |
