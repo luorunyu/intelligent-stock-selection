@@ -42,7 +42,8 @@ def dataset_exists(
     cache_root: str | Path | None = None,
 ) -> bool:
     """检查目标正式缓存是否已存在，不触发读取。"""
-    return dataset_path(api_name, trade_date, static=static, cache_root=cache_root).exists()
+    path = dataset_path(api_name, trade_date, static=static, cache_root=cache_root)
+    return path.exists() or path.with_suffix(".csv").exists()
 
 
 def write_dataset(
@@ -87,6 +88,85 @@ def read_dataset(
     return pd.read_parquet(path)
 
 
+def list_dataset_dates(
+    api_name: str,
+    *,
+    cache_root: str | Path | None = None,
+) -> list[str]:
+    """返回某个日频接口已经缓存的交易日。"""
+    root = Path(cache_root) if cache_root is not None else DEFAULT_CACHE_ROOT
+    data_dir = root / api_name
+    if not data_dir.exists():
+        return []
+    dates = {path.stem for path in data_dir.glob("*.*") if _is_compact_date(path.stem)}
+    return sorted(dates)
+
+
+def read_date_range(
+    api_name: str,
+    *,
+    start_date: str | None = None,
+    end_date: str | None = None,
+    filters: dict[str, Any] | None = None,
+    required_fields: tuple[str, ...] = (),
+    cache_root: str | Path | None = None,
+) -> pd.DataFrame:
+    """拼接一个日频接口的日期范围缓存，并执行字段与等值过滤。"""
+    start = _compact_date(start_date) if start_date is not None else None
+    end = _compact_date(end_date) if end_date is not None else None
+    frames: list[pd.DataFrame] = []
+    for trade_date in list_dataset_dates(api_name, cache_root=cache_root):
+        if start is not None and trade_date < start:
+            continue
+        if end is not None and trade_date > end:
+            continue
+        data = read_dataset(api_name, trade_date, cache_root=cache_root).copy()
+        missing = [field for field in required_fields if field not in data.columns]
+        if missing:
+            raise ValueError(f"{api_name} {trade_date} missing required fields: {', '.join(missing)}")
+        if "trade_date" not in data.columns:
+            data["trade_date"] = trade_date
+        data["trade_date"] = data["trade_date"].astype(str)
+        for column, value in (filters or {}).items():
+            if column not in data.columns:
+                data = data.iloc[0:0]
+                break
+            data = data[data[column].astype(str) == str(value)]
+        if not data.empty:
+            frames.append(data)
+    if not frames:
+        return pd.DataFrame()
+    result = pd.concat(frames, ignore_index=True)
+    sort_columns = [column for column in ["ts_code", "trade_date"] if column in result.columns]
+    if sort_columns:
+        result = result.sort_values(sort_columns)
+    return result.drop_duplicates().reset_index(drop=True)
+
+
+def complete_trade_dates(
+    api_names: list[str] | tuple[str, ...],
+    *,
+    cache_root: str | Path | None = None,
+) -> list[str]:
+    """返回所有指定接口都已缓存的共同交易日。"""
+    if not api_names:
+        return []
+    date_sets = [set(list_dataset_dates(api_name, cache_root=cache_root)) for api_name in api_names]
+    if any(not dates for dates in date_sets):
+        return []
+    return sorted(set.intersection(*date_sets))
+
+
+def latest_complete_trade_date(
+    api_names: list[str] | tuple[str, ...],
+    *,
+    cache_root: str | Path | None = None,
+) -> str | None:
+    """返回所有指定接口共同存在的最近交易日。"""
+    dates = complete_trade_dates(api_names, cache_root=cache_root)
+    return dates[-1] if dates else None
+
+
 def metadata_path(name: str, *, cache_root: str | Path | None = None) -> Path:
     """返回运行清单、调用日志和权限结果使用的元数据路径。"""
     root = Path(cache_root) if cache_root is not None else DEFAULT_CACHE_ROOT
@@ -119,3 +199,14 @@ def read_json(name: str, *, cache_root: str | Path | None = None) -> dict[str, A
         return {}
     with path.open("r", encoding="utf-8") as file:
         return json.load(file)
+
+
+def _compact_date(value: str) -> str:
+    compact = value.replace("-", "")
+    if not _is_compact_date(compact):
+        raise ValueError(f"invalid date: {value}")
+    return compact
+
+
+def _is_compact_date(value: str) -> bool:
+    return len(value) == 8 and value.isdigit()

@@ -1,4 +1,4 @@
 interface:
-  display_name: "Tushare 10000 积分 A 股"
-  short_description: "整理 10000 积分可用的 Tushare A 股接口与调用模板"
-  default_prompt: "使用 $tushare-10000-a-stock 帮我选择合适的 Tushare Pro 接口，并生成 A 股数据查询代码。"
+  display_name: "Tushare 个股与申万行业数据"
+  short_description: "缓存个股日K、申万行业日K及SW2021三级映射"
+  default_prompt: "使用 $tushare-10000-a-stock 检查或维护本项目的个股日K与申万行业数据缓存。"

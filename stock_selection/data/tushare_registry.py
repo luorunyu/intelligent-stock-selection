@@ -1,4 +1,4 @@
-"""Tushare 接口注册表：集中声明采集频率、缓存方式和最小调用参数。"""
+"""个股日K与申万行业缓存所需的最小 Tushare 接口注册表。"""
 
 from __future__ import annotations
 
@@ -17,45 +17,82 @@ class TushareApiSpec:
     frequency: Frequency
     cache_mode: CacheMode
     description: str
+    required_fields: tuple[str, ...] = ()
+    collection_group: str = ""
+    refresh_policy: str = ""
     enabled_by_default: bool = True
 
 
 DAILY_API_SPECS: tuple[TushareApiSpec, ...] = (
-    TushareApiSpec("trade_cal", "daily", "trade_date", "Trading calendar confirmation"),
-    TushareApiSpec("daily", "daily", "trade_date", "A-share daily OHLCV snapshot"),
-    TushareApiSpec("daily_basic", "daily", "trade_date", "Valuation and turnover snapshot"),
-    TushareApiSpec("stk_limit", "daily", "trade_date", "Limit-up and limit-down prices"),
-    TushareApiSpec("moneyflow", "daily", "trade_date", "A-share money-flow snapshot"),
-    TushareApiSpec("sw_daily", "daily", "trade_date", "Shenwan industry daily bars"),
-    TushareApiSpec("top_list", "daily", "trade_date", "Dragon tiger list summary"),
-    TushareApiSpec("top_inst", "daily", "trade_date", "Institution seats from dragon tiger list"),
-    TushareApiSpec("margin", "daily", "trade_date", "Market margin trading summary"),
-    TushareApiSpec("margin_detail", "daily", "trade_date", "Stock-level margin detail"),
-    TushareApiSpec("index_daily", "daily", "trade_date", "Index daily bars"),
-    TushareApiSpec("index_dailybasic", "daily", "trade_date", "Index valuation and turnover"),
+    TushareApiSpec(
+        "trade_cal",
+        "daily",
+        "trade_date",
+        "Trading calendar confirmation",
+        ("exchange", "cal_date", "is_open"),
+        "market_daily",
+        "daily",
+    ),
+    TushareApiSpec(
+        "daily",
+        "daily",
+        "trade_date",
+        "A-share daily OHLCV snapshot",
+        ("ts_code", "trade_date", "open", "high", "low", "close", "vol", "amount"),
+        "market_daily",
+        "daily",
+    ),
+    TushareApiSpec(
+        "sw_daily",
+        "daily",
+        "trade_date",
+        "Shenwan industry daily bars",
+        ("ts_code", "trade_date", "open", "high", "low", "close"),
+        "market_daily",
+        "daily",
+    ),
 )
 
 STATIC_API_SPECS: tuple[TushareApiSpec, ...] = (
-    TushareApiSpec("stock_basic", "static", "static", "Listed A-share stock universe"),
-    TushareApiSpec("index_basic", "static", "static", "Index universe"),
-    TushareApiSpec("index_classify", "static", "static", "Industry classification"),
-    TushareApiSpec("index_member_all", "static", "static", "Industry/index constituents"),
+    TushareApiSpec(
+        "stock_basic",
+        "static",
+        "static",
+        "Listed A-share stock universe",
+        ("ts_code", "symbol", "name", "market", "list_date"),
+        "sw_static",
+        "monthly",
+    ),
+    TushareApiSpec(
+        "index_classify",
+        "static",
+        "static",
+        "SW2021 industry catalogue",
+        ("index_code", "industry_name", "level", "industry_code", "parent_code", "src"),
+        "sw_static",
+        "monthly",
+    ),
+    TushareApiSpec(
+        "index_member_all",
+        "static",
+        "static",
+        "SW2021 stock membership",
+        ("l1_code", "l1_name", "l2_code", "l2_name", "l3_code", "l3_name", "ts_code"),
+        "sw_static",
+        "monthly",
+    ),
 )
 
 ON_DEMAND_API_SPECS: tuple[TushareApiSpec, ...] = (
-    TushareApiSpec("pro_bar", "on_demand", "on_demand", "Adjusted stock bars", False),
-    TushareApiSpec("income", "on_demand", "on_demand", "Income statement", False),
-    TushareApiSpec("balancesheet", "on_demand", "on_demand", "Balance sheet", False),
-    TushareApiSpec("cashflow", "on_demand", "on_demand", "Cash-flow statement", False),
-    TushareApiSpec("fina_indicator", "on_demand", "on_demand", "Financial indicators", False),
-    TushareApiSpec("fina_mainbz", "on_demand", "on_demand", "Main business composition", False),
-    TushareApiSpec("forecast", "on_demand", "on_demand", "Earnings forecast", False),
-    TushareApiSpec("express", "on_demand", "on_demand", "Earnings express", False),
-    TushareApiSpec("dividend", "on_demand", "on_demand", "Dividend records", False),
-    TushareApiSpec("stk_holdernumber", "on_demand", "on_demand", "Shareholder count", False),
-    TushareApiSpec("stk_holdertrade", "on_demand", "on_demand", "Shareholder increase/decrease", False),
-    TushareApiSpec("pledge_stat", "on_demand", "on_demand", "Share pledge statistics", False),
-    TushareApiSpec("share_float", "on_demand", "on_demand", "Lock-up share release", False),
+    TushareApiSpec(
+        "pro_bar",
+        "on_demand",
+        "on_demand",
+        "Adjusted stock bars",
+        ("ts_code", "trade_date", "open", "high", "low", "close", "vol"),
+        "stock_on_demand",
+        "on_demand",
+    ),
 )
 
 ALL_API_SPECS = DAILY_API_SPECS + STATIC_API_SPECS + ON_DEMAND_API_SPECS
@@ -84,16 +121,19 @@ def iter_specs(
     return specs
 
 
+def iter_group(group: str) -> tuple[TushareApiSpec, ...]:
+    """按采集组返回接口声明。"""
+    return tuple(spec for spec in ALL_API_SPECS if spec.collection_group == group)
+
+
 def default_params(api_name: str, trade_date: str | None = None) -> dict[str, str]:
-    """返回权限探测和常规采集可使用的最小安全参数。"""
+    """返回正式采集参数。"""
     if api_name == "stock_basic":
         return {
             "exchange": "",
             "list_status": "L",
-            "fields": "ts_code,symbol,name,area,industry,market,list_date",
+            "fields": "ts_code,symbol,name,area,industry,market,list_date,delist_date",
         }
-    if api_name == "index_basic":
-        return {"market": "SSE"}
     if api_name == "index_classify":
         return {"src": "SW2021"}
     if api_name == "index_member_all":
@@ -108,3 +148,12 @@ def default_params(api_name: str, trade_date: str | None = None) -> dict[str, st
     if trade_date is None:
         raise ValueError(f"{api_name} requires trade_date")
     return {"trade_date": trade_date}
+
+
+def probe_params(api_name: str, trade_date: str) -> dict[str, str]:
+    """返回只用于权限探测的轻量参数，不代表完整采集范围。"""
+    if api_name == "index_member_all":
+        return {"l1_code": "801010.SI"}
+    if api_name == "pro_bar":
+        return {"ts_code": "000001.SZ", "adj": "qfq", "freq": "D", "limit": "5"}
+    return default_params(api_name, trade_date)

@@ -1,4 +1,4 @@
-"""命令行入口：按交易日或静态分类采集 Tushare 数据到本地正式缓存。"""
+"""采集或回填个股日K、申万行业日K和申万三级映射。"""
 
 from __future__ import annotations
 
@@ -15,39 +15,59 @@ from stock_selection.data.tushare_collector import TushareCollector
 
 
 def parse_args() -> argparse.Namespace:
-    """定义日期、接口过滤、缓存位置和强制刷新选项。"""
-    parser = argparse.ArgumentParser(description="Collect daily Tushare datasets into the local cache.")
-    parser.add_argument("--date", default="latest", help="Trade date in YYYYMMDD, or latest.")
-    parser.add_argument("--api", action="append", dest="apis", help="Collect only this API. Repeatable.")
-    parser.add_argument("--cache-root", default=None, help="Override cache root directory.")
-    parser.add_argument("--force", action="store_true", help="Overwrite existing cached datasets.")
-    parser.add_argument("--include-unprobed", action="store_true", help="Ignore available_apis.json filtering.")
-    parser.add_argument("--static", action="store_true", help="Collect static/low-frequency datasets instead.")
+    """定义静态初始化、每日增量和历史回填命令。"""
+    parser = argparse.ArgumentParser(description="Collect stock and Shenwan industry data into the local cache.")
+    subparsers = parser.add_subparsers(dest="command", required=True)
+
+    static_parser = subparsers.add_parser("static", help="Collect SW2021 static datasets and rebuild membership.")
+    _add_common_options(static_parser)
+
+    daily_parser = subparsers.add_parser("daily", help="Collect one complete market trading day.")
+    _add_common_options(daily_parser)
+    daily_parser.add_argument("--date", default="latest", help="Trade date in YYYYMMDD, or latest.")
+
+    backfill_parser = subparsers.add_parser("backfill", help="Backfill complete market trading days.")
+    _add_common_options(backfill_parser)
+    backfill_parser.add_argument("--start", required=True, help="Start date in YYYYMMDD.")
+    backfill_parser.add_argument("--end", required=True, help="End date in YYYYMMDD.")
     return parser.parse_args()
 
 
+def _add_common_options(parser: argparse.ArgumentParser) -> None:
+    parser.add_argument("--cache-root", default=None, help="Override cache root directory.")
+    parser.add_argument("--force", action="store_true", help="Overwrite existing cached datasets.")
+    parser.add_argument("--include-unprobed", action="store_true", help="Ignore available_apis.json filtering.")
+
+
 def main() -> int:
-    """根据模式调用采集器，并将每个接口的结果打印为可审计摘要。"""
+    """执行静态初始化、每日增量或历史回填。"""
     args = parse_args()
     collector = TushareCollector(cache_root=args.cache_root)
+    available_only = not args.include_unprobed
 
-    # 静态表（股票池、行业分类等）与每日横截面使用不同的缓存路径和采集方式。
-    if args.static:
-        results = collector.collect_static(
-            api_names=args.apis,
+    if args.command == "static":
+        results = collector.collect_sw_static(
             force=args.force,
-            available_only=not args.include_unprobed,
+            available_only=available_only,
+        )
+    elif args.command == "daily":
+        trade_date = None if args.date == "latest" else args.date
+        results = collector.collect_market_daily(
+            trade_date,
+            force=args.force,
+            available_only=available_only,
         )
     else:
-        trade_date = None if args.date == "latest" else args.date
-        results = collector.collect_daily(
-            trade_date,
-            api_names=args.apis,
-            force=args.force,
-            available_only=not args.include_unprobed,
-        )
+        results = []
+        for trade_date in collector.trade_dates(args.start, args.end):
+            results.extend(
+                collector.collect_market_daily(
+                    trade_date,
+                    force=args.force,
+                    available_only=available_only,
+                )
+            )
 
-    # 保留每个接口的状态，便于定位权限、网络或数据为空的问题。
     for result in results:
         detail = f" rows={result.rows}" if result.rows is not None else ""
         path = f" path={result.path}" if result.path else ""

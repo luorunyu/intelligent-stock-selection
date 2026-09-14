@@ -4,7 +4,11 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from stock_selection.data.tushare_cache import DEFAULT_CACHE_ROOT
+from stock_selection.data.tushare_cache import (
+    complete_trade_dates,
+    latest_complete_trade_date as latest_common_trade_date,
+    list_dataset_dates,
+)
 
 
 def cached_trade_dates(
@@ -14,13 +18,16 @@ def cached_trade_dates(
 ) -> list[str]:
     """返回指定接口在正式缓存中实际存在的交易日，按日期升序排列。"""
 
-    root = Path(cache_root) if cache_root is not None else DEFAULT_CACHE_ROOT
-    data_dir = root / api_name
-    if not data_dir.exists():
-        return []
-    # 同一交易日可能同时存在 parquet/csv 回退文件，集合可避免重复。
-    dates = {_date_from_path(path) for path in data_dir.glob("*.*")}
-    return sorted(date for date in dates if date is not None)
+    return list_dataset_dates(api_name, cache_root=cache_root)
+
+
+def cached_common_trade_dates(
+    api_names: list[str] | tuple[str, ...] = ("daily", "sw_daily"),
+    *,
+    cache_root: str | Path | None = None,
+) -> list[str]:
+    """返回个股和申万行业数据共同可用的交易日。"""
+    return complete_trade_dates(api_names, cache_root=cache_root)
 
 
 def resolve_cached_offsets(
@@ -49,7 +56,10 @@ def latest_cached_trade_date(*, cache_root: str | Path | None = None, api_name: 
     return dates[-1] if dates else None
 
 
-def _date_from_path(path: Path) -> str | None:
-    """只接受形如 YYYYMMDD 的缓存文件名，忽略元数据和其他杂项文件。"""
-    value = path.stem
-    return value if len(value) == 8 and value.isdigit() else None
+def latest_complete_trade_date(
+    api_names: list[str] | tuple[str, ...] = ("daily", "sw_daily"),
+    *,
+    cache_root: str | Path | None = None,
+) -> str | None:
+    """返回个股和申万行业数据共同存在的最近交易日。"""
+    return latest_common_trade_date(api_names, cache_root=cache_root)

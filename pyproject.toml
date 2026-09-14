@@ -1,7 +1,7 @@
 [project]
 name = "intelligent-stock-selection-system"
 version = "0.1.0"
-description = "A minimal stock cycle selection, backtesting, and visualization framework."
+description = "A minimal A-share and Shenwan industry market-data foundation."
 requires-python = ">=3.10"
 dependencies = [
     "numpy>=1.23",

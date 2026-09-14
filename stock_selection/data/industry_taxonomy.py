@@ -1,8 +1,4 @@
-"""申万行业分类的缓存映射与校验。
-
-本模块只处理 Tushare ``SW2021`` 正式分类，不维护任何市场概念、主题名或
-预设股票名单。主题发现需要的每股一级、二级、三级行业均从这里取得。
-"""
+"""SW2021 行业目录、股票三级归属和派生缓存校验。"""
 
 from __future__ import annotations
 
@@ -11,7 +7,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from stock_selection.data.tushare_cache import DEFAULT_CACHE_ROOT, read_dataset, write_dataset
+from stock_selection.data.tushare_cache import DEFAULT_CACHE_ROOT, dataset_path, read_dataset, write_dataset
 
 
 SW_MEMBERSHIP_DATASET = "sw_industry_membership"
@@ -34,13 +30,15 @@ class SwIndustryMembership:
     warnings: list[str] = field(default_factory=list)
 
     def summary(self) -> dict[str, object]:
-        """返回适合写入热点发现 JSON 的小型来源说明。"""
+        """返回映射覆盖情况和数据质量摘要。"""
+        validation = validate_sw_membership(self.data)
         return {
             "source": self.source,
             "rows": int(len(self.data)),
             "mapped_stocks": int(self.data["ts_code"].nunique()) if "ts_code" in self.data else 0,
             "warnings": list(self.warnings),
             "columns": list(SW_LEVEL_COLUMNS),
+            **validation,
         }
 
 
@@ -57,10 +55,40 @@ def load_sw_industry_membership(
     """
     root = Path(cache_root) if cache_root is not None else DEFAULT_CACHE_ROOT
     warnings: list[str] = []
-    derived_path = root / "static" / f"{SW_MEMBERSHIP_DATASET}.parquet"
-    if derived_path.exists() and not rebuild:
+    derived_path = dataset_path(SW_MEMBERSHIP_DATASET, static=True, cache_root=root)
+    if not rebuild and _derived_cache_is_fresh(root, derived_path):
         data = read_dataset(SW_MEMBERSHIP_DATASET, static=True, cache_root=root)
         return SwIndustryMembership(_normalise_membership(data), "derived_cache", warnings)
+
+    return rebuild_sw_industry_membership(cache_root=root)
+
+
+def load_sw_catalog(
+    *,
+    level: str | None = None,
+    cache_root: str | Path | None = None,
+) -> pd.DataFrame:
+    """读取 SW2021 行业目录，并可筛选一级、二级或三级。"""
+    root = Path(cache_root) if cache_root is not None else DEFAULT_CACHE_ROOT
+    data = read_dataset("index_classify", static=True, cache_root=root).copy()
+    if "src" in data.columns:
+        data = data[data["src"].fillna("").astype(str) == "SW2021"]
+    if level is not None:
+        normalised_level = normalise_sw_level(level)
+        if "level" not in data.columns:
+            return data.iloc[0:0].copy()
+        data = data[data["level"].fillna("").astype(str).str.upper() == normalised_level]
+    sort_columns = [column for column in ["level", "industry_code", "index_code"] if column in data.columns]
+    return data.sort_values(sort_columns).reset_index(drop=True) if sort_columns else data.reset_index(drop=True)
+
+
+def rebuild_sw_industry_membership(
+    *,
+    cache_root: str | Path | None = None,
+) -> SwIndustryMembership:
+    """由最新静态原始表重建股票到申万三级的派生映射。"""
+    root = Path(cache_root) if cache_root is not None else DEFAULT_CACHE_ROOT
+    warnings: list[str] = []
 
     try:
         classes = read_dataset("index_classify", static=True, cache_root=root)
@@ -91,6 +119,34 @@ def load_sw_industry_membership(
     # 派生缓存可避免每次盘后都对原始成分表重复清洗；原始表仍保留在 static 目录。
     write_dataset(data, SW_MEMBERSHIP_DATASET, static=True, cache_root=root)
     return SwIndustryMembership(data, "rebuilt_from_tushare_static", warnings)
+
+
+def validate_sw_membership(data: pd.DataFrame) -> dict[str, int]:
+    """统计映射覆盖、行业数量和不完整路径数量。"""
+    if data.empty:
+        return {
+            "l1_industries": 0,
+            "l2_industries": 0,
+            "l3_industries": 0,
+            "incomplete_rows": 0,
+        }
+    incomplete = data[list(SW_LEVEL_COLUMNS)].fillna("").astype(str).eq("").any(axis=1)
+    return {
+        "l1_industries": int(data["sw_l1_code"].nunique()),
+        "l2_industries": int(data["sw_l2_code"].nunique()),
+        "l3_industries": int(data["sw_l3_code"].nunique()),
+        "incomplete_rows": int(incomplete.sum()),
+    }
+
+
+def normalise_sw_level(level: str) -> str:
+    """将中文或数字行业层级统一为 L1/L2/L3。"""
+    value = level.strip().upper()
+    aliases = {"1": "L1", "2": "L2", "3": "L3", "一级": "L1", "二级": "L2", "三级": "L3"}
+    value = aliases.get(value, value)
+    if value not in {"L1", "L2", "L3"}:
+        raise ValueError(f"invalid Shenwan level: {level}")
+    return value
 
 
 def attach_sw_industry(data: pd.DataFrame, membership: pd.DataFrame) -> pd.DataFrame:
@@ -139,3 +195,21 @@ def _normalise_membership(data: pd.DataFrame) -> pd.DataFrame:
 def _empty_membership() -> pd.DataFrame:
     """提供带固定列的空映射，令下游能保留信息缺口而不中断。"""
     return pd.DataFrame(columns=["ts_code", *SW_LEVEL_COLUMNS])
+
+
+def _derived_cache_is_fresh(root: Path, derived_path: Path) -> bool:
+    actual_derived = derived_path if derived_path.exists() else derived_path.with_suffix(".csv")
+    if not actual_derived.exists():
+        return False
+    source_paths = [
+        dataset_path("index_classify", static=True, cache_root=root),
+        dataset_path("index_member_all", static=True, cache_root=root),
+    ]
+    actual_sources = [
+        path if path.exists() else path.with_suffix(".csv")
+        for path in source_paths
+    ]
+    existing_sources = [path for path in actual_sources if path.exists()]
+    if len(existing_sources) != len(source_paths):
+        return True
+    return actual_derived.stat().st_mtime >= max(path.stat().st_mtime for path in existing_sources)

@@ -9,9 +9,16 @@ from typing import Any, Callable
 
 import pandas as pd
 
-from stock_selection.data.tushare_cache import append_jsonl, dataset_exists, write_dataset
+from stock_selection.data.industry_taxonomy import rebuild_sw_industry_membership
+from stock_selection.data.tushare_cache import (
+    append_jsonl,
+    dataset_exists,
+    read_dataset,
+    write_dataset,
+    write_json,
+)
 from stock_selection.data.tushare_client import TushareCallResult, call_api, call_pro_bar
-from stock_selection.data.tushare_registry import default_params, get_spec, iter_specs
+from stock_selection.data.tushare_registry import default_params, get_spec, iter_group, iter_specs
 
 
 @dataclass(frozen=True)
@@ -37,6 +44,67 @@ class TushareCollector:
         self.pro = pro
         self.cache_root = cache_root
         self._caller = caller
+
+    def collect_market_daily(
+        self,
+        trade_date: str | None = None,
+        *,
+        force: bool = False,
+        available_only: bool = True,
+    ) -> list[CollectionResult]:
+        """采集个股与申万行业共同需要的完整日频数据包。"""
+        resolved_date = trade_date or self.latest_trade_date()
+        api_names = [spec.name for spec in iter_group("market_daily")]
+        results = self.collect_daily(
+            resolved_date,
+            api_names=api_names,
+            force=force,
+            available_only=available_only,
+        )
+        readiness = {
+            api_name: self._dataset_ready(api_name, resolved_date)
+            for api_name in api_names
+        }
+        write_json(
+            f"market_daily/{resolved_date}.json",
+            {
+                "trade_date": resolved_date,
+                "datasets": readiness,
+                "complete": all(readiness.values()),
+                "results": [result.__dict__ for result in results],
+            },
+            cache_root=self.cache_root,
+        )
+        return results
+
+    def collect_sw_static(
+        self,
+        *,
+        force: bool = False,
+        available_only: bool = True,
+    ) -> list[CollectionResult]:
+        """采集 SW2021 静态表并重建股票三级行业映射。"""
+        api_names = [spec.name for spec in iter_group("sw_static")]
+        results = self.collect_static(
+            api_names=api_names,
+            force=force,
+            available_only=available_only,
+        )
+        try:
+            membership = rebuild_sw_industry_membership(cache_root=self.cache_root)
+            summary = membership.summary()
+            results.append(
+                CollectionResult(
+                    "sw_industry_membership",
+                    "ok",
+                    rows=int(summary["rows"]),
+                    message="rebuilt from index_classify and index_member_all",
+                )
+            )
+            write_json("sw_static.json", summary, cache_root=self.cache_root)
+        except Exception as exc:
+            results.append(CollectionResult("sw_industry_membership", "failed", message=str(exc)))
+        return results
 
     def collect_daily(
         self,
@@ -129,7 +197,7 @@ class TushareCollector:
                 continue
             if result.status == "failed":
                 raise RuntimeError(f"required Tushare API failed: {result.api_name}: {result.message}")
-            if result.status == "ok" and result.rows == 0:
+            if result.status == "empty" or (result.status == "ok" and result.rows == 0):
                 raise RuntimeError(f"required Tushare API returned 0 rows: {result.api_name}")
         return results
 
@@ -195,6 +263,21 @@ class TushareCollector:
             raise RuntimeError("trade_cal returned no open trading days")
         return str(cal.sort_values("cal_date").iloc[-1]["cal_date"])
 
+    def trade_dates(self, start_date: str, end_date: str) -> list[str]:
+        """返回指定区间内的开市日期。"""
+        cal = self._call(
+            "trade_cal",
+            {
+                "exchange": "SSE",
+                "start_date": start_date,
+                "end_date": end_date,
+                "is_open": "1",
+            },
+        )
+        if cal.empty:
+            return []
+        return [str(value) for value in cal.sort_values("cal_date")["cal_date"].tolist()]
+
     def _collect_one(
         self,
         api_name: str,
@@ -211,6 +294,7 @@ class TushareCollector:
             if isinstance(data, pd.DataFrame):
                 if data.empty:
                     return CollectionResult(api_name, "empty", rows=0)
+                self._validate_fields(api_name, data)
                 path = write_dataset(data, api_name, trade_date, static=static, cache_root=self.cache_root)
                 rows = int(data.shape[0])
             else:
@@ -255,3 +339,18 @@ class TushareCollector:
         if not available:
             return None
         return {name for name, info in available.items() if info.get("available")}
+
+    def _dataset_ready(self, api_name: str, trade_date: str) -> bool:
+        try:
+            data = read_dataset(api_name, trade_date, cache_root=self.cache_root)
+            self._validate_fields(api_name, data)
+        except Exception:
+            return False
+        return not data.empty
+
+    @staticmethod
+    def _validate_fields(api_name: str, data: pd.DataFrame) -> None:
+        required = get_spec(api_name).required_fields
+        missing = [field for field in required if field not in data.columns]
+        if missing:
+            raise ValueError(f"{api_name} missing required fields: {', '.join(missing)}")

@@ -22,7 +22,7 @@ def test_attach_sw_industry_keeps_official_three_levels() -> None:
 
     result = attach_sw_industry(daily, membership)
 
-    assert list(result.loc[0, SW_LEVEL_COLUMNS]) == [
+    assert list(result.loc[0, list(SW_LEVEL_COLUMNS)]) == [
         "801010.SI",
         "农林牧渔",
         "801011.SI",
@@ -30,4 +30,4 @@ def test_attach_sw_industry_keeps_official_three_levels() -> None:
         "850111.SI",
         "种子",
     ]
-    assert list(result.loc[1, SW_LEVEL_COLUMNS]) == [""] * len(SW_LEVEL_COLUMNS)
+    assert list(result.loc[1, list(SW_LEVEL_COLUMNS)]) == [""] * len(SW_LEVEL_COLUMNS)

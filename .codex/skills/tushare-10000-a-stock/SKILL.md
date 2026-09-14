@@ -1,108 +1,119 @@
 ---
 name: tushare-10000-a-stock
-description: 当 Codex 需要在 Tushare Pro 个人 10000 积分账户范围内处理 A 股选股、数据采集、因子研究、回测数据拉取或权限排查时使用。用于选择可用接口，避开仍需独立授权的港股、美股、新闻、公告、研报等数据，并生成包含合适入参的 Python tushare/pro_bar/pro 接口调用代码。
+description: 在本项目中采集、缓存、读取或排查 Tushare Pro 个人 10000 积分账户下的 A 股个股日K、申万行业日K、SW2021 一级/二级/三级目录和股票行业归属。用户要求每日数据缓存、历史回填、个股行情读取、申万行业数据读取、缓存完整性检查、接口权限排查或相关代码修改时使用；当前分支只使用 trade_cal、daily、sw_daily、stock_basic、index_classify、index_member_all 和 pro_bar。
 ---
 
-# Tushare 10000 积分 A 股数据
+# Tushare 个股与申万行业数据
 
-## 核心规则
+## 固定范围
 
-把 10000 积分视为：可使用官方积分表中权限门槛不高于 10000 分的大多数 A 股日线、指数、行业、财务、资金流、事件、基金、期货、期权、债券、外汇和宏观类常规接口；但不自动包含独立权限数据。具体接口仍以 Tushare 当日权限表和实际返回为准。
-
-当用户需求涉及以下数据时，必须提醒这是独立权限或可能需要更高权限：
-
-- 港股、美股、新闻、公告、研报
-- A 股历史分钟、实时分钟、实时日线
-- 港美股财务、实时行情、政策库、部分高级因子/预测数据
-
-如需确认最新权限，以 Tushare 官方文档为准：
-
-- 权限说明：`https://tushare.pro/document/2?doc_id=108`
-- 积分与频次权限表：`https://tushare.pro/document/1?doc_id=290`
-
-## 使用流程
-
-1. 先判断用户要的数据类型：行情、估值、财务、指数、行业、资金流、事件/风险，还是跨资产数据。
-2. 需要接口名、入参模板或字段说明时，读取 `references/api-reference.md`。
-3. 优先选择 10000 积分下稳定可用的 A 股常规接口，再考虑独立权限数据。
-4. 在本项目中，优先读取本地缓存 `data_cache/tushare/`；缺失数据时，只通过项目统一采集代码补数，不要临时绕过限流直接调用 Tushare。
-5. 统一采集入口是 `stock_selection/data/tushare_client.py`、`stock_selection/data/tushare_collector.py` 和 `scripts/collect_tushare_daily.py`，其中已包含环境变量 token、自定义 HTTP 地址、限流和重试。不要把 token 写入报告、日志或最终回答。
-6. 涉及批量选股、每日复盘或自动化任务时，先读取 `references/usage-strategy.md`，按 10000 积分和分钟频率友好的方式读取缓存或调用统一采集脚本。
-7. 如果当前项目没有可用 client，再使用环境变量或占位 token 方式：
-
-```python
-import tushare as ts
-
-pro = ts.pro_api("YOUR_TOKEN")
-```
-
-8. 用户需要可用于研究/回测的复权行情时，优先通过 `call_pro_bar(...)` 或 collector 的按需采集入口调用 `ts.pro_bar(api=pro, ...)`。
-9. 普通 Pro 接口通过 `call_api(api_name, params)` 或 collector 调用。
-10. 说明常见限制：很多接口有单次返回行数限制，历史数据通常要按日期或股票代码分页拉取，交易日数据可能在盘后才完整更新。
-
-## 本项目数据入口
-
-当前项目已提供并测试过 Tushare client：
+只使用以下接口：
 
 ```text
-stock_selection/data/tushare_client.py
+日频：trade_cal、daily、sw_daily
+静态：stock_basic、index_classify、index_member_all
+按需：pro_bar
+派生：sw_industry_membership
 ```
 
-使用本项目做数据采集、行情分析、选股观察池或复盘时，先读本地缓存；缺失时通过统一脚本补数：
+不要在当前分支引入资金流、龙虎榜、融资融券、财务、公告、新闻、研报或跨资产接口。
+
+## 工作流
+
+1. 优先读取 `data_cache/tushare/`，不要隐式访问网络。
+2. 需要接口字段或参数时读取 `references/api-reference.md`。
+3. 需要初始化、每日增量或历史回填时读取 `references/usage-strategy.md`。
+4. 所有网络调用必须经过：
+   - `stock_selection/data/tushare_client.py`
+   - `stock_selection/data/tushare_collector.py`
+5. 不要绕过项目限流、重试、自定义 HTTP 地址和安全日志。
+6. 不要输出或写入真实 `TUSHARE_TOKEN`。
+
+## 标准命令
+
+首次或定期刷新静态数据：
 
 ```powershell
-python scripts/collect_tushare_daily.py --date latest
-python scripts/collect_tushare_daily.py --static
+python scripts/collect_tushare_daily.py static
+```
+
+采集最新有效交易日：
+
+```powershell
+python scripts/collect_tushare_daily.py daily --date latest
+```
+
+回填历史区间：
+
+```powershell
+python scripts/collect_tushare_daily.py backfill --start 20260101 --end 20260914
+```
+
+权限探测：
+
+```powershell
 python scripts/probe_tushare_apis.py --date latest
 ```
 
-项目 client 已改为函数式入口，导入不会触发示例请求。token 使用 `TUSHARE_TOKEN` 环境变量；分钟频率默认由代码限制为 90 次/分钟，可用 `TUSHARE_MAX_CALLS_PER_MINUTE` 调整。
+## 完整性规则
 
-安全规则：
+- 每日研究日期必须同时存在 `daily` 和 `sw_daily`。
+- `daily` 或 `sw_daily` 任一缺失时，不得把该日期视为完整日期。
+- `index_classify` 必须使用 `src=SW2021`。
+- `index_member_all` 是股票申万归属的唯一正式来源。
+- 静态原始表更新后必须重建 `sw_industry_membership`。
+- 缺失申万映射时保留空值和警告，不得退回 `stock_basic.industry`。
+- 权限探测只证明接口可调用，不证明静态全量数据已经缓存。
 
-- 不要在回答、报告、日志、归档文件或示例代码里输出真实 token。
-- 如果需要展示代码，使用 `YOUR_TOKEN`、环境变量或说明“沿用项目 client”，不要复制项目里的真实 token。
-- 保留项目 client 中的自定义 HTTP 地址设置，除非用户明确要求改回官方默认地址。
-
-## 常用入参
-
-统一使用这些参数含义：
-
-- `ts_code`：证券代码，例如 `000001.SZ`、`600000.SH`、`000001.SH`
-- `trade_date`：单个交易日，格式 `YYYYMMDD`
-- `start_date`、`end_date`：日期区间，格式 `YYYYMMDD`
-- `limit`：`pro_bar` 最近 N 条记录
-- `adj`：复权方式，`qfq` 前复权，`hfq` 后复权，不传或 `None` 为不复权
-- `freq`：周期，`D` 日线，`W` 周线，`M` 月线
-- `fields`：限制返回字段，多个字段用英文逗号拼接
-
-## 代码默认选择
-
-股票策略研究默认使用 `qfq` 前复权价格，除非用户明确要求原始价格。
-
-做横截面因子、每日观察池和收盘后复盘时，优先按 `trade_date` 拉取全市场数据，再筛候选池：
+## 读取入口
 
 ```python
-from stock_selection.data.tushare_cache import read_dataset
+from stock_selection.data import (
+    load_stock_daily,
+    load_sw_catalog,
+    load_sw_daily,
+    load_sw_industry_membership,
+)
 
-daily_basic = read_dataset("daily_basic", "20260608")
-moneyflow = read_dataset("moneyflow", "20260608")
+stock_daily = load_stock_daily(
+    "000001.SZ",
+    start_date="20260101",
+    end_date="20260914",
+)
+
+sw_l3 = load_sw_catalog(level="L3")
+membership = load_sw_industry_membership().data
+industry_daily = load_sw_daily(
+    level="L3",
+    start_date="20260101",
+    end_date="20260914",
+)
 ```
 
-做单只股票历史序列时，优先按 `ts_code` 加日期区间拉取：
+需要单股复权行情时直接使用项目客户端：
 
 ```python
 from stock_selection.data.tushare_client import call_pro_bar
 
-bars = call_pro_bar({
-    "ts_code": "000001.SZ",
-    "adj": "qfq",
-    "start_date": "20250101",
-    "end_date": "20260608",
-})
+bars = call_pro_bar(
+    {
+        "ts_code": "000001.SZ",
+        "adj": "qfq",
+        "freq": "D",
+        "start_date": "20260101",
+        "end_date": "20260914",
+    }
+)
 ```
+
+## 安全边界
+
+- Token 只从环境变量或项目环境文件读取。
+- 不在报告、日志、示例或最终回答中显示真实 Token。
+- 不把公司文件、缓存或数据上传到第三方公网服务。
+- 接口无权限时记录失败原因，不尝试绕过。
 
 ## 参考文件
 
-- `references/api-reference.md`：10000 积分友好的接口目录、入参、示例调用和独立权限排除项。
-- `references/usage-strategy.md`：10000 积分和分钟调用限制下的批量拉取、缓存、候选池深挖和自动化任务调用策略。
+- `references/api-reference.md`：当前分支7个接口的参数、字段和缓存规则。
+- `references/usage-strategy.md`：初始化、每日增量、历史回填和静态刷新流程。

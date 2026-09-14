@@ -1,72 +1,114 @@
-# Tushare 10000 积分调用策略
+# 个股与申万行业缓存策略
 
-目标：支撑 A 股收盘后复盘、早盘前校准、观察池筛选和候选股深挖，同时避免分钟频率限制、接口行数限制和不必要的全市场逐票循环。
+## 原则
 
-## 核心原则
+- 按交易日批量拉取全市场 `daily`，不要逐只股票调用 `pro_bar` 构建全市场历史。
+- 同一交易日批量拉取 `sw_daily`，与 `daily` 使用相同缓存日期。
+- 静态表低频刷新，刷新后重建 `sw_industry_membership`。
+- 分析代码只读缓存；缺数由采集脚本显式补齐。
+- 重复执行默认跳过已有缓存，只有 `--force` 覆盖。
 
-- 优先按 `trade_date` 拉全市场横截面，再合并筛选。
-- 不要对全市场 5000 只股票逐只调用 `pro_bar`、`moneyflow`、财务、龙虎榜或融资融券。
-- 先粗筛候选池，再对候选池补近 20/60 日历史序列。
-- 低频数据缓存：股票池、行业分类、行业成分、指数基础信息不必每天全量重新拉。
-- 每日数据落盘：同一交易日同一接口尽量只拉一次，后续分析读本地缓存。
-- 自动任务必须走项目统一采集代码，默认限流 90 次/分钟；遇到频率错误或网络错误时退避等待再重试。
-- 盘中实时和分钟级监控仍可能属于独立权限或受实时频率限制的场景；默认不做，实际权限以官方表和接口返回为准。
-
-## 推荐每日采集顺序
-
-收盘后复盘优先使用：
-
-1. `trade_cal`：确认最新交易日。
-2. `daily(trade_date=...)`：全市场日线横截面，获取涨跌幅、成交量、成交额。
-3. `daily_basic(trade_date=...)`：全市场换手率、量比、市值、估值。
-4. `stk_limit(trade_date=...)`：涨停价、跌停价，用于涨停、跌停、连板判断。
-5. `sw_daily(trade_date=...)`：申万行业日线，用于行业强弱。
-6. `moneyflow(trade_date=...)`：全市场资金流，如果接口权限和返回量允许。
-7. `top_list(trade_date=...)`、`top_inst(trade_date=...)`：龙虎榜和机构席位。
-8. `margin(trade_date=...)`、`margin_detail(trade_date=...)`：融资融券。
-9. `moneyflow_hsgt`、`hk_hold`：北向资金和持股变化，可按需要拉取。
-10. 对候选池股票补 `ts.pro_bar(api=pro, ts_code=..., adj="qfq", limit=20/60)` 或区间 `daily`。
-
-早盘前校准优先读取昨晚本地缓存和观察池记录，只补充：
-
-- 最新交易日确认。
-- 隔夜海外和国内公告/新闻。
-- 必要时少量查询上一交易日候选池数据。
-
-## 本地缓存建议
-
-本项目统一缓存目录：
+## 缓存结构
 
 ```text
-data_cache/tushare/<api_name>/<trade_date>.parquet
-data_cache/tushare/static/<api_name>.parquet
-data_cache/tushare/_metadata/calls.jsonl
-data_cache/tushare/_metadata/runs.jsonl
+data_cache/tushare/
+├─ daily/YYYYMMDD.parquet
+├─ sw_daily/YYYYMMDD.parquet
+├─ trade_cal/YYYYMMDD.parquet
+├─ static/stock_basic.parquet
+├─ static/index_classify.parquet
+├─ static/index_member_all.parquet
+├─ static/sw_industry_membership.parquet
+└─ _metadata/
+   ├─ available_apis.json
+   ├─ sw_static.json
+   ├─ market_daily/YYYYMMDD.json
+   ├─ calls.jsonl
+   ├─ runs.jsonl
+   └─ errors.jsonl
 ```
 
-建议缓存：
+## 首次初始化
 
-- 静态或低频：`stock_basic`、`index_classify`、`index_member_all`、`index_basic`。
-- 每日横截面：`daily`、`daily_basic`、`stk_limit`、`sw_daily`、`moneyflow`、`top_list`、`margin_detail`。
-- 候选池历史：只保存候选股票的近 20/60 日行情和资金数据。
+1. 配置 `TUSHARE_TOKEN`。
+2. 探测当前7个接口。
+3. 采集静态数据。
+4. 验证 SW2021 目录包含 L1/L2/L3。
+5. 由 `index_member_all` 生成 `sw_industry_membership`。
+6. 按需要回填 `daily` 和 `sw_daily`。
 
-## 候选池深挖规则
+```powershell
+python scripts/probe_tushare_apis.py --date latest
+python scripts/collect_tushare_daily.py static
+python scripts/collect_tushare_daily.py backfill --start 20260101 --end 20260914
+```
 
-- 第一步：用全市场横截面筛出强势行业、涨幅、成交额、换手、量比、涨停、资金流异常股票。
-- 第二步：将候选池压缩到约 100-300 只。
-- 第三步：只对候选池补历史走势、资金持续性、龙虎榜、融资融券和公司风险数据。
-- 第四步：重点观察池通常控制在 20-50 只，输出给人工观察。
+## 每日增量
 
-## 限频与重试
+```powershell
+python scripts/collect_tushare_daily.py daily --date latest
+```
 
-- 接口调用必须通过 `stock_selection.data.tushare_client.call_api` 或 `call_pro_bar`，由 `RateLimiter` 控制在默认 90 次/分钟。
-- 碰到频率限制、网络超时或服务端短暂错误时，不要立刻密集重试；等待 30-60 秒后重试。
-- 对单次返回行数受限的接口，按 `trade_date`、日期区间或候选股票列表分页。
-- 日线数据可能盘后才完整更新；收盘后任务默认放到 16:30 或更晚。
+执行顺序：
 
-## 禁止模式
+1. 通过 `trade_cal` 确认最新开市日。
+2. 采集该日 `trade_cal`、`daily`、`sw_daily`。
+3. 校验必需字段和非空结果。
+4. 写入 `_metadata/market_daily/YYYYMMDD.json`。
+5. 只有 `complete=true` 的日期才能用于个股与行业联合研究。
 
-- 不要在自动任务中全市场逐票调用 `pro_bar(limit=250)`。
-- 不要盘中每几分钟全市场刷新。
-- 不要为了新闻解释逐票拉全量财务、公告或研报数据。
-- 不要把资金流字段当作唯一结论；必须结合价格、成交、换手、龙虎榜、融资融券、北向和板块扩散。
+## 历史回填
+
+```powershell
+python scripts/collect_tushare_daily.py backfill --start 20250101 --end 20260914
+```
+
+- 先一次性取得区间交易日。
+- 按交易日调用完整日频采集。
+- 已有缓存默认跳过。
+- 中途中断后可直接重跑。
+- 不要对全市场逐只调用 `pro_bar`。
+
+## 静态刷新
+
+建议按月刷新，或在申万成分调整、股票上市状态变化后刷新：
+
+```powershell
+python scripts/collect_tushare_daily.py static --force
+```
+
+静态刷新必须完成：
+
+```text
+stock_basic
+index_classify
+index_member_all
+→ rebuild sw_industry_membership
+```
+
+派生映射比任一原始静态表旧时，读取阶段自动重建。
+
+## 权限探测
+
+权限探测与正式采集分离：
+
+- `index_member_all` 探测使用代表性一级行业，只验证接口可调用。
+- 正式静态采集使用完整参数。
+- `sample_rows` 不是全量缓存行数。
+- `full_collection_required=true` 表示仍需执行静态采集。
+
+## 查询约定
+
+- `load_stock_daily`：从全市场 `daily` 缓存拼出单股未复权日K。
+- `load_sw_daily`：从 `sw_daily` 缓存拼出行业日K，可按L1/L2/L3过滤。
+- `load_sw_catalog`：读取SW2021行业目录。
+- `load_sw_industry_membership`：读取或重建股票三级行业映射。
+- `call_pro_bar`：只在明确需要单股复权行情时按需调用。
+
+## 故障处理
+
+- 无权限：记录错误并停止使用该接口，不绕过。
+- 返回空表：先确认是否交易日及盘后数据是否已更新。
+- 字段缺失：视为采集失败，不写成完整日期。
+- `daily` 与 `sw_daily` 日期不一致：使用共同完整日期。
+- 静态映射缺失：先运行 `static`，不要使用基础行业字段替代。
