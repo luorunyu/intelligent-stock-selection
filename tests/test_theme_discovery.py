@@ -88,3 +88,6 @@ def test_dynamic_discovery_has_no_seed_input_and_exposes_sw_levels(tmp_path) -> 
     assert result["market_hotspots"]
     assert all("formal_industry" in hotspot for hotspot in result["market_hotspots"])
     assert all(hotspot["concept_label"] is None for hotspot in result["dynamic_clusters"])
+    for key in ("market_hotspots", "industry_hotspots", "dynamic_clusters", "themes"):
+        for hotspot in result[key]:
+            assert all(set(stock) == {"name", "active_reasons"} for stock in hotspot["stocks"])

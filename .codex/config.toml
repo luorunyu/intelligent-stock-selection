@@ -1,0 +1,18 @@
+model_provider = "thetacodex"
+
+model = "gpt-5.6-terra"
+model_reasoning_effort = "xhigh"
+[model_providers.thetacodex]
+name = "thetacodex"
+base_url = "https://api.thetacodex.com/v1"
+requires_openai_auth = true
+supports_websockets = false
+
+[marketplaces.openai-bundled]
+source_type = "local"
+source = '\\?\C:\Users\runyu.luo\.codex\.tmp\bundled-marketplaces\openai-bundled'
+
+[marketplaces.openai-primary-runtime]
+last_updated = "2026-06-17T16:11:43Z"
+source_type = "local"
+source = '\\?\C:\Users\runyu.luo\.cache\codex-runtimes\codex-primary-runtime\plugins\openai-primary-runtime'

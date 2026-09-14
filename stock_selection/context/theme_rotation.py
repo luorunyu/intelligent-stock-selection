@@ -168,16 +168,27 @@ def _membership_changes(relationship_context: dict[str, Any], records: list[dict
         for stock in (hotspot.get("stocks") or [])
         if stock.get("ts_code")
     }
+    active_names = {
+        str(stock.get("name"))
+        for record in records[-3:]
+        for hotspot in (record["payload"].get("market_hotspots") or [])
+        for stock in (hotspot.get("stocks") or [])
+        if stock.get("name")
+    }
     for item in relationship_context.get("pending_diffusion") or []:
-        if str(item.get("ts_code")) in active_codes:
+        if _stock_is_active(item, active_codes=active_codes, active_names=active_names):
             rows.append({"change": "pending_diffusion_started", **_compact_map_item(item)})
     for item in relationship_context.get("not_started") or []:
-        if str(item.get("ts_code")) in active_codes:
+        if _stock_is_active(item, active_codes=active_codes, active_names=active_names):
             rows.append({"change": "not_started_activated", **_compact_map_item(item)})
     for item in relationship_context.get("falsified") or []:
-        if str(item.get("ts_code")) in active_codes:
+        if _stock_is_active(item, active_codes=active_codes, active_names=active_names):
             rows.append({"change": "falsified_stock_moved_needs_recheck", **_compact_map_item(item)})
     return rows
+
+
+def _stock_is_active(item: dict[str, Any], *, active_codes: set[str], active_names: set[str]) -> bool:
+    return str(item.get("ts_code")) in active_codes or str(item.get("name")) in active_names
 
 
 def _falsified_theme_rows(relationship_context: dict[str, Any]) -> list[dict[str, Any]]:

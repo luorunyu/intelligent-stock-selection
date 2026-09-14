@@ -6,6 +6,7 @@
 
 from __future__ import annotations
 
+from copy import deepcopy
 from dataclasses import asdict, dataclass, field
 import json
 from pathlib import Path
@@ -44,8 +45,10 @@ class ThemeDiscoveryResult:
     def to_dict(self) -> dict[str, Any]:
         """保留 JSON 兼容字段，方便历史轮动模块读取新旧记录。"""
         payload = asdict(self)
+        for key in ("market_hotspots", "industry_hotspots", "dynamic_clusters"):
+            _compact_hotspot_stocks(payload[key])
         # ``themes`` 是历史轮动模块使用的兼容字段，内容为当前市场热点而非预设概念。
-        payload["themes"] = list(self.market_hotspots)
+        payload["themes"] = deepcopy(payload["market_hotspots"])
         payload["tag_clusters"] = []
         return payload
 
@@ -182,17 +185,15 @@ def build_active_pool(
         pct = _float(item.get("pct_chg"))
         amount = _float(item.get("amount_yi"))
         turnover = _float(item.get("turnover_rate"))
-        reasons: list[str] = []
-        if bool(item.get("limit_up_hit")):
-            reasons.append("涨停/接近涨停")
-        if pct is not None and pct >= 7:
-            reasons.append("涨幅前列")
-        if amount is not None and amount >= 30:
-            reasons.append("高成交")
-        if turnover is not None and turnover >= 10:
-            reasons.append("高换手")
-        if pre_cum is not None and pre_cum >= 8:
-            reasons.append("前期已有强度")
+        reasons = _active_reasons(
+            {
+                "limit_up_hit": item.get("limit_up_hit"),
+                "pct_chg": pct,
+                "amount_yi": amount,
+                "turnover_rate": turnover,
+                "pre_cum_pct": pre_cum,
+            }
+        )
         rows.append(
             {
                 "ts_code": code,
@@ -468,6 +469,7 @@ def _top_stock_rows(group: pd.DataFrame, *, limit: int) -> list[dict[str, Any]]:
             "amount_yi": _float(item.get("amount_yi")), "turnover_rate": _float(item.get("turnover_rate")),
             "volume_ratio": _float(item.get("volume_ratio")), "limit_up_hit": bool(item.get("limit_up_hit")),
         }
+        row["active_reasons"] = _active_reasons(row)
         row.update({column: _string(item.get(column)) for column in ["sw_l1_code", "sw_l1_name", "sw_l2_code", "sw_l2_name", "sw_l3_code", "sw_l3_name"]})
         rows.append(row)
     return rows
@@ -476,6 +478,37 @@ def _top_stock_rows(group: pd.DataFrame, *, limit: int) -> list[dict[str, Any]]:
 def _theme_like_stock_row(item: dict[str, Any]) -> dict[str, Any]:
     keep = ["ts_code", "name", "industry", "pct_chg", "amount_yi", "turnover_rate", "pre_cum_pct", "lookback_cum_pct", "active_reasons", "sw_l1_code", "sw_l1_name", "sw_l2_code", "sw_l2_name", "sw_l3_code", "sw_l3_name"]
     return {column: item.get(column) for column in keep}
+
+
+def _compact_hotspot_stocks(hotspots: list[dict[str, Any]]) -> None:
+    """缩减导出记录中的股票信息，避免 theme_discovery JSON 过度膨胀。"""
+    for hotspot in hotspots:
+        stocks = hotspot.get("stocks")
+        if not isinstance(stocks, list):
+            continue
+        hotspot["stocks"] = [
+            {
+                "name": _string(stock.get("name")),
+                "active_reasons": list(stock.get("active_reasons") or _active_reasons(stock)),
+            }
+            for stock in stocks
+            if isinstance(stock, dict)
+        ]
+
+
+def _active_reasons(item: dict[str, Any]) -> list[str]:
+    reasons: list[str] = []
+    if bool(item.get("limit_up_hit")):
+        reasons.append("涨停/接近涨停")
+    if (_float(item.get("pct_chg")) or 0) >= 7:
+        reasons.append("涨幅前列")
+    if (_float(item.get("amount_yi")) or 0) >= 30:
+        reasons.append("高成交")
+    if (_float(item.get("turnover_rate")) or 0) >= 10:
+        reasons.append("高换手")
+    if (_float(item.get("pre_cum_pct")) or 0) >= 8:
+        reasons.append("前期已有强度")
+    return reasons
 
 
 def _formal_path_from_row(row: pd.Series) -> tuple[dict[str, str], dict[str, str], dict[str, str]]:

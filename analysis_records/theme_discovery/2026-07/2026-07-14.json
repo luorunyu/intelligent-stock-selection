@@ -33,16 +33,7 @@
       "evidence": "3涨/0跌，涨停或接近涨停3只，均涨+10.00%，成交约481.9亿元",
       "stocks": [
         {
-          "ts_code": "002463.SZ",
           "name": "沪电股份",
-          "industry": "元器件",
-          "pct_chg": 10.0032,
-          "amount_yi": 125.537961328,
-          "turnover_rate": 4.8897,
-          "pre_cum_pct": -3.2368642958221505,
-          "lookback_cum_pct": 6.442545694938162,
-          "role": "core",
-          "chain": "midstream",
           "active_reasons": [
             "涨停/接近涨停",
             "涨幅前列",
@@ -50,16 +41,7 @@
           ]
         },
         {
-          "ts_code": "600183.SH",
           "name": "生益科技",
-          "industry": "元器件",
-          "pct_chg": 10.0037,
-          "amount_yi": 117.79525052999999,
-          "turnover_rate": 3.381,
-          "pre_cum_pct": -12.847563790760708,
-          "lookback_cum_pct": -4.129095529697047,
-          "role": "core",
-          "chain": "upstream",
           "active_reasons": [
             "涨停/接近涨停",
             "涨幅前列",
@@ -67,16 +49,7 @@
           ]
         },
         {
-          "ts_code": "002384.SZ",
           "name": "东山精密",
-          "industry": "元器件",
-          "pct_chg": 10.0,
-          "amount_yi": 238.56271061,
-          "turnover_rate": 6.8865,
-          "pre_cum_pct": 5.453099556738628,
-          "lookback_cum_pct": 15.998409512412493,
-          "role": "related",
-          "chain": "midstream",
           "active_reasons": [
             "涨停/接近涨停",
             "涨幅前列",
@@ -117,124 +90,52 @@
       "evidence": "8涨/0跌，涨停或接近涨停0只，均涨+5.45%，成交约1289.4亿元",
       "stocks": [
         {
-          "ts_code": "301308.SZ",
           "name": "江波龙",
-          "industry": "半导体",
-          "pct_chg": 3.1549,
-          "amount_yi": 88.7532089432,
-          "turnover_rate": 5.9569,
-          "pre_cum_pct": -23.43199212969589,
-          "lookback_cum_pct": -21.01634804939566,
-          "role": "core",
-          "chain": "midstream",
           "active_reasons": [
             "高成交"
           ]
         },
         {
-          "ts_code": "688525.SH",
           "name": "佰维存储",
-          "industry": "半导体",
-          "pct_chg": 5.5613,
-          "amount_yi": 114.42818342,
-          "turnover_rate": 7.0317,
-          "pre_cum_pct": -25.337694398275158,
-          "lookback_cum_pct": -21.185499596846434,
-          "role": "core",
-          "chain": "midstream",
           "active_reasons": [
             "高成交"
           ]
         },
         {
-          "ts_code": "001309.SZ",
           "name": "德明利",
-          "industry": "半导体",
-          "pct_chg": 2.2251,
-          "amount_yi": 119.99055401900002,
-          "turnover_rate": 10.3199,
-          "pre_cum_pct": -22.99688531341898,
-          "lookback_cum_pct": -21.283489008527866,
-          "role": "related",
-          "chain": "midstream",
           "active_reasons": [
             "高成交",
             "高换手"
           ]
         },
         {
-          "ts_code": "603986.SH",
           "name": "兆易创新",
-          "industry": "半导体",
-          "pct_chg": 6.0258,
-          "amount_yi": 383.37659763,
-          "turnover_rate": 10.1645,
-          "pre_cum_pct": -15.817152908559029,
-          "lookback_cum_pct": -10.744462908522989,
-          "role": "core",
-          "chain": "midstream",
           "active_reasons": [
             "高成交",
             "高换手"
           ]
         },
         {
-          "ts_code": "688008.SH",
           "name": "澜起科技",
-          "industry": "半导体",
-          "pct_chg": 6.808,
-          "amount_yi": 165.38871448999998,
-          "turnover_rate": 5.557,
-          "pre_cum_pct": -5.914039851474118,
-          "lookback_cum_pct": 0.49133231543752043,
-          "role": "core",
-          "chain": "midstream",
           "active_reasons": [
             "高成交"
           ]
         },
         {
-          "ts_code": "300223.SZ",
           "name": "北京君正",
-          "industry": "半导体",
-          "pct_chg": 9.2128,
-          "amount_yi": 82.1096016961,
-          "turnover_rate": 9.6925,
-          "pre_cum_pct": -24.8339895016767,
-          "lookback_cum_pct": -17.909095286487176,
-          "role": "related",
-          "chain": "midstream",
           "active_reasons": [
             "涨幅前列",
             "高成交"
           ]
         },
         {
-          "ts_code": "688766.SH",
           "name": "普冉股份",
-          "industry": "半导体",
-          "pct_chg": 6.9652,
-          "amount_yi": 61.10088584,
-          "turnover_rate": 6.5764,
-          "pre_cum_pct": -20.65687010924503,
-          "lookback_cum_pct": -15.13046242609416,
-          "role": "related",
-          "chain": "midstream",
           "active_reasons": [
             "高成交"
           ]
         },
         {
-          "ts_code": "600584.SH",
           "name": "长电科技",
-          "industry": "半导体",
-          "pct_chg": 3.685,
-          "amount_yi": 274.24670381,
-          "turnover_rate": 15.5505,
-          "pre_cum_pct": 4.164276983652093,
-          "lookback_cum_pct": 8.002730590499674,
-          "role": "related",
-          "chain": "support",
           "active_reasons": [
             "高成交",
             "高换手"
@@ -274,94 +175,40 @@
       "evidence": "6涨/0跌，涨停或接近涨停0只，均涨+6.85%，成交约1315.5亿元",
       "stocks": [
         {
-          "ts_code": "300502.SZ",
           "name": "新易盛",
-          "industry": "通信设备",
-          "pct_chg": 10.9893,
-          "amount_yi": 354.303855735,
-          "turnover_rate": 5.1747,
-          "pre_cum_pct": 1.1068091388504397,
-          "lookback_cum_pct": 12.217739715546138,
-          "role": "core",
-          "chain": "midstream",
           "active_reasons": [
             "涨幅前列",
             "高成交"
           ]
         },
         {
-          "ts_code": "300308.SZ",
           "name": "中际旭创",
-          "industry": "通信设备",
-          "pct_chg": 6.8637,
-          "amount_yi": 462.49945646,
-          "turnover_rate": 3.6081,
-          "pre_cum_pct": 0.8262470018217449,
-          "lookback_cum_pct": 7.746658117285787,
-          "role": "core",
-          "chain": "midstream",
           "active_reasons": [
             "高成交"
           ]
         },
         {
-          "ts_code": "300394.SZ",
           "name": "天孚通信",
-          "industry": "通信设备",
-          "pct_chg": 5.4761,
-          "amount_yi": 127.60497501900001,
-          "turnover_rate": 4.3915,
-          "pre_cum_pct": 9.41350346786134,
-          "lookback_cum_pct": 15.4050963312649,
-          "role": "core",
-          "chain": "midstream",
           "active_reasons": [
             "高成交",
             "前期已有强度"
           ]
         },
         {
-          "ts_code": "002281.SZ",
           "name": "光迅科技",
-          "industry": "通信设备",
-          "pct_chg": 7.8472,
-          "amount_yi": 113.324251174,
-          "turnover_rate": 6.4532,
-          "pre_cum_pct": 3.3345186260434367,
-          "lookback_cum_pct": 11.443384971666326,
-          "role": "core",
-          "chain": "midstream",
           "active_reasons": [
             "涨幅前列",
             "高成交"
           ]
         },
         {
-          "ts_code": "600522.SH",
           "name": "中天科技",
-          "industry": "通信设备",
-          "pct_chg": 3.7028,
-          "amount_yi": 98.68893521,
-          "turnover_rate": 6.9571,
-          "pre_cum_pct": -13.970341072667047,
-          "lookback_cum_pct": -10.784834861905757,
-          "role": "related",
-          "chain": "upstream",
           "active_reasons": [
             "高成交"
           ]
         },
         {
-          "ts_code": "600487.SH",
           "name": "亨通光电",
-          "industry": "通信设备",
-          "pct_chg": 6.242,
-          "amount_yi": 159.11827997,
-          "turnover_rate": 9.0665,
-          "pre_cum_pct": -17.24579187041534,
-          "lookback_cum_pct": -12.080274198966666,
-          "role": "related",
-          "chain": "upstream",
           "active_reasons": [
             "高成交"
           ]
@@ -403,16 +250,7 @@
       "evidence": "0涨/7跌，涨停或接近涨停0只，均涨-4.92%，成交约615.7亿元，前期累计强度+8.97%，跨静态行业聚类",
       "stocks": [
         {
-          "ts_code": "000938.SZ",
           "name": "紫光股份",
-          "industry": "IT设备",
-          "pct_chg": -3.6979,
-          "amount_yi": 167.490701423,
-          "turnover_rate": 16.2204,
-          "pre_cum_pct": 15.280773989475293,
-          "lookback_cum_pct": 11.017806248118479,
-          "role": "core",
-          "chain": "midstream",
           "active_reasons": [
             "高成交",
             "高换手",
@@ -420,31 +258,13 @@
           ]
         },
         {
-          "ts_code": "301165.SZ",
           "name": "锐捷网络",
-          "industry": "通信设备",
-          "pct_chg": -5.778,
-          "amount_yi": 38.8801947828,
-          "turnover_rate": 3.5774,
-          "pre_cum_pct": 2.823634190166424,
-          "lookback_cum_pct": -3.1175153933413857,
-          "role": "core",
-          "chain": "midstream",
           "active_reasons": [
             "高成交"
           ]
         },
         {
-          "ts_code": "002396.SZ",
           "name": "星网锐捷",
-          "industry": "通信设备",
-          "pct_chg": -1.2763,
-          "amount_yi": 51.8513154601,
-          "turnover_rate": 23.5026,
-          "pre_cum_pct": 12.626333464962357,
-          "lookback_cum_pct": 11.188883570949049,
-          "role": "related",
-          "chain": "midstream",
           "active_reasons": [
             "高成交",
             "高换手",
@@ -452,31 +272,13 @@
           ]
         },
         {
-          "ts_code": "301191.SZ",
           "name": "菲菱科思",
-          "industry": "通信设备",
-          "pct_chg": -7.2436,
-          "amount_yi": 15.052325290699999,
-          "turnover_rate": 16.8201,
-          "pre_cum_pct": -4.392342791348769,
-          "lookback_cum_pct": -11.317779048914623,
-          "role": "related",
-          "chain": "midstream",
           "active_reasons": [
             "高换手"
           ]
         },
         {
-          "ts_code": "000977.SZ",
           "name": "浪潮信息",
-          "industry": "IT设备",
-          "pct_chg": -0.6317,
-          "amount_yi": 145.325199892,
-          "turnover_rate": 12.0755,
-          "pre_cum_pct": 22.636519776573174,
-          "lookback_cum_pct": 21.861824881144564,
-          "role": "related",
-          "chain": "midstream",
           "active_reasons": [
             "高成交",
             "高换手",
@@ -484,32 +286,14 @@
           ]
         },
         {
-          "ts_code": "603019.SH",
           "name": "中科曙光",
-          "industry": "IT设备",
-          "pct_chg": -3.9857,
-          "amount_yi": 120.18691205,
-          "turnover_rate": 8.199,
-          "pre_cum_pct": 12.235656546780248,
-          "lookback_cum_pct": 7.762279983795217,
-          "role": "related",
-          "chain": "midstream",
           "active_reasons": [
             "高成交",
             "前期已有强度"
           ]
         },
         {
-          "ts_code": "688629.SH",
           "name": "华丰科技",
-          "industry": "元器件",
-          "pct_chg": -11.8093,
-          "amount_yi": 76.94476296,
-          "turnover_rate": 9.1649,
-          "pre_cum_pct": 1.609846005435478,
-          "lookback_cum_pct": -10.389565538884415,
-          "role": "related",
-          "chain": "support",
           "active_reasons": [
             "高成交"
           ]
@@ -539,19 +323,22 @@
       ],
       "stocks": [
         {
-          "ts_code": "600183.SH",
           "name": "生益科技",
-          "pct_chg": 10.0037
+          "active_reasons": [
+            "涨幅前列"
+          ]
         },
         {
-          "ts_code": "002463.SZ",
           "name": "沪电股份",
-          "pct_chg": 10.0032
+          "active_reasons": [
+            "涨幅前列"
+          ]
         },
         {
-          "ts_code": "002384.SZ",
           "name": "东山精密",
-          "pct_chg": 10.0
+          "active_reasons": [
+            "涨幅前列"
+          ]
         }
       ]
     },
@@ -568,19 +355,22 @@
       ],
       "stocks": [
         {
-          "ts_code": "600183.SH",
           "name": "生益科技",
-          "pct_chg": 10.0037
+          "active_reasons": [
+            "涨幅前列"
+          ]
         },
         {
-          "ts_code": "002463.SZ",
           "name": "沪电股份",
-          "pct_chg": 10.0032
+          "active_reasons": [
+            "涨幅前列"
+          ]
         },
         {
-          "ts_code": "002384.SZ",
           "name": "东山精密",
-          "pct_chg": 10.0
+          "active_reasons": [
+            "涨幅前列"
+          ]
         }
       ]
     },
@@ -599,54 +389,50 @@
       ],
       "stocks": [
         {
-          "ts_code": "600183.SH",
           "name": "生益科技",
-          "pct_chg": 10.0037
+          "active_reasons": [
+            "涨幅前列"
+          ]
         },
         {
-          "ts_code": "002463.SZ",
           "name": "沪电股份",
-          "pct_chg": 10.0032
+          "active_reasons": [
+            "涨幅前列"
+          ]
         },
         {
-          "ts_code": "002384.SZ",
           "name": "东山精密",
-          "pct_chg": 10.0
+          "active_reasons": [
+            "涨幅前列"
+          ]
         },
         {
-          "ts_code": "000977.SZ",
           "name": "浪潮信息",
-          "pct_chg": -0.6317
+          "active_reasons": []
         },
         {
-          "ts_code": "002396.SZ",
           "name": "星网锐捷",
-          "pct_chg": -1.2763
+          "active_reasons": []
         },
         {
-          "ts_code": "000938.SZ",
           "name": "紫光股份",
-          "pct_chg": -3.6979
+          "active_reasons": []
         },
         {
-          "ts_code": "603019.SH",
           "name": "中科曙光",
-          "pct_chg": -3.9857
+          "active_reasons": []
         },
         {
-          "ts_code": "301165.SZ",
           "name": "锐捷网络",
-          "pct_chg": -5.778
+          "active_reasons": []
         },
         {
-          "ts_code": "301191.SZ",
           "name": "菲菱科思",
-          "pct_chg": -7.2436
+          "active_reasons": []
         },
         {
-          "ts_code": "688629.SH",
           "name": "华丰科技",
-          "pct_chg": -11.8093
+          "active_reasons": []
         }
       ]
     },
@@ -665,54 +451,50 @@
       ],
       "stocks": [
         {
-          "ts_code": "600183.SH",
           "name": "生益科技",
-          "pct_chg": 10.0037
+          "active_reasons": [
+            "涨幅前列"
+          ]
         },
         {
-          "ts_code": "002463.SZ",
           "name": "沪电股份",
-          "pct_chg": 10.0032
+          "active_reasons": [
+            "涨幅前列"
+          ]
         },
         {
-          "ts_code": "002384.SZ",
           "name": "东山精密",
-          "pct_chg": 10.0
+          "active_reasons": [
+            "涨幅前列"
+          ]
         },
         {
-          "ts_code": "000977.SZ",
           "name": "浪潮信息",
-          "pct_chg": -0.6317
+          "active_reasons": []
         },
         {
-          "ts_code": "002396.SZ",
           "name": "星网锐捷",
-          "pct_chg": -1.2763
+          "active_reasons": []
         },
         {
-          "ts_code": "000938.SZ",
           "name": "紫光股份",
-          "pct_chg": -3.6979
+          "active_reasons": []
         },
         {
-          "ts_code": "603019.SH",
           "name": "中科曙光",
-          "pct_chg": -3.9857
+          "active_reasons": []
         },
         {
-          "ts_code": "301165.SZ",
           "name": "锐捷网络",
-          "pct_chg": -5.778
+          "active_reasons": []
         },
         {
-          "ts_code": "301191.SZ",
           "name": "菲菱科思",
-          "pct_chg": -7.2436
+          "active_reasons": []
         },
         {
-          "ts_code": "688629.SH",
           "name": "华丰科技",
-          "pct_chg": -11.8093
+          "active_reasons": []
         }
       ]
     },
@@ -729,44 +511,38 @@
       ],
       "stocks": [
         {
-          "ts_code": "300223.SZ",
           "name": "北京君正",
-          "pct_chg": 9.2128
+          "active_reasons": [
+            "涨幅前列"
+          ]
         },
         {
-          "ts_code": "688766.SH",
           "name": "普冉股份",
-          "pct_chg": 6.9652
+          "active_reasons": []
         },
         {
-          "ts_code": "688008.SH",
           "name": "澜起科技",
-          "pct_chg": 6.808
+          "active_reasons": []
         },
         {
-          "ts_code": "603986.SH",
           "name": "兆易创新",
-          "pct_chg": 6.0258
+          "active_reasons": []
         },
         {
-          "ts_code": "688525.SH",
           "name": "佰维存储",
-          "pct_chg": 5.5613
+          "active_reasons": []
         },
         {
-          "ts_code": "600584.SH",
           "name": "长电科技",
-          "pct_chg": 3.685
+          "active_reasons": []
         },
         {
-          "ts_code": "301308.SZ",
           "name": "江波龙",
-          "pct_chg": 3.1549
+          "active_reasons": []
         },
         {
-          "ts_code": "001309.SZ",
           "name": "德明利",
-          "pct_chg": 2.2251
+          "active_reasons": []
         }
       ]
     },
@@ -783,44 +559,38 @@
       ],
       "stocks": [
         {
-          "ts_code": "300223.SZ",
           "name": "北京君正",
-          "pct_chg": 9.2128
+          "active_reasons": [
+            "涨幅前列"
+          ]
         },
         {
-          "ts_code": "688766.SH",
           "name": "普冉股份",
-          "pct_chg": 6.9652
+          "active_reasons": []
         },
         {
-          "ts_code": "688008.SH",
           "name": "澜起科技",
-          "pct_chg": 6.808
+          "active_reasons": []
         },
         {
-          "ts_code": "603986.SH",
           "name": "兆易创新",
-          "pct_chg": 6.0258
+          "active_reasons": []
         },
         {
-          "ts_code": "688525.SH",
           "name": "佰维存储",
-          "pct_chg": 5.5613
+          "active_reasons": []
         },
         {
-          "ts_code": "600584.SH",
           "name": "长电科技",
-          "pct_chg": 3.685
+          "active_reasons": []
         },
         {
-          "ts_code": "301308.SZ",
           "name": "江波龙",
-          "pct_chg": 3.1549
+          "active_reasons": []
         },
         {
-          "ts_code": "001309.SZ",
           "name": "德明利",
-          "pct_chg": 2.2251
+          "active_reasons": []
         }
       ]
     },
@@ -837,44 +607,38 @@
       ],
       "stocks": [
         {
-          "ts_code": "300223.SZ",
           "name": "北京君正",
-          "pct_chg": 9.2128
+          "active_reasons": [
+            "涨幅前列"
+          ]
         },
         {
-          "ts_code": "688766.SH",
           "name": "普冉股份",
-          "pct_chg": 6.9652
+          "active_reasons": []
         },
         {
-          "ts_code": "688008.SH",
           "name": "澜起科技",
-          "pct_chg": 6.808
+          "active_reasons": []
         },
         {
-          "ts_code": "603986.SH",
           "name": "兆易创新",
-          "pct_chg": 6.0258
+          "active_reasons": []
         },
         {
-          "ts_code": "688525.SH",
           "name": "佰维存储",
-          "pct_chg": 5.5613
+          "active_reasons": []
         },
         {
-          "ts_code": "600584.SH",
           "name": "长电科技",
-          "pct_chg": 3.685
+          "active_reasons": []
         },
         {
-          "ts_code": "301308.SZ",
           "name": "江波龙",
-          "pct_chg": 3.1549
+          "active_reasons": []
         },
         {
-          "ts_code": "001309.SZ",
           "name": "德明利",
-          "pct_chg": 2.2251
+          "active_reasons": []
         }
       ]
     },
@@ -891,44 +655,38 @@
       ],
       "stocks": [
         {
-          "ts_code": "300223.SZ",
           "name": "北京君正",
-          "pct_chg": 9.2128
+          "active_reasons": [
+            "涨幅前列"
+          ]
         },
         {
-          "ts_code": "688766.SH",
           "name": "普冉股份",
-          "pct_chg": 6.9652
+          "active_reasons": []
         },
         {
-          "ts_code": "688008.SH",
           "name": "澜起科技",
-          "pct_chg": 6.808
+          "active_reasons": []
         },
         {
-          "ts_code": "603986.SH",
           "name": "兆易创新",
-          "pct_chg": 6.0258
+          "active_reasons": []
         },
         {
-          "ts_code": "688525.SH",
           "name": "佰维存储",
-          "pct_chg": 5.5613
+          "active_reasons": []
         },
         {
-          "ts_code": "600584.SH",
           "name": "长电科技",
-          "pct_chg": 3.685
+          "active_reasons": []
         },
         {
-          "ts_code": "301308.SZ",
           "name": "江波龙",
-          "pct_chg": 3.1549
+          "active_reasons": []
         },
         {
-          "ts_code": "001309.SZ",
           "name": "德明利",
-          "pct_chg": 2.2251
+          "active_reasons": []
         }
       ]
     },
@@ -945,34 +703,32 @@
       ],
       "stocks": [
         {
-          "ts_code": "300502.SZ",
           "name": "新易盛",
-          "pct_chg": 10.9893
+          "active_reasons": [
+            "涨幅前列"
+          ]
         },
         {
-          "ts_code": "002281.SZ",
           "name": "光迅科技",
-          "pct_chg": 7.8472
+          "active_reasons": [
+            "涨幅前列"
+          ]
         },
         {
-          "ts_code": "300308.SZ",
           "name": "中际旭创",
-          "pct_chg": 6.8637
+          "active_reasons": []
         },
         {
-          "ts_code": "600487.SH",
           "name": "亨通光电",
-          "pct_chg": 6.242
+          "active_reasons": []
         },
         {
-          "ts_code": "300394.SZ",
           "name": "天孚通信",
-          "pct_chg": 5.4761
+          "active_reasons": []
         },
         {
-          "ts_code": "600522.SH",
           "name": "中天科技",
-          "pct_chg": 3.7028
+          "active_reasons": []
         }
       ]
     },
@@ -989,34 +745,32 @@
       ],
       "stocks": [
         {
-          "ts_code": "300502.SZ",
           "name": "新易盛",
-          "pct_chg": 10.9893
+          "active_reasons": [
+            "涨幅前列"
+          ]
         },
         {
-          "ts_code": "002281.SZ",
           "name": "光迅科技",
-          "pct_chg": 7.8472
+          "active_reasons": [
+            "涨幅前列"
+          ]
         },
         {
-          "ts_code": "300308.SZ",
           "name": "中际旭创",
-          "pct_chg": 6.8637
+          "active_reasons": []
         },
         {
-          "ts_code": "600487.SH",
           "name": "亨通光电",
-          "pct_chg": 6.242
+          "active_reasons": []
         },
         {
-          "ts_code": "300394.SZ",
           "name": "天孚通信",
-          "pct_chg": 5.4761
+          "active_reasons": []
         },
         {
-          "ts_code": "600522.SH",
           "name": "中天科技",
-          "pct_chg": 3.7028
+          "active_reasons": []
         }
       ]
     },
@@ -1033,34 +787,32 @@
       ],
       "stocks": [
         {
-          "ts_code": "300502.SZ",
           "name": "新易盛",
-          "pct_chg": 10.9893
+          "active_reasons": [
+            "涨幅前列"
+          ]
         },
         {
-          "ts_code": "002281.SZ",
           "name": "光迅科技",
-          "pct_chg": 7.8472
+          "active_reasons": [
+            "涨幅前列"
+          ]
         },
         {
-          "ts_code": "300308.SZ",
           "name": "中际旭创",
-          "pct_chg": 6.8637
+          "active_reasons": []
         },
         {
-          "ts_code": "600487.SH",
           "name": "亨通光电",
-          "pct_chg": 6.242
+          "active_reasons": []
         },
         {
-          "ts_code": "300394.SZ",
           "name": "天孚通信",
-          "pct_chg": 5.4761
+          "active_reasons": []
         },
         {
-          "ts_code": "600522.SH",
           "name": "中天科技",
-          "pct_chg": 3.7028
+          "active_reasons": []
         }
       ]
     },
@@ -1077,14 +829,14 @@
       ],
       "stocks": [
         {
-          "ts_code": "002281.SZ",
           "name": "光迅科技",
-          "pct_chg": 7.8472
+          "active_reasons": [
+            "涨幅前列"
+          ]
         },
         {
-          "ts_code": "300394.SZ",
           "name": "天孚通信",
-          "pct_chg": 5.4761
+          "active_reasons": []
         }
       ]
     },
@@ -1101,14 +853,12 @@
       ],
       "stocks": [
         {
-          "ts_code": "600487.SH",
           "name": "亨通光电",
-          "pct_chg": 6.242
+          "active_reasons": []
         },
         {
-          "ts_code": "600522.SH",
           "name": "中天科技",
-          "pct_chg": 3.7028
+          "active_reasons": []
         }
       ]
     },
@@ -1125,14 +875,12 @@
       ],
       "stocks": [
         {
-          "ts_code": "600487.SH",
           "name": "亨通光电",
-          "pct_chg": 6.242
+          "active_reasons": []
         },
         {
-          "ts_code": "600522.SH",
           "name": "中天科技",
-          "pct_chg": 3.7028
+          "active_reasons": []
         }
       ]
     },
@@ -1151,39 +899,32 @@
       ],
       "stocks": [
         {
-          "ts_code": "000977.SZ",
           "name": "浪潮信息",
-          "pct_chg": -0.6317
+          "active_reasons": []
         },
         {
-          "ts_code": "002396.SZ",
           "name": "星网锐捷",
-          "pct_chg": -1.2763
+          "active_reasons": []
         },
         {
-          "ts_code": "000938.SZ",
           "name": "紫光股份",
-          "pct_chg": -3.6979
+          "active_reasons": []
         },
         {
-          "ts_code": "603019.SH",
           "name": "中科曙光",
-          "pct_chg": -3.9857
+          "active_reasons": []
         },
         {
-          "ts_code": "301165.SZ",
           "name": "锐捷网络",
-          "pct_chg": -5.778
+          "active_reasons": []
         },
         {
-          "ts_code": "301191.SZ",
           "name": "菲菱科思",
-          "pct_chg": -7.2436
+          "active_reasons": []
         },
         {
-          "ts_code": "688629.SH",
           "name": "华丰科技",
-          "pct_chg": -11.8093
+          "active_reasons": []
         }
       ]
     }
