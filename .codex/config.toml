@@ -1,6 +1,6 @@
 model_provider = "thetacodex"
 
-model = "gpt-5.6-terra"
+model = "gpt-5.6-sol"
 model_reasoning_effort = "xhigh"
 [model_providers.thetacodex]
 name = "thetacodex"
