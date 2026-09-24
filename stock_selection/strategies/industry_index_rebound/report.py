@@ -35,7 +35,7 @@ def mark_qualified_industries(
     min_days_since_low: int | None = None,
     min_up_days: int | None = None,
 ) -> pd.DataFrame:
-    """按照统一阈值给每个行业指数增加 qualified 标记。"""
+    """按照统一阈值给每个行业指数增加 qualified 标记。这个地方才是真正的筛选逻辑"""
     result = metrics.copy()
     qualified = result["data_quality"].eq("ok")
     if min_rise_from_low is not None:
@@ -58,13 +58,14 @@ def build_industry_index_report(
     min_days_since_low: int | None = None,
     min_up_days: int | None = None,
 ) -> dict[str, Any]:
-    """构建一级到三级的递归行业初筛报告。"""
+    """构建一级到三级的递归行业初筛报告"""
     marked = mark_qualified_industries(
         metrics,
         min_rise_from_low=min_rise_from_low,
         min_days_since_low=min_days_since_low,
         min_up_days=min_up_days,
     )
+    #按代码索引的指标字典
     metric_by_code = marked.drop_duplicates("index_code").set_index("index_code").to_dict("index")
     level_counts = {
         "level1": {"total": 0, "qualified": 0},

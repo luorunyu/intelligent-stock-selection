@@ -38,9 +38,8 @@ def calculate_industry_index_screen(
     window: int = 20,
 ) -> pd.DataFrame:
     """按行业指数计算近月低点后的简单涨跌统计。"""
-    if window <= 0:
-        raise ValueError("window must be positive")
-    data = normalise_industry_index_data(index_data)
+   
+    data = index_data.copy()
     if as_of_date is not None:
         target_date = _normalise_date(as_of_date)
         if not target_date:
@@ -131,15 +130,16 @@ def _calculate_one_index(
     level: str,
     window: int,
 ) -> dict[str, Any]:
-    series = group.sort_values("trade_date").tail(window).reset_index(drop=True)
+    """指数维度，只计算了窗口内的值，后续需要修改"""
+    window_df = group.sort_values("trade_date").tail(window).reset_index(drop=True)
     base = {
         "index_code": index_code,
         "name": name,
         "level": level,
-        "latest_trade_date": series["trade_date"].iloc[-1],
-        "current_close": float(series["close"].iloc[-1]),
+        "latest_trade_date": window_df["trade_date"].iloc[-1],
+        "current_close": float(window_df["close"].iloc[-1]),
         "window": window,
-        "window_start_date": series["trade_date"].iloc[0],
+        "window_start_date": window_df["trade_date"].iloc[0],
         "window_low_date": None,
         "window_low_close": None,
         "days_since_low": None,
@@ -149,24 +149,24 @@ def _calculate_one_index(
         "down_days_after_low": None,
         "down_pct_sum_after_low": None,
         "flat_days_after_low": None,
-        "data_quality": "ok" if len(series) >= window else "insufficient_history",
+        "data_quality": "ok" if len(window_df) >= window else "insufficient_history",
     }
-    if len(series) < window:
+    if len(window_df) < window:
         return base
 
-    low_close = float(series["close"].min())
-    low_rows = series[series["close"].eq(low_close)]
+    low_close = float(window_df["close"].min())
+    low_rows = window_df[window_df["close"].eq(low_close)]
     low_position = int(low_rows.index[-1])
-    low_date = str(series.loc[low_position, "trade_date"])
-    after_low = series.iloc[low_position + 1 :]
-    pct_chg = _fill_pct_chg(series).iloc[low_position + 1 :]
+    low_date = str(window_df.loc[low_position, "trade_date"])
+    after_low = window_df.iloc[low_position + 1 :]
+    pct_chg = _fill_pct_chg(window_df).iloc[low_position + 1 :]
 
     base.update(
         {
             "window_low_date": low_date,
             "window_low_close": low_close,
             "days_since_low": int(len(after_low)),
-            "rise_from_low_pct": float(series["close"].iloc[-1] / low_close - 1),
+            "rise_from_low_pct": float(window_df["close"].iloc[-1] / low_close - 1),
             "up_days_after_low": int((pct_chg > 0).sum()),
             "up_pct_sum_after_low": float(pct_chg[pct_chg > 0].sum()),
             "down_days_after_low": int((pct_chg < 0).sum()),
@@ -177,9 +177,9 @@ def _calculate_one_index(
     return base
 
 
-def _fill_pct_chg(series: pd.DataFrame) -> pd.Series:
-    pct_chg = series["pct_chg"].copy()
-    calculated = series["close"].pct_change() * 100
+def _fill_pct_chg(df: pd.DataFrame) -> pd.Series:
+    pct_chg = df["pct_chg"].copy()
+    calculated = df["close"].pct_change() * 100
     return pct_chg.fillna(calculated).fillna(0.0)
 
 

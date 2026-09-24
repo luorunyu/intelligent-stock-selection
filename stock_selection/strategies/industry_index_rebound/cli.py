@@ -26,12 +26,12 @@ from stock_selection.strategies.industry_index_rebound.report import (
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Screen SW industry indexes from their recent low.")
-    parser.add_argument("--date", default=date.today().strftime("%Y%m%d"), help="As-of date, default today.")
+    parser.add_argument("--date", default=date.today().strftime("%Y%m%d"), help="As-of date,例如20260924, default today.")
     parser.add_argument("--cache-root", default=None)
     parser.add_argument("--window", type=int, default=20)
-    parser.add_argument("--min-rise", type=float, default=None, help="Minimum rise from low, decimal form.")
-    parser.add_argument("--min-days", type=int, default=None, help="Minimum trading days since low.")
-    parser.add_argument("--min-up-days", type=int, default=None, help="Minimum up days since low.")
+    parser.add_argument("--min-rise", type=float, default=None, help="Minimum rise threshold from low, decimal form.")
+    parser.add_argument("--min-days", type=int, default=None, help="Minimum trading days threshold since low.")
+    parser.add_argument("--min-up-days", type=int, default=None, help="Minimum up days threshold since low.")
     parser.add_argument(
         "--dictionary",
         default="data_cache/tushare/static/sw_industry_stock_dictionary.json",
