@@ -36,9 +36,11 @@ OUTPUT_COLUMNS = [
     "downtrend_by_drawdown",
     "forward_window",
     "forward_observations",
-    "target_forward_return",
+    "target_peak_ratio",
+    "target_close",
     "max_forward_close",
     "max_forward_return",
+    "max_forward_peak_ratio",
     "target_hit",
     "target_hit_date",
     "trading_days_to_target",
@@ -58,7 +60,7 @@ def calculate_industry_index_stabilization(
     min_stable_days: int = 5,
     max_stable_range_points: float = 10.0,
     forward_window: int = 60,
-    target_forward_return: float = 0.40,
+    target_peak_ratio: float = 0.80,
     industry_codes: Iterable[str] | None = None,
 ) -> pd.DataFrame:
     """Find every historical L2/L3 stabilization episode and validate its outcome.
@@ -77,7 +79,7 @@ def calculate_industry_index_stabilization(
         min_stable_days=min_stable_days,
         max_stable_range_points=max_stable_range_points,
         forward_window=forward_window,
-        target_forward_return=target_forward_return,
+        target_peak_ratio=target_peak_ratio,
     )
     normalised_level = _normalise_level(level)
     data = normalise_industry_index_data(index_data)
@@ -109,7 +111,7 @@ def calculate_industry_index_stabilization(
                 min_stable_days=min_stable_days,
                 max_stable_range_points=max_stable_range_points,
                 forward_window=forward_window,
-                target_forward_return=target_forward_return,
+                target_peak_ratio=target_peak_ratio,
             )
         )
     if not rows:
@@ -222,7 +224,7 @@ def _calculate_one_index_history(
     min_stable_days: int,
     max_stable_range_points: float,
     forward_window: int,
-    target_forward_return: float,
+    target_peak_ratio: float,
 ) -> list[dict[str, Any]]:
     series = group.sort_values("trade_date").reset_index(drop=True)
     rows: list[dict[str, Any]] = []
@@ -271,8 +273,9 @@ def _calculate_one_index_history(
         validation = _validate_forward_outcome(
             future,
             signal_close=signal_close,
+            decline_start_close=peak_close,
             forward_window=forward_window,
-            target_forward_return=target_forward_return,
+            target_peak_ratio=target_peak_ratio,
         )
         stable_open_min = float(stable["open"].min())
         stable_open_max = float(stable["open"].max())
@@ -306,7 +309,8 @@ def _calculate_one_index_history(
                 "downtrend_by_duration": bool(by_duration),
                 "downtrend_by_drawdown": bool(by_drawdown),
                 "forward_window": forward_window,
-                "target_forward_return": target_forward_return,
+                "target_peak_ratio": target_peak_ratio,
+                "target_close": peak_close * target_peak_ratio,
                 **validation,
             }
         )
@@ -339,14 +343,18 @@ def _validate_forward_outcome(
     future: pd.DataFrame,
     *,
     signal_close: float,
+    decline_start_close: float,
     forward_window: int,
-    target_forward_return: float,
+    target_peak_ratio: float,
 ) -> dict[str, Any]:
+    """判断策略是否有效"""
+    target_close = decline_start_close * target_peak_ratio
     if future.empty:
         return {
             "forward_observations": 0,
             "max_forward_close": None,
             "max_forward_return": None,
+            "max_forward_peak_ratio": None,
             "target_hit": False,
             "target_hit_date": None,
             "trading_days_to_target": None,
@@ -354,8 +362,9 @@ def _validate_forward_outcome(
         }
 
     returns = future["close"] / signal_close - 1
+    peak_ratios = future["close"] / decline_start_close
     maximum_position = int(returns.idxmax())
-    hit_rows = future[returns.ge(target_forward_return)]
+    hit_rows = future[future["close"].ge(target_close)]
     target_hit = not hit_rows.empty
     hit_position = int(hit_rows.index[0]) if target_hit else None
     status = (
@@ -369,6 +378,7 @@ def _validate_forward_outcome(
         "forward_observations": int(len(future)),
         "max_forward_close": float(future.loc[maximum_position, "close"]),
         "max_forward_return": float(returns.loc[maximum_position]),
+        "max_forward_peak_ratio": float(peak_ratios.loc[maximum_position]),
         "target_hit": bool(target_hit),
         "target_hit_date": (
             str(future.loc[hit_position, "trade_date"]) if hit_position is not None else None
@@ -385,9 +395,12 @@ def _validate_parameters(**parameters: Any) -> None:
     for name in integer_positive:
         if int(parameters[name]) <= 0:
             raise ValueError(f"{name} must be greater than zero")
-    for name in ("min_decline_pct", "max_stable_range_points", "target_forward_return"):
+    for name in ("min_decline_pct", "max_stable_range_points"):
         if float(parameters[name]) <= 0:
             raise ValueError(f"{name} must be greater than zero")
+    target_peak_ratio = float(parameters["target_peak_ratio"])
+    if not 0 < target_peak_ratio <= 1:
+        raise ValueError("target_peak_ratio must be greater than zero and at most one")
 
 
 def _latest_nonempty(values: pd.Series) -> str:

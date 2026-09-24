@@ -46,8 +46,8 @@ def _bars(
     )
 
 
-def test_finds_historical_signal_and_validates_later_40_percent_gain():
-    data = _bars("L2A", [110, 120, 130, 141.5, 145, 143, 142, 140, 139, 138])
+def test_finds_historical_signal_and_validates_recovery_to_peak_ratio():
+    data = _bars("L2A", [110, 120, 130, 161, 165, 163, 162, 160, 159, 158])
     result = calculate_industry_index_stabilization(
         data,
         _dictionary("L2A"),
@@ -64,7 +64,8 @@ def test_finds_historical_signal_and_validates_later_40_percent_gain():
     assert signal["target_hit"]
     assert signal["validation_status"] == "success"
     assert signal["trading_days_to_target"] == 4
-    assert signal["max_forward_return"] > 0.40
+    assert signal["target_close"] == 160
+    assert signal["max_forward_peak_ratio"] > 0.80
 
 
 def test_marks_complete_non_hit_signal_as_failed_and_deduplicates_episode():
@@ -96,7 +97,7 @@ def test_marks_recent_signal_pending_when_forward_window_is_incomplete():
 def test_large_drawdown_qualifies_even_when_decline_is_shorter_than_one_month():
     data = _bars(
         "L2A",
-        [110, 120, 130, 141.5, 145, 143, 142, 140, 139, 138],
+        [110, 120, 130, 161, 165, 163, 162, 160, 159, 158],
         short_decline=True,
     )
     result = calculate_industry_index_stabilization(
@@ -135,8 +136,8 @@ def test_open_close_extremes_must_share_one_ten_point_band():
 def test_filters_to_dictionary_l2_codes_and_supports_result_screening():
     data = pd.concat(
         [
-            _bars("L2A", [110, 120, 130, 141.5, 145, 143, 142, 140, 139, 138]),
-            _bars("NOT_L2", [110, 120, 130, 141.5, 145, 143, 142, 140, 139, 138]),
+            _bars("L2A", [110, 120, 130, 161, 165, 163, 162, 160, 159, 158]),
+            _bars("NOT_L2", [110, 120, 130, 161, 165, 163, 162, 160, 159, 158]),
         ],
         ignore_index=True,
     )
@@ -153,8 +154,8 @@ def test_filters_to_dictionary_l2_codes_and_supports_result_screening():
 
 
 def test_level_parameter_supports_l3_and_defaults_to_l2():
-    l2_data = _bars("L2A", [110, 120, 130, 141.5, 145, 143, 142, 140, 139, 138])
-    l3_data = _bars("L3A", [110, 120, 130, 141.5, 145, 143, 142, 140, 139, 138])
+    l2_data = _bars("L2A", [110, 120, 130, 161, 165, 163, 162, 160, 159, 158])
+    l3_data = _bars("L3A", [110, 120, 130, 161, 165, 163, 162, 160, 159, 158])
     data = pd.concat([l2_data, l3_data], ignore_index=True)
     dictionary = {
         **_dictionary("L2A", level="L2"),

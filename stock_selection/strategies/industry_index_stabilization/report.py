@@ -1,4 +1,4 @@
-"""Reports for historical SW L2 stabilization-signal validation."""
+"""Reports for historical SW industry stabilization-signal validation."""
 
 from __future__ import annotations
 
@@ -22,9 +22,9 @@ def build_industry_index_stabilization_report(
     min_stable_days: int,
     max_stable_range_points: float,
     forward_window: int,
-    target_forward_return: float,
+    target_peak_ratio: float,
 ) -> dict[str, Any]:
-    """Build a compact effectiveness report from historical signals."""
+    """Build an effectiveness report from historical stabilization signals."""
     status_counts = (
         signals["validation_status"]
         .value_counts()
@@ -46,7 +46,7 @@ def build_industry_index_stabilization_report(
             "min_stable_days": min_stable_days,
             "max_stable_range_points": max_stable_range_points,
             "forward_window": forward_window,
-            "target_forward_return": target_forward_return,
+            "target_peak_ratio": target_peak_ratio,
             "generated_at": datetime.now().astimezone().isoformat(timespec="seconds"),
         },
         "summary": {
@@ -57,17 +57,18 @@ def build_industry_index_stabilization_report(
             "pending": int(status_counts["pending"]),
             "resolved_signals": resolved,
             "success_rate": successes / resolved if resolved else None,
-            "median_max_forward_return": _optional_float(
-                signals["max_forward_return"].median()
-            )
-            if not signals.empty
-            else None,
+            "median_max_forward_peak_ratio": (
+                _optional_float(signals["max_forward_peak_ratio"].median())
+                if not signals.empty
+                else None
+            ),
         },
         "signals": _records(signals),
     }
 
 
 def render_industry_index_stabilization_markdown(report: dict[str, Any]) -> str:
+    """Render a human-readable Markdown backtest report."""
     metadata = report["metadata"]
     summary = report["summary"]
     level = metadata["industry_level"]
@@ -76,9 +77,13 @@ def render_industry_index_stabilization_markdown(report: dict[str, Any]) -> str:
         "",
         "## 规则",
         "",
-        f"- 下跌时间阈值：{metadata['min_decline_days']}个交易日；或跌幅达到：{metadata['min_decline_pct']:.1%}",
-        f"- 企稳要求：连续至少{metadata['min_stable_days']}个交易日，期间全部开盘价和收盘价落在{metadata['max_stable_range_points']:g}点价格带内",
-        f"- 成功标准：信号后{metadata['forward_window']}个交易日内，收盘价较信号日收盘价上涨至少{metadata['target_forward_return']:.1%}",
+        f"- 下跌时间阈值：{metadata['min_decline_days']}个交易日；"
+        f"或跌幅达到：{metadata['min_decline_pct']:.1%}",
+        f"- 企稳要求：连续至少{metadata['min_stable_days']}个交易日，"
+        f"期间全部开盘价和收盘价落在"
+        f"{metadata['max_stable_range_points']:g}点价格带内",
+        f"- 成功标准：信号后{metadata['forward_window']}个交易日内，"
+        f"收盘价达到下跌起点高点的{metadata['target_peak_ratio']:.1%}",
         "",
         "## 验证结果",
         "",
@@ -88,21 +93,24 @@ def render_industry_index_stabilization_markdown(report: dict[str, Any]) -> str:
         f"- 失败：{summary['failures']}",
         f"- 待验证：{summary['pending']}",
         f"- 已完成样本成功率：{_format_percent(summary['success_rate'])}",
-        f"- 最大后续涨幅中位数：{_format_percent(summary['median_max_forward_return'])}",
+        "- 后续最高收盘价/下跌起点高点的中位数："
+        f"{_format_percent(summary['median_max_forward_peak_ratio'])}",
         "",
         "## 信号明细",
         "",
-        "| 信号日 | 行业 | 下跌天数 | 最大跌幅 | 企稳区间 | 后续最大涨幅 | 状态 | 达标日 |",
-        "| --- | --- | ---: | ---: | ---: | ---: | --- | --- |",
+        "| 信号日 | 行业 | 下跌天数 | 最大跌幅 | 企稳区间 | "
+        "目标收盘价 | 后续最高/前高 | 状态 | 达标日 |",
+        "| --- | --- | ---: | ---: | ---: | ---: | ---: | --- | --- |",
     ]
     if not report["signals"]:
-        lines.append("| - | - | - | - | - | - | - | - |")
+        lines.append("| - | - | - | - | - | - | - | - | - |")
     for row in report["signals"]:
         lines.append(
             f"| {row['signal_date']} | {row['index_code']} {row.get('name') or ''} | "
             f"{row['decline_days']} | {_format_percent(row['decline_pct'])} | "
             f"{row['stable_range_points']:.2f}点 | "
-            f"{_format_percent(row.get('max_forward_return'))} | "
+            f"{row['target_close']:.2f} | "
+            f"{_format_percent(row.get('max_forward_peak_ratio'))} | "
             f"{row['validation_status']} | {row.get('target_hit_date') or '-'} |"
         )
     return "\n".join(lines) + "\n"
@@ -114,6 +122,7 @@ def save_industry_index_stabilization_report(
     *,
     records_root: str | Path = "analysis_records",
 ) -> tuple[Path, Path, Path]:
+    """Save complete CSV plus structured JSON and readable Markdown."""
     metadata = report["metadata"]
     date_text = str(metadata["as_of_date"])
     level = str(metadata["industry_level"]).upper()

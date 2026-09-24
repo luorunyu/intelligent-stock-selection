@@ -19,7 +19,9 @@ def _signals() -> pd.DataFrame:
                 "decline_days": 22,
                 "decline_pct": -0.35,
                 "stable_range_points": 8.0,
+                "target_close": 160.0,
                 "max_forward_return": 0.45,
+                "max_forward_peak_ratio": 0.825,
                 "validation_status": "success",
                 "target_hit_date": "20260320",
             },
@@ -30,7 +32,9 @@ def _signals() -> pd.DataFrame:
                 "decline_days": 25,
                 "decline_pct": -0.20,
                 "stable_range_points": 9.5,
+                "target_close": 160.0,
                 "max_forward_return": 0.25,
+                "max_forward_peak_ratio": 0.70,
                 "validation_status": "failed",
                 "target_hit_date": None,
             },
@@ -41,7 +45,9 @@ def _signals() -> pd.DataFrame:
                 "decline_days": 21,
                 "decline_pct": -0.18,
                 "stable_range_points": 7.0,
+                "target_close": 160.0,
                 "max_forward_return": 0.05,
+                "max_forward_peak_ratio": 0.60,
                 "validation_status": "pending",
                 "target_hit_date": None,
             },
@@ -60,14 +66,14 @@ def test_report_calculates_effectiveness_from_resolved_signals():
         min_stable_days=5,
         max_stable_range_points=10,
         forward_window=60,
-        target_forward_return=0.40,
+        target_peak_ratio=0.80,
     )
 
     assert report["summary"]["signals"] == 3
     assert report["summary"]["resolved_signals"] == 2
     assert report["summary"]["success_rate"] == 0.5
     markdown = render_industry_index_stabilization_markdown(report)
-    assert "上涨至少40.0%" in markdown
+    assert "下跌起点高点的80.0%" in markdown
     assert "已完成样本成功率：50.00%" in markdown
 
 
@@ -83,7 +89,7 @@ def test_report_saves_csv_json_and_markdown(tmp_path):
         min_stable_days=5,
         max_stable_range_points=10,
         forward_window=60,
-        target_forward_return=0.40,
+        target_peak_ratio=0.80,
     )
     csv_path, json_path, markdown_path = save_industry_index_stabilization_report(
         report, signals, records_root=tmp_path

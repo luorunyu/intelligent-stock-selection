@@ -43,7 +43,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--min-stable-days", type=int, default=5)
     parser.add_argument("--max-stable-range-points", type=float, default=10.0)
     parser.add_argument("--forward-window", type=int, default=60)
-    parser.add_argument("--target-forward-return", type=float, default=0.40)
+    parser.add_argument("--target-peak-ratio", type=float, default=0.80)
     parser.add_argument("--write-report", action="store_true")
     parser.add_argument("--records-root", default="analysis_records")
     return parser.parse_args()
@@ -63,7 +63,7 @@ def main() -> int:
         min_stable_days=args.min_stable_days,
         max_stable_range_points=args.max_stable_range_points,
         forward_window=args.forward_window,
-        target_forward_return=args.target_forward_return,
+        target_peak_ratio=args.target_peak_ratio,
         industry_codes=args.industry_code,
     )
     report = build_industry_index_stabilization_report(
@@ -76,7 +76,7 @@ def main() -> int:
         min_stable_days=args.min_stable_days,
         max_stable_range_points=args.max_stable_range_points,
         forward_window=args.forward_window,
-        target_forward_return=args.target_forward_return,
+        target_peak_ratio=args.target_peak_ratio,
     )
     if args.write_report:
         csv_path, json_path, markdown_path = save_industry_index_stabilization_report(
