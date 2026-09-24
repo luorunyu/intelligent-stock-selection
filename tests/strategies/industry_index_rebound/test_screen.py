@@ -1,6 +1,6 @@
 import pandas as pd
 
-from stock_selection.context.industry_index_screen import (
+from stock_selection.strategies.industry_index_rebound.screen import (
     calculate_industry_index_screen,
     normalise_industry_index_data,
     screen_industry_index_rebound,

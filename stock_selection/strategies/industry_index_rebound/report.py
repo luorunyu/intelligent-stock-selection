@@ -1,4 +1,4 @@
-"""申万行业指数初筛的分级报告构建与保存。"""
+"""策略一：申万行业指数初筛的分级报告构建与保存。"""
 
 from __future__ import annotations
 
@@ -289,9 +289,9 @@ def _render_metric_table(nodes: list[dict[str, Any]]) -> list[str]:
                 days=_format_number(metrics.get("days_since_low")),
                 rise=_format_percent(metrics.get("rise_from_low_pct")),
                 up_days=_format_number(metrics.get("up_days_after_low")),
-                up_sum=_format_percent(metrics.get("up_pct_sum_after_low")),
+                up_sum=_format_percentage_points(metrics.get("up_pct_sum_after_low")),
                 down_days=_format_number(metrics.get("down_days_after_low")),
-                down_sum=_format_percent(metrics.get("down_pct_sum_after_low")),
+                down_sum=_format_percentage_points(metrics.get("down_pct_sum_after_low")),
             )
         )
     return lines
@@ -309,6 +309,13 @@ def _format_percent(value: Any) -> str:
     if value is None or pd.isna(value):
         return "-"
     return f"{float(value):.2%}"
+
+
+def _format_percentage_points(value: Any) -> str:
+    """Format Tushare pct_chg sums, whose unit is already percentage points."""
+    if value is None or pd.isna(value):
+        return "-"
+    return f"{float(value):.2f}%"
 
 
 def _format_number(value: Any) -> str:

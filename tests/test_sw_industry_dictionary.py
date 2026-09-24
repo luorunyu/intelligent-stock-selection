@@ -65,6 +65,43 @@ def test_build_dictionary_rolls_stocks_up_to_all_levels():
     assert result["metadata"]["counts"]["unique_stocks"] == 2
 
 
+def test_build_dictionary_filters_members_against_current_listed_universe():
+    members = pd.DataFrame(
+        [
+            {
+                "ts_code": "000001.SZ",
+                "l1_code": "L1A",
+                "l1_name": "一级A",
+                "l2_code": "L2A",
+                "l2_name": "二级A",
+                "l3_code": "L3A",
+                "l3_name": "三级A",
+                "out_date": None,
+            },
+            {
+                "ts_code": "600087.SH",
+                "l1_code": "L1A",
+                "l1_name": "一级A",
+                "l2_code": "L2A",
+                "l2_name": "二级A",
+                "l3_code": "L3A",
+                "l3_name": "三级A",
+                "out_date": None,
+            },
+        ]
+    )
+
+    result = build_sw_industry_dictionary(
+        _classes(),
+        members,
+        listed_stock_codes=pd.Series(["000001.SZ", "000002.SZ"]),
+    )
+
+    assert result["level3_index"]["L3A"]["stock_codes"] == ["000001.SZ"]
+    assert result["metadata"]["counts"]["nonlisted_membership_stocks_excluded"] == 1
+    assert result["metadata"]["counts"]["listed_stocks_without_membership"] == 1
+
+
 def test_collect_queries_every_level3_industry():
     calls = []
 

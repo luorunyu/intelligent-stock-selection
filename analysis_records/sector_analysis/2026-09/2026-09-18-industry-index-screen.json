@@ -1,0 +1,4795 @@
+{
+  "metadata": {
+    "report_type": "sw_industry_index_screen",
+    "as_of_date": "20260918",
+    "window": 20,
+    "filters": {
+      "min_rise_from_low": 0.05,
+      "min_days_since_low": 5,
+      "min_up_days": 4
+    },
+    "generated_at": "2026-09-19T15:46:21+08:00"
+  },
+  "summary": {
+    "level1": {
+      "total": 31,
+      "qualified": 5
+    },
+    "level2": {
+      "total": 134,
+      "qualified": 29
+    },
+    "level3": {
+      "total": 346,
+      "qualified": 55
+    }
+  },
+  "level1": [
+    {
+      "index_code": "801010.SI",
+      "name": "农林牧渔",
+      "level": "level1",
+      "qualified": true,
+      "metrics": {
+        "latest_trade_date": "20260918",
+        "current_close": 2578.44,
+        "window": 20,
+        "window_start_date": "20260824",
+        "window_low_date": "20260824",
+        "window_low_close": 2452.15,
+        "days_since_low": 19,
+        "rise_from_low_pct": 0.05150174336806468,
+        "up_days_after_low": 11,
+        "up_pct_sum_after_low": 17.849999999999998,
+        "down_days_after_low": 8,
+        "down_pct_sum_after_low": -12.469999999999999,
+        "flat_days_after_low": 0,
+        "data_quality": "ok"
+      },
+      "children_summary": {
+        "direct_children_total": 8,
+        "direct_children_qualified": 4,
+        "qualified_descendants": 9,
+        "total_descendants": 26,
+        "descendant_counts": {
+          "level2": {
+            "total": 8,
+            "qualified": 4
+          },
+          "level3": {
+            "total": 18,
+            "qualified": 5
+          }
+        }
+      },
+      "level2": [
+        {
+          "index_code": "801012.SI",
+          "name": "农产品加工",
+          "level": "level2",
+          "qualified": true,
+          "metrics": {
+            "latest_trade_date": "20260918",
+            "current_close": 2360.48,
+            "window": 20,
+            "window_start_date": "20260824",
+            "window_low_date": "20260824",
+            "window_low_close": 2213.81,
+            "days_since_low": 19,
+            "rise_from_low_pct": 0.0662522980743605,
+            "up_days_after_low": 12,
+            "up_pct_sum_after_low": 27.990000000000002,
+            "down_days_after_low": 7,
+            "down_pct_sum_after_low": -20.78,
+            "flat_days_after_low": 0,
+            "data_quality": "ok"
+          },
+          "children_summary": {
+            "direct_children_total": 3,
+            "direct_children_qualified": 2,
+            "qualified_descendants": 2,
+            "total_descendants": 3,
+            "descendant_counts": {
+              "level2": {
+                "total": 0,
+                "qualified": 0
+              },
+              "level3": {
+                "total": 3,
+                "qualified": 2
+              }
+            }
+          },
+          "level3": [
+            {
+              "index_code": "850151.SI",
+              "name": "果蔬加工",
+              "level": "level3",
+              "qualified": true,
+              "metrics": {
+                "latest_trade_date": "20260918",
+                "current_close": 1961.97,
+                "window": 20,
+                "window_start_date": "20260824",
+                "window_low_date": "20260824",
+                "window_low_close": 1822.51,
+                "days_since_low": 19,
+                "rise_from_low_pct": 0.07652084213529697,
+                "up_days_after_low": 14,
+                "up_pct_sum_after_low": 18.28,
+                "down_days_after_low": 5,
+                "down_pct_sum_after_low": -10.57,
+                "flat_days_after_low": 0,
+                "data_quality": "ok"
+              },
+              "children_summary": {
+                "direct_children_total": 0,
+                "direct_children_qualified": 0,
+                "qualified_descendants": 0,
+                "total_descendants": 0,
+                "descendant_counts": {
+                  "level2": {
+                    "total": 0,
+                    "qualified": 0
+                  },
+                  "level3": {
+                    "total": 0,
+                    "qualified": 0
+                  }
+                }
+              }
+            },
+            {
+              "index_code": "850152.SI",
+              "name": "粮油加工",
+              "level": "level3",
+              "qualified": true,
+              "metrics": {
+                "latest_trade_date": "20260918",
+                "current_close": 1618.9,
+                "window": 20,
+                "window_start_date": "20260824",
+                "window_low_date": "20260824",
+                "window_low_close": 1425.26,
+                "days_since_low": 19,
+                "rise_from_low_pct": 0.1358629302723715,
+                "up_days_after_low": 11,
+                "up_pct_sum_after_low": 33.32,
+                "down_days_after_low": 8,
+                "down_pct_sum_after_low": -19.63,
+                "flat_days_after_low": 0,
+                "data_quality": "ok"
+              },
+              "children_summary": {
+                "direct_children_total": 0,
+                "direct_children_qualified": 0,
+                "qualified_descendants": 0,
+                "total_descendants": 0,
+                "descendant_counts": {
+                  "level2": {
+                    "total": 0,
+                    "qualified": 0
+                  },
+                  "level3": {
+                    "total": 0,
+                    "qualified": 0
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "index_code": "801015.SI",
+          "name": "渔业",
+          "level": "level2",
+          "qualified": true,
+          "metrics": {
+            "latest_trade_date": "20260918",
+            "current_close": 741.66,
+            "window": 20,
+            "window_start_date": "20260824",
+            "window_low_date": "20260824",
+            "window_low_close": 704.34,
+            "days_since_low": 19,
+            "rise_from_low_pct": 0.05298577391600645,
+            "up_days_after_low": 11,
+            "up_pct_sum_after_low": 29.49,
+            "down_days_after_low": 8,
+            "down_pct_sum_after_low": -23.4,
+            "flat_days_after_low": 0,
+            "data_quality": "ok"
+          },
+          "children_summary": {
+            "direct_children_total": 2,
+            "direct_children_qualified": 0,
+            "qualified_descendants": 0,
+            "total_descendants": 2,
+            "descendant_counts": {
+              "level2": {
+                "total": 0,
+                "qualified": 0
+              },
+              "level3": {
+                "total": 2,
+                "qualified": 0
+              }
+            }
+          }
+        },
+        {
+          "index_code": "801016.SI",
+          "name": "种植业",
+          "level": "level2",
+          "qualified": true,
+          "metrics": {
+            "latest_trade_date": "20260918",
+            "current_close": 2631.2,
+            "window": 20,
+            "window_start_date": "20260824",
+            "window_low_date": "20260824",
+            "window_low_close": 2422.7,
+            "days_since_low": 19,
+            "rise_from_low_pct": 0.08606100631526803,
+            "up_days_after_low": 12,
+            "up_pct_sum_after_low": 36.4,
+            "down_days_after_low": 7,
+            "down_pct_sum_after_low": -26.729999999999997,
+            "flat_days_after_low": 0,
+            "data_quality": "ok"
+          },
+          "children_summary": {
+            "direct_children_total": 4,
+            "direct_children_qualified": 2,
+            "qualified_descendants": 2,
+            "total_descendants": 4,
+            "descendant_counts": {
+              "level2": {
+                "total": 0,
+                "qualified": 0
+              },
+              "level3": {
+                "total": 4,
+                "qualified": 2
+              }
+            }
+          },
+          "level3": [
+            {
+              "index_code": "850111.SI",
+              "name": "种子",
+              "level": "level3",
+              "qualified": true,
+              "metrics": {
+                "latest_trade_date": "20260918",
+                "current_close": 3205.34,
+                "window": 20,
+                "window_start_date": "20260824",
+                "window_low_date": "20260824",
+                "window_low_close": 2842.39,
+                "days_since_low": 19,
+                "rise_from_low_pct": 0.1276918367993134,
+                "up_days_after_low": 10,
+                "up_pct_sum_after_low": 44.68,
+                "down_days_after_low": 9,
+                "down_pct_sum_after_low": -30.55,
+                "flat_days_after_low": 0,
+                "data_quality": "ok"
+              },
+              "children_summary": {
+                "direct_children_total": 0,
+                "direct_children_qualified": 0,
+                "qualified_descendants": 0,
+                "total_descendants": 0,
+                "descendant_counts": {
+                  "level2": {
+                    "total": 0,
+                    "qualified": 0
+                  },
+                  "level3": {
+                    "total": 0,
+                    "qualified": 0
+                  }
+                }
+              }
+            },
+            {
+              "index_code": "850113.SI",
+              "name": "其他种植业",
+              "level": "level3",
+              "qualified": true,
+              "metrics": {
+                "latest_trade_date": "20260918",
+                "current_close": 1838.25,
+                "window": 20,
+                "window_start_date": "20260824",
+                "window_low_date": "20260825",
+                "window_low_close": 1682.44,
+                "days_since_low": 18,
+                "rise_from_low_pct": 0.09260954328237547,
+                "up_days_after_low": 11,
+                "up_pct_sum_after_low": 36.44,
+                "down_days_after_low": 7,
+                "down_pct_sum_after_low": -26.19,
+                "flat_days_after_low": 0,
+                "data_quality": "ok"
+              },
+              "children_summary": {
+                "direct_children_total": 0,
+                "direct_children_qualified": 0,
+                "qualified_descendants": 0,
+                "total_descendants": 0,
+                "descendant_counts": {
+                  "level2": {
+                    "total": 0,
+                    "qualified": 0
+                  },
+                  "level3": {
+                    "total": 0,
+                    "qualified": 0
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "index_code": "801017.SI",
+          "name": "养殖业",
+          "level": "level2",
+          "qualified": true,
+          "metrics": {
+            "latest_trade_date": "20260918",
+            "current_close": 2763.92,
+            "window": 20,
+            "window_start_date": "20260824",
+            "window_low_date": "20260824",
+            "window_low_close": 2619.88,
+            "days_since_low": 19,
+            "rise_from_low_pct": 0.05497961738705581,
+            "up_days_after_low": 11,
+            "up_pct_sum_after_low": 13.670000000000002,
+            "down_days_after_low": 8,
+            "down_pct_sum_after_low": -8.040000000000001,
+            "flat_days_after_low": 0,
+            "data_quality": "ok"
+          },
+          "children_summary": {
+            "direct_children_total": 3,
+            "direct_children_qualified": 1,
+            "qualified_descendants": 1,
+            "total_descendants": 3,
+            "descendant_counts": {
+              "level2": {
+                "total": 0,
+                "qualified": 0
+              },
+              "level3": {
+                "total": 3,
+                "qualified": 1
+              }
+            }
+          },
+          "level3": [
+            {
+              "index_code": "850172.SI",
+              "name": "生猪养殖",
+              "level": "level3",
+              "qualified": true,
+              "metrics": {
+                "latest_trade_date": "20260918",
+                "current_close": 5238.26,
+                "window": 20,
+                "window_start_date": "20260824",
+                "window_low_date": "20260824",
+                "window_low_close": 4930.87,
+                "days_since_low": 19,
+                "rise_from_low_pct": 0.062339911618030985,
+                "up_days_after_low": 11,
+                "up_pct_sum_after_low": 14.000000000000002,
+                "down_days_after_low": 8,
+                "down_pct_sum_after_low": -7.6899999999999995,
+                "flat_days_after_low": 0,
+                "data_quality": "ok"
+              },
+              "children_summary": {
+                "direct_children_total": 0,
+                "direct_children_qualified": 0,
+                "qualified_descendants": 0,
+                "total_descendants": 0,
+                "descendant_counts": {
+                  "level2": {
+                    "total": 0,
+                    "qualified": 0
+                  },
+                  "level3": {
+                    "total": 0,
+                    "qualified": 0
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "index_code": "801030.SI",
+      "name": "基础化工",
+      "level": "level1",
+      "qualified": false,
+      "metrics": {
+        "latest_trade_date": "20260918",
+        "current_close": 4268.67,
+        "window": 20,
+        "window_start_date": "20260824",
+        "window_low_date": "20260915",
+        "window_low_close": 4208.43,
+        "days_since_low": 3,
+        "rise_from_low_pct": 0.014314126645803782,
+        "up_days_after_low": 2,
+        "up_pct_sum_after_low": 2.15,
+        "down_days_after_low": 1,
+        "down_pct_sum_after_low": -0.71,
+        "flat_days_after_low": 0,
+        "data_quality": "ok"
+      },
+      "children_summary": {
+        "direct_children_total": 7,
+        "direct_children_qualified": 3,
+        "qualified_descendants": 7,
+        "total_descendants": 40,
+        "descendant_counts": {
+          "level2": {
+            "total": 7,
+            "qualified": 3
+          },
+          "level3": {
+            "total": 33,
+            "qualified": 4
+          }
+        }
+      },
+      "level2": [
+        {
+          "index_code": "801036.SI",
+          "name": "塑料",
+          "level": "level2",
+          "qualified": true,
+          "metrics": {
+            "latest_trade_date": "20260918",
+            "current_close": 5031.61,
+            "window": 20,
+            "window_start_date": "20260824",
+            "window_low_date": "20260904",
+            "window_low_close": 4730.63,
+            "days_since_low": 10,
+            "rise_from_low_pct": 0.06362366111913209,
+            "up_days_after_low": 5,
+            "up_pct_sum_after_low": 9.54,
+            "down_days_after_low": 4,
+            "down_pct_sum_after_low": -3.24,
+            "flat_days_after_low": 1,
+            "data_quality": "ok"
+          },
+          "children_summary": {
+            "direct_children_total": 4,
+            "direct_children_qualified": 2,
+            "qualified_descendants": 2,
+            "total_descendants": 4,
+            "descendant_counts": {
+              "level2": {
+                "total": 0,
+                "qualified": 0
+              },
+              "level3": {
+                "total": 4,
+                "qualified": 2
+              }
+            }
+          },
+          "level3": [
+            {
+              "index_code": "850354.SI",
+              "name": "合成树脂",
+              "level": "level3",
+              "qualified": true,
+              "metrics": {
+                "latest_trade_date": "20260918",
+                "current_close": 4920.32,
+                "window": 20,
+                "window_start_date": "20260824",
+                "window_low_date": "20260904",
+                "window_low_close": 4556.15,
+                "days_since_low": 10,
+                "rise_from_low_pct": 0.07992932629522742,
+                "up_days_after_low": 6,
+                "up_pct_sum_after_low": 11.11,
+                "down_days_after_low": 4,
+                "down_pct_sum_after_low": -3.28,
+                "flat_days_after_low": 0,
+                "data_quality": "ok"
+              },
+              "children_summary": {
+                "direct_children_total": 0,
+                "direct_children_qualified": 0,
+                "qualified_descendants": 0,
+                "total_descendants": 0,
+                "descendant_counts": {
+                  "level2": {
+                    "total": 0,
+                    "qualified": 0
+                  },
+                  "level3": {
+                    "total": 0,
+                    "qualified": 0
+                  }
+                }
+              }
+            },
+            {
+              "index_code": "850355.SI",
+              "name": "膜材料",
+              "level": "level3",
+              "qualified": true,
+              "metrics": {
+                "latest_trade_date": "20260918",
+                "current_close": 3522.97,
+                "window": 20,
+                "window_start_date": "20260824",
+                "window_low_date": "20260904",
+                "window_low_close": 3153.61,
+                "days_since_low": 10,
+                "rise_from_low_pct": 0.11712291627690163,
+                "up_days_after_low": 6,
+                "up_pct_sum_after_low": 16.28,
+                "down_days_after_low": 4,
+                "down_pct_sum_after_low": -4.88,
+                "flat_days_after_low": 0,
+                "data_quality": "ok"
+              },
+              "children_summary": {
+                "direct_children_total": 0,
+                "direct_children_qualified": 0,
+                "qualified_descendants": 0,
+                "total_descendants": 0,
+                "descendant_counts": {
+                  "level2": {
+                    "total": 0,
+                    "qualified": 0
+                  },
+                  "level3": {
+                    "total": 0,
+                    "qualified": 0
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "index_code": "801037.SI",
+          "name": "橡胶",
+          "level": "level2",
+          "qualified": true,
+          "metrics": {
+            "latest_trade_date": "20260918",
+            "current_close": 5112.98,
+            "window": 20,
+            "window_start_date": "20260824",
+            "window_low_date": "20260904",
+            "window_low_close": 4635.56,
+            "days_since_low": 10,
+            "rise_from_low_pct": 0.10299079291390889,
+            "up_days_after_low": 7,
+            "up_pct_sum_after_low": 15.14,
+            "down_days_after_low": 3,
+            "down_pct_sum_after_low": -5.09,
+            "flat_days_after_low": 0,
+            "data_quality": "ok"
+          },
+          "children_summary": {
+            "direct_children_total": 3,
+            "direct_children_qualified": 1,
+            "qualified_descendants": 1,
+            "total_descendants": 3,
+            "descendant_counts": {
+              "level2": {
+                "total": 0,
+                "qualified": 0
+              },
+              "level3": {
+                "total": 3,
+                "qualified": 1
+              }
+            }
+          },
+          "level3": [
+            {
+              "index_code": "850363.SI",
+              "name": "炭黑",
+              "level": "level3",
+              "qualified": true,
+              "metrics": {
+                "latest_trade_date": "20260918",
+                "current_close": 3267.07,
+                "window": 20,
+                "window_start_date": "20260824",
+                "window_low_date": "20260824",
+                "window_low_close": 2882.95,
+                "days_since_low": 19,
+                "rise_from_low_pct": 0.13323852304063566,
+                "up_days_after_low": 12,
+                "up_pct_sum_after_low": 23.05,
+                "down_days_after_low": 7,
+                "down_pct_sum_after_low": -10.009999999999998,
+                "flat_days_after_low": 0,
+                "data_quality": "ok"
+              },
+              "children_summary": {
+                "direct_children_total": 0,
+                "direct_children_qualified": 0,
+                "qualified_descendants": 0,
+                "total_descendants": 0,
+                "descendant_counts": {
+                  "level2": {
+                    "total": 0,
+                    "qualified": 0
+                  },
+                  "level3": {
+                    "total": 0,
+                    "qualified": 0
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "index_code": "801039.SI",
+          "name": "非金属材料Ⅱ",
+          "level": "level2",
+          "qualified": true,
+          "metrics": {
+            "latest_trade_date": "20260918",
+            "current_close": 6711.59,
+            "window": 20,
+            "window_start_date": "20260824",
+            "window_low_date": "20260824",
+            "window_low_close": 6041.85,
+            "days_since_low": 19,
+            "rise_from_low_pct": 0.11085015351258298,
+            "up_days_after_low": 10,
+            "up_pct_sum_after_low": 28.34,
+            "down_days_after_low": 8,
+            "down_pct_sum_after_low": -16.86,
+            "flat_days_after_low": 1,
+            "data_quality": "ok"
+          },
+          "children_summary": {
+            "direct_children_total": 1,
+            "direct_children_qualified": 1,
+            "qualified_descendants": 1,
+            "total_descendants": 1,
+            "descendant_counts": {
+              "level2": {
+                "total": 0,
+                "qualified": 0
+              },
+              "level3": {
+                "total": 1,
+                "qualified": 1
+              }
+            }
+          },
+          "level3": [
+            {
+              "index_code": "850523.SI",
+              "name": "非金属材料Ⅲ",
+              "level": "level3",
+              "qualified": true,
+              "metrics": {
+                "latest_trade_date": "20260918",
+                "current_close": 5982.92,
+                "window": 20,
+                "window_start_date": "20260824",
+                "window_low_date": "20260824",
+                "window_low_close": 5385.89,
+                "days_since_low": 19,
+                "rise_from_low_pct": 0.11085076004151584,
+                "up_days_after_low": 10,
+                "up_pct_sum_after_low": 28.34,
+                "down_days_after_low": 8,
+                "down_pct_sum_after_low": -16.86,
+                "flat_days_after_low": 1,
+                "data_quality": "ok"
+              },
+              "children_summary": {
+                "direct_children_total": 0,
+                "direct_children_qualified": 0,
+                "qualified_descendants": 0,
+                "total_descendants": 0,
+                "descendant_counts": {
+                  "level2": {
+                    "total": 0,
+                    "qualified": 0
+                  },
+                  "level3": {
+                    "total": 0,
+                    "qualified": 0
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "index_code": "801050.SI",
+      "name": "有色金属",
+      "level": "level1",
+      "qualified": false,
+      "metrics": {
+        "latest_trade_date": "20260918",
+        "current_close": 8020.54,
+        "window": 20,
+        "window_start_date": "20260824",
+        "window_low_date": "20260917",
+        "window_low_close": 7906.73,
+        "days_since_low": 1,
+        "rise_from_low_pct": 0.014394066826614926,
+        "up_days_after_low": 1,
+        "up_pct_sum_after_low": 1.44,
+        "down_days_after_low": 0,
+        "down_pct_sum_after_low": 0.0,
+        "flat_days_after_low": 0,
+        "data_quality": "ok"
+      },
+      "children_summary": {
+        "direct_children_total": 5,
+        "direct_children_qualified": 0,
+        "qualified_descendants": 1,
+        "total_descendants": 19,
+        "descendant_counts": {
+          "level2": {
+            "total": 5,
+            "qualified": 0
+          },
+          "level3": {
+            "total": 14,
+            "qualified": 1
+          }
+        }
+      },
+      "level2": [
+        {
+          "index_code": "801051.SI",
+          "name": "金属新材料",
+          "level": "level2",
+          "qualified": false,
+          "metrics": {
+            "latest_trade_date": "20260918",
+            "current_close": 9403.75,
+            "window": 20,
+            "window_start_date": "20260824",
+            "window_low_date": "20260904",
+            "window_low_close": 9074.52,
+            "days_since_low": 10,
+            "rise_from_low_pct": 0.036280706858324185,
+            "up_days_after_low": 5,
+            "up_pct_sum_after_low": 9.51,
+            "down_days_after_low": 5,
+            "down_pct_sum_after_low": -5.779999999999999,
+            "flat_days_after_low": 0,
+            "data_quality": "ok"
+          },
+          "children_summary": {
+            "direct_children_total": 2,
+            "direct_children_qualified": 1,
+            "qualified_descendants": 1,
+            "total_descendants": 2,
+            "descendant_counts": {
+              "level2": {
+                "total": 0,
+                "qualified": 0
+              },
+              "level3": {
+                "total": 2,
+                "qualified": 1
+              }
+            }
+          },
+          "level3": [
+            {
+              "index_code": "850522.SI",
+              "name": "磁性材料",
+              "level": "level3",
+              "qualified": true,
+              "metrics": {
+                "latest_trade_date": "20260918",
+                "current_close": 9784.19,
+                "window": 20,
+                "window_start_date": "20260824",
+                "window_low_date": "20260904",
+                "window_low_close": 9305.02,
+                "days_since_low": 10,
+                "rise_from_low_pct": 0.05149585922437572,
+                "up_days_after_low": 5,
+                "up_pct_sum_after_low": 11.38,
+                "down_days_after_low": 5,
+                "down_pct_sum_after_low": -6.109999999999999,
+                "flat_days_after_low": 0,
+                "data_quality": "ok"
+              },
+              "children_summary": {
+                "direct_children_total": 0,
+                "direct_children_qualified": 0,
+                "qualified_descendants": 0,
+                "total_descendants": 0,
+                "descendant_counts": {
+                  "level2": {
+                    "total": 0,
+                    "qualified": 0
+                  },
+                  "level3": {
+                    "total": 0,
+                    "qualified": 0
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "index_code": "801080.SI",
+      "name": "电子",
+      "level": "level1",
+      "qualified": true,
+      "metrics": {
+        "latest_trade_date": "20260918",
+        "current_close": 8935.03,
+        "window": 20,
+        "window_start_date": "20260824",
+        "window_low_date": "20260904",
+        "window_low_close": 8315.93,
+        "days_since_low": 10,
+        "rise_from_low_pct": 0.07444747610910629,
+        "up_days_after_low": 4,
+        "up_pct_sum_after_low": 11.350000000000001,
+        "down_days_after_low": 6,
+        "down_pct_sum_after_low": -3.97,
+        "flat_days_after_low": 0,
+        "data_quality": "ok"
+      },
+      "children_summary": {
+        "direct_children_total": 6,
+        "direct_children_qualified": 4,
+        "qualified_descendants": 13,
+        "total_descendants": 22,
+        "descendant_counts": {
+          "level2": {
+            "total": 6,
+            "qualified": 4
+          },
+          "level3": {
+            "total": 16,
+            "qualified": 9
+          }
+        }
+      },
+      "level2": [
+        {
+          "index_code": "801081.SI",
+          "name": "半导体",
+          "level": "level2",
+          "qualified": false,
+          "metrics": {
+            "latest_trade_date": "20260918",
+            "current_close": 10010.16,
+            "window": 20,
+            "window_start_date": "20260824",
+            "window_low_date": "20260914",
+            "window_low_close": 9130.71,
+            "days_since_low": 4,
+            "rise_from_low_pct": 0.09631781099169734,
+            "up_days_after_low": 3,
+            "up_pct_sum_after_low": 9.940000000000001,
+            "down_days_after_low": 1,
+            "down_pct_sum_after_low": -0.57,
+            "flat_days_after_low": 0,
+            "data_quality": "ok"
+          },
+          "children_summary": {
+            "direct_children_total": 7,
+            "direct_children_qualified": 4,
+            "qualified_descendants": 4,
+            "total_descendants": 7,
+            "descendant_counts": {
+              "level2": {
+                "total": 0,
+                "qualified": 0
+              },
+              "level3": {
+                "total": 7,
+                "qualified": 4
+              }
+            }
+          },
+          "level3": [
+            {
+              "index_code": "850812.SI",
+              "name": "分立器件",
+              "level": "level3",
+              "qualified": true,
+              "metrics": {
+                "latest_trade_date": "20260918",
+                "current_close": 4438.32,
+                "window": 20,
+                "window_start_date": "20260824",
+                "window_low_date": "20260904",
+                "window_low_close": 3820.16,
+                "days_since_low": 10,
+                "rise_from_low_pct": 0.16181521192829607,
+                "up_days_after_low": 6,
+                "up_pct_sum_after_low": 18.700000000000003,
+                "down_days_after_low": 4,
+                "down_pct_sum_after_low": -3.13,
+                "flat_days_after_low": 0,
+                "data_quality": "ok"
+              },
+              "children_summary": {
+                "direct_children_total": 0,
+                "direct_children_qualified": 0,
+                "qualified_descendants": 0,
+                "total_descendants": 0,
+                "descendant_counts": {
+                  "level2": {
+                    "total": 0,
+                    "qualified": 0
+                  },
+                  "level3": {
+                    "total": 0,
+                    "qualified": 0
+                  }
+                }
+              }
+            },
+            {
+              "index_code": "850813.SI",
+              "name": "半导体材料",
+              "level": "level3",
+              "qualified": true,
+              "metrics": {
+                "latest_trade_date": "20260918",
+                "current_close": 14296.01,
+                "window": 20,
+                "window_start_date": "20260824",
+                "window_low_date": "20260904",
+                "window_low_close": 12576.94,
+                "days_since_low": 10,
+                "rise_from_low_pct": 0.13668428091411733,
+                "up_days_after_low": 5,
+                "up_pct_sum_after_low": 17.56,
+                "down_days_after_low": 5,
+                "down_pct_sum_after_low": -4.31,
+                "flat_days_after_low": 0,
+                "data_quality": "ok"
+              },
+              "children_summary": {
+                "direct_children_total": 0,
+                "direct_children_qualified": 0,
+                "qualified_descendants": 0,
+                "total_descendants": 0,
+                "descendant_counts": {
+                  "level2": {
+                    "total": 0,
+                    "qualified": 0
+                  },
+                  "level3": {
+                    "total": 0,
+                    "qualified": 0
+                  }
+                }
+              }
+            },
+            {
+              "index_code": "850815.SI",
+              "name": "模拟芯片设计",
+              "level": "level3",
+              "qualified": true,
+              "metrics": {
+                "latest_trade_date": "20260918",
+                "current_close": 4478.22,
+                "window": 20,
+                "window_start_date": "20260824",
+                "window_low_date": "20260911",
+                "window_low_close": 4066.88,
+                "days_since_low": 5,
+                "rise_from_low_pct": 0.10114387441970263,
+                "up_days_after_low": 5,
+                "up_pct_sum_after_low": 9.809999999999999,
+                "down_days_after_low": 0,
+                "down_pct_sum_after_low": 0.0,
+                "flat_days_after_low": 0,
+                "data_quality": "ok"
+              },
+              "children_summary": {
+                "direct_children_total": 0,
+                "direct_children_qualified": 0,
+                "qualified_descendants": 0,
+                "total_descendants": 0,
+                "descendant_counts": {
+                  "level2": {
+                    "total": 0,
+                    "qualified": 0
+                  },
+                  "level3": {
+                    "total": 0,
+                    "qualified": 0
+                  }
+                }
+              }
+            },
+            {
+              "index_code": "850817.SI",
+              "name": "集成电路封测",
+              "level": "level3",
+              "qualified": true,
+              "metrics": {
+                "latest_trade_date": "20260918",
+                "current_close": 11045.23,
+                "window": 20,
+                "window_start_date": "20260824",
+                "window_low_date": "20260904",
+                "window_low_close": 9976.97,
+                "days_since_low": 10,
+                "rise_from_low_pct": 0.10707258817055676,
+                "up_days_after_low": 5,
+                "up_pct_sum_after_low": 15.18,
+                "down_days_after_low": 5,
+                "down_pct_sum_after_low": -4.65,
+                "flat_days_after_low": 0,
+                "data_quality": "ok"
+              },
+              "children_summary": {
+                "direct_children_total": 0,
+                "direct_children_qualified": 0,
+                "qualified_descendants": 0,
+                "total_descendants": 0,
+                "descendant_counts": {
+                  "level2": {
+                    "total": 0,
+                    "qualified": 0
+                  },
+                  "level3": {
+                    "total": 0,
+                    "qualified": 0
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "index_code": "801082.SI",
+          "name": "其他电子Ⅱ",
+          "level": "level2",
+          "qualified": true,
+          "metrics": {
+            "latest_trade_date": "20260918",
+            "current_close": 17239.46,
+            "window": 20,
+            "window_start_date": "20260824",
+            "window_low_date": "20260826",
+            "window_low_close": 16221.11,
+            "days_since_low": 17,
+            "rise_from_low_pct": 0.06277930425229838,
+            "up_days_after_low": 7,
+            "up_pct_sum_after_low": 19.259999999999998,
+            "down_days_after_low": 10,
+            "down_pct_sum_after_low": -12.729999999999999,
+            "flat_days_after_low": 0,
+            "data_quality": "ok"
+          },
+          "children_summary": {
+            "direct_children_total": 1,
+            "direct_children_qualified": 1,
+            "qualified_descendants": 1,
+            "total_descendants": 1,
+            "descendant_counts": {
+              "level2": {
+                "total": 0,
+                "qualified": 0
+              },
+              "level3": {
+                "total": 1,
+                "qualified": 1
+              }
+            }
+          },
+          "level3": [
+            {
+              "index_code": "850841.SI",
+              "name": "其他电子Ⅲ",
+              "level": "level3",
+              "qualified": true,
+              "metrics": {
+                "latest_trade_date": "20260918",
+                "current_close": 17280.99,
+                "window": 20,
+                "window_start_date": "20260824",
+                "window_low_date": "20260826",
+                "window_low_close": 16260.17,
+                "days_since_low": 17,
+                "rise_from_low_pct": 0.06278040143491737,
+                "up_days_after_low": 7,
+                "up_pct_sum_after_low": 19.259999999999998,
+                "down_days_after_low": 10,
+                "down_pct_sum_after_low": -12.729999999999999,
+                "flat_days_after_low": 0,
+                "data_quality": "ok"
+              },
+              "children_summary": {
+                "direct_children_total": 0,
+                "direct_children_qualified": 0,
+                "qualified_descendants": 0,
+                "total_descendants": 0,
+                "descendant_counts": {
+                  "level2": {
+                    "total": 0,
+                    "qualified": 0
+                  },
+                  "level3": {
+                    "total": 0,
+                    "qualified": 0
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "index_code": "801083.SI",
+          "name": "元件",
+          "level": "level2",
+          "qualified": true,
+          "metrics": {
+            "latest_trade_date": "20260918",
+            "current_close": 23904.03,
+            "window": 20,
+            "window_start_date": "20260824",
+            "window_low_date": "20260904",
+            "window_low_close": 21065.15,
+            "days_since_low": 10,
+            "rise_from_low_pct": 0.13476666437219764,
+            "up_days_after_low": 8,
+            "up_pct_sum_after_low": 15.64,
+            "down_days_after_low": 2,
+            "down_pct_sum_after_low": -2.62,
+            "flat_days_after_low": 0,
+            "data_quality": "ok"
+          },
+          "children_summary": {
+            "direct_children_total": 2,
+            "direct_children_qualified": 2,
+            "qualified_descendants": 2,
+            "total_descendants": 2,
+            "descendant_counts": {
+              "level2": {
+                "total": 0,
+                "qualified": 0
+              },
+              "level3": {
+                "total": 2,
+                "qualified": 2
+              }
+            }
+          },
+          "level3": [
+            {
+              "index_code": "850822.SI",
+              "name": "印制电路板",
+              "level": "level3",
+              "qualified": true,
+              "metrics": {
+                "latest_trade_date": "20260918",
+                "current_close": 19759.51,
+                "window": 20,
+                "window_start_date": "20260824",
+                "window_low_date": "20260904",
+                "window_low_close": 17539.47,
+                "days_since_low": 10,
+                "rise_from_low_pct": 0.12657395006804628,
+                "up_days_after_low": 8,
+                "up_pct_sum_after_low": 15.610000000000001,
+                "down_days_after_low": 2,
+                "down_pct_sum_after_low": -3.3,
+                "flat_days_after_low": 0,
+                "data_quality": "ok"
+              },
+              "children_summary": {
+                "direct_children_total": 0,
+                "direct_children_qualified": 0,
+                "qualified_descendants": 0,
+                "total_descendants": 0,
+                "descendant_counts": {
+                  "level2": {
+                    "total": 0,
+                    "qualified": 0
+                  },
+                  "level3": {
+                    "total": 0,
+                    "qualified": 0
+                  }
+                }
+              }
+            },
+            {
+              "index_code": "850823.SI",
+              "name": "被动元件",
+              "level": "level3",
+              "qualified": true,
+              "metrics": {
+                "latest_trade_date": "20260918",
+                "current_close": 19937.01,
+                "window": 20,
+                "window_start_date": "20260824",
+                "window_low_date": "20260904",
+                "window_low_close": 17071.64,
+                "days_since_low": 10,
+                "rise_from_low_pct": 0.16784386268688878,
+                "up_days_after_low": 7,
+                "up_pct_sum_after_low": 18.900000000000002,
+                "down_days_after_low": 3,
+                "down_pct_sum_after_low": -2.99,
+                "flat_days_after_low": 0,
+                "data_quality": "ok"
+              },
+              "children_summary": {
+                "direct_children_total": 0,
+                "direct_children_qualified": 0,
+                "qualified_descendants": 0,
+                "total_descendants": 0,
+                "descendant_counts": {
+                  "level2": {
+                    "total": 0,
+                    "qualified": 0
+                  },
+                  "level3": {
+                    "total": 0,
+                    "qualified": 0
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "index_code": "801084.SI",
+          "name": "光学光电子",
+          "level": "level2",
+          "qualified": true,
+          "metrics": {
+            "latest_trade_date": "20260918",
+            "current_close": 1868.87,
+            "window": 20,
+            "window_start_date": "20260824",
+            "window_low_date": "20260911",
+            "window_low_close": 1736.96,
+            "days_since_low": 5,
+            "rise_from_low_pct": 0.07594302689756804,
+            "up_days_after_low": 4,
+            "up_pct_sum_after_low": 7.879999999999999,
+            "down_days_after_low": 1,
+            "down_pct_sum_after_low": -0.46,
+            "flat_days_after_low": 0,
+            "data_quality": "ok"
+          },
+          "children_summary": {
+            "direct_children_total": 3,
+            "direct_children_qualified": 1,
+            "qualified_descendants": 1,
+            "total_descendants": 3,
+            "descendant_counts": {
+              "level2": {
+                "total": 0,
+                "qualified": 0
+              },
+              "level3": {
+                "total": 3,
+                "qualified": 1
+              }
+            }
+          },
+          "level3": [
+            {
+              "index_code": "850831.SI",
+              "name": "面板",
+              "level": "level3",
+              "qualified": true,
+              "metrics": {
+                "latest_trade_date": "20260918",
+                "current_close": 1337.39,
+                "window": 20,
+                "window_start_date": "20260824",
+                "window_low_date": "20260911",
+                "window_low_close": 1226.88,
+                "days_since_low": 5,
+                "rise_from_low_pct": 0.09007400886802297,
+                "up_days_after_low": 5,
+                "up_pct_sum_after_low": 8.73,
+                "down_days_after_low": 0,
+                "down_pct_sum_after_low": 0.0,
+                "flat_days_after_low": 0,
+                "data_quality": "ok"
+              },
+              "children_summary": {
+                "direct_children_total": 0,
+                "direct_children_qualified": 0,
+                "qualified_descendants": 0,
+                "total_descendants": 0,
+                "descendant_counts": {
+                  "level2": {
+                    "total": 0,
+                    "qualified": 0
+                  },
+                  "level3": {
+                    "total": 0,
+                    "qualified": 0
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "index_code": "801086.SI",
+          "name": "电子化学品Ⅱ",
+          "level": "level2",
+          "qualified": true,
+          "metrics": {
+            "latest_trade_date": "20260918",
+            "current_close": 12361.93,
+            "window": 20,
+            "window_start_date": "20260824",
+            "window_low_date": "20260904",
+            "window_low_close": 11079.92,
+            "days_since_low": 10,
+            "rise_from_low_pct": 0.11570570906649147,
+            "up_days_after_low": 5,
+            "up_pct_sum_after_low": 14.639999999999999,
+            "down_days_after_low": 5,
+            "down_pct_sum_after_low": -3.4400000000000004,
+            "flat_days_after_low": 0,
+            "data_quality": "ok"
+          },
+          "children_summary": {
+            "direct_children_total": 1,
+            "direct_children_qualified": 1,
+            "qualified_descendants": 1,
+            "total_descendants": 1,
+            "descendant_counts": {
+              "level2": {
+                "total": 0,
+                "qualified": 0
+              },
+              "level3": {
+                "total": 1,
+                "qualified": 1
+              }
+            }
+          },
+          "level3": [
+            {
+              "index_code": "850861.SI",
+              "name": "电子化学品Ⅲ",
+              "level": "level3",
+              "qualified": true,
+              "metrics": {
+                "latest_trade_date": "20260918",
+                "current_close": 12361.95,
+                "window": 20,
+                "window_start_date": "20260824",
+                "window_low_date": "20260904",
+                "window_low_close": 11079.93,
+                "days_since_low": 10,
+                "rise_from_low_pct": 0.11570650717107411,
+                "up_days_after_low": 5,
+                "up_pct_sum_after_low": 14.639999999999999,
+                "down_days_after_low": 5,
+                "down_pct_sum_after_low": -3.4400000000000004,
+                "flat_days_after_low": 0,
+                "data_quality": "ok"
+              },
+              "children_summary": {
+                "direct_children_total": 0,
+                "direct_children_qualified": 0,
+                "qualified_descendants": 0,
+                "total_descendants": 0,
+                "descendant_counts": {
+                  "level2": {
+                    "total": 0,
+                    "qualified": 0
+                  },
+                  "level3": {
+                    "total": 0,
+                    "qualified": 0
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "index_code": "801110.SI",
+      "name": "家用电器",
+      "level": "level1",
+      "qualified": false,
+      "metrics": {
+        "latest_trade_date": "20260918",
+        "current_close": 8532.63,
+        "window": 20,
+        "window_start_date": "20260824",
+        "window_low_date": "20260916",
+        "window_low_close": 8486.67,
+        "days_since_low": 2,
+        "rise_from_low_pct": 0.005415551682815378,
+        "up_days_after_low": 2,
+        "up_pct_sum_after_low": 0.54,
+        "down_days_after_low": 0,
+        "down_pct_sum_after_low": 0.0,
+        "flat_days_after_low": 0,
+        "data_quality": "ok"
+      },
+      "children_summary": {
+        "direct_children_total": 7,
+        "direct_children_qualified": 2,
+        "qualified_descendants": 4,
+        "total_descendants": 19,
+        "descendant_counts": {
+          "level2": {
+            "total": 7,
+            "qualified": 2
+          },
+          "level3": {
+            "total": 12,
+            "qualified": 2
+          }
+        }
+      },
+      "level2": [
+        {
+          "index_code": "801112.SI",
+          "name": "黑色家电",
+          "level": "level2",
+          "qualified": true,
+          "metrics": {
+            "latest_trade_date": "20260918",
+            "current_close": 1958.06,
+            "window": 20,
+            "window_start_date": "20260824",
+            "window_low_date": "20260824",
+            "window_low_close": 1863.77,
+            "days_since_low": 19,
+            "rise_from_low_pct": 0.050591006401004446,
+            "up_days_after_low": 10,
+            "up_pct_sum_after_low": 10.6,
+            "down_days_after_low": 9,
+            "down_pct_sum_after_low": -5.56,
+            "flat_days_after_low": 0,
+            "data_quality": "ok"
+          },
+          "children_summary": {
+            "direct_children_total": 2,
+            "direct_children_qualified": 1,
+            "qualified_descendants": 1,
+            "total_descendants": 2,
+            "descendant_counts": {
+              "level2": {
+                "total": 0,
+                "qualified": 0
+              },
+              "level3": {
+                "total": 2,
+                "qualified": 1
+              }
+            }
+          },
+          "level3": [
+            {
+              "index_code": "851122.SI",
+              "name": "其他黑色家电",
+              "level": "level3",
+              "qualified": true,
+              "metrics": {
+                "latest_trade_date": "20260918",
+                "current_close": 1945.17,
+                "window": 20,
+                "window_start_date": "20260824",
+                "window_low_date": "20260824",
+                "window_low_close": 1757.15,
+                "days_since_low": 19,
+                "rise_from_low_pct": 0.10700281706171921,
+                "up_days_after_low": 10,
+                "up_pct_sum_after_low": 16.66,
+                "down_days_after_low": 9,
+                "down_pct_sum_after_low": -6.21,
+                "flat_days_after_low": 0,
+                "data_quality": "ok"
+              },
+              "children_summary": {
+                "direct_children_total": 0,
+                "direct_children_qualified": 0,
+                "qualified_descendants": 0,
+                "total_descendants": 0,
+                "descendant_counts": {
+                  "level2": {
+                    "total": 0,
+                    "qualified": 0
+                  },
+                  "level3": {
+                    "total": 0,
+                    "qualified": 0
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "index_code": "801115.SI",
+          "name": "照明设备Ⅱ",
+          "level": "level2",
+          "qualified": true,
+          "metrics": {
+            "latest_trade_date": "20260918",
+            "current_close": 4665.67,
+            "window": 20,
+            "window_start_date": "20260824",
+            "window_low_date": "20260911",
+            "window_low_close": 4369.66,
+            "days_since_low": 5,
+            "rise_from_low_pct": 0.06774211265865082,
+            "up_days_after_low": 4,
+            "up_pct_sum_after_low": 7.26,
+            "down_days_after_low": 1,
+            "down_pct_sum_after_low": -0.62,
+            "flat_days_after_low": 0,
+            "data_quality": "ok"
+          },
+          "children_summary": {
+            "direct_children_total": 1,
+            "direct_children_qualified": 1,
+            "qualified_descendants": 1,
+            "total_descendants": 1,
+            "descendant_counts": {
+              "level2": {
+                "total": 0,
+                "qualified": 0
+              },
+              "level3": {
+                "total": 1,
+                "qualified": 1
+              }
+            }
+          },
+          "level3": [
+            {
+              "index_code": "851151.SI",
+              "name": "照明设备Ⅲ",
+              "level": "level3",
+              "qualified": true,
+              "metrics": {
+                "latest_trade_date": "20260918",
+                "current_close": 4665.66,
+                "window": 20,
+                "window_start_date": "20260824",
+                "window_low_date": "20260911",
+                "window_low_close": 4369.66,
+                "days_since_low": 5,
+                "rise_from_low_pct": 0.06773982415107804,
+                "up_days_after_low": 4,
+                "up_pct_sum_after_low": 7.26,
+                "down_days_after_low": 1,
+                "down_pct_sum_after_low": -0.62,
+                "flat_days_after_low": 0,
+                "data_quality": "ok"
+              },
+              "children_summary": {
+                "direct_children_total": 0,
+                "direct_children_qualified": 0,
+                "qualified_descendants": 0,
+                "total_descendants": 0,
+                "descendant_counts": {
+                  "level2": {
+                    "total": 0,
+                    "qualified": 0
+                  },
+                  "level3": {
+                    "total": 0,
+                    "qualified": 0
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "index_code": "801120.SI",
+      "name": "食品饮料",
+      "level": "level1",
+      "qualified": false,
+      "metrics": {
+        "latest_trade_date": "20260918",
+        "current_close": 13547.29,
+        "window": 20,
+        "window_start_date": "20260824",
+        "window_low_date": "20260916",
+        "window_low_close": 13486.33,
+        "days_since_low": 2,
+        "rise_from_low_pct": 0.0045201326083523785,
+        "up_days_after_low": 2,
+        "up_pct_sum_after_low": 0.44999999999999996,
+        "down_days_after_low": 0,
+        "down_pct_sum_after_low": 0.0,
+        "flat_days_after_low": 0,
+        "data_quality": "ok"
+      },
+      "children_summary": {
+        "direct_children_total": 6,
+        "direct_children_qualified": 0,
+        "qualified_descendants": 1,
+        "total_descendants": 19,
+        "descendant_counts": {
+          "level2": {
+            "total": 6,
+            "qualified": 0
+          },
+          "level3": {
+            "total": 13,
+            "qualified": 1
+          }
+        }
+      },
+      "level2": [
+        {
+          "index_code": "801126.SI",
+          "name": "非白酒",
+          "level": "level2",
+          "qualified": false,
+          "metrics": {
+            "latest_trade_date": "20260918",
+            "current_close": 3447.86,
+            "window": 20,
+            "window_start_date": "20260824",
+            "window_low_date": "20260824",
+            "window_low_close": 3312.24,
+            "days_since_low": 19,
+            "rise_from_low_pct": 0.0409451005965753,
+            "up_days_after_low": 12,
+            "up_pct_sum_after_low": 10.63,
+            "down_days_after_low": 7,
+            "down_pct_sum_after_low": -6.5,
+            "flat_days_after_low": 0,
+            "data_quality": "ok"
+          },
+          "children_summary": {
+            "direct_children_total": 2,
+            "direct_children_qualified": 1,
+            "qualified_descendants": 1,
+            "total_descendants": 2,
+            "descendant_counts": {
+              "level2": {
+                "total": 0,
+                "qualified": 0
+              },
+              "level3": {
+                "total": 2,
+                "qualified": 1
+              }
+            }
+          },
+          "level3": [
+            {
+              "index_code": "851233.SI",
+              "name": "其他酒类",
+              "level": "level3",
+              "qualified": true,
+              "metrics": {
+                "latest_trade_date": "20260918",
+                "current_close": 3989.53,
+                "window": 20,
+                "window_start_date": "20260824",
+                "window_low_date": "20260831",
+                "window_low_close": 3452.04,
+                "days_since_low": 14,
+                "rise_from_low_pct": 0.15570213554883505,
+                "up_days_after_low": 10,
+                "up_pct_sum_after_low": 22.09,
+                "down_days_after_low": 4,
+                "down_pct_sum_after_low": -7.12,
+                "flat_days_after_low": 0,
+                "data_quality": "ok"
+              },
+              "children_summary": {
+                "direct_children_total": 0,
+                "direct_children_qualified": 0,
+                "qualified_descendants": 0,
+                "total_descendants": 0,
+                "descendant_counts": {
+                  "level2": {
+                    "total": 0,
+                    "qualified": 0
+                  },
+                  "level3": {
+                    "total": 0,
+                    "qualified": 0
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "index_code": "801140.SI",
+      "name": "轻工制造",
+      "level": "level1",
+      "qualified": false,
+      "metrics": {
+        "latest_trade_date": "20260918",
+        "current_close": 2096.44,
+        "window": 20,
+        "window_start_date": "20260824",
+        "window_low_date": "20260824",
+        "window_low_close": 2026.33,
+        "days_since_low": 19,
+        "rise_from_low_pct": 0.03459949761391301,
+        "up_days_after_low": 13,
+        "up_pct_sum_after_low": 9.49,
+        "down_days_after_low": 6,
+        "down_pct_sum_after_low": -5.99,
+        "flat_days_after_low": 0,
+        "data_quality": "ok"
+      },
+      "children_summary": {
+        "direct_children_total": 4,
+        "direct_children_qualified": 0,
+        "qualified_descendants": 5,
+        "total_descendants": 18,
+        "descendant_counts": {
+          "level2": {
+            "total": 4,
+            "qualified": 0
+          },
+          "level3": {
+            "total": 14,
+            "qualified": 5
+          }
+        }
+      },
+      "level2": [
+        {
+          "index_code": "801141.SI",
+          "name": "包装印刷",
+          "level": "level2",
+          "qualified": false,
+          "metrics": {
+            "latest_trade_date": "20260918",
+            "current_close": 2733.88,
+            "window": 20,
+            "window_start_date": "20260824",
+            "window_low_date": "20260824",
+            "window_low_close": 2605.18,
+            "days_since_low": 19,
+            "rise_from_low_pct": 0.049401576858413065,
+            "up_days_after_low": 11,
+            "up_pct_sum_after_low": 11.030000000000001,
+            "down_days_after_low": 8,
+            "down_pct_sum_after_low": -6.1,
+            "flat_days_after_low": 0,
+            "data_quality": "ok"
+          },
+          "children_summary": {
+            "direct_children_total": 5,
+            "direct_children_qualified": 2,
+            "qualified_descendants": 2,
+            "total_descendants": 5,
+            "descendant_counts": {
+              "level2": {
+                "total": 0,
+                "qualified": 0
+              },
+              "level3": {
+                "total": 5,
+                "qualified": 2
+              }
+            }
+          },
+          "level3": [
+            {
+              "index_code": "851424.SI",
+              "name": "塑料包装",
+              "level": "level3",
+              "qualified": true,
+              "metrics": {
+                "latest_trade_date": "20260918",
+                "current_close": 3188.36,
+                "window": 20,
+                "window_start_date": "20260824",
+                "window_low_date": "20260824",
+                "window_low_close": 2956.87,
+                "days_since_low": 19,
+                "rise_from_low_pct": 0.07828886626737064,
+                "up_days_after_low": 10,
+                "up_pct_sum_after_low": 13.21,
+                "down_days_after_low": 9,
+                "down_pct_sum_after_low": -5.51,
+                "flat_days_after_low": 0,
+                "data_quality": "ok"
+              },
+              "children_summary": {
+                "direct_children_total": 0,
+                "direct_children_qualified": 0,
+                "qualified_descendants": 0,
+                "total_descendants": 0,
+                "descendant_counts": {
+                  "level2": {
+                    "total": 0,
+                    "qualified": 0
+                  },
+                  "level3": {
+                    "total": 0,
+                    "qualified": 0
+                  }
+                }
+              }
+            },
+            {
+              "index_code": "851425.SI",
+              "name": "纸包装",
+              "level": "level3",
+              "qualified": true,
+              "metrics": {
+                "latest_trade_date": "20260918",
+                "current_close": 2182.72,
+                "window": 20,
+                "window_start_date": "20260824",
+                "window_low_date": "20260824",
+                "window_low_close": 2034.0,
+                "days_since_low": 19,
+                "rise_from_low_pct": 0.07311701081612587,
+                "up_days_after_low": 12,
+                "up_pct_sum_after_low": 13.189999999999998,
+                "down_days_after_low": 6,
+                "down_pct_sum_after_low": -6.0200000000000005,
+                "flat_days_after_low": 1,
+                "data_quality": "ok"
+              },
+              "children_summary": {
+                "direct_children_total": 0,
+                "direct_children_qualified": 0,
+                "qualified_descendants": 0,
+                "total_descendants": 0,
+                "descendant_counts": {
+                  "level2": {
+                    "total": 0,
+                    "qualified": 0
+                  },
+                  "level3": {
+                    "total": 0,
+                    "qualified": 0
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "index_code": "801142.SI",
+          "name": "家居用品",
+          "level": "level2",
+          "qualified": false,
+          "metrics": {
+            "latest_trade_date": "20260918",
+            "current_close": 1630.69,
+            "window": 20,
+            "window_start_date": "20260824",
+            "window_low_date": "20260915",
+            "window_low_close": 1573.68,
+            "days_since_low": 3,
+            "rise_from_low_pct": 0.036227187229932456,
+            "up_days_after_low": 3,
+            "up_pct_sum_after_low": 3.59,
+            "down_days_after_low": 0,
+            "down_pct_sum_after_low": 0.0,
+            "flat_days_after_low": 0,
+            "data_quality": "ok"
+          },
+          "children_summary": {
+            "direct_children_total": 5,
+            "direct_children_qualified": 2,
+            "qualified_descendants": 2,
+            "total_descendants": 5,
+            "descendant_counts": {
+              "level2": {
+                "total": 0,
+                "qualified": 0
+              },
+              "level3": {
+                "total": 5,
+                "qualified": 2
+              }
+            }
+          },
+          "level3": [
+            {
+              "index_code": "851436.SI",
+              "name": "瓷砖地板",
+              "level": "level3",
+              "qualified": true,
+              "metrics": {
+                "latest_trade_date": "20260918",
+                "current_close": 824.94,
+                "window": 20,
+                "window_start_date": "20260824",
+                "window_low_date": "20260824",
+                "window_low_close": 764.85,
+                "days_since_low": 19,
+                "rise_from_low_pct": 0.07856442439694056,
+                "up_days_after_low": 9,
+                "up_pct_sum_after_low": 13.84,
+                "down_days_after_low": 10,
+                "down_pct_sum_after_low": -6.099999999999999,
+                "flat_days_after_low": 0,
+                "data_quality": "ok"
+              },
+              "children_summary": {
+                "direct_children_total": 0,
+                "direct_children_qualified": 0,
+                "qualified_descendants": 0,
+                "total_descendants": 0,
+                "descendant_counts": {
+                  "level2": {
+                    "total": 0,
+                    "qualified": 0
+                  },
+                  "level3": {
+                    "total": 0,
+                    "qualified": 0
+                  }
+                }
+              }
+            },
+            {
+              "index_code": "851439.SI",
+              "name": "卫浴制品",
+              "level": "level3",
+              "qualified": true,
+              "metrics": {
+                "latest_trade_date": "20260918",
+                "current_close": 467.68,
+                "window": 20,
+                "window_start_date": "20260824",
+                "window_low_date": "20260824",
+                "window_low_close": 420.87,
+                "days_since_low": 19,
+                "rise_from_low_pct": 0.1112219925392639,
+                "up_days_after_low": 10,
+                "up_pct_sum_after_low": 22.97,
+                "down_days_after_low": 9,
+                "down_pct_sum_after_low": -11.950000000000001,
+                "flat_days_after_low": 0,
+                "data_quality": "ok"
+              },
+              "children_summary": {
+                "direct_children_total": 0,
+                "direct_children_qualified": 0,
+                "qualified_descendants": 0,
+                "total_descendants": 0,
+                "descendant_counts": {
+                  "level2": {
+                    "total": 0,
+                    "qualified": 0
+                  },
+                  "level3": {
+                    "total": 0,
+                    "qualified": 0
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "index_code": "801143.SI",
+          "name": "造纸",
+          "level": "level2",
+          "qualified": false,
+          "metrics": {
+            "latest_trade_date": "20260918",
+            "current_close": 2091.48,
+            "window": 20,
+            "window_start_date": "20260824",
+            "window_low_date": "20260824",
+            "window_low_close": 2015.69,
+            "days_since_low": 19,
+            "rise_from_low_pct": 0.03760002778204985,
+            "up_days_after_low": 10,
+            "up_pct_sum_after_low": 13.21,
+            "down_days_after_low": 9,
+            "down_pct_sum_after_low": -9.29,
+            "flat_days_after_low": 0,
+            "data_quality": "ok"
+          },
+          "children_summary": {
+            "direct_children_total": 2,
+            "direct_children_qualified": 1,
+            "qualified_descendants": 1,
+            "total_descendants": 2,
+            "descendant_counts": {
+              "level2": {
+                "total": 0,
+                "qualified": 0
+              },
+              "level3": {
+                "total": 2,
+                "qualified": 1
+              }
+            }
+          },
+          "level3": [
+            {
+              "index_code": "851413.SI",
+              "name": "特种纸",
+              "level": "level3",
+              "qualified": true,
+              "metrics": {
+                "latest_trade_date": "20260918",
+                "current_close": 1535.75,
+                "window": 20,
+                "window_start_date": "20260824",
+                "window_low_date": "20260824",
+                "window_low_close": 1447.26,
+                "days_since_low": 19,
+                "rise_from_low_pct": 0.06114312563050173,
+                "up_days_after_low": 10,
+                "up_pct_sum_after_low": 20.929999999999996,
+                "down_days_after_low": 9,
+                "down_pct_sum_after_low": -14.56,
+                "flat_days_after_low": 0,
+                "data_quality": "ok"
+              },
+              "children_summary": {
+                "direct_children_total": 0,
+                "direct_children_qualified": 0,
+                "qualified_descendants": 0,
+                "total_descendants": 0,
+                "descendant_counts": {
+                  "level2": {
+                    "total": 0,
+                    "qualified": 0
+                  },
+                  "level3": {
+                    "total": 0,
+                    "qualified": 0
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "index_code": "801150.SI",
+      "name": "医药生物",
+      "level": "level1",
+      "qualified": false,
+      "metrics": {
+        "latest_trade_date": "20260918",
+        "current_close": 7701.03,
+        "window": 20,
+        "window_start_date": "20260824",
+        "window_low_date": "20260911",
+        "window_low_close": 7458.23,
+        "days_since_low": 5,
+        "rise_from_low_pct": 0.03255464098050087,
+        "up_days_after_low": 4,
+        "up_pct_sum_after_low": 4.3100000000000005,
+        "down_days_after_low": 1,
+        "down_pct_sum_after_low": -1.07,
+        "flat_days_after_low": 0,
+        "data_quality": "ok"
+      },
+      "children_summary": {
+        "direct_children_total": 6,
+        "direct_children_qualified": 1,
+        "qualified_descendants": 4,
+        "total_descendants": 22,
+        "descendant_counts": {
+          "level2": {
+            "total": 6,
+            "qualified": 1
+          },
+          "level3": {
+            "total": 16,
+            "qualified": 3
+          }
+        }
+      },
+      "level2": [
+        {
+          "index_code": "801151.SI",
+          "name": "化学制药",
+          "level": "level2",
+          "qualified": false,
+          "metrics": {
+            "latest_trade_date": "20260918",
+            "current_close": 11067.36,
+            "window": 20,
+            "window_start_date": "20260824",
+            "window_low_date": "20260911",
+            "window_low_close": 10766.22,
+            "days_since_low": 5,
+            "rise_from_low_pct": 0.027970819842061623,
+            "up_days_after_low": 4,
+            "up_pct_sum_after_low": 3.8800000000000003,
+            "down_days_after_low": 1,
+            "down_pct_sum_after_low": -1.08,
+            "flat_days_after_low": 0,
+            "data_quality": "ok"
+          },
+          "children_summary": {
+            "direct_children_total": 2,
+            "direct_children_qualified": 1,
+            "qualified_descendants": 1,
+            "total_descendants": 2,
+            "descendant_counts": {
+              "level2": {
+                "total": 0,
+                "qualified": 0
+              },
+              "level3": {
+                "total": 2,
+                "qualified": 1
+              }
+            }
+          },
+          "level3": [
+            {
+              "index_code": "851511.SI",
+              "name": "原料药",
+              "level": "level3",
+              "qualified": true,
+              "metrics": {
+                "latest_trade_date": "20260918",
+                "current_close": 10848.68,
+                "window": 20,
+                "window_start_date": "20260824",
+                "window_low_date": "20260911",
+                "window_low_close": 10315.36,
+                "days_since_low": 5,
+                "rise_from_low_pct": 0.05170154022738904,
+                "up_days_after_low": 4,
+                "up_pct_sum_after_low": 5.9,
+                "down_days_after_low": 1,
+                "down_pct_sum_after_low": -0.81,
+                "flat_days_after_low": 0,
+                "data_quality": "ok"
+              },
+              "children_summary": {
+                "direct_children_total": 0,
+                "direct_children_qualified": 0,
+                "qualified_descendants": 0,
+                "total_descendants": 0,
+                "descendant_counts": {
+                  "level2": {
+                    "total": 0,
+                    "qualified": 0
+                  },
+                  "level3": {
+                    "total": 0,
+                    "qualified": 0
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "index_code": "801152.SI",
+          "name": "生物制品",
+          "level": "level2",
+          "qualified": false,
+          "metrics": {
+            "latest_trade_date": "20260918",
+            "current_close": 5424.76,
+            "window": 20,
+            "window_start_date": "20260824",
+            "window_low_date": "20260911",
+            "window_low_close": 5220.32,
+            "days_since_low": 5,
+            "rise_from_low_pct": 0.03916235020075409,
+            "up_days_after_low": 4,
+            "up_pct_sum_after_low": 5.49,
+            "down_days_after_low": 1,
+            "down_pct_sum_after_low": -1.58,
+            "flat_days_after_low": 0,
+            "data_quality": "ok"
+          },
+          "children_summary": {
+            "direct_children_total": 3,
+            "direct_children_qualified": 1,
+            "qualified_descendants": 1,
+            "total_descendants": 3,
+            "descendant_counts": {
+              "level2": {
+                "total": 0,
+                "qualified": 0
+              },
+              "level3": {
+                "total": 3,
+                "qualified": 1
+              }
+            }
+          },
+          "level3": [
+            {
+              "index_code": "851524.SI",
+              "name": "其他生物制品",
+              "level": "level3",
+              "qualified": true,
+              "metrics": {
+                "latest_trade_date": "20260918",
+                "current_close": 10101.14,
+                "window": 20,
+                "window_start_date": "20260824",
+                "window_low_date": "20260911",
+                "window_low_close": 9583.77,
+                "days_since_low": 5,
+                "rise_from_low_pct": 0.05398397499105245,
+                "up_days_after_low": 4,
+                "up_pct_sum_after_low": 6.74,
+                "down_days_after_low": 1,
+                "down_pct_sum_after_low": -1.39,
+                "flat_days_after_low": 0,
+                "data_quality": "ok"
+              },
+              "children_summary": {
+                "direct_children_total": 0,
+                "direct_children_qualified": 0,
+                "qualified_descendants": 0,
+                "total_descendants": 0,
+                "descendant_counts": {
+                  "level2": {
+                    "total": 0,
+                    "qualified": 0
+                  },
+                  "level3": {
+                    "total": 0,
+                    "qualified": 0
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "index_code": "801156.SI",
+          "name": "医疗服务",
+          "level": "level2",
+          "qualified": true,
+          "metrics": {
+            "latest_trade_date": "20260918",
+            "current_close": 8458.84,
+            "window": 20,
+            "window_start_date": "20260824",
+            "window_low_date": "20260911",
+            "window_low_close": 7892.22,
+            "days_since_low": 5,
+            "rise_from_low_pct": 0.07179475483450792,
+            "up_days_after_low": 4,
+            "up_pct_sum_after_low": 8.26,
+            "down_days_after_low": 1,
+            "down_pct_sum_after_low": -1.19,
+            "flat_days_after_low": 0,
+            "data_quality": "ok"
+          },
+          "children_summary": {
+            "direct_children_total": 4,
+            "direct_children_qualified": 1,
+            "qualified_descendants": 1,
+            "total_descendants": 4,
+            "descendant_counts": {
+              "level2": {
+                "total": 0,
+                "qualified": 0
+              },
+              "level3": {
+                "total": 4,
+                "qualified": 1
+              }
+            }
+          },
+          "level3": [
+            {
+              "index_code": "851563.SI",
+              "name": "医疗研发外包",
+              "level": "level3",
+              "qualified": true,
+              "metrics": {
+                "latest_trade_date": "20260918",
+                "current_close": 18329.57,
+                "window": 20,
+                "window_start_date": "20260824",
+                "window_low_date": "20260911",
+                "window_low_close": 16921.32,
+                "days_since_low": 5,
+                "rise_from_low_pct": 0.08322341283067747,
+                "up_days_after_low": 4,
+                "up_pct_sum_after_low": 9.279999999999998,
+                "down_days_after_low": 1,
+                "down_pct_sum_after_low": -1.11,
+                "flat_days_after_low": 0,
+                "data_quality": "ok"
+              },
+              "children_summary": {
+                "direct_children_total": 0,
+                "direct_children_qualified": 0,
+                "qualified_descendants": 0,
+                "total_descendants": 0,
+                "descendant_counts": {
+                  "level2": {
+                    "total": 0,
+                    "qualified": 0
+                  },
+                  "level3": {
+                    "total": 0,
+                    "qualified": 0
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "index_code": "801160.SI",
+      "name": "公用事业",
+      "level": "level1",
+      "qualified": false,
+      "metrics": {
+        "latest_trade_date": "20260918",
+        "current_close": 2467.39,
+        "window": 20,
+        "window_start_date": "20260824",
+        "window_low_date": "20260824",
+        "window_low_close": 2434.51,
+        "days_since_low": 19,
+        "rise_from_low_pct": 0.013505797881298243,
+        "up_days_after_low": 9,
+        "up_pct_sum_after_low": 5.36,
+        "down_days_after_low": 10,
+        "down_pct_sum_after_low": -3.98,
+        "flat_days_after_low": 0,
+        "data_quality": "ok"
+      },
+      "children_summary": {
+        "direct_children_total": 2,
+        "direct_children_qualified": 0,
+        "qualified_descendants": 1,
+        "total_descendants": 11,
+        "descendant_counts": {
+          "level2": {
+            "total": 2,
+            "qualified": 0
+          },
+          "level3": {
+            "total": 9,
+            "qualified": 1
+          }
+        }
+      },
+      "level2": [
+        {
+          "index_code": "801161.SI",
+          "name": "电力",
+          "level": "level2",
+          "qualified": false,
+          "metrics": {
+            "latest_trade_date": "20260918",
+            "current_close": 3240.54,
+            "window": 20,
+            "window_start_date": "20260824",
+            "window_low_date": "20260824",
+            "window_low_close": 3197.31,
+            "days_since_low": 19,
+            "rise_from_low_pct": 0.0135207408727962,
+            "up_days_after_low": 9,
+            "up_pct_sum_after_low": 5.36,
+            "down_days_after_low": 10,
+            "down_pct_sum_after_low": -4.0,
+            "flat_days_after_low": 0,
+            "data_quality": "ok"
+          },
+          "children_summary": {
+            "direct_children_total": 8,
+            "direct_children_qualified": 1,
+            "qualified_descendants": 1,
+            "total_descendants": 8,
+            "descendant_counts": {
+              "level2": {
+                "total": 0,
+                "qualified": 0
+              },
+              "level3": {
+                "total": 8,
+                "qualified": 1
+              }
+            }
+          },
+          "level3": [
+            {
+              "index_code": "851614.SI",
+              "name": "热力服务",
+              "level": "level3",
+              "qualified": true,
+              "metrics": {
+                "latest_trade_date": "20260918",
+                "current_close": 2439.05,
+                "window": 20,
+                "window_start_date": "20260824",
+                "window_low_date": "20260824",
+                "window_low_close": 2320.54,
+                "days_since_low": 19,
+                "rise_from_low_pct": 0.051070009566738905,
+                "up_days_after_low": 10,
+                "up_pct_sum_after_low": 11.24,
+                "down_days_after_low": 9,
+                "down_pct_sum_after_low": -6.129999999999999,
+                "flat_days_after_low": 0,
+                "data_quality": "ok"
+              },
+              "children_summary": {
+                "direct_children_total": 0,
+                "direct_children_qualified": 0,
+                "qualified_descendants": 0,
+                "total_descendants": 0,
+                "descendant_counts": {
+                  "level2": {
+                    "total": 0,
+                    "qualified": 0
+                  },
+                  "level3": {
+                    "total": 0,
+                    "qualified": 0
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "index_code": "801170.SI",
+      "name": "交通运输",
+      "level": "level1",
+      "qualified": false,
+      "metrics": {
+        "latest_trade_date": "20260918",
+        "current_close": 2090.33,
+        "window": 20,
+        "window_start_date": "20260824",
+        "window_low_date": "20260916",
+        "window_low_close": 2064.62,
+        "days_since_low": 2,
+        "rise_from_low_pct": 0.012452654725809031,
+        "up_days_after_low": 2,
+        "up_pct_sum_after_low": 1.25,
+        "down_days_after_low": 0,
+        "down_pct_sum_after_low": 0.0,
+        "flat_days_after_low": 0,
+        "data_quality": "ok"
+      },
+      "children_summary": {
+        "direct_children_total": 4,
+        "direct_children_qualified": 0,
+        "qualified_descendants": 1,
+        "total_descendants": 17,
+        "descendant_counts": {
+          "level2": {
+            "total": 4,
+            "qualified": 0
+          },
+          "level3": {
+            "total": 13,
+            "qualified": 1
+          }
+        }
+      },
+      "level2": [
+        {
+          "index_code": "801992.SI",
+          "name": "航运港口",
+          "level": "level2",
+          "qualified": false,
+          "metrics": {
+            "latest_trade_date": "20260918",
+            "current_close": 3658.59,
+            "window": 20,
+            "window_start_date": "20260824",
+            "window_low_date": "20260902",
+            "window_low_close": 3490.88,
+            "days_since_low": 12,
+            "rise_from_low_pct": 0.04804232743606196,
+            "up_days_after_low": 5,
+            "up_pct_sum_after_low": 9.979999999999999,
+            "down_days_after_low": 7,
+            "down_pct_sum_after_low": -5.12,
+            "flat_days_after_low": 0,
+            "data_quality": "ok"
+          },
+          "children_summary": {
+            "direct_children_total": 2,
+            "direct_children_qualified": 1,
+            "qualified_descendants": 1,
+            "total_descendants": 2,
+            "descendant_counts": {
+              "level2": {
+                "total": 0,
+                "qualified": 0
+              },
+              "level3": {
+                "total": 2,
+                "qualified": 1
+              }
+            }
+          },
+          "level3": [
+            {
+              "index_code": "851761.SI",
+              "name": "航运",
+              "level": "level3",
+              "qualified": true,
+              "metrics": {
+                "latest_trade_date": "20260918",
+                "current_close": 3025.95,
+                "window": 20,
+                "window_start_date": "20260824",
+                "window_low_date": "20260902",
+                "window_low_close": 2809.77,
+                "days_since_low": 12,
+                "rise_from_low_pct": 0.0769386818138138,
+                "up_days_after_low": 5,
+                "up_pct_sum_after_low": 13.91,
+                "down_days_after_low": 7,
+                "down_pct_sum_after_low": -6.19,
+                "flat_days_after_low": 0,
+                "data_quality": "ok"
+              },
+              "children_summary": {
+                "direct_children_total": 0,
+                "direct_children_qualified": 0,
+                "qualified_descendants": 0,
+                "total_descendants": 0,
+                "descendant_counts": {
+                  "level2": {
+                    "total": 0,
+                    "qualified": 0
+                  },
+                  "level3": {
+                    "total": 0,
+                    "qualified": 0
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "index_code": "801180.SI",
+      "name": "房地产",
+      "level": "level1",
+      "qualified": false,
+      "metrics": {
+        "latest_trade_date": "20260918",
+        "current_close": 1896.07,
+        "window": 20,
+        "window_start_date": "20260824",
+        "window_low_date": "20260915",
+        "window_low_close": 1811.36,
+        "days_since_low": 3,
+        "rise_from_low_pct": 0.046765965904072004,
+        "up_days_after_low": 3,
+        "up_pct_sum_after_low": 4.63,
+        "down_days_after_low": 0,
+        "down_pct_sum_after_low": 0.0,
+        "flat_days_after_low": 0,
+        "data_quality": "ok"
+      },
+      "children_summary": {
+        "direct_children_total": 2,
+        "direct_children_qualified": 1,
+        "qualified_descendants": 2,
+        "total_descendants": 8,
+        "descendant_counts": {
+          "level2": {
+            "total": 2,
+            "qualified": 1
+          },
+          "level3": {
+            "total": 6,
+            "qualified": 1
+          }
+        }
+      },
+      "level2": [
+        {
+          "index_code": "801183.SI",
+          "name": "房地产服务",
+          "level": "level2",
+          "qualified": true,
+          "metrics": {
+            "latest_trade_date": "20260918",
+            "current_close": 823.09,
+            "window": 20,
+            "window_start_date": "20260824",
+            "window_low_date": "20260824",
+            "window_low_close": 733.95,
+            "days_since_low": 19,
+            "rise_from_low_pct": 0.12145241501464676,
+            "up_days_after_low": 12,
+            "up_pct_sum_after_low": 28.42,
+            "down_days_after_low": 7,
+            "down_pct_sum_after_low": -16.24,
+            "flat_days_after_low": 0,
+            "data_quality": "ok"
+          },
+          "children_summary": {
+            "direct_children_total": 3,
+            "direct_children_qualified": 1,
+            "qualified_descendants": 1,
+            "total_descendants": 3,
+            "descendant_counts": {
+              "level2": {
+                "total": 0,
+                "qualified": 0
+              },
+              "level3": {
+                "total": 3,
+                "qualified": 1
+              }
+            }
+          },
+          "level3": [
+            {
+              "index_code": "851831.SI",
+              "name": "物业管理",
+              "level": "level3",
+              "qualified": true,
+              "metrics": {
+                "latest_trade_date": "20260918",
+                "current_close": 569.18,
+                "window": 20,
+                "window_start_date": "20260824",
+                "window_low_date": "20260824",
+                "window_low_close": 538.81,
+                "days_since_low": 19,
+                "rise_from_low_pct": 0.05636495239509287,
+                "up_days_after_low": 10,
+                "up_pct_sum_after_low": 14.05,
+                "down_days_after_low": 9,
+                "down_pct_sum_after_low": -8.360000000000001,
+                "flat_days_after_low": 0,
+                "data_quality": "ok"
+              },
+              "children_summary": {
+                "direct_children_total": 0,
+                "direct_children_qualified": 0,
+                "qualified_descendants": 0,
+                "total_descendants": 0,
+                "descendant_counts": {
+                  "level2": {
+                    "total": 0,
+                    "qualified": 0
+                  },
+                  "level3": {
+                    "total": 0,
+                    "qualified": 0
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "index_code": "801200.SI",
+      "name": "商贸零售",
+      "level": "level1",
+      "qualified": false,
+      "metrics": {
+        "latest_trade_date": "20260918",
+        "current_close": 1796.29,
+        "window": 20,
+        "window_start_date": "20260824",
+        "window_low_date": "20260915",
+        "window_low_close": 1755.33,
+        "days_since_low": 3,
+        "rise_from_low_pct": 0.023334643628263763,
+        "up_days_after_low": 3,
+        "up_pct_sum_after_low": 2.33,
+        "down_days_after_low": 0,
+        "down_pct_sum_after_low": 0.0,
+        "flat_days_after_low": 0,
+        "data_quality": "ok"
+      },
+      "children_summary": {
+        "direct_children_total": 5,
+        "direct_children_qualified": 1,
+        "qualified_descendants": 3,
+        "total_descendants": 15,
+        "descendant_counts": {
+          "level2": {
+            "total": 5,
+            "qualified": 1
+          },
+          "level3": {
+            "total": 10,
+            "qualified": 2
+          }
+        }
+      },
+      "level2": [
+        {
+          "index_code": "801203.SI",
+          "name": "一般零售",
+          "level": "level2",
+          "qualified": false,
+          "metrics": {
+            "latest_trade_date": "20260918",
+            "current_close": 2716.41,
+            "window": 20,
+            "window_start_date": "20260824",
+            "window_low_date": "20260916",
+            "window_low_close": 2667.38,
+            "days_since_low": 2,
+            "rise_from_low_pct": 0.01838133299342415,
+            "up_days_after_low": 2,
+            "up_pct_sum_after_low": 1.84,
+            "down_days_after_low": 0,
+            "down_pct_sum_after_low": 0.0,
+            "flat_days_after_low": 0,
+            "data_quality": "ok"
+          },
+          "children_summary": {
+            "direct_children_total": 4,
+            "direct_children_qualified": 1,
+            "qualified_descendants": 1,
+            "total_descendants": 4,
+            "descendant_counts": {
+              "level2": {
+                "total": 0,
+                "qualified": 0
+              },
+              "level3": {
+                "total": 4,
+                "qualified": 1
+              }
+            }
+          },
+          "level3": [
+            {
+              "index_code": "852031.SI",
+              "name": "百货",
+              "level": "level3",
+              "qualified": true,
+              "metrics": {
+                "latest_trade_date": "20260918",
+                "current_close": 2214.59,
+                "window": 20,
+                "window_start_date": "20260824",
+                "window_low_date": "20260824",
+                "window_low_close": 2099.84,
+                "days_since_low": 19,
+                "rise_from_low_pct": 0.05464702072538863,
+                "up_days_after_low": 11,
+                "up_pct_sum_after_low": 21.67,
+                "down_days_after_low": 8,
+                "down_pct_sum_after_low": -15.74,
+                "flat_days_after_low": 0,
+                "data_quality": "ok"
+              },
+              "children_summary": {
+                "direct_children_total": 0,
+                "direct_children_qualified": 0,
+                "qualified_descendants": 0,
+                "total_descendants": 0,
+                "descendant_counts": {
+                  "level2": {
+                    "total": 0,
+                    "qualified": 0
+                  },
+                  "level3": {
+                    "total": 0,
+                    "qualified": 0
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "index_code": "801206.SI",
+          "name": "互联网电商",
+          "level": "level2",
+          "qualified": true,
+          "metrics": {
+            "latest_trade_date": "20260918",
+            "current_close": 10513.37,
+            "window": 20,
+            "window_start_date": "20260824",
+            "window_low_date": "20260824",
+            "window_low_close": 9539.3,
+            "days_since_low": 19,
+            "rise_from_low_pct": 0.10211126602580922,
+            "up_days_after_low": 12,
+            "up_pct_sum_after_low": 17.77,
+            "down_days_after_low": 7,
+            "down_pct_sum_after_low": -7.85,
+            "flat_days_after_low": 0,
+            "data_quality": "ok"
+          },
+          "children_summary": {
+            "direct_children_total": 3,
+            "direct_children_qualified": 1,
+            "qualified_descendants": 1,
+            "total_descendants": 3,
+            "descendant_counts": {
+              "level2": {
+                "total": 0,
+                "qualified": 0
+              },
+              "level3": {
+                "total": 3,
+                "qualified": 1
+              }
+            }
+          },
+          "level3": [
+            {
+              "index_code": "852062.SI",
+              "name": "跨境电商",
+              "level": "level3",
+              "qualified": true,
+              "metrics": {
+                "latest_trade_date": "20260918",
+                "current_close": 714.19,
+                "window": 20,
+                "window_start_date": "20260824",
+                "window_low_date": "20260824",
+                "window_low_close": 621.05,
+                "days_since_low": 19,
+                "rise_from_low_pct": 0.14997182191449987,
+                "up_days_after_low": 11,
+                "up_pct_sum_after_low": 20.15,
+                "down_days_after_low": 8,
+                "down_pct_sum_after_low": -5.930000000000001,
+                "flat_days_after_low": 0,
+                "data_quality": "ok"
+              },
+              "children_summary": {
+                "direct_children_total": 0,
+                "direct_children_qualified": 0,
+                "qualified_descendants": 0,
+                "total_descendants": 0,
+                "descendant_counts": {
+                  "level2": {
+                    "total": 0,
+                    "qualified": 0
+                  },
+                  "level3": {
+                    "total": 0,
+                    "qualified": 0
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "index_code": "801210.SI",
+      "name": "社会服务",
+      "level": "level1",
+      "qualified": false,
+      "metrics": {
+        "latest_trade_date": "20260918",
+        "current_close": 7384.07,
+        "window": 20,
+        "window_start_date": "20260824",
+        "window_low_date": "20260824",
+        "window_low_close": 7151.52,
+        "days_since_low": 19,
+        "rise_from_low_pct": 0.032517562699957425,
+        "up_days_after_low": 12,
+        "up_pct_sum_after_low": 11.530000000000001,
+        "down_days_after_low": 7,
+        "down_pct_sum_after_low": -8.21,
+        "flat_days_after_low": 0,
+        "data_quality": "ok"
+      },
+      "children_summary": {
+        "direct_children_total": 6,
+        "direct_children_qualified": 1,
+        "qualified_descendants": 1,
+        "total_descendants": 21,
+        "descendant_counts": {
+          "level2": {
+            "total": 6,
+            "qualified": 1
+          },
+          "level3": {
+            "total": 15,
+            "qualified": 0
+          }
+        }
+      },
+      "level2": [
+        {
+          "index_code": "801994.SI",
+          "name": "教育",
+          "level": "level2",
+          "qualified": true,
+          "metrics": {
+            "latest_trade_date": "20260918",
+            "current_close": 1942.79,
+            "window": 20,
+            "window_start_date": "20260824",
+            "window_low_date": "20260824",
+            "window_low_close": 1723.0,
+            "days_since_low": 19,
+            "rise_from_low_pct": 0.12756239117817758,
+            "up_days_after_low": 15,
+            "up_pct_sum_after_low": 19.72,
+            "down_days_after_low": 4,
+            "down_pct_sum_after_low": -7.46,
+            "flat_days_after_low": 0,
+            "data_quality": "ok"
+          },
+          "children_summary": {
+            "direct_children_total": 3,
+            "direct_children_qualified": 0,
+            "qualified_descendants": 0,
+            "total_descendants": 3,
+            "descendant_counts": {
+              "level2": {
+                "total": 0,
+                "qualified": 0
+              },
+              "level3": {
+                "total": 3,
+                "qualified": 0
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "index_code": "801710.SI",
+      "name": "建筑材料",
+      "level": "level1",
+      "qualified": true,
+      "metrics": {
+        "latest_trade_date": "20260918",
+        "current_close": 6101.16,
+        "window": 20,
+        "window_start_date": "20260824",
+        "window_low_date": "20260824",
+        "window_low_close": 5778.38,
+        "days_since_low": 19,
+        "rise_from_low_pct": 0.055859946905534086,
+        "up_days_after_low": 14,
+        "up_pct_sum_after_low": 10.010000000000002,
+        "down_days_after_low": 4,
+        "down_pct_sum_after_low": -4.4799999999999995,
+        "flat_days_after_low": 1,
+        "data_quality": "ok"
+      },
+      "children_summary": {
+        "direct_children_total": 3,
+        "direct_children_qualified": 1,
+        "qualified_descendants": 2,
+        "total_descendants": 12,
+        "descendant_counts": {
+          "level2": {
+            "total": 3,
+            "qualified": 1
+          },
+          "level3": {
+            "total": 9,
+            "qualified": 1
+          }
+        }
+      },
+      "level2": [
+        {
+          "index_code": "801712.SI",
+          "name": "玻璃玻纤",
+          "level": "level2",
+          "qualified": true,
+          "metrics": {
+            "latest_trade_date": "20260918",
+            "current_close": 21414.8,
+            "window": 20,
+            "window_start_date": "20260824",
+            "window_low_date": "20260904",
+            "window_low_close": 18631.7,
+            "days_since_low": 10,
+            "rise_from_low_pct": 0.1493744532168293,
+            "up_days_after_low": 8,
+            "up_pct_sum_after_low": 15.799999999999999,
+            "down_days_after_low": 2,
+            "down_pct_sum_after_low": -1.69,
+            "flat_days_after_low": 0,
+            "data_quality": "ok"
+          },
+          "children_summary": {
+            "direct_children_total": 2,
+            "direct_children_qualified": 1,
+            "qualified_descendants": 1,
+            "total_descendants": 2,
+            "descendant_counts": {
+              "level2": {
+                "total": 0,
+                "qualified": 0
+              },
+              "level3": {
+                "total": 2,
+                "qualified": 1
+              }
+            }
+          },
+          "level3": [
+            {
+              "index_code": "857122.SI",
+              "name": "玻纤制造",
+              "level": "level3",
+              "qualified": true,
+              "metrics": {
+                "latest_trade_date": "20260918",
+                "current_close": 97137.78,
+                "window": 20,
+                "window_start_date": "20260824",
+                "window_low_date": "20260904",
+                "window_low_close": 82926.55,
+                "days_since_low": 10,
+                "rise_from_low_pct": 0.1713712918239092,
+                "up_days_after_low": 8,
+                "up_pct_sum_after_low": 17.939999999999998,
+                "down_days_after_low": 2,
+                "down_pct_sum_after_low": -1.8800000000000001,
+                "flat_days_after_low": 0,
+                "data_quality": "ok"
+              },
+              "children_summary": {
+                "direct_children_total": 0,
+                "direct_children_qualified": 0,
+                "qualified_descendants": 0,
+                "total_descendants": 0,
+                "descendant_counts": {
+                  "level2": {
+                    "total": 0,
+                    "qualified": 0
+                  },
+                  "level3": {
+                    "total": 0,
+                    "qualified": 0
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "index_code": "801730.SI",
+      "name": "电力设备",
+      "level": "level1",
+      "qualified": false,
+      "metrics": {
+        "latest_trade_date": "20260918",
+        "current_close": 8587.3,
+        "window": 20,
+        "window_start_date": "20260824",
+        "window_low_date": "20260917",
+        "window_low_close": 8447.02,
+        "days_since_low": 1,
+        "rise_from_low_pct": 0.0166070401159224,
+        "up_days_after_low": 1,
+        "up_pct_sum_after_low": 1.66,
+        "down_days_after_low": 0,
+        "down_pct_sum_after_low": 0.0,
+        "flat_days_after_low": 0,
+        "data_quality": "ok"
+      },
+      "children_summary": {
+        "direct_children_total": 6,
+        "direct_children_qualified": 1,
+        "qualified_descendants": 5,
+        "total_descendants": 27,
+        "descendant_counts": {
+          "level2": {
+            "total": 6,
+            "qualified": 1
+          },
+          "level3": {
+            "total": 21,
+            "qualified": 4
+          }
+        }
+      },
+      "level2": [
+        {
+          "index_code": "801733.SI",
+          "name": "其他电源设备Ⅱ",
+          "level": "level2",
+          "qualified": false,
+          "metrics": {
+            "latest_trade_date": "20260918",
+            "current_close": 38512.58,
+            "window": 20,
+            "window_start_date": "20260824",
+            "window_low_date": "20260915",
+            "window_low_close": 36927.53,
+            "days_since_low": 3,
+            "rise_from_low_pct": 0.04292326077590358,
+            "up_days_after_low": 2,
+            "up_pct_sum_after_low": 4.5200000000000005,
+            "down_days_after_low": 1,
+            "down_pct_sum_after_low": -0.25,
+            "flat_days_after_low": 0,
+            "data_quality": "ok"
+          },
+          "children_summary": {
+            "direct_children_total": 3,
+            "direct_children_qualified": 1,
+            "qualified_descendants": 1,
+            "total_descendants": 3,
+            "descendant_counts": {
+              "level2": {
+                "total": 0,
+                "qualified": 0
+              },
+              "level3": {
+                "total": 3,
+                "qualified": 1
+              }
+            }
+          },
+          "level3": [
+            {
+              "index_code": "857334.SI",
+              "name": "火电设备",
+              "level": "level3",
+              "qualified": true,
+              "metrics": {
+                "latest_trade_date": "20260918",
+                "current_close": 3532.5,
+                "window": 20,
+                "window_start_date": "20260824",
+                "window_low_date": "20260825",
+                "window_low_close": 3361.47,
+                "days_since_low": 18,
+                "rise_from_low_pct": 0.05087952592169498,
+                "up_days_after_low": 9,
+                "up_pct_sum_after_low": 13.059999999999999,
+                "down_days_after_low": 9,
+                "down_pct_sum_after_low": -7.9,
+                "flat_days_after_low": 0,
+                "data_quality": "ok"
+              },
+              "children_summary": {
+                "direct_children_total": 0,
+                "direct_children_qualified": 0,
+                "qualified_descendants": 0,
+                "total_descendants": 0,
+                "descendant_counts": {
+                  "level2": {
+                    "total": 0,
+                    "qualified": 0
+                  },
+                  "level3": {
+                    "total": 0,
+                    "qualified": 0
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "index_code": "801736.SI",
+          "name": "风电设备",
+          "level": "level2",
+          "qualified": true,
+          "metrics": {
+            "latest_trade_date": "20260918",
+            "current_close": 2078.64,
+            "window": 20,
+            "window_start_date": "20260824",
+            "window_low_date": "20260904",
+            "window_low_close": 1960.33,
+            "days_since_low": 10,
+            "rise_from_low_pct": 0.06035208357776489,
+            "up_days_after_low": 8,
+            "up_pct_sum_after_low": 7.609999999999999,
+            "down_days_after_low": 2,
+            "down_pct_sum_after_low": -1.7,
+            "flat_days_after_low": 0,
+            "data_quality": "ok"
+          },
+          "children_summary": {
+            "direct_children_total": 2,
+            "direct_children_qualified": 1,
+            "qualified_descendants": 1,
+            "total_descendants": 2,
+            "descendant_counts": {
+              "level2": {
+                "total": 0,
+                "qualified": 0
+              },
+              "level3": {
+                "total": 2,
+                "qualified": 1
+              }
+            }
+          },
+          "level3": [
+            {
+              "index_code": "857362.SI",
+              "name": "风电零部件",
+              "level": "level3",
+              "qualified": true,
+              "metrics": {
+                "latest_trade_date": "20260918",
+                "current_close": 6551.7,
+                "window": 20,
+                "window_start_date": "20260824",
+                "window_low_date": "20260824",
+                "window_low_close": 6065.61,
+                "days_since_low": 19,
+                "rise_from_low_pct": 0.08013868349597164,
+                "up_days_after_low": 12,
+                "up_pct_sum_after_low": 13.69,
+                "down_days_after_low": 7,
+                "down_pct_sum_after_low": -5.79,
+                "flat_days_after_low": 0,
+                "data_quality": "ok"
+              },
+              "children_summary": {
+                "direct_children_total": 0,
+                "direct_children_qualified": 0,
+                "qualified_descendants": 0,
+                "total_descendants": 0,
+                "descendant_counts": {
+                  "level2": {
+                    "total": 0,
+                    "qualified": 0
+                  },
+                  "level3": {
+                    "total": 0,
+                    "qualified": 0
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "index_code": "801737.SI",
+          "name": "电池",
+          "level": "level2",
+          "qualified": false,
+          "metrics": {
+            "latest_trade_date": "20260918",
+            "current_close": 20252.08,
+            "window": 20,
+            "window_start_date": "20260824",
+            "window_low_date": "20260917",
+            "window_low_close": 20099.83,
+            "days_since_low": 1,
+            "rise_from_low_pct": 0.0075746909302218945,
+            "up_days_after_low": 1,
+            "up_pct_sum_after_low": 0.76,
+            "down_days_after_low": 0,
+            "down_pct_sum_after_low": 0.0,
+            "flat_days_after_low": 0,
+            "data_quality": "ok"
+          },
+          "children_summary": {
+            "direct_children_total": 5,
+            "direct_children_qualified": 1,
+            "qualified_descendants": 1,
+            "total_descendants": 5,
+            "descendant_counts": {
+              "level2": {
+                "total": 0,
+                "qualified": 0
+              },
+              "level3": {
+                "total": 5,
+                "qualified": 1
+              }
+            }
+          },
+          "level3": [
+            {
+              "index_code": "857373.SI",
+              "name": "锂电专用设备",
+              "level": "level3",
+              "qualified": true,
+              "metrics": {
+                "latest_trade_date": "20260918",
+                "current_close": 15323.83,
+                "window": 20,
+                "window_start_date": "20260824",
+                "window_low_date": "20260911",
+                "window_low_close": 14087.55,
+                "days_since_low": 5,
+                "rise_from_low_pct": 0.08775692011740865,
+                "up_days_after_low": 4,
+                "up_pct_sum_after_low": 8.629999999999999,
+                "down_days_after_low": 1,
+                "down_pct_sum_after_low": -0.1,
+                "flat_days_after_low": 0,
+                "data_quality": "ok"
+              },
+              "children_summary": {
+                "direct_children_total": 0,
+                "direct_children_qualified": 0,
+                "qualified_descendants": 0,
+                "total_descendants": 0,
+                "descendant_counts": {
+                  "level2": {
+                    "total": 0,
+                    "qualified": 0
+                  },
+                  "level3": {
+                    "total": 0,
+                    "qualified": 0
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "index_code": "801738.SI",
+          "name": "电网设备",
+          "level": "level2",
+          "qualified": false,
+          "metrics": {
+            "latest_trade_date": "20260918",
+            "current_close": 5289.92,
+            "window": 20,
+            "window_start_date": "20260824",
+            "window_low_date": "20260917",
+            "window_low_close": 5190.87,
+            "days_since_low": 1,
+            "rise_from_low_pct": 0.01908157977371805,
+            "up_days_after_low": 1,
+            "up_pct_sum_after_low": 1.91,
+            "down_days_after_low": 0,
+            "down_pct_sum_after_low": 0.0,
+            "flat_days_after_low": 0,
+            "data_quality": "ok"
+          },
+          "children_summary": {
+            "direct_children_total": 5,
+            "direct_children_qualified": 1,
+            "qualified_descendants": 1,
+            "total_descendants": 5,
+            "descendant_counts": {
+              "level2": {
+                "total": 0,
+                "qualified": 0
+              },
+              "level3": {
+                "total": 5,
+                "qualified": 1
+              }
+            }
+          },
+          "level3": [
+            {
+              "index_code": "857344.SI",
+              "name": "线缆部件及其他",
+              "level": "level3",
+              "qualified": true,
+              "metrics": {
+                "latest_trade_date": "20260918",
+                "current_close": 13157.41,
+                "window": 20,
+                "window_start_date": "20260824",
+                "window_low_date": "20260824",
+                "window_low_close": 12187.24,
+                "days_since_low": 19,
+                "rise_from_low_pct": 0.07960539055602411,
+                "up_days_after_low": 11,
+                "up_pct_sum_after_low": 18.67,
+                "down_days_after_low": 8,
+                "down_pct_sum_after_low": -10.74,
+                "flat_days_after_low": 0,
+                "data_quality": "ok"
+              },
+              "children_summary": {
+                "direct_children_total": 0,
+                "direct_children_qualified": 0,
+                "qualified_descendants": 0,
+                "total_descendants": 0,
+                "descendant_counts": {
+                  "level2": {
+                    "total": 0,
+                    "qualified": 0
+                  },
+                  "level3": {
+                    "total": 0,
+                    "qualified": 0
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "index_code": "801740.SI",
+      "name": "国防军工",
+      "level": "level1",
+      "qualified": true,
+      "metrics": {
+        "latest_trade_date": "20260918",
+        "current_close": 1689.38,
+        "window": 20,
+        "window_start_date": "20260824",
+        "window_low_date": "20260824",
+        "window_low_close": 1580.52,
+        "days_since_low": 19,
+        "rise_from_low_pct": 0.06887606610482644,
+        "up_days_after_low": 12,
+        "up_pct_sum_after_low": 10.49,
+        "down_days_after_low": 7,
+        "down_pct_sum_after_low": -3.74,
+        "flat_days_after_low": 0,
+        "data_quality": "ok"
+      },
+      "children_summary": {
+        "direct_children_total": 5,
+        "direct_children_qualified": 3,
+        "qualified_descendants": 6,
+        "total_descendants": 10,
+        "descendant_counts": {
+          "level2": {
+            "total": 5,
+            "qualified": 3
+          },
+          "level3": {
+            "total": 5,
+            "qualified": 3
+          }
+        }
+      },
+      "level2": [
+        {
+          "index_code": "801742.SI",
+          "name": "航空装备Ⅱ",
+          "level": "level2",
+          "qualified": true,
+          "metrics": {
+            "latest_trade_date": "20260918",
+            "current_close": 8458.31,
+            "window": 20,
+            "window_start_date": "20260824",
+            "window_low_date": "20260825",
+            "window_low_close": 8050.16,
+            "days_since_low": 18,
+            "rise_from_low_pct": 0.05070085563516735,
+            "up_days_after_low": 11,
+            "up_pct_sum_after_low": 11.81,
+            "down_days_after_low": 7,
+            "down_pct_sum_after_low": -6.720000000000001,
+            "flat_days_after_low": 0,
+            "data_quality": "ok"
+          },
+          "children_summary": {
+            "direct_children_total": 1,
+            "direct_children_qualified": 1,
+            "qualified_descendants": 1,
+            "total_descendants": 1,
+            "descendant_counts": {
+              "level2": {
+                "total": 0,
+                "qualified": 0
+              },
+              "level3": {
+                "total": 1,
+                "qualified": 1
+              }
+            }
+          },
+          "level3": [
+            {
+              "index_code": "857421.SI",
+              "name": "航空装备Ⅲ",
+              "level": "level3",
+              "qualified": true,
+              "metrics": {
+                "latest_trade_date": "20260918",
+                "current_close": 8389.66,
+                "window": 20,
+                "window_start_date": "20260824",
+                "window_low_date": "20260825",
+                "window_low_close": 7984.82,
+                "days_since_low": 18,
+                "rise_from_low_pct": 0.05070120553750734,
+                "up_days_after_low": 11,
+                "up_pct_sum_after_low": 11.81,
+                "down_days_after_low": 7,
+                "down_pct_sum_after_low": -6.720000000000001,
+                "flat_days_after_low": 0,
+                "data_quality": "ok"
+              },
+              "children_summary": {
+                "direct_children_total": 0,
+                "direct_children_qualified": 0,
+                "qualified_descendants": 0,
+                "total_descendants": 0,
+                "descendant_counts": {
+                  "level2": {
+                    "total": 0,
+                    "qualified": 0
+                  },
+                  "level3": {
+                    "total": 0,
+                    "qualified": 0
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "index_code": "801743.SI",
+          "name": "地面兵装Ⅱ",
+          "level": "level2",
+          "qualified": true,
+          "metrics": {
+            "latest_trade_date": "20260918",
+            "current_close": 16194.91,
+            "window": 20,
+            "window_start_date": "20260824",
+            "window_low_date": "20260824",
+            "window_low_close": 14286.11,
+            "days_since_low": 19,
+            "rise_from_low_pct": 0.13361229893931936,
+            "up_days_after_low": 12,
+            "up_pct_sum_after_low": 27.570000000000004,
+            "down_days_after_low": 7,
+            "down_pct_sum_after_low": -14.370000000000001,
+            "flat_days_after_low": 0,
+            "data_quality": "ok"
+          },
+          "children_summary": {
+            "direct_children_total": 1,
+            "direct_children_qualified": 1,
+            "qualified_descendants": 1,
+            "total_descendants": 1,
+            "descendant_counts": {
+              "level2": {
+                "total": 0,
+                "qualified": 0
+              },
+              "level3": {
+                "total": 1,
+                "qualified": 1
+              }
+            }
+          },
+          "level3": [
+            {
+              "index_code": "857431.SI",
+              "name": "地面兵装Ⅲ",
+              "level": "level3",
+              "qualified": true,
+              "metrics": {
+                "latest_trade_date": "20260918",
+                "current_close": 16195.0,
+                "window": 20,
+                "window_start_date": "20260824",
+                "window_low_date": "20260824",
+                "window_low_close": 14286.19,
+                "days_since_low": 19,
+                "rise_from_low_pct": 0.13361225071205118,
+                "up_days_after_low": 12,
+                "up_pct_sum_after_low": 27.570000000000004,
+                "down_days_after_low": 7,
+                "down_pct_sum_after_low": -14.370000000000001,
+                "flat_days_after_low": 0,
+                "data_quality": "ok"
+              },
+              "children_summary": {
+                "direct_children_total": 0,
+                "direct_children_qualified": 0,
+                "qualified_descendants": 0,
+                "total_descendants": 0,
+                "descendant_counts": {
+                  "level2": {
+                    "total": 0,
+                    "qualified": 0
+                  },
+                  "level3": {
+                    "total": 0,
+                    "qualified": 0
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "index_code": "801744.SI",
+          "name": "航海装备Ⅱ",
+          "level": "level2",
+          "qualified": true,
+          "metrics": {
+            "latest_trade_date": "20260918",
+            "current_close": 3561.09,
+            "window": 20,
+            "window_start_date": "20260824",
+            "window_low_date": "20260824",
+            "window_low_close": 3098.71,
+            "days_since_low": 19,
+            "rise_from_low_pct": 0.1492169322072734,
+            "up_days_after_low": 12,
+            "up_pct_sum_after_low": 23.42,
+            "down_days_after_low": 7,
+            "down_pct_sum_after_low": -9.08,
+            "flat_days_after_low": 0,
+            "data_quality": "ok"
+          },
+          "children_summary": {
+            "direct_children_total": 1,
+            "direct_children_qualified": 1,
+            "qualified_descendants": 1,
+            "total_descendants": 1,
+            "descendant_counts": {
+              "level2": {
+                "total": 0,
+                "qualified": 0
+              },
+              "level3": {
+                "total": 1,
+                "qualified": 1
+              }
+            }
+          },
+          "level3": [
+            {
+              "index_code": "850935.SI",
+              "name": "航海装备Ⅲ",
+              "level": "level3",
+              "qualified": true,
+              "metrics": {
+                "latest_trade_date": "20260918",
+                "current_close": 3561.33,
+                "window": 20,
+                "window_start_date": "20260824",
+                "window_low_date": "20260824",
+                "window_low_close": 3098.92,
+                "days_since_low": 19,
+                "rise_from_low_pct": 0.14921650123268737,
+                "up_days_after_low": 12,
+                "up_pct_sum_after_low": 23.42,
+                "down_days_after_low": 7,
+                "down_pct_sum_after_low": -9.08,
+                "flat_days_after_low": 0,
+                "data_quality": "ok"
+              },
+              "children_summary": {
+                "direct_children_total": 0,
+                "direct_children_qualified": 0,
+                "qualified_descendants": 0,
+                "total_descendants": 0,
+                "descendant_counts": {
+                  "level2": {
+                    "total": 0,
+                    "qualified": 0
+                  },
+                  "level3": {
+                    "total": 0,
+                    "qualified": 0
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "index_code": "801760.SI",
+      "name": "传媒",
+      "level": "level1",
+      "qualified": false,
+      "metrics": {
+        "latest_trade_date": "20260918",
+        "current_close": 678.3,
+        "window": 20,
+        "window_start_date": "20260824",
+        "window_low_date": "20260824",
+        "window_low_close": 654.06,
+        "days_since_low": 19,
+        "rise_from_low_pct": 0.03706082010824696,
+        "up_days_after_low": 11,
+        "up_pct_sum_after_low": 14.06,
+        "down_days_after_low": 8,
+        "down_pct_sum_after_low": -10.18,
+        "flat_days_after_low": 0,
+        "data_quality": "ok"
+      },
+      "children_summary": {
+        "direct_children_total": 7,
+        "direct_children_qualified": 3,
+        "qualified_descendants": 6,
+        "total_descendants": 23,
+        "descendant_counts": {
+          "level2": {
+            "total": 7,
+            "qualified": 3
+          },
+          "level3": {
+            "total": 16,
+            "qualified": 3
+          }
+        }
+      },
+      "level2": [
+        {
+          "index_code": "801766.SI",
+          "name": "影视院线",
+          "level": "level2",
+          "qualified": true,
+          "metrics": {
+            "latest_trade_date": "20260918",
+            "current_close": 1071.27,
+            "window": 20,
+            "window_start_date": "20260824",
+            "window_low_date": "20260824",
+            "window_low_close": 980.86,
+            "days_since_low": 19,
+            "rise_from_low_pct": 0.0921742144648574,
+            "up_days_after_low": 11,
+            "up_pct_sum_after_low": 20.099999999999998,
+            "down_days_after_low": 8,
+            "down_pct_sum_after_low": -10.82,
+            "flat_days_after_low": 0,
+            "data_quality": "ok"
+          },
+          "children_summary": {
+            "direct_children_total": 2,
+            "direct_children_qualified": 1,
+            "qualified_descendants": 1,
+            "total_descendants": 2,
+            "descendant_counts": {
+              "level2": {
+                "total": 0,
+                "qualified": 0
+              },
+              "level3": {
+                "total": 2,
+                "qualified": 1
+              }
+            }
+          },
+          "level3": [
+            {
+              "index_code": "857661.SI",
+              "name": "影视动漫制作",
+              "level": "level3",
+              "qualified": true,
+              "metrics": {
+                "latest_trade_date": "20260918",
+                "current_close": 1134.15,
+                "window": 20,
+                "window_start_date": "20260824",
+                "window_low_date": "20260824",
+                "window_low_close": 1033.31,
+                "days_since_low": 19,
+                "rise_from_low_pct": 0.09758930040355773,
+                "up_days_after_low": 12,
+                "up_pct_sum_after_low": 21.729999999999997,
+                "down_days_after_low": 7,
+                "down_pct_sum_after_low": -11.84,
+                "flat_days_after_low": 0,
+                "data_quality": "ok"
+              },
+              "children_summary": {
+                "direct_children_total": 0,
+                "direct_children_qualified": 0,
+                "qualified_descendants": 0,
+                "total_descendants": 0,
+                "descendant_counts": {
+                  "level2": {
+                    "total": 0,
+                    "qualified": 0
+                  },
+                  "level3": {
+                    "total": 0,
+                    "qualified": 0
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "index_code": "801767.SI",
+          "name": "数字媒体",
+          "level": "level2",
+          "qualified": true,
+          "metrics": {
+            "latest_trade_date": "20260918",
+            "current_close": 1693.77,
+            "window": 20,
+            "window_start_date": "20260824",
+            "window_low_date": "20260824",
+            "window_low_close": 1499.67,
+            "days_since_low": 19,
+            "rise_from_low_pct": 0.12942847426433812,
+            "up_days_after_low": 12,
+            "up_pct_sum_after_low": 24.740000000000002,
+            "down_days_after_low": 7,
+            "down_pct_sum_after_low": -11.940000000000001,
+            "flat_days_after_low": 0,
+            "data_quality": "ok"
+          },
+          "children_summary": {
+            "direct_children_total": 6,
+            "direct_children_qualified": 1,
+            "qualified_descendants": 1,
+            "total_descendants": 6,
+            "descendant_counts": {
+              "level2": {
+                "total": 0,
+                "qualified": 0
+              },
+              "level3": {
+                "total": 6,
+                "qualified": 1
+              }
+            }
+          },
+          "level3": [
+            {
+              "index_code": "857674.SI",
+              "name": "门户网站",
+              "level": "level3",
+              "qualified": true,
+              "metrics": {
+                "latest_trade_date": "20260918",
+                "current_close": 1631.5,
+                "window": 20,
+                "window_start_date": "20260824",
+                "window_low_date": "20260824",
+                "window_low_close": 1449.02,
+                "days_since_low": 19,
+                "rise_from_low_pct": 0.12593338946322352,
+                "up_days_after_low": 13,
+                "up_pct_sum_after_low": 20.160000000000004,
+                "down_days_after_low": 6,
+                "down_pct_sum_after_low": -8.02,
+                "flat_days_after_low": 0,
+                "data_quality": "ok"
+              },
+              "children_summary": {
+                "direct_children_total": 0,
+                "direct_children_qualified": 0,
+                "qualified_descendants": 0,
+                "total_descendants": 0,
+                "descendant_counts": {
+                  "level2": {
+                    "total": 0,
+                    "qualified": 0
+                  },
+                  "level3": {
+                    "total": 0,
+                    "qualified": 0
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "index_code": "801769.SI",
+          "name": "出版",
+          "level": "level2",
+          "qualified": true,
+          "metrics": {
+            "latest_trade_date": "20260918",
+            "current_close": 1434.41,
+            "window": 20,
+            "window_start_date": "20260824",
+            "window_low_date": "20260827",
+            "window_low_close": 1349.65,
+            "days_since_low": 16,
+            "rise_from_low_pct": 0.06280146704701228,
+            "up_days_after_low": 9,
+            "up_pct_sum_after_low": 17.560000000000002,
+            "down_days_after_low": 7,
+            "down_pct_sum_after_low": -11.079999999999998,
+            "flat_days_after_low": 0,
+            "data_quality": "ok"
+          },
+          "children_summary": {
+            "direct_children_total": 3,
+            "direct_children_qualified": 1,
+            "qualified_descendants": 1,
+            "total_descendants": 3,
+            "descendant_counts": {
+              "level2": {
+                "total": 0,
+                "qualified": 0
+              },
+              "level3": {
+                "total": 3,
+                "qualified": 1
+              }
+            }
+          },
+          "level3": [
+            {
+              "index_code": "857692.SI",
+              "name": "大众出版",
+              "level": "level3",
+              "qualified": true,
+              "metrics": {
+                "latest_trade_date": "20260918",
+                "current_close": 1974.85,
+                "window": 20,
+                "window_start_date": "20260824",
+                "window_low_date": "20260824",
+                "window_low_close": 1813.32,
+                "days_since_low": 19,
+                "rise_from_low_pct": 0.08907969911543456,
+                "up_days_after_low": 11,
+                "up_pct_sum_after_low": 24.470000000000002,
+                "down_days_after_low": 8,
+                "down_pct_sum_after_low": -15.3,
+                "flat_days_after_low": 0,
+                "data_quality": "ok"
+              },
+              "children_summary": {
+                "direct_children_total": 0,
+                "direct_children_qualified": 0,
+                "qualified_descendants": 0,
+                "total_descendants": 0,
+                "descendant_counts": {
+                  "level2": {
+                    "total": 0,
+                    "qualified": 0
+                  },
+                  "level3": {
+                    "total": 0,
+                    "qualified": 0
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "index_code": "801770.SI",
+      "name": "通信",
+      "level": "level1",
+      "qualified": true,
+      "metrics": {
+        "latest_trade_date": "20260918",
+        "current_close": 7619.28,
+        "window": 20,
+        "window_start_date": "20260824",
+        "window_low_date": "20260904",
+        "window_low_close": 6871.85,
+        "days_since_low": 10,
+        "rise_from_low_pct": 0.10876692593697457,
+        "up_days_after_low": 6,
+        "up_pct_sum_after_low": 15.580000000000002,
+        "down_days_after_low": 4,
+        "down_pct_sum_after_low": -4.880000000000001,
+        "flat_days_after_low": 0,
+        "data_quality": "ok"
+      },
+      "children_summary": {
+        "direct_children_total": 2,
+        "direct_children_qualified": 1,
+        "qualified_descendants": 4,
+        "total_descendants": 9,
+        "descendant_counts": {
+          "level2": {
+            "total": 2,
+            "qualified": 1
+          },
+          "level3": {
+            "total": 7,
+            "qualified": 3
+          }
+        }
+      },
+      "level2": [
+        {
+          "index_code": "801102.SI",
+          "name": "通信设备",
+          "level": "level2",
+          "qualified": true,
+          "metrics": {
+            "latest_trade_date": "20260918",
+            "current_close": 10289.38,
+            "window": 20,
+            "window_start_date": "20260824",
+            "window_low_date": "20260904",
+            "window_low_close": 9113.34,
+            "days_since_low": 10,
+            "rise_from_low_pct": 0.1290459919195377,
+            "up_days_after_low": 6,
+            "up_pct_sum_after_low": 17.97,
+            "down_days_after_low": 4,
+            "down_pct_sum_after_low": -5.319999999999999,
+            "flat_days_after_low": 0,
+            "data_quality": "ok"
+          },
+          "children_summary": {
+            "direct_children_total": 4,
+            "direct_children_qualified": 3,
+            "qualified_descendants": 3,
+            "total_descendants": 4,
+            "descendant_counts": {
+              "level2": {
+                "total": 0,
+                "qualified": 0
+              },
+              "level3": {
+                "total": 4,
+                "qualified": 3
+              }
+            }
+          },
+          "level3": [
+            {
+              "index_code": "851024.SI",
+              "name": "通信网络设备及器件",
+              "level": "level3",
+              "qualified": true,
+              "metrics": {
+                "latest_trade_date": "20260918",
+                "current_close": 47334.24,
+                "window": 20,
+                "window_start_date": "20260824",
+                "window_low_date": "20260904",
+                "window_low_close": 41755.9,
+                "days_since_low": 10,
+                "rise_from_low_pct": 0.13359405497187216,
+                "up_days_after_low": 5,
+                "up_pct_sum_after_low": 19.36,
+                "down_days_after_low": 5,
+                "down_pct_sum_after_low": -6.18,
+                "flat_days_after_low": 0,
+                "data_quality": "ok"
+              },
+              "children_summary": {
+                "direct_children_total": 0,
+                "direct_children_qualified": 0,
+                "qualified_descendants": 0,
+                "total_descendants": 0,
+                "descendant_counts": {
+                  "level2": {
+                    "total": 0,
+                    "qualified": 0
+                  },
+                  "level3": {
+                    "total": 0,
+                    "qualified": 0
+                  }
+                }
+              }
+            },
+            {
+              "index_code": "851025.SI",
+              "name": "通信线缆及配套",
+              "level": "level3",
+              "qualified": true,
+              "metrics": {
+                "latest_trade_date": "20260918",
+                "current_close": 9900.57,
+                "window": 20,
+                "window_start_date": "20260824",
+                "window_low_date": "20260824",
+                "window_low_close": 8540.52,
+                "days_since_low": 19,
+                "rise_from_low_pct": 0.1592467437579912,
+                "up_days_after_low": 10,
+                "up_pct_sum_after_low": 33.61,
+                "down_days_after_low": 9,
+                "down_pct_sum_after_low": -17.71,
+                "flat_days_after_low": 0,
+                "data_quality": "ok"
+              },
+              "children_summary": {
+                "direct_children_total": 0,
+                "direct_children_qualified": 0,
+                "qualified_descendants": 0,
+                "total_descendants": 0,
+                "descendant_counts": {
+                  "level2": {
+                    "total": 0,
+                    "qualified": 0
+                  },
+                  "level3": {
+                    "total": 0,
+                    "qualified": 0
+                  }
+                }
+              }
+            },
+            {
+              "index_code": "851026.SI",
+              "name": "通信终端及配件",
+              "level": "level3",
+              "qualified": true,
+              "metrics": {
+                "latest_trade_date": "20260918",
+                "current_close": 2460.88,
+                "window": 20,
+                "window_start_date": "20260824",
+                "window_low_date": "20260825",
+                "window_low_close": 2233.01,
+                "days_since_low": 18,
+                "rise_from_low_pct": 0.10204611712441936,
+                "up_days_after_low": 9,
+                "up_pct_sum_after_low": 15.889999999999999,
+                "down_days_after_low": 9,
+                "down_pct_sum_after_low": -5.9399999999999995,
+                "flat_days_after_low": 0,
+                "data_quality": "ok"
+              },
+              "children_summary": {
+                "direct_children_total": 0,
+                "direct_children_qualified": 0,
+                "qualified_descendants": 0,
+                "total_descendants": 0,
+                "descendant_counts": {
+                  "level2": {
+                    "total": 0,
+                    "qualified": 0
+                  },
+                  "level3": {
+                    "total": 0,
+                    "qualified": 0
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "index_code": "801880.SI",
+      "name": "汽车",
+      "level": "level1",
+      "qualified": false,
+      "metrics": {
+        "latest_trade_date": "20260918",
+        "current_close": 6318.94,
+        "window": 20,
+        "window_start_date": "20260824",
+        "window_low_date": "20260916",
+        "window_low_close": 6183.67,
+        "days_since_low": 2,
+        "rise_from_low_pct": 0.02187535880795699,
+        "up_days_after_low": 2,
+        "up_pct_sum_after_low": 2.18,
+        "down_days_after_low": 0,
+        "down_pct_sum_after_low": 0.0,
+        "flat_days_after_low": 0,
+        "data_quality": "ok"
+      },
+      "children_summary": {
+        "direct_children_total": 5,
+        "direct_children_qualified": 1,
+        "qualified_descendants": 2,
+        "total_descendants": 18,
+        "descendant_counts": {
+          "level2": {
+            "total": 5,
+            "qualified": 1
+          },
+          "level3": {
+            "total": 13,
+            "qualified": 1
+          }
+        }
+      },
+      "level2": [
+        {
+          "index_code": "801092.SI",
+          "name": "汽车服务",
+          "level": "level2",
+          "qualified": true,
+          "metrics": {
+            "latest_trade_date": "20260918",
+            "current_close": 455.91,
+            "window": 20,
+            "window_start_date": "20260824",
+            "window_low_date": "20260824",
+            "window_low_close": 430.34,
+            "days_since_low": 19,
+            "rise_from_low_pct": 0.0594181344983038,
+            "up_days_after_low": 12,
+            "up_pct_sum_after_low": 11.71,
+            "down_days_after_low": 7,
+            "down_pct_sum_after_low": -5.78,
+            "flat_days_after_low": 0,
+            "data_quality": "ok"
+          },
+          "children_summary": {
+            "direct_children_total": 2,
+            "direct_children_qualified": 1,
+            "qualified_descendants": 1,
+            "total_descendants": 2,
+            "descendant_counts": {
+              "level2": {
+                "total": 0,
+                "qualified": 0
+              },
+              "level3": {
+                "total": 2,
+                "qualified": 1
+              }
+            }
+          },
+          "level3": [
+            {
+              "index_code": "850233.SI",
+              "name": "汽车综合服务",
+              "level": "level3",
+              "qualified": true,
+              "metrics": {
+                "latest_trade_date": "20260918",
+                "current_close": 1740.16,
+                "window": 20,
+                "window_start_date": "20260824",
+                "window_low_date": "20260824",
+                "window_low_close": 1634.27,
+                "days_since_low": 19,
+                "rise_from_low_pct": 0.06479345518182433,
+                "up_days_after_low": 12,
+                "up_pct_sum_after_low": 12.600000000000001,
+                "down_days_after_low": 7,
+                "down_pct_sum_after_low": -6.18,
+                "flat_days_after_low": 0,
+                "data_quality": "ok"
+              },
+              "children_summary": {
+                "direct_children_total": 0,
+                "direct_children_qualified": 0,
+                "qualified_descendants": 0,
+                "total_descendants": 0,
+                "descendant_counts": {
+                  "level2": {
+                    "total": 0,
+                    "qualified": 0
+                  },
+                  "level3": {
+                    "total": 0,
+                    "qualified": 0
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "index_code": "801890.SI",
+      "name": "机械设备",
+      "level": "level1",
+      "qualified": false,
+      "metrics": {
+        "latest_trade_date": "20260918",
+        "current_close": 2226.37,
+        "window": 20,
+        "window_start_date": "20260824",
+        "window_low_date": "20260915",
+        "window_low_close": 2150.38,
+        "days_since_low": 3,
+        "rise_from_low_pct": 0.03533794027102166,
+        "up_days_after_low": 2,
+        "up_pct_sum_after_low": 3.61,
+        "down_days_after_low": 1,
+        "down_pct_sum_after_low": -0.1,
+        "flat_days_after_low": 0,
+        "data_quality": "ok"
+      },
+      "children_summary": {
+        "direct_children_total": 5,
+        "direct_children_qualified": 1,
+        "qualified_descendants": 4,
+        "total_descendants": 24,
+        "descendant_counts": {
+          "level2": {
+            "total": 5,
+            "qualified": 1
+          },
+          "level3": {
+            "total": 19,
+            "qualified": 3
+          }
+        }
+      },
+      "level2": [
+        {
+          "index_code": "801072.SI",
+          "name": "通用设备",
+          "level": "level2",
+          "qualified": true,
+          "metrics": {
+            "latest_trade_date": "20260918",
+            "current_close": 8156.58,
+            "window": 20,
+            "window_start_date": "20260824",
+            "window_low_date": "20260911",
+            "window_low_close": 7721.88,
+            "days_since_low": 5,
+            "rise_from_low_pct": 0.05629458111237162,
+            "up_days_after_low": 4,
+            "up_pct_sum_after_low": 6.3,
+            "down_days_after_low": 1,
+            "down_pct_sum_after_low": -0.75,
+            "flat_days_after_low": 0,
+            "data_quality": "ok"
+          },
+          "children_summary": {
+            "direct_children_total": 6,
+            "direct_children_qualified": 1,
+            "qualified_descendants": 1,
+            "total_descendants": 6,
+            "descendant_counts": {
+              "level2": {
+                "total": 0,
+                "qualified": 0
+              },
+              "level3": {
+                "total": 6,
+                "qualified": 1
+              }
+            }
+          },
+          "level3": [
+            {
+              "index_code": "850713.SI",
+              "name": "磨具磨料",
+              "level": "level3",
+              "qualified": true,
+              "metrics": {
+                "latest_trade_date": "20260918",
+                "current_close": 3901.41,
+                "window": 20,
+                "window_start_date": "20260824",
+                "window_low_date": "20260824",
+                "window_low_close": 3245.26,
+                "days_since_low": 19,
+                "rise_from_low_pct": 0.20218718993239349,
+                "up_days_after_low": 11,
+                "up_pct_sum_after_low": 33.65,
+                "down_days_after_low": 8,
+                "down_pct_sum_after_low": -14.469999999999999,
+                "flat_days_after_low": 0,
+                "data_quality": "ok"
+              },
+              "children_summary": {
+                "direct_children_total": 0,
+                "direct_children_qualified": 0,
+                "qualified_descendants": 0,
+                "total_descendants": 0,
+                "descendant_counts": {
+                  "level2": {
+                    "total": 0,
+                    "qualified": 0
+                  },
+                  "level3": {
+                    "total": 0,
+                    "qualified": 0
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "index_code": "801078.SI",
+          "name": "自动化设备",
+          "level": "level2",
+          "qualified": false,
+          "metrics": {
+            "latest_trade_date": "20260918",
+            "current_close": 20479.07,
+            "window": 20,
+            "window_start_date": "20260824",
+            "window_low_date": "20260915",
+            "window_low_close": 19460.03,
+            "days_since_low": 3,
+            "rise_from_low_pct": 0.05236579799722829,
+            "up_days_after_low": 2,
+            "up_pct_sum_after_low": 5.24,
+            "down_days_after_low": 1,
+            "down_pct_sum_after_low": -0.07,
+            "flat_days_after_low": 0,
+            "data_quality": "ok"
+          },
+          "children_summary": {
+            "direct_children_total": 4,
+            "direct_children_qualified": 2,
+            "qualified_descendants": 2,
+            "total_descendants": 4,
+            "descendant_counts": {
+              "level2": {
+                "total": 0,
+                "qualified": 0
+              },
+              "level3": {
+                "total": 4,
+                "qualified": 2
+              }
+            }
+          },
+          "level3": [
+            {
+              "index_code": "850783.SI",
+              "name": "激光设备",
+              "level": "level3",
+              "qualified": true,
+              "metrics": {
+                "latest_trade_date": "20260918",
+                "current_close": 13917.11,
+                "window": 20,
+                "window_start_date": "20260824",
+                "window_low_date": "20260904",
+                "window_low_close": 12336.77,
+                "days_since_low": 10,
+                "rise_from_low_pct": 0.12809998078913698,
+                "up_days_after_low": 4,
+                "up_pct_sum_after_low": 17.67,
+                "down_days_after_low": 6,
+                "down_pct_sum_after_low": -5.170000000000001,
+                "flat_days_after_low": 0,
+                "data_quality": "ok"
+              },
+              "children_summary": {
+                "direct_children_total": 0,
+                "direct_children_qualified": 0,
+                "qualified_descendants": 0,
+                "total_descendants": 0,
+                "descendant_counts": {
+                  "level2": {
+                    "total": 0,
+                    "qualified": 0
+                  },
+                  "level3": {
+                    "total": 0,
+                    "qualified": 0
+                  }
+                }
+              }
+            },
+            {
+              "index_code": "850784.SI",
+              "name": "其他自动化设备",
+              "level": "level3",
+              "qualified": true,
+              "metrics": {
+                "latest_trade_date": "20260918",
+                "current_close": 7106.19,
+                "window": 20,
+                "window_start_date": "20260824",
+                "window_low_date": "20260824",
+                "window_low_close": 6164.56,
+                "days_since_low": 19,
+                "rise_from_low_pct": 0.15274893909703202,
+                "up_days_after_low": 11,
+                "up_pct_sum_after_low": 26.7,
+                "down_days_after_low": 8,
+                "down_pct_sum_after_low": -11.83,
+                "flat_days_after_low": 0,
+                "data_quality": "ok"
+              },
+              "children_summary": {
+                "direct_children_total": 0,
+                "direct_children_qualified": 0,
+                "qualified_descendants": 0,
+                "total_descendants": 0,
+                "descendant_counts": {
+                  "level2": {
+                    "total": 0,
+                    "qualified": 0
+                  },
+                  "level3": {
+                    "total": 0,
+                    "qualified": 0
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "index_code": "801960.SI",
+      "name": "石油石化",
+      "level": "level1",
+      "qualified": false,
+      "metrics": {
+        "latest_trade_date": "20260918",
+        "current_close": 2657.44,
+        "window": 20,
+        "window_start_date": "20260824",
+        "window_low_date": "20260918",
+        "window_low_close": 2657.44,
+        "days_since_low": 0,
+        "rise_from_low_pct": 0.0,
+        "up_days_after_low": 0,
+        "up_pct_sum_after_low": 0.0,
+        "down_days_after_low": 0,
+        "down_pct_sum_after_low": 0.0,
+        "flat_days_after_low": 0,
+        "data_quality": "ok"
+      },
+      "children_summary": {
+        "direct_children_total": 3,
+        "direct_children_qualified": 0,
+        "qualified_descendants": 1,
+        "total_descendants": 9,
+        "descendant_counts": {
+          "level2": {
+            "total": 3,
+            "qualified": 0
+          },
+          "level3": {
+            "total": 6,
+            "qualified": 1
+          }
+        }
+      },
+      "level2": [
+        {
+          "index_code": "801963.SI",
+          "name": "炼化及贸易",
+          "level": "level2",
+          "qualified": false,
+          "metrics": {
+            "latest_trade_date": "20260918",
+            "current_close": 3068.23,
+            "window": 20,
+            "window_start_date": "20260824",
+            "window_low_date": "20260918",
+            "window_low_close": 3068.23,
+            "days_since_low": 0,
+            "rise_from_low_pct": 0.0,
+            "up_days_after_low": 0,
+            "up_pct_sum_after_low": 0.0,
+            "down_days_after_low": 0,
+            "down_pct_sum_after_low": 0.0,
+            "flat_days_after_low": 0,
+            "data_quality": "ok"
+          },
+          "children_summary": {
+            "direct_children_total": 3,
+            "direct_children_qualified": 1,
+            "qualified_descendants": 1,
+            "total_descendants": 3,
+            "descendant_counts": {
+              "level2": {
+                "total": 0,
+                "qualified": 0
+              },
+              "level3": {
+                "total": 3,
+                "qualified": 1
+              }
+            }
+          },
+          "level3": [
+            {
+              "index_code": "859632.SI",
+              "name": "油品石化贸易",
+              "level": "level3",
+              "qualified": true,
+              "metrics": {
+                "latest_trade_date": "20260918",
+                "current_close": 6992.48,
+                "window": 20,
+                "window_start_date": "20260824",
+                "window_low_date": "20260824",
+                "window_low_close": 6409.88,
+                "days_since_low": 19,
+                "rise_from_low_pct": 0.0908909371158273,
+                "up_days_after_low": 10,
+                "up_pct_sum_after_low": 18.78,
+                "down_days_after_low": 9,
+                "down_pct_sum_after_low": -9.68,
+                "flat_days_after_low": 0,
+                "data_quality": "ok"
+              },
+              "children_summary": {
+                "direct_children_total": 0,
+                "direct_children_qualified": 0,
+                "qualified_descendants": 0,
+                "total_descendants": 0,
+                "descendant_counts": {
+                  "level2": {
+                    "total": 0,
+                    "qualified": 0
+                  },
+                  "level3": {
+                    "total": 0,
+                    "qualified": 0
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "index_code": "801980.SI",
+      "name": "美容护理",
+      "level": "level1",
+      "qualified": false,
+      "metrics": {
+        "latest_trade_date": "20260918",
+        "current_close": 3416.96,
+        "window": 20,
+        "window_start_date": "20260824",
+        "window_low_date": "20260915",
+        "window_low_close": 3319.55,
+        "days_since_low": 3,
+        "rise_from_low_pct": 0.029344338841107875,
+        "up_days_after_low": 3,
+        "up_pct_sum_after_low": 2.91,
+        "down_days_after_low": 0,
+        "down_pct_sum_after_low": 0.0,
+        "flat_days_after_low": 0,
+        "data_quality": "ok"
+      },
+      "children_summary": {
+        "direct_children_total": 3,
+        "direct_children_qualified": 1,
+        "qualified_descendants": 2,
+        "total_descendants": 9,
+        "descendant_counts": {
+          "level2": {
+            "total": 3,
+            "qualified": 1
+          },
+          "level3": {
+            "total": 6,
+            "qualified": 1
+          }
+        }
+      },
+      "level2": [
+        {
+          "index_code": "801981.SI",
+          "name": "个护用品",
+          "level": "level2",
+          "qualified": true,
+          "metrics": {
+            "latest_trade_date": "20260918",
+            "current_close": 1301.55,
+            "window": 20,
+            "window_start_date": "20260824",
+            "window_low_date": "20260824",
+            "window_low_close": 1211.12,
+            "days_since_low": 19,
+            "rise_from_low_pct": 0.07466642446660954,
+            "up_days_after_low": 10,
+            "up_pct_sum_after_low": 14.5,
+            "down_days_after_low": 9,
+            "down_pct_sum_after_low": -7.129999999999999,
+            "flat_days_after_low": 0,
+            "data_quality": "ok"
+          },
+          "children_summary": {
+            "direct_children_total": 2,
+            "direct_children_qualified": 1,
+            "qualified_descendants": 1,
+            "total_descendants": 2,
+            "descendant_counts": {
+              "level2": {
+                "total": 0,
+                "qualified": 0
+              },
+              "level3": {
+                "total": 2,
+                "qualified": 1
+              }
+            }
+          },
+          "level3": [
+            {
+              "index_code": "859811.SI",
+              "name": "生活用纸",
+              "level": "level3",
+              "qualified": true,
+              "metrics": {
+                "latest_trade_date": "20260918",
+                "current_close": 1230.95,
+                "window": 20,
+                "window_start_date": "20260824",
+                "window_low_date": "20260824",
+                "window_low_close": 1126.38,
+                "days_since_low": 19,
+                "rise_from_low_pct": 0.09283723077469408,
+                "up_days_after_low": 13,
+                "up_pct_sum_after_low": 14.910000000000002,
+                "down_days_after_low": 6,
+                "down_pct_sum_after_low": -5.83,
+                "flat_days_after_low": 0,
+                "data_quality": "ok"
+              },
+              "children_summary": {
+                "direct_children_total": 0,
+                "direct_children_qualified": 0,
+                "qualified_descendants": 0,
+                "total_descendants": 0,
+                "descendant_counts": {
+                  "level2": {
+                    "total": 0,
+                    "qualified": 0
+                  },
+                  "level3": {
+                    "total": 0,
+                    "qualified": 0
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

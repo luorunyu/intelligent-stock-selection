@@ -2,7 +2,7 @@ import json
 
 import pandas as pd
 
-from stock_selection.context.industry_index_report import (
+from stock_selection.strategies.industry_index_rebound.report import (
     build_industry_index_report,
     render_industry_index_report_markdown,
     save_industry_index_report,
@@ -21,8 +21,8 @@ def _metrics() -> pd.DataFrame:
                 "days_since_low": 5,
                 "up_days_after_low": 3,
                 "window_low_date": "20260901",
-                "up_pct_sum_after_low": 0.12,
-                "down_pct_sum_after_low": -0.02,
+                "up_pct_sum_after_low": 12.0,
+                "down_pct_sum_after_low": -2.0,
             },
             {
                 "index_code": "L2A",
@@ -33,7 +33,7 @@ def _metrics() -> pd.DataFrame:
                 "days_since_low": 2,
                 "up_days_after_low": 1,
                 "window_low_date": "20260903",
-                "up_pct_sum_after_low": 0.02,
+                "up_pct_sum_after_low": 2.0,
                 "down_pct_sum_after_low": 0.00,
             },
             {
@@ -45,8 +45,8 @@ def _metrics() -> pd.DataFrame:
                 "days_since_low": 4,
                 "up_days_after_low": 3,
                 "window_low_date": "20260902",
-                "up_pct_sum_after_low": 0.10,
-                "down_pct_sum_after_low": -0.01,
+                "up_pct_sum_after_low": 10.0,
+                "down_pct_sum_after_low": -1.0,
             },
         ]
     )
@@ -110,6 +110,8 @@ def test_report_renders_markdown_and_saves_both_formats(tmp_path):
     markdown = render_industry_index_report_markdown(report)
     assert "# 申万行业指数近月低点初筛报告 - 20260918" in markdown
     assert "二级行业：满足 0 / 2" in markdown
+    assert "12.00%" in markdown
+    assert "1200.00%" not in markdown
     json_path, markdown_path = save_industry_index_report(report, records_root=tmp_path)
     assert json.loads(json_path.read_text(encoding="utf-8"))["summary"]["level3"]["qualified"] == 1
     assert markdown_path.read_text(encoding="utf-8").startswith("# 申万行业指数")

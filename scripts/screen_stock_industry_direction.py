@@ -8,7 +8,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from stock_selection.strategies.industry_index_rebound.cli import main
+from stock_selection.strategies.stock_industry_direction.cli import main
 
 
 if __name__ == "__main__":

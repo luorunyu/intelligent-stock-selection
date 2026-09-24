@@ -5,7 +5,7 @@ from __future__ import annotations
 from datetime import datetime
 import json
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any, Callable, Collection
 
 import pandas as pd
 
@@ -47,10 +47,16 @@ def build_sw_industry_dictionary(
     members: pd.DataFrame,
     *,
     generated_at: str | None = None,
+    listed_stock_codes: Collection[str] | None = None,
 ) -> dict[str, Any]:
     """构建一级、二级、三级平铺字典和层级树。"""
     catalogue = normalise_sw_catalogue(classes)
     current_members = normalise_current_members(members)
+    membership_codes = set(current_members["ts_code"])
+    listed_values = [] if listed_stock_codes is None else listed_stock_codes
+    listed_codes = {str(code) for code in listed_values if str(code)}
+    if listed_stock_codes is not None:
+        current_members = current_members[current_members["ts_code"].isin(listed_codes)].reset_index(drop=True)
     levels = {
         "level1": _build_level_dictionary(catalogue, current_members, "L1"),
         "level2": _build_level_dictionary(catalogue, current_members, "L2"),
@@ -76,6 +82,8 @@ def build_sw_industry_dictionary(
                 "unique_stocks": len(stock_codes),
                 "current_membership_rows": int(len(current_members)),
                 "stocks_with_multiple_level3_memberships": len(multi_mapped),
+                "nonlisted_membership_stocks_excluded": len(membership_codes - listed_codes) if listed_stock_codes is not None else 0,
+                "listed_stocks_without_membership": len(listed_codes - membership_codes) if listed_stock_codes is not None else 0,
             },
         },
         "level1": hierarchy,
@@ -110,10 +118,25 @@ def collect_build_and_save_sw_dictionary(
     """采集完整静态表，写入项目缓存，并生成行业成分大字典。"""
     root = Path(cache_root) if cache_root is not None else DEFAULT_CACHE_ROOT
     classes, members = collect_sw_industry_data(caller=caller)
+    listed = caller(
+        "stock_basic",
+        {
+            "exchange": "",
+            "list_status": "L",
+            "fields": "ts_code,symbol,name,area,industry,market,list_date",
+        },
+    )
+    if listed is None or listed.empty or "ts_code" not in listed.columns:
+        raise RuntimeError("stock_basic returned no current listed-stock universe")
     write_dataset(classes, "index_classify", static=True, cache_root=root)
     write_dataset(members, "index_member_all", static=True, cache_root=root)
+    write_dataset(listed, "stock_basic", static=True, cache_root=root)
     load_sw_industry_membership(cache_root=root, rebuild=True)
-    payload = build_sw_industry_dictionary(classes, members)
+    payload = build_sw_industry_dictionary(
+        classes,
+        members,
+        listed_stock_codes=listed["ts_code"].dropna().astype(str),
+    )
     path = save_sw_industry_dictionary(payload, output_path=output_path, cache_root=root)
     return path, payload
 
