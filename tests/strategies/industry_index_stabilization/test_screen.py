@@ -1,6 +1,7 @@
 import pandas as pd
 
 from stock_selection.strategies.industry_index_stabilization.screen import (
+    _trailing_stable_starts,
     calculate_industry_index_stabilization,
     normalise_industry_index_data,
     screen_industry_index_stabilization,
@@ -131,6 +132,17 @@ def test_open_close_extremes_must_share_one_ten_point_band():
         forward_window=3,
     )
     assert outside.empty
+
+
+def test_linear_stable_window_matches_longest_trailing_intervals():
+    data = pd.DataFrame(
+        {
+            "open": [100, 102, 108, 111, 105, 104],
+            "close": [101, 99, 109, 110, 103, 106],
+        }
+    )
+
+    assert _trailing_stable_starts(data, 10) == [0, 0, 0, 2, 2, 2]
 
 
 def test_filters_to_dictionary_l2_codes_and_supports_result_screening():

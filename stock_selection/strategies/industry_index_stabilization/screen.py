@@ -2,10 +2,12 @@
 
 from __future__ import annotations
 
+from collections import deque
 import json
 from pathlib import Path
 from typing import Any, Iterable
 
+import numpy as np
 import pandas as pd
 
 from stock_selection.data.tushare_cache import DEFAULT_CACHE_ROOT
@@ -229,11 +231,9 @@ def _calculate_one_index_history(
     series = group.sort_values("trade_date").reset_index(drop=True)
     rows: list[dict[str, Any]] = []
     stable_episode_active = False
+    stable_starts = _trailing_stable_starts(series, max_stable_range_points)
 
-    for signal_position in range(len(series)):
-        stable_start = _trailing_stable_start(
-            series, signal_position, max_stable_range_points
-        )
+    for signal_position, stable_start in enumerate(stable_starts):
         stable_days = signal_position - stable_start + 1
         stable_now = stable_days >= min_stable_days
         if not stable_now:
@@ -317,26 +317,49 @@ def _calculate_one_index_history(
     return rows
 
 
-def _trailing_stable_start(
+def _trailing_stable_starts(
     series: pd.DataFrame,
-    end_position: int,
     max_stable_range_points: float,
-) -> int:
-    """Find the longest trailing open/close interval inside one price band."""
-    price_min = float("inf")
-    price_max = float("-inf")
-    start_position = end_position
-    for position in range(end_position, -1, -1):
-        open_price = float(series.loc[position, "open"])
-        close_price = float(series.loc[position, "close"])
-        next_min = min(price_min, open_price, close_price)
-        next_max = max(price_max, open_price, close_price)
-        if next_max - next_min > max_stable_range_points:
-            break
-        price_min = next_min
-        price_max = next_max
-        start_position = position
-    return start_position
+) -> list[int]:
+    """Find every longest trailing stable-window start in linear time.
+
+    Each daily interval contributes ``min(open, close)`` and
+    ``max(open, close)``. Two monotonic queues maintain the minimum and maximum
+    over the current window. The left boundary only moves forward, so every
+    row enters and leaves each queue at most once.
+    """
+    if series.empty:
+        return []
+
+    opens = series["open"].to_numpy(dtype=float)
+    closes = series["close"].to_numpy(dtype=float)
+    daily_mins = np.minimum(opens, closes)
+    daily_maxes = np.maximum(opens, closes)
+    min_queue: deque[int] = deque()
+    max_queue: deque[int] = deque()
+    starts: list[int] = []
+    left = 0
+
+    for right in range(len(series)):
+        while min_queue and daily_mins[min_queue[-1]] >= daily_mins[right]:
+            min_queue.pop()
+        min_queue.append(right)
+        while max_queue and daily_maxes[max_queue[-1]] <= daily_maxes[right]:
+            max_queue.pop()
+        max_queue.append(right)
+
+        while (
+            daily_maxes[max_queue[0]] - daily_mins[min_queue[0]]
+            > max_stable_range_points
+        ):
+            if min_queue[0] == left:
+                min_queue.popleft()
+            if max_queue[0] == left:
+                max_queue.popleft()
+            left += 1
+        starts.append(left)
+
+    return starts
 
 
 def _validate_forward_outcome(
