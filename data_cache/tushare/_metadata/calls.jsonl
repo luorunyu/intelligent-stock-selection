@@ -1,0 +1,628 @@
+{"recorded_at": "2026-08-24T22:38:55", "api_name": "trade_cal", "params": {"exchange": "SSE", "start_date": "20260710", "end_date": "20260824", "is_open": "1"}, "rows": 32, "elapsed_seconds": 1.621, "attempts": 1}
+{"recorded_at": "2026-08-24T22:39:16", "api_name": "trade_cal", "params": {"exchange": "SSE", "start_date": "20260710", "end_date": "20260824", "is_open": "1"}, "rows": 32, "elapsed_seconds": 1.267, "attempts": 1}
+{"recorded_at": "2026-08-24T22:40:14", "api_name": "trade_cal", "params": {"exchange": "SSE", "start_date": "20260710", "end_date": "20260824", "is_open": "1"}, "rows": 32, "elapsed_seconds": 1.263, "attempts": 1}
+{"recorded_at": "2026-08-24T22:40:15", "api_name": "trade_cal", "params": {"exchange": "SSE", "start_date": "20260824", "end_date": "20260824"}, "rows": 1, "elapsed_seconds": 1.157, "attempts": 1}
+{"recorded_at": "2026-08-24T22:40:18", "api_name": "daily", "params": {"trade_date": "20260824"}, "rows": 5547, "elapsed_seconds": 2.361, "attempts": 1}
+{"recorded_at": "2026-08-24T22:40:21", "api_name": "daily_basic", "params": {"trade_date": "20260824"}, "rows": 5545, "elapsed_seconds": 2.455, "attempts": 1}
+{"recorded_at": "2026-08-24T22:40:23", "api_name": "stk_limit", "params": {"trade_date": "20260824"}, "rows": 7552, "elapsed_seconds": 1.758, "attempts": 1}
+{"recorded_at": "2026-08-24T22:40:25", "api_name": "moneyflow", "params": {"trade_date": "20260824"}, "rows": 5545, "elapsed_seconds": 2.72, "attempts": 1}
+{"recorded_at": "2026-08-24T22:40:27", "api_name": "sw_daily", "params": {"trade_date": "20260824"}, "rows": 439, "elapsed_seconds": 1.423, "attempts": 1}
+{"recorded_at": "2026-08-24T22:40:28", "api_name": "top_list", "params": {"trade_date": "20260824"}, "rows": 64, "elapsed_seconds": 1.167, "attempts": 1}
+{"recorded_at": "2026-08-24T22:40:29", "api_name": "top_inst", "params": {"trade_date": "20260824"}, "rows": 670, "elapsed_seconds": 1.484, "attempts": 1}
+{"recorded_at": "2026-08-24T22:40:31", "api_name": "margin", "params": {"trade_date": "20260824"}, "rows": 0, "elapsed_seconds": 1.168, "attempts": 1}
+{"recorded_at": "2026-08-24T22:40:32", "api_name": "margin_detail", "params": {"trade_date": "20260824"}, "rows": 0, "elapsed_seconds": 1.229, "attempts": 1}
+{"recorded_at": "2026-08-24T22:40:33", "api_name": "index_dailybasic", "params": {"trade_date": "20260824"}, "rows": 12, "elapsed_seconds": 1.475, "attempts": 1}
+{"recorded_at": "2026-08-24T22:40:57", "api_name": "stock_basic", "params": {"exchange": "", "list_status": "L", "fields": "ts_code,symbol,name,area,industry,market,list_date"}, "rows": 5551, "elapsed_seconds": 1.955, "attempts": 1}
+{"recorded_at": "2026-08-24T22:40:58", "api_name": "index_basic", "params": {"market": "SSE"}, "rows": 621, "elapsed_seconds": 1.216, "attempts": 1}
+{"recorded_at": "2026-08-24T22:40:59", "api_name": "index_classify", "params": {"src": "SW2021"}, "rows": 511, "elapsed_seconds": 1.058, "attempts": 1}
+{"recorded_at": "2026-08-24T22:41:01", "api_name": "index_member_all", "params": {}, "rows": 2000, "elapsed_seconds": 1.662, "attempts": 1}
+{"recorded_at": "2026-08-24T22:44:19", "api_name": "trade_cal", "params": {"exchange": "SSE", "start_date": "20260807", "end_date": "20260807"}, "rows": 1, "elapsed_seconds": 1.053, "attempts": 1}
+{"recorded_at": "2026-08-24T22:44:22", "api_name": "daily", "params": {"trade_date": "20260807"}, "rows": 5535, "elapsed_seconds": 2.31, "attempts": 1}
+{"recorded_at": "2026-08-24T22:44:24", "api_name": "daily_basic", "params": {"trade_date": "20260807"}, "rows": 5535, "elapsed_seconds": 2.324, "attempts": 1}
+{"recorded_at": "2026-08-24T22:44:26", "api_name": "stk_limit", "params": {"trade_date": "20260807"}, "rows": 7521, "elapsed_seconds": 1.981, "attempts": 1}
+{"recorded_at": "2026-08-24T22:44:29", "api_name": "moneyflow", "params": {"trade_date": "20260807"}, "rows": 5535, "elapsed_seconds": 3.171, "attempts": 1}
+{"recorded_at": "2026-08-24T22:44:31", "api_name": "limit_list_d", "params": {"trade_date": "20260807"}, "rows": 104, "elapsed_seconds": 1.491, "attempts": 1}
+{"recorded_at": "2026-08-24T22:44:32", "api_name": "top_list", "params": {"trade_date": "20260807"}, "rows": 67, "elapsed_seconds": 1.715, "attempts": 1}
+{"recorded_at": "2026-08-24T22:44:35", "api_name": "margin", "params": {"trade_date": "20260807"}, "rows": 3, "elapsed_seconds": 2.478, "attempts": 1}
+{"recorded_at": "2026-08-24T22:44:37", "api_name": "margin_detail", "params": {"trade_date": "20260807"}, "rows": 4424, "elapsed_seconds": 2.509, "attempts": 1}
+{"recorded_at": "2026-08-24T22:44:39", "api_name": "sw_daily", "params": {"trade_date": "20260807"}, "rows": 439, "elapsed_seconds": 1.53, "attempts": 1}
+{"recorded_at": "2026-08-24T22:44:41", "api_name": "stock_basic", "params": {"exchange": "", "list_status": "L", "fields": "ts_code,symbol,name,area,industry,market,list_date"}, "rows": 5551, "elapsed_seconds": 2.392, "attempts": 1}
+{"recorded_at": "2026-08-24T22:47:27", "api_name": "trade_cal", "params": {"exchange": "SSE", "start_date": "20260810", "end_date": "20260810"}, "rows": 1, "elapsed_seconds": 1.279, "attempts": 1}
+{"recorded_at": "2026-08-24T22:47:29", "api_name": "daily", "params": {"trade_date": "20260810"}, "rows": 5538, "elapsed_seconds": 2.068, "attempts": 1}
+{"recorded_at": "2026-08-24T22:47:34", "api_name": "daily_basic", "params": {"trade_date": "20260810"}, "rows": 5538, "elapsed_seconds": 5.465, "attempts": 1}
+{"recorded_at": "2026-08-24T22:47:36", "api_name": "stk_limit", "params": {"trade_date": "20260810"}, "rows": 7522, "elapsed_seconds": 1.893, "attempts": 1}
+{"recorded_at": "2026-08-24T22:47:39", "api_name": "moneyflow", "params": {"trade_date": "20260810"}, "rows": 5538, "elapsed_seconds": 3.118, "attempts": 1}
+{"recorded_at": "2026-08-24T22:47:41", "api_name": "limit_list_d", "params": {"trade_date": "20260810"}, "rows": 118, "elapsed_seconds": 1.308, "attempts": 1}
+{"recorded_at": "2026-08-24T22:47:42", "api_name": "top_list", "params": {"trade_date": "20260810"}, "rows": 69, "elapsed_seconds": 1.728, "attempts": 1}
+{"recorded_at": "2026-08-24T22:47:43", "api_name": "margin", "params": {"trade_date": "20260810"}, "rows": 3, "elapsed_seconds": 1.066, "attempts": 1}
+{"recorded_at": "2026-08-24T22:47:46", "api_name": "margin_detail", "params": {"trade_date": "20260810"}, "rows": 4424, "elapsed_seconds": 2.824, "attempts": 1}
+{"recorded_at": "2026-08-24T22:47:48", "api_name": "sw_daily", "params": {"trade_date": "20260810"}, "rows": 439, "elapsed_seconds": 1.536, "attempts": 1}
+{"recorded_at": "2026-08-24T22:47:50", "api_name": "stock_basic", "params": {"exchange": "", "list_status": "L", "fields": "ts_code,symbol,name,area,industry,market,list_date"}, "rows": 5551, "elapsed_seconds": 2.212, "attempts": 1}
+{"recorded_at": "2026-08-24T22:49:40", "api_name": "trade_cal", "params": {"exchange": "SSE", "start_date": "20260804", "end_date": "20260804"}, "rows": 1, "elapsed_seconds": 1.047, "attempts": 1}
+{"recorded_at": "2026-08-24T22:49:42", "api_name": "daily", "params": {"trade_date": "20260804"}, "rows": 5531, "elapsed_seconds": 2.082, "attempts": 1}
+{"recorded_at": "2026-08-24T22:49:45", "api_name": "daily_basic", "params": {"trade_date": "20260804"}, "rows": 5529, "elapsed_seconds": 2.521, "attempts": 1}
+{"recorded_at": "2026-08-24T22:49:46", "api_name": "stk_limit", "params": {"trade_date": "20260804"}, "rows": 7510, "elapsed_seconds": 1.719, "attempts": 1}
+{"recorded_at": "2026-08-24T22:49:49", "api_name": "moneyflow", "params": {"trade_date": "20260804"}, "rows": 5536, "elapsed_seconds": 2.348, "attempts": 1}
+{"recorded_at": "2026-08-24T22:49:50", "api_name": "limit_list_d", "params": {"trade_date": "20260804"}, "rows": 153, "elapsed_seconds": 1.187, "attempts": 1}
+{"recorded_at": "2026-08-24T22:49:51", "api_name": "top_list", "params": {"trade_date": "20260804"}, "rows": 91, "elapsed_seconds": 1.144, "attempts": 1}
+{"recorded_at": "2026-08-24T22:49:52", "api_name": "margin", "params": {"trade_date": "20260804"}, "rows": 3, "elapsed_seconds": 1.04, "attempts": 1}
+{"recorded_at": "2026-08-24T22:49:54", "api_name": "margin_detail", "params": {"trade_date": "20260804"}, "rows": 4421, "elapsed_seconds": 2.356, "attempts": 1}
+{"recorded_at": "2026-08-24T22:49:56", "api_name": "sw_daily", "params": {"trade_date": "20260804"}, "rows": 439, "elapsed_seconds": 1.373, "attempts": 1}
+{"recorded_at": "2026-08-24T22:49:58", "api_name": "stock_basic", "params": {"exchange": "", "list_status": "L", "fields": "ts_code,symbol,name,area,industry,market,list_date"}, "rows": 5551, "elapsed_seconds": 1.793, "attempts": 1}
+{"recorded_at": "2026-08-24T22:50:20", "api_name": "trade_cal", "params": {"exchange": "SSE", "start_date": "20260805", "end_date": "20260805"}, "rows": 1, "elapsed_seconds": 1.046, "attempts": 1}
+{"recorded_at": "2026-08-24T22:50:22", "api_name": "daily", "params": {"trade_date": "20260805"}, "rows": 5532, "elapsed_seconds": 2.143, "attempts": 1}
+{"recorded_at": "2026-08-24T22:50:25", "api_name": "daily_basic", "params": {"trade_date": "20260805"}, "rows": 5532, "elapsed_seconds": 2.516, "attempts": 1}
+{"recorded_at": "2026-08-24T22:50:27", "api_name": "stk_limit", "params": {"trade_date": "20260805"}, "rows": 7513, "elapsed_seconds": 2.035, "attempts": 1}
+{"recorded_at": "2026-08-24T22:50:30", "api_name": "moneyflow", "params": {"trade_date": "20260805"}, "rows": 5532, "elapsed_seconds": 2.581, "attempts": 1}
+{"recorded_at": "2026-08-24T22:50:31", "api_name": "limit_list_d", "params": {"trade_date": "20260805"}, "rows": 147, "elapsed_seconds": 1.187, "attempts": 1}
+{"recorded_at": "2026-08-24T22:50:32", "api_name": "top_list", "params": {"trade_date": "20260805"}, "rows": 69, "elapsed_seconds": 1.342, "attempts": 1}
+{"recorded_at": "2026-08-24T22:50:33", "api_name": "margin", "params": {"trade_date": "20260805"}, "rows": 3, "elapsed_seconds": 1.182, "attempts": 1}
+{"recorded_at": "2026-08-24T22:50:37", "api_name": "margin_detail", "params": {"trade_date": "20260805"}, "rows": 4422, "elapsed_seconds": 3.616, "attempts": 1}
+{"recorded_at": "2026-08-24T22:50:38", "api_name": "sw_daily", "params": {"trade_date": "20260805"}, "rows": 439, "elapsed_seconds": 1.437, "attempts": 1}
+{"recorded_at": "2026-08-24T22:50:41", "api_name": "stock_basic", "params": {"exchange": "", "list_status": "L", "fields": "ts_code,symbol,name,area,industry,market,list_date"}, "rows": 5551, "elapsed_seconds": 2.188, "attempts": 1}
+{"recorded_at": "2026-08-24T22:50:59", "api_name": "trade_cal", "params": {"exchange": "SSE", "start_date": "20260806", "end_date": "20260806"}, "rows": 1, "elapsed_seconds": 1.253, "attempts": 1}
+{"recorded_at": "2026-08-24T22:51:01", "api_name": "daily", "params": {"trade_date": "20260806"}, "rows": 5534, "elapsed_seconds": 2.12, "attempts": 1}
+{"recorded_at": "2026-08-24T22:51:04", "api_name": "daily_basic", "params": {"trade_date": "20260806"}, "rows": 5533, "elapsed_seconds": 2.437, "attempts": 1}
+{"recorded_at": "2026-08-24T22:51:05", "api_name": "stk_limit", "params": {"trade_date": "20260806"}, "rows": 7516, "elapsed_seconds": 1.728, "attempts": 1}
+{"recorded_at": "2026-08-24T22:51:08", "api_name": "moneyflow", "params": {"trade_date": "20260806"}, "rows": 5533, "elapsed_seconds": 2.477, "attempts": 1}
+{"recorded_at": "2026-08-24T22:51:09", "api_name": "limit_list_d", "params": {"trade_date": "20260806"}, "rows": 100, "elapsed_seconds": 1.187, "attempts": 1}
+{"recorded_at": "2026-08-24T22:51:10", "api_name": "top_list", "params": {"trade_date": "20260806"}, "rows": 109, "elapsed_seconds": 1.207, "attempts": 1}
+{"recorded_at": "2026-08-24T22:51:11", "api_name": "margin", "params": {"trade_date": "20260806"}, "rows": 3, "elapsed_seconds": 1.103, "attempts": 1}
+{"recorded_at": "2026-08-24T22:51:14", "api_name": "margin_detail", "params": {"trade_date": "20260806"}, "rows": 4422, "elapsed_seconds": 2.577, "attempts": 1}
+{"recorded_at": "2026-08-24T22:51:16", "api_name": "sw_daily", "params": {"trade_date": "20260806"}, "rows": 439, "elapsed_seconds": 1.521, "attempts": 1}
+{"recorded_at": "2026-08-24T22:51:18", "api_name": "stock_basic", "params": {"exchange": "", "list_status": "L", "fields": "ts_code,symbol,name,area,industry,market,list_date"}, "rows": 5551, "elapsed_seconds": 2.025, "attempts": 1}
+{"recorded_at": "2026-08-24T22:53:13", "api_name": "trade_cal", "params": {"exchange": "SSE", "start_date": "20260811", "end_date": "20260811"}, "rows": 1, "elapsed_seconds": 1.086, "attempts": 1}
+{"recorded_at": "2026-08-24T22:53:15", "api_name": "daily", "params": {"trade_date": "20260811"}, "rows": 5539, "elapsed_seconds": 2.066, "attempts": 1}
+{"recorded_at": "2026-08-24T22:53:17", "api_name": "daily_basic", "params": {"trade_date": "20260811"}, "rows": 5539, "elapsed_seconds": 2.282, "attempts": 1}
+{"recorded_at": "2026-08-24T22:53:19", "api_name": "stk_limit", "params": {"trade_date": "20260811"}, "rows": 7526, "elapsed_seconds": 1.897, "attempts": 1}
+{"recorded_at": "2026-08-24T22:53:22", "api_name": "moneyflow", "params": {"trade_date": "20260811"}, "rows": 5539, "elapsed_seconds": 2.481, "attempts": 1}
+{"recorded_at": "2026-08-24T22:53:23", "api_name": "limit_list_d", "params": {"trade_date": "20260811"}, "rows": 76, "elapsed_seconds": 1.104, "attempts": 1}
+{"recorded_at": "2026-08-24T22:53:24", "api_name": "top_list", "params": {"trade_date": "20260811"}, "rows": 68, "elapsed_seconds": 1.141, "attempts": 1}
+{"recorded_at": "2026-08-24T22:53:25", "api_name": "margin", "params": {"trade_date": "20260811"}, "rows": 3, "elapsed_seconds": 1.18, "attempts": 1}
+{"recorded_at": "2026-08-24T22:53:27", "api_name": "margin_detail", "params": {"trade_date": "20260811"}, "rows": 4427, "elapsed_seconds": 2.056, "attempts": 1}
+{"recorded_at": "2026-08-24T22:53:28", "api_name": "sw_daily", "params": {"trade_date": "20260811"}, "rows": 439, "elapsed_seconds": 1.37, "attempts": 1}
+{"recorded_at": "2026-08-24T22:53:30", "api_name": "stock_basic", "params": {"exchange": "", "list_status": "L", "fields": "ts_code,symbol,name,area,industry,market,list_date"}, "rows": 5551, "elapsed_seconds": 1.946, "attempts": 1}
+{"recorded_at": "2026-08-31T23:10:09", "api_name": "trade_cal", "params": {"exchange": "SSE", "start_date": "20260803", "end_date": "20260803"}, "rows": 1, "elapsed_seconds": 6.602, "attempts": 1}
+{"recorded_at": "2026-08-31T23:10:11", "api_name": "daily", "params": {"trade_date": "20260803"}, "rows": 5533, "elapsed_seconds": 2.41, "attempts": 1}
+{"recorded_at": "2026-08-31T23:10:14", "api_name": "daily_basic", "params": {"trade_date": "20260803"}, "rows": 5529, "elapsed_seconds": 2.635, "attempts": 1}
+{"recorded_at": "2026-08-31T23:10:16", "api_name": "stk_limit", "params": {"trade_date": "20260803"}, "rows": 7507, "elapsed_seconds": 1.82, "attempts": 1}
+{"recorded_at": "2026-08-31T23:10:18", "api_name": "moneyflow", "params": {"trade_date": "20260803"}, "rows": 5529, "elapsed_seconds": 2.584, "attempts": 1}
+{"recorded_at": "2026-08-31T23:10:21", "api_name": "top_list", "params": {"trade_date": "20260803"}, "rows": 56, "elapsed_seconds": 2.434, "attempts": 1}
+{"recorded_at": "2026-08-31T23:10:23", "api_name": "margin", "params": {"trade_date": "20260803"}, "rows": 3, "elapsed_seconds": 1.913, "attempts": 1}
+{"recorded_at": "2026-08-31T23:10:26", "api_name": "margin_detail", "params": {"trade_date": "20260803"}, "rows": 4420, "elapsed_seconds": 2.778, "attempts": 1}
+{"recorded_at": "2026-08-31T23:10:27", "api_name": "sw_daily", "params": {"trade_date": "20260803"}, "rows": 439, "elapsed_seconds": 1.633, "attempts": 1}
+{"recorded_at": "2026-08-31T23:10:31", "api_name": "stock_basic", "params": {"exchange": "", "list_status": "L", "fields": "ts_code,symbol,name,area,industry,market,list_date"}, "rows": 5555, "elapsed_seconds": 4.02, "attempts": 1}
+{"recorded_at": "2026-09-01T08:02:39", "api_name": "trade_cal", "params": {"exchange": "SSE", "start_date": "20260812", "end_date": "20260812"}, "rows": 1, "elapsed_seconds": 1.186, "attempts": 1}
+{"recorded_at": "2026-09-01T08:02:42", "api_name": "daily", "params": {"trade_date": "20260812"}, "rows": 5541, "elapsed_seconds": 2.744, "attempts": 1}
+{"recorded_at": "2026-09-01T08:02:45", "api_name": "daily_basic", "params": {"trade_date": "20260812"}, "rows": 5539, "elapsed_seconds": 2.78, "attempts": 1}
+{"recorded_at": "2026-09-01T09:51:29", "api_name": "stk_limit", "params": {"trade_date": "20260812"}, "rows": 7529, "elapsed_seconds": 204.602, "attempts": 4}
+{"recorded_at": "2026-09-01T09:51:33", "api_name": "moneyflow", "params": {"trade_date": "20260812"}, "rows": 5539, "elapsed_seconds": 3.706, "attempts": 1}
+{"recorded_at": "2026-09-01T09:51:34", "api_name": "top_list", "params": {"trade_date": "20260812"}, "rows": 50, "elapsed_seconds": 1.189, "attempts": 1}
+{"recorded_at": "2026-09-01T09:51:36", "api_name": "margin", "params": {"trade_date": "20260812"}, "rows": 3, "elapsed_seconds": 1.56, "attempts": 1}
+{"recorded_at": "2026-09-01T09:51:38", "api_name": "margin_detail", "params": {"trade_date": "20260812"}, "rows": 4428, "elapsed_seconds": 2.184, "attempts": 1}
+{"recorded_at": "2026-09-01T09:51:39", "api_name": "sw_daily", "params": {"trade_date": "20260812"}, "rows": 439, "elapsed_seconds": 1.535, "attempts": 1}
+{"recorded_at": "2026-09-01T09:51:43", "api_name": "stock_basic", "params": {"exchange": "", "list_status": "L", "fields": "ts_code,symbol,name,area,industry,market,list_date"}, "rows": 5556, "elapsed_seconds": 3.243, "attempts": 1}
+{"recorded_at": "2026-09-01T22:03:12", "api_name": "trade_cal", "params": {"exchange": "SSE", "start_date": "20260731", "end_date": "20260731"}, "rows": 1, "elapsed_seconds": 1.208, "attempts": 1}
+{"recorded_at": "2026-09-01T22:03:15", "api_name": "daily", "params": {"trade_date": "20260731"}, "rows": 5534, "elapsed_seconds": 3.213, "attempts": 1}
+{"recorded_at": "2026-09-01T22:03:20", "api_name": "daily_basic", "params": {"trade_date": "20260731"}, "rows": 5528, "elapsed_seconds": 4.881, "attempts": 1}
+{"recorded_at": "2026-09-01T22:03:22", "api_name": "stk_limit", "params": {"trade_date": "20260731"}, "rows": 7514, "elapsed_seconds": 2.554, "attempts": 1}
+{"recorded_at": "2026-09-01T22:03:25", "api_name": "moneyflow", "params": {"trade_date": "20260731"}, "rows": 5197, "elapsed_seconds": 2.494, "attempts": 1}
+{"recorded_at": "2026-09-01T22:03:27", "api_name": "top_list", "params": {"trade_date": "20260731"}, "rows": 80, "elapsed_seconds": 2.55, "attempts": 1}
+{"recorded_at": "2026-09-01T22:03:29", "api_name": "margin", "params": {"trade_date": "20260731"}, "rows": 3, "elapsed_seconds": 1.313, "attempts": 1}
+{"recorded_at": "2026-09-01T22:03:31", "api_name": "margin_detail", "params": {"trade_date": "20260731"}, "rows": 4419, "elapsed_seconds": 2.407, "attempts": 1}
+{"recorded_at": "2026-09-01T22:03:33", "api_name": "sw_daily", "params": {"trade_date": "20260731"}, "rows": 439, "elapsed_seconds": 1.616, "attempts": 1}
+{"recorded_at": "2026-09-01T22:03:35", "api_name": "stock_basic", "params": {"exchange": "", "list_status": "L", "fields": "ts_code,symbol,name,area,industry,market,list_date"}, "rows": 5556, "elapsed_seconds": 2.124, "attempts": 1}
+{"recorded_at": "2026-09-03T21:15:23", "api_name": "trade_cal", "params": {"exchange": "SSE", "start_date": "20260813", "end_date": "20260813"}, "rows": 1, "elapsed_seconds": 1.512, "attempts": 1}
+{"recorded_at": "2026-09-03T21:15:26", "api_name": "daily", "params": {"trade_date": "20260813"}, "rows": 5541, "elapsed_seconds": 2.718, "attempts": 1}
+{"recorded_at": "2026-09-03T21:15:30", "api_name": "daily_basic", "params": {"trade_date": "20260813"}, "rows": 5540, "elapsed_seconds": 3.947, "attempts": 1}
+{"recorded_at": "2026-09-03T21:15:32", "api_name": "stk_limit", "params": {"trade_date": "20260813"}, "rows": 7534, "elapsed_seconds": 2.559, "attempts": 1}
+{"recorded_at": "2026-09-03T21:15:36", "api_name": "moneyflow", "params": {"trade_date": "20260813"}, "rows": 5540, "elapsed_seconds": 3.914, "attempts": 1}
+{"recorded_at": "2026-09-03T21:15:38", "api_name": "top_list", "params": {"trade_date": "20260813"}, "rows": 81, "elapsed_seconds": 1.494, "attempts": 1}
+{"recorded_at": "2026-09-03T21:15:39", "api_name": "margin", "params": {"trade_date": "20260813"}, "rows": 3, "elapsed_seconds": 1.202, "attempts": 1}
+{"recorded_at": "2026-09-03T21:15:42", "api_name": "margin_detail", "params": {"trade_date": "20260813"}, "rows": 4429, "elapsed_seconds": 2.961, "attempts": 1}
+{"recorded_at": "2026-09-03T21:15:44", "api_name": "sw_daily", "params": {"trade_date": "20260813"}, "rows": 439, "elapsed_seconds": 1.557, "attempts": 1}
+{"recorded_at": "2026-09-03T21:15:46", "api_name": "stock_basic", "params": {"exchange": "", "list_status": "L", "fields": "ts_code,symbol,name,area,industry,market,list_date"}, "rows": 5557, "elapsed_seconds": 2.215, "attempts": 1}
+{"recorded_at": "2026-09-03T22:10:02", "api_name": "trade_cal", "params": {"exchange": "SSE", "start_date": "20260814", "end_date": "20260814"}, "rows": 1, "elapsed_seconds": 2.4, "attempts": 1}
+{"recorded_at": "2026-09-03T22:10:06", "api_name": "daily", "params": {"trade_date": "20260814"}, "rows": 5542, "elapsed_seconds": 3.263, "attempts": 1}
+{"recorded_at": "2026-09-03T22:10:08", "api_name": "daily_basic", "params": {"trade_date": "20260814"}, "rows": 5540, "elapsed_seconds": 2.502, "attempts": 1}
+{"recorded_at": "2026-09-03T22:10:11", "api_name": "stk_limit", "params": {"trade_date": "20260814"}, "rows": 7538, "elapsed_seconds": 3.016, "attempts": 1}
+{"recorded_at": "2026-09-03T22:10:15", "api_name": "moneyflow", "params": {"trade_date": "20260814"}, "rows": 5540, "elapsed_seconds": 3.566, "attempts": 1}
+{"recorded_at": "2026-09-03T22:10:16", "api_name": "top_list", "params": {"trade_date": "20260814"}, "rows": 72, "elapsed_seconds": 1.356, "attempts": 1}
+{"recorded_at": "2026-09-03T22:10:19", "api_name": "margin", "params": {"trade_date": "20260814"}, "rows": 3, "elapsed_seconds": 2.92, "attempts": 1}
+{"recorded_at": "2026-09-03T22:10:21", "api_name": "margin_detail", "params": {"trade_date": "20260814"}, "rows": 4429, "elapsed_seconds": 2.263, "attempts": 1}
+{"recorded_at": "2026-09-03T22:10:23", "api_name": "sw_daily", "params": {"trade_date": "20260814"}, "rows": 439, "elapsed_seconds": 1.582, "attempts": 1}
+{"recorded_at": "2026-09-03T22:10:25", "api_name": "stock_basic", "params": {"exchange": "", "list_status": "L", "fields": "ts_code,symbol,name,area,industry,market,list_date"}, "rows": 5557, "elapsed_seconds": 2.125, "attempts": 1}
+{"recorded_at": "2026-09-03T22:33:56", "api_name": "trade_cal", "params": {"exchange": "SSE", "start_date": "20260817", "end_date": "20260817"}, "rows": 1, "elapsed_seconds": 1.462, "attempts": 1}
+{"recorded_at": "2026-09-03T22:33:59", "api_name": "daily", "params": {"trade_date": "20260817"}, "rows": 5541, "elapsed_seconds": 3.064, "attempts": 1}
+{"recorded_at": "2026-09-03T22:34:02", "api_name": "daily_basic", "params": {"trade_date": "20260817"}, "rows": 5539, "elapsed_seconds": 3.338, "attempts": 1}
+{"recorded_at": "2026-09-03T22:34:04", "api_name": "stk_limit", "params": {"trade_date": "20260817"}, "rows": 7532, "elapsed_seconds": 2.223, "attempts": 1}
+{"recorded_at": "2026-09-03T22:34:07", "api_name": "moneyflow", "params": {"trade_date": "20260817"}, "rows": 5539, "elapsed_seconds": 2.778, "attempts": 1}
+{"recorded_at": "2026-09-03T22:34:08", "api_name": "top_list", "params": {"trade_date": "20260817"}, "rows": 59, "elapsed_seconds": 1.228, "attempts": 1}
+{"recorded_at": "2026-09-03T22:34:10", "api_name": "margin", "params": {"trade_date": "20260817"}, "rows": 3, "elapsed_seconds": 1.274, "attempts": 1}
+{"recorded_at": "2026-09-03T22:34:13", "api_name": "margin_detail", "params": {"trade_date": "20260817"}, "rows": 4430, "elapsed_seconds": 2.938, "attempts": 1}
+{"recorded_at": "2026-09-03T22:34:14", "api_name": "sw_daily", "params": {"trade_date": "20260817"}, "rows": 439, "elapsed_seconds": 1.525, "attempts": 1}
+{"recorded_at": "2026-09-03T22:34:17", "api_name": "stock_basic", "params": {"exchange": "", "list_status": "L", "fields": "ts_code,symbol,name,area,industry,market,list_date"}, "rows": 5557, "elapsed_seconds": 2.511, "attempts": 1}
+{"recorded_at": "2026-09-03T22:38:35", "api_name": "trade_cal", "params": {"exchange": "SSE", "start_date": "20260818", "end_date": "20260818"}, "rows": 1, "elapsed_seconds": 1.768, "attempts": 1}
+{"recorded_at": "2026-09-03T22:38:40", "api_name": "daily", "params": {"trade_date": "20260818"}, "rows": 5541, "elapsed_seconds": 4.773, "attempts": 1}
+{"recorded_at": "2026-09-03T22:38:44", "api_name": "daily_basic", "params": {"trade_date": "20260818"}, "rows": 5540, "elapsed_seconds": 4.353, "attempts": 1}
+{"recorded_at": "2026-09-03T22:38:47", "api_name": "stk_limit", "params": {"trade_date": "20260818"}, "rows": 7536, "elapsed_seconds": 2.167, "attempts": 1}
+{"recorded_at": "2026-09-03T22:38:49", "api_name": "moneyflow", "params": {"trade_date": "20260818"}, "rows": 5540, "elapsed_seconds": 2.719, "attempts": 1}
+{"recorded_at": "2026-09-03T22:38:51", "api_name": "top_list", "params": {"trade_date": "20260818"}, "rows": 82, "elapsed_seconds": 1.245, "attempts": 1}
+{"recorded_at": "2026-09-03T22:38:52", "api_name": "margin", "params": {"trade_date": "20260818"}, "rows": 3, "elapsed_seconds": 1.55, "attempts": 1}
+{"recorded_at": "2026-09-03T22:38:54", "api_name": "margin_detail", "params": {"trade_date": "20260818"}, "rows": 4431, "elapsed_seconds": 2.323, "attempts": 1}
+{"recorded_at": "2026-09-03T22:38:56", "api_name": "sw_daily", "params": {"trade_date": "20260818"}, "rows": 439, "elapsed_seconds": 1.733, "attempts": 1}
+{"recorded_at": "2026-09-03T22:38:58", "api_name": "stock_basic", "params": {"exchange": "", "list_status": "L", "fields": "ts_code,symbol,name,area,industry,market,list_date"}, "rows": 5557, "elapsed_seconds": 2.222, "attempts": 1}
+{"recorded_at": "2026-09-04T20:43:07", "api_name": "trade_cal", "params": {"exchange": "SSE", "start_date": "20260904", "end_date": "20260904"}, "rows": 1, "elapsed_seconds": 1.632, "attempts": 1}
+{"recorded_at": "2026-09-04T20:43:09", "api_name": "daily", "params": {"trade_date": "20260904"}, "rows": 5550, "elapsed_seconds": 2.569, "attempts": 1}
+{"recorded_at": "2026-09-04T20:43:13", "api_name": "daily_basic", "params": {"trade_date": "20260904"}, "rows": 5548, "elapsed_seconds": 3.267, "attempts": 1}
+{"recorded_at": "2026-09-04T20:43:15", "api_name": "stk_limit", "params": {"trade_date": "20260904"}, "rows": 7593, "elapsed_seconds": 2.259, "attempts": 1}
+{"recorded_at": "2026-09-04T20:43:18", "api_name": "moneyflow", "params": {"trade_date": "20260904"}, "rows": 5548, "elapsed_seconds": 3.018, "attempts": 1}
+{"recorded_at": "2026-09-04T20:43:19", "api_name": "limit_list_d", "params": {"trade_date": "20260904"}, "rows": 96, "elapsed_seconds": 1.374, "attempts": 1}
+{"recorded_at": "2026-09-04T20:43:21", "api_name": "top_list", "params": {"trade_date": "20260904"}, "rows": 57, "elapsed_seconds": 1.591, "attempts": 1}
+{"recorded_at": "2026-09-04T21:00:09", "api_name": "margin", "params": {"trade_date": "20260904"}, "rows": 0, "elapsed_seconds": 1.467, "attempts": 1}
+{"recorded_at": "2026-09-04T21:00:11", "api_name": "margin_detail", "params": {"trade_date": "20260904"}, "rows": 0, "elapsed_seconds": 2.229, "attempts": 1}
+{"recorded_at": "2026-09-04T21:00:13", "api_name": "sw_daily", "params": {"trade_date": "20260904"}, "rows": 439, "elapsed_seconds": 1.888, "attempts": 1}
+{"recorded_at": "2026-09-04T21:04:04", "api_name": "stock_basic", "params": {"exchange": "", "list_status": "L", "fields": "ts_code,symbol,name,area,industry,market,list_date"}, "rows": 5558, "elapsed_seconds": 71.973, "attempts": 2}
+{"recorded_at": "2026-09-04T21:04:12", "api_name": "trade_cal", "params": {"exchange": "SSE", "start_date": "20260904", "end_date": "20260904"}, "rows": 1, "elapsed_seconds": 2.753, "attempts": 1}
+{"recorded_at": "2026-09-04T21:04:15", "api_name": "daily", "params": {"trade_date": "20260904"}, "rows": 5550, "elapsed_seconds": 2.743, "attempts": 1}
+{"recorded_at": "2026-09-04T21:04:18", "api_name": "daily_basic", "params": {"trade_date": "20260904"}, "rows": 5548, "elapsed_seconds": 3.467, "attempts": 1}
+{"recorded_at": "2026-09-04T21:04:20", "api_name": "trade_cal", "params": {"exchange": "SSE", "start_date": "20260903", "end_date": "20260903"}, "rows": 1, "elapsed_seconds": 1.462, "attempts": 1}
+{"recorded_at": "2026-09-04T21:04:22", "api_name": "daily", "params": {"trade_date": "20260903"}, "rows": 5549, "elapsed_seconds": 2.344, "attempts": 1}
+{"recorded_at": "2026-09-04T21:04:25", "api_name": "daily_basic", "params": {"trade_date": "20260903"}, "rows": 5549, "elapsed_seconds": 2.946, "attempts": 1}
+{"recorded_at": "2026-09-04T21:04:27", "api_name": "stk_limit", "params": {"trade_date": "20260903"}, "rows": 7581, "elapsed_seconds": 2.079, "attempts": 1}
+{"recorded_at": "2026-09-04T21:04:30", "api_name": "moneyflow", "params": {"trade_date": "20260903"}, "rows": 5549, "elapsed_seconds": 3.127, "attempts": 1}
+{"recorded_at": "2026-09-04T21:04:32", "api_name": "limit_list_d", "params": {"trade_date": "20260903"}, "rows": 93, "elapsed_seconds": 1.374, "attempts": 1}
+{"recorded_at": "2026-09-04T21:04:33", "api_name": "top_list", "params": {"trade_date": "20260903"}, "rows": 58, "elapsed_seconds": 1.578, "attempts": 1}
+{"recorded_at": "2026-09-04T21:04:35", "api_name": "margin", "params": {"trade_date": "20260903"}, "rows": 3, "elapsed_seconds": 1.68, "attempts": 1}
+{"recorded_at": "2026-09-04T21:04:37", "api_name": "margin_detail", "params": {"trade_date": "20260903"}, "rows": 4440, "elapsed_seconds": 2.236, "attempts": 1}
+{"recorded_at": "2026-09-04T21:04:39", "api_name": "sw_daily", "params": {"trade_date": "20260903"}, "rows": 439, "elapsed_seconds": 1.651, "attempts": 1}
+{"recorded_at": "2026-09-04T21:04:41", "api_name": "stock_basic", "params": {"exchange": "", "list_status": "L", "fields": "ts_code,symbol,name,area,industry,market,list_date"}, "rows": 5558, "elapsed_seconds": 2.257, "attempts": 1}
+{"recorded_at": "2026-09-04T21:04:43", "api_name": "trade_cal", "params": {"exchange": "SSE", "start_date": "20260902", "end_date": "20260902"}, "rows": 1, "elapsed_seconds": 1.771, "attempts": 1}
+{"recorded_at": "2026-09-04T21:04:46", "api_name": "daily", "params": {"trade_date": "20260902"}, "rows": 5548, "elapsed_seconds": 2.676, "attempts": 1}
+{"recorded_at": "2026-09-04T21:04:48", "api_name": "daily_basic", "params": {"trade_date": "20260902"}, "rows": 5547, "elapsed_seconds": 2.532, "attempts": 1}
+{"recorded_at": "2026-09-04T21:04:50", "api_name": "stk_limit", "params": {"trade_date": "20260902"}, "rows": 7572, "elapsed_seconds": 1.97, "attempts": 1}
+{"recorded_at": "2026-09-04T21:04:53", "api_name": "moneyflow", "params": {"trade_date": "20260902"}, "rows": 5547, "elapsed_seconds": 3.023, "attempts": 1}
+{"recorded_at": "2026-09-04T21:04:55", "api_name": "limit_list_d", "params": {"trade_date": "20260902"}, "rows": 75, "elapsed_seconds": 1.746, "attempts": 1}
+{"recorded_at": "2026-09-04T21:04:56", "api_name": "top_list", "params": {"trade_date": "20260902"}, "rows": 77, "elapsed_seconds": 1.332, "attempts": 1}
+{"recorded_at": "2026-09-04T21:04:58", "api_name": "margin", "params": {"trade_date": "20260902"}, "rows": 3, "elapsed_seconds": 1.304, "attempts": 1}
+{"recorded_at": "2026-09-04T21:05:00", "api_name": "margin_detail", "params": {"trade_date": "20260902"}, "rows": 4439, "elapsed_seconds": 2.345, "attempts": 1}
+{"recorded_at": "2026-09-04T21:05:02", "api_name": "sw_daily", "params": {"trade_date": "20260902"}, "rows": 439, "elapsed_seconds": 1.64, "attempts": 1}
+{"recorded_at": "2026-09-04T21:05:04", "api_name": "stock_basic", "params": {"exchange": "", "list_status": "L", "fields": "ts_code,symbol,name,area,industry,market,list_date"}, "rows": 5558, "elapsed_seconds": 2.181, "attempts": 1}
+{"recorded_at": "2026-09-04T21:05:05", "api_name": "trade_cal", "params": {"exchange": "SSE", "start_date": "20260901", "end_date": "20260901"}, "rows": 1, "elapsed_seconds": 1.309, "attempts": 1}
+{"recorded_at": "2026-09-04T21:05:08", "api_name": "daily", "params": {"trade_date": "20260901"}, "rows": 5548, "elapsed_seconds": 2.537, "attempts": 1}
+{"recorded_at": "2026-09-04T21:05:11", "api_name": "daily_basic", "params": {"trade_date": "20260901"}, "rows": 5546, "elapsed_seconds": 3.374, "attempts": 1}
+{"recorded_at": "2026-09-04T21:05:13", "api_name": "stk_limit", "params": {"trade_date": "20260901"}, "rows": 7569, "elapsed_seconds": 2.093, "attempts": 1}
+{"recorded_at": "2026-09-04T21:05:16", "api_name": "moneyflow", "params": {"trade_date": "20260901"}, "rows": 5546, "elapsed_seconds": 2.684, "attempts": 1}
+{"recorded_at": "2026-09-04T21:05:17", "api_name": "limit_list_d", "params": {"trade_date": "20260901"}, "rows": 89, "elapsed_seconds": 1.398, "attempts": 1}
+{"recorded_at": "2026-09-04T21:05:19", "api_name": "top_list", "params": {"trade_date": "20260901"}, "rows": 68, "elapsed_seconds": 1.426, "attempts": 1}
+{"recorded_at": "2026-09-04T21:05:20", "api_name": "margin", "params": {"trade_date": "20260901"}, "rows": 3, "elapsed_seconds": 1.576, "attempts": 1}
+{"recorded_at": "2026-09-04T21:05:23", "api_name": "margin_detail", "params": {"trade_date": "20260901"}, "rows": 4438, "elapsed_seconds": 2.556, "attempts": 1}
+{"recorded_at": "2026-09-04T21:05:25", "api_name": "sw_daily", "params": {"trade_date": "20260901"}, "rows": 439, "elapsed_seconds": 1.8, "attempts": 1}
+{"recorded_at": "2026-09-04T21:09:44", "api_name": "trade_cal", "params": {"exchange": "SSE", "start_date": "20260819", "end_date": "20260819"}, "rows": 1, "elapsed_seconds": 1.661, "attempts": 1}
+{"recorded_at": "2026-09-04T21:09:46", "api_name": "daily", "params": {"trade_date": "20260819"}, "rows": 5542, "elapsed_seconds": 2.099, "attempts": 1}
+{"recorded_at": "2026-09-04T21:09:49", "api_name": "daily_basic", "params": {"trade_date": "20260819"}, "rows": 5541, "elapsed_seconds": 2.632, "attempts": 1}
+{"recorded_at": "2026-09-04T21:09:51", "api_name": "stk_limit", "params": {"trade_date": "20260819"}, "rows": 7544, "elapsed_seconds": 2.602, "attempts": 1}
+{"recorded_at": "2026-09-04T21:09:54", "api_name": "moneyflow", "params": {"trade_date": "20260819"}, "rows": 5541, "elapsed_seconds": 2.467, "attempts": 1}
+{"recorded_at": "2026-09-04T21:09:55", "api_name": "top_list", "params": {"trade_date": "20260819"}, "rows": 80, "elapsed_seconds": 1.393, "attempts": 1}
+{"recorded_at": "2026-09-04T21:09:56", "api_name": "margin", "params": {"trade_date": "20260819"}, "rows": 3, "elapsed_seconds": 1.207, "attempts": 1}
+{"recorded_at": "2026-09-04T21:09:59", "api_name": "margin_detail", "params": {"trade_date": "20260819"}, "rows": 4433, "elapsed_seconds": 2.04, "attempts": 1}
+{"recorded_at": "2026-09-04T21:10:00", "api_name": "sw_daily", "params": {"trade_date": "20260819"}, "rows": 439, "elapsed_seconds": 1.673, "attempts": 1}
+{"recorded_at": "2026-09-04T21:10:03", "api_name": "stock_basic", "params": {"exchange": "", "list_status": "L", "fields": "ts_code,symbol,name,area,industry,market,list_date"}, "rows": 5558, "elapsed_seconds": 2.326, "attempts": 1}
+{"recorded_at": "2026-09-04T21:15:04", "api_name": "trade_cal", "params": {"exchange": "SSE", "start_date": "20260820", "end_date": "20260820"}, "rows": 1, "elapsed_seconds": 1.613, "attempts": 1}
+{"recorded_at": "2026-09-04T21:15:07", "api_name": "daily", "params": {"trade_date": "20260820"}, "rows": 5542, "elapsed_seconds": 2.314, "attempts": 1}
+{"recorded_at": "2026-09-04T21:15:09", "api_name": "daily_basic", "params": {"trade_date": "20260820"}, "rows": 5541, "elapsed_seconds": 2.742, "attempts": 1}
+{"recorded_at": "2026-09-04T21:15:11", "api_name": "stk_limit", "params": {"trade_date": "20260820"}, "rows": 7551, "elapsed_seconds": 1.829, "attempts": 1}
+{"recorded_at": "2026-09-04T21:15:14", "api_name": "moneyflow", "params": {"trade_date": "20260820"}, "rows": 5541, "elapsed_seconds": 3.045, "attempts": 1}
+{"recorded_at": "2026-09-04T21:15:16", "api_name": "top_list", "params": {"trade_date": "20260820"}, "rows": 71, "elapsed_seconds": 1.281, "attempts": 1}
+{"recorded_at": "2026-09-04T21:15:17", "api_name": "margin", "params": {"trade_date": "20260820"}, "rows": 3, "elapsed_seconds": 1.186, "attempts": 1}
+{"recorded_at": "2026-09-04T21:15:19", "api_name": "margin_detail", "params": {"trade_date": "20260820"}, "rows": 4434, "elapsed_seconds": 2.21, "attempts": 1}
+{"recorded_at": "2026-09-04T21:15:21", "api_name": "sw_daily", "params": {"trade_date": "20260820"}, "rows": 439, "elapsed_seconds": 1.635, "attempts": 1}
+{"recorded_at": "2026-09-04T21:15:23", "api_name": "stock_basic", "params": {"exchange": "", "list_status": "L", "fields": "ts_code,symbol,name,area,industry,market,list_date"}, "rows": 5558, "elapsed_seconds": 1.947, "attempts": 1}
+{"recorded_at": "2026-09-04T21:21:47", "api_name": "trade_cal", "params": {"exchange": "SSE", "start_date": "20260821", "end_date": "20260821"}, "rows": 1, "elapsed_seconds": 1.515, "attempts": 1}
+{"recorded_at": "2026-09-04T21:21:49", "api_name": "daily", "params": {"trade_date": "20260821"}, "rows": 5549, "elapsed_seconds": 2.417, "attempts": 1}
+{"recorded_at": "2026-09-04T21:21:52", "api_name": "daily_basic", "params": {"trade_date": "20260821"}, "rows": 5543, "elapsed_seconds": 2.843, "attempts": 1}
+{"recorded_at": "2026-09-04T21:21:54", "api_name": "stk_limit", "params": {"trade_date": "20260821"}, "rows": 7554, "elapsed_seconds": 1.85, "attempts": 1}
+{"recorded_at": "2026-09-04T21:21:56", "api_name": "moneyflow", "params": {"trade_date": "20260821"}, "rows": 5543, "elapsed_seconds": 2.423, "attempts": 1}
+{"recorded_at": "2026-09-04T21:21:58", "api_name": "top_list", "params": {"trade_date": "20260821"}, "rows": 61, "elapsed_seconds": 1.205, "attempts": 1}
+{"recorded_at": "2026-09-04T21:21:59", "api_name": "margin", "params": {"trade_date": "20260821"}, "rows": 3, "elapsed_seconds": 1.118, "attempts": 1}
+{"recorded_at": "2026-09-04T21:22:01", "api_name": "margin_detail", "params": {"trade_date": "20260821"}, "rows": 4435, "elapsed_seconds": 2.047, "attempts": 1}
+{"recorded_at": "2026-09-04T21:22:03", "api_name": "sw_daily", "params": {"trade_date": "20260821"}, "rows": 439, "elapsed_seconds": 1.744, "attempts": 1}
+{"recorded_at": "2026-09-04T21:22:05", "api_name": "stock_basic", "params": {"exchange": "", "list_status": "L", "fields": "ts_code,symbol,name,area,industry,market,list_date"}, "rows": 5558, "elapsed_seconds": 1.985, "attempts": 1}
+{"recorded_at": "2026-09-04T21:29:29", "api_name": "margin", "params": {"trade_date": "20260824"}, "rows": 3, "elapsed_seconds": 1.428, "attempts": 1}
+{"recorded_at": "2026-09-04T21:29:31", "api_name": "margin_detail", "params": {"trade_date": "20260824"}, "rows": 4435, "elapsed_seconds": 2.109, "attempts": 1}
+{"recorded_at": "2026-09-04T21:29:33", "api_name": "stock_basic", "params": {"exchange": "", "list_status": "L", "fields": "ts_code,symbol,name,area,industry,market,list_date"}, "rows": 5558, "elapsed_seconds": 2.334, "attempts": 1}
+{"recorded_at": "2026-09-04T21:33:09", "api_name": "trade_cal", "params": {"exchange": "SSE", "start_date": "20260825", "end_date": "20260825"}, "rows": 1, "elapsed_seconds": 1.356, "attempts": 1}
+{"recorded_at": "2026-09-04T21:33:11", "api_name": "daily", "params": {"trade_date": "20260825"}, "rows": 5548, "elapsed_seconds": 2.464, "attempts": 1}
+{"recorded_at": "2026-09-04T21:33:14", "api_name": "daily_basic", "params": {"trade_date": "20260825"}, "rows": 5546, "elapsed_seconds": 2.786, "attempts": 1}
+{"recorded_at": "2026-09-04T21:33:16", "api_name": "stk_limit", "params": {"trade_date": "20260825"}, "rows": 7554, "elapsed_seconds": 2.017, "attempts": 1}
+{"recorded_at": "2026-09-04T21:33:19", "api_name": "moneyflow", "params": {"trade_date": "20260825"}, "rows": 5546, "elapsed_seconds": 3.135, "attempts": 1}
+{"recorded_at": "2026-09-04T21:33:20", "api_name": "top_list", "params": {"trade_date": "20260825"}, "rows": 61, "elapsed_seconds": 1.189, "attempts": 1}
+{"recorded_at": "2026-09-04T21:33:22", "api_name": "margin", "params": {"trade_date": "20260825"}, "rows": 3, "elapsed_seconds": 1.171, "attempts": 1}
+{"recorded_at": "2026-09-04T21:33:24", "api_name": "margin_detail", "params": {"trade_date": "20260825"}, "rows": 4435, "elapsed_seconds": 2.136, "attempts": 1}
+{"recorded_at": "2026-09-04T21:33:25", "api_name": "sw_daily", "params": {"trade_date": "20260825"}, "rows": 439, "elapsed_seconds": 1.505, "attempts": 1}
+{"recorded_at": "2026-09-04T21:33:27", "api_name": "stock_basic", "params": {"exchange": "", "list_status": "L", "fields": "ts_code,symbol,name,area,industry,market,list_date"}, "rows": 5558, "elapsed_seconds": 1.875, "attempts": 1}
+{"recorded_at": "2026-09-04T21:41:02", "api_name": "trade_cal", "params": {"exchange": "SSE", "start_date": "20260826", "end_date": "20260826"}, "rows": 1, "elapsed_seconds": 1.204, "attempts": 1}
+{"recorded_at": "2026-09-04T21:41:05", "api_name": "daily", "params": {"trade_date": "20260826"}, "rows": 5548, "elapsed_seconds": 2.408, "attempts": 1}
+{"recorded_at": "2026-09-04T21:41:07", "api_name": "daily_basic", "params": {"trade_date": "20260826"}, "rows": 5547, "elapsed_seconds": 2.456, "attempts": 1}
+{"recorded_at": "2026-09-04T21:41:09", "api_name": "stk_limit", "params": {"trade_date": "20260826"}, "rows": 7559, "elapsed_seconds": 2.24, "attempts": 1}
+{"recorded_at": "2026-09-04T21:41:12", "api_name": "moneyflow", "params": {"trade_date": "20260826"}, "rows": 5547, "elapsed_seconds": 2.581, "attempts": 1}
+{"recorded_at": "2026-09-04T21:41:13", "api_name": "top_list", "params": {"trade_date": "20260826"}, "rows": 64, "elapsed_seconds": 1.23, "attempts": 1}
+{"recorded_at": "2026-09-04T21:41:15", "api_name": "margin", "params": {"trade_date": "20260826"}, "rows": 3, "elapsed_seconds": 1.197, "attempts": 1}
+{"recorded_at": "2026-09-04T21:41:17", "api_name": "margin_detail", "params": {"trade_date": "20260826"}, "rows": 4435, "elapsed_seconds": 2.263, "attempts": 1}
+{"recorded_at": "2026-09-04T21:41:18", "api_name": "sw_daily", "params": {"trade_date": "20260826"}, "rows": 439, "elapsed_seconds": 1.551, "attempts": 1}
+{"recorded_at": "2026-09-04T21:41:21", "api_name": "stock_basic", "params": {"exchange": "", "list_status": "L", "fields": "ts_code,symbol,name,area,industry,market,list_date"}, "rows": 5558, "elapsed_seconds": 2.44, "attempts": 1}
+{"recorded_at": "2026-09-04T21:47:40", "api_name": "trade_cal", "params": {"exchange": "SSE", "start_date": "20260827", "end_date": "20260827"}, "rows": 1, "elapsed_seconds": 1.405, "attempts": 1}
+{"recorded_at": "2026-09-04T21:47:42", "api_name": "daily", "params": {"trade_date": "20260827"}, "rows": 5548, "elapsed_seconds": 2.527, "attempts": 1}
+{"recorded_at": "2026-09-04T21:47:46", "api_name": "daily_basic", "params": {"trade_date": "20260827"}, "rows": 5547, "elapsed_seconds": 3.695, "attempts": 1}
+{"recorded_at": "2026-09-04T21:47:48", "api_name": "stk_limit", "params": {"trade_date": "20260827"}, "rows": 7565, "elapsed_seconds": 1.857, "attempts": 1}
+{"recorded_at": "2026-09-04T21:47:50", "api_name": "moneyflow", "params": {"trade_date": "20260827"}, "rows": 5547, "elapsed_seconds": 2.375, "attempts": 1}
+{"recorded_at": "2026-09-04T21:47:51", "api_name": "top_list", "params": {"trade_date": "20260827"}, "rows": 62, "elapsed_seconds": 1.198, "attempts": 1}
+{"recorded_at": "2026-09-04T21:47:53", "api_name": "margin", "params": {"trade_date": "20260827"}, "rows": 3, "elapsed_seconds": 1.203, "attempts": 1}
+{"recorded_at": "2026-09-04T21:47:55", "api_name": "margin_detail", "params": {"trade_date": "20260827"}, "rows": 4435, "elapsed_seconds": 2.262, "attempts": 1}
+{"recorded_at": "2026-09-04T21:47:56", "api_name": "sw_daily", "params": {"trade_date": "20260827"}, "rows": 439, "elapsed_seconds": 1.527, "attempts": 1}
+{"recorded_at": "2026-09-04T21:47:59", "api_name": "stock_basic", "params": {"exchange": "", "list_status": "L", "fields": "ts_code,symbol,name,area,industry,market,list_date"}, "rows": 5558, "elapsed_seconds": 3.059, "attempts": 1}
+{"recorded_at": "2026-09-04T21:59:29", "api_name": "trade_cal", "params": {"exchange": "SSE", "start_date": "20260828", "end_date": "20260828"}, "rows": 1, "elapsed_seconds": 1.413, "attempts": 1}
+{"recorded_at": "2026-09-04T21:59:31", "api_name": "daily", "params": {"trade_date": "20260828"}, "rows": 5551, "elapsed_seconds": 2.152, "attempts": 1}
+{"recorded_at": "2026-09-04T21:59:34", "api_name": "daily_basic", "params": {"trade_date": "20260828"}, "rows": 5547, "elapsed_seconds": 2.379, "attempts": 1}
+{"recorded_at": "2026-09-04T21:59:36", "api_name": "stk_limit", "params": {"trade_date": "20260828"}, "rows": 7570, "elapsed_seconds": 2.266, "attempts": 1}
+{"recorded_at": "2026-09-04T21:59:38", "api_name": "moneyflow", "params": {"trade_date": "20260828"}, "rows": 5547, "elapsed_seconds": 2.605, "attempts": 1}
+{"recorded_at": "2026-09-04T21:59:40", "api_name": "top_list", "params": {"trade_date": "20260828"}, "rows": 57, "elapsed_seconds": 1.404, "attempts": 1}
+{"recorded_at": "2026-09-04T21:59:42", "api_name": "margin", "params": {"trade_date": "20260828"}, "rows": 3, "elapsed_seconds": 2.591, "attempts": 1}
+{"recorded_at": "2026-09-04T21:59:45", "api_name": "margin_detail", "params": {"trade_date": "20260828"}, "rows": 4436, "elapsed_seconds": 2.18, "attempts": 1}
+{"recorded_at": "2026-09-04T21:59:46", "api_name": "sw_daily", "params": {"trade_date": "20260828"}, "rows": 439, "elapsed_seconds": 1.54, "attempts": 1}
+{"recorded_at": "2026-09-04T21:59:48", "api_name": "stock_basic", "params": {"exchange": "", "list_status": "L", "fields": "ts_code,symbol,name,area,industry,market,list_date"}, "rows": 5558, "elapsed_seconds": 1.933, "attempts": 1}
+{"recorded_at": "2026-09-04T22:04:34", "api_name": "trade_cal", "params": {"exchange": "SSE", "start_date": "20260831", "end_date": "20260831"}, "rows": 1, "elapsed_seconds": 2.113, "attempts": 1}
+{"recorded_at": "2026-09-04T22:04:36", "api_name": "daily", "params": {"trade_date": "20260831"}, "rows": 5549, "elapsed_seconds": 2.143, "attempts": 1}
+{"recorded_at": "2026-09-04T22:04:39", "api_name": "daily_basic", "params": {"trade_date": "20260831"}, "rows": 5545, "elapsed_seconds": 2.655, "attempts": 1}
+{"recorded_at": "2026-09-04T22:04:40", "api_name": "stk_limit", "params": {"trade_date": "20260831"}, "rows": 7565, "elapsed_seconds": 1.764, "attempts": 1}
+{"recorded_at": "2026-09-04T22:04:44", "api_name": "moneyflow", "params": {"trade_date": "20260831"}, "rows": 5545, "elapsed_seconds": 3.888, "attempts": 1}
+{"recorded_at": "2026-09-04T22:04:46", "api_name": "top_list", "params": {"trade_date": "20260831"}, "rows": 76, "elapsed_seconds": 1.326, "attempts": 1}
+{"recorded_at": "2026-09-04T22:04:47", "api_name": "margin", "params": {"trade_date": "20260831"}, "rows": 3, "elapsed_seconds": 1.464, "attempts": 1}
+{"recorded_at": "2026-09-04T22:04:50", "api_name": "margin_detail", "params": {"trade_date": "20260831"}, "rows": 4436, "elapsed_seconds": 3.266, "attempts": 1}
+{"recorded_at": "2026-09-04T22:04:52", "api_name": "sw_daily", "params": {"trade_date": "20260831"}, "rows": 439, "elapsed_seconds": 1.526, "attempts": 1}
+{"recorded_at": "2026-09-04T22:04:54", "api_name": "stock_basic", "params": {"exchange": "", "list_status": "L", "fields": "ts_code,symbol,name,area,industry,market,list_date"}, "rows": 5558, "elapsed_seconds": 1.951, "attempts": 1}
+{"recorded_at": "2026-09-04T22:09:25", "api_name": "trade_cal", "params": {"exchange": "SSE", "start_date": "20260901", "end_date": "20260901"}, "rows": 1, "elapsed_seconds": 1.342, "attempts": 1}
+{"recorded_at": "2026-09-04T22:09:28", "api_name": "daily", "params": {"trade_date": "20260901"}, "rows": 5548, "elapsed_seconds": 2.921, "attempts": 1}
+{"recorded_at": "2026-09-04T22:09:30", "api_name": "daily_basic", "params": {"trade_date": "20260901"}, "rows": 5546, "elapsed_seconds": 2.431, "attempts": 1}
+{"recorded_at": "2026-09-04T22:09:32", "api_name": "stk_limit", "params": {"trade_date": "20260901"}, "rows": 7569, "elapsed_seconds": 1.857, "attempts": 1}
+{"recorded_at": "2026-09-04T22:09:34", "api_name": "moneyflow", "params": {"trade_date": "20260901"}, "rows": 5546, "elapsed_seconds": 2.559, "attempts": 1}
+{"recorded_at": "2026-09-04T22:09:36", "api_name": "top_list", "params": {"trade_date": "20260901"}, "rows": 68, "elapsed_seconds": 1.613, "attempts": 1}
+{"recorded_at": "2026-09-04T22:09:39", "api_name": "margin", "params": {"trade_date": "20260901"}, "rows": 3, "elapsed_seconds": 2.668, "attempts": 1}
+{"recorded_at": "2026-09-04T22:09:41", "api_name": "margin_detail", "params": {"trade_date": "20260901"}, "rows": 4438, "elapsed_seconds": 2.042, "attempts": 1}
+{"recorded_at": "2026-09-04T22:09:42", "api_name": "sw_daily", "params": {"trade_date": "20260901"}, "rows": 439, "elapsed_seconds": 1.598, "attempts": 1}
+{"recorded_at": "2026-09-04T22:09:46", "api_name": "stock_basic", "params": {"exchange": "", "list_status": "L", "fields": "ts_code,symbol,name,area,industry,market,list_date"}, "rows": 5558, "elapsed_seconds": 3.489, "attempts": 1}
+{"recorded_at": "2026-09-04T22:18:08", "api_name": "trade_cal", "params": {"exchange": "SSE", "start_date": "20260902", "end_date": "20260902"}, "rows": 1, "elapsed_seconds": 1.454, "attempts": 1}
+{"recorded_at": "2026-09-04T22:18:12", "api_name": "daily", "params": {"trade_date": "20260902"}, "rows": 5548, "elapsed_seconds": 4.298, "attempts": 1}
+{"recorded_at": "2026-09-04T22:18:15", "api_name": "daily_basic", "params": {"trade_date": "20260902"}, "rows": 5547, "elapsed_seconds": 2.44, "attempts": 1}
+{"recorded_at": "2026-09-04T22:18:16", "api_name": "stk_limit", "params": {"trade_date": "20260902"}, "rows": 7572, "elapsed_seconds": 1.858, "attempts": 1}
+{"recorded_at": "2026-09-04T22:18:21", "api_name": "moneyflow", "params": {"trade_date": "20260902"}, "rows": 5547, "elapsed_seconds": 4.4, "attempts": 1}
+{"recorded_at": "2026-09-04T22:18:22", "api_name": "top_list", "params": {"trade_date": "20260902"}, "rows": 77, "elapsed_seconds": 1.147, "attempts": 1}
+{"recorded_at": "2026-09-04T22:18:23", "api_name": "margin", "params": {"trade_date": "20260902"}, "rows": 3, "elapsed_seconds": 1.404, "attempts": 1}
+{"recorded_at": "2026-09-04T22:18:26", "api_name": "margin_detail", "params": {"trade_date": "20260902"}, "rows": 4439, "elapsed_seconds": 2.354, "attempts": 1}
+{"recorded_at": "2026-09-04T22:18:28", "api_name": "sw_daily", "params": {"trade_date": "20260902"}, "rows": 439, "elapsed_seconds": 1.763, "attempts": 1}
+{"recorded_at": "2026-09-04T22:18:30", "api_name": "stock_basic", "params": {"exchange": "", "list_status": "L", "fields": "ts_code,symbol,name,area,industry,market,list_date"}, "rows": 5558, "elapsed_seconds": 2.719, "attempts": 1}
+{"recorded_at": "2026-09-04T22:25:30", "api_name": "trade_cal", "params": {"exchange": "SSE", "start_date": "20260903", "end_date": "20260903"}, "rows": 1, "elapsed_seconds": 1.531, "attempts": 1}
+{"recorded_at": "2026-09-04T22:25:33", "api_name": "daily", "params": {"trade_date": "20260903"}, "rows": 5549, "elapsed_seconds": 3.179, "attempts": 1}
+{"recorded_at": "2026-09-04T22:25:39", "api_name": "daily_basic", "params": {"trade_date": "20260903"}, "rows": 5549, "elapsed_seconds": 5.994, "attempts": 1}
+{"recorded_at": "2026-09-04T22:25:48", "api_name": "stk_limit", "params": {"trade_date": "20260903"}, "rows": 7581, "elapsed_seconds": 8.544, "attempts": 1}
+{"recorded_at": "2026-09-04T22:25:52", "api_name": "moneyflow", "params": {"trade_date": "20260903"}, "rows": 5549, "elapsed_seconds": 3.776, "attempts": 1}
+{"recorded_at": "2026-09-04T22:25:54", "api_name": "top_list", "params": {"trade_date": "20260903"}, "rows": 58, "elapsed_seconds": 1.689, "attempts": 1}
+{"recorded_at": "2026-09-04T22:25:56", "api_name": "margin", "params": {"trade_date": "20260903"}, "rows": 3, "elapsed_seconds": 2.425, "attempts": 1}
+{"recorded_at": "2026-09-04T22:25:58", "api_name": "margin_detail", "params": {"trade_date": "20260903"}, "rows": 4440, "elapsed_seconds": 2.456, "attempts": 1}
+{"recorded_at": "2026-09-04T22:26:01", "api_name": "sw_daily", "params": {"trade_date": "20260903"}, "rows": 439, "elapsed_seconds": 2.851, "attempts": 1}
+{"recorded_at": "2026-09-04T22:26:03", "api_name": "stock_basic", "params": {"exchange": "", "list_status": "L", "fields": "ts_code,symbol,name,area,industry,market,list_date"}, "rows": 5558, "elapsed_seconds": 2.117, "attempts": 1}
+{"recorded_at": "2026-09-04T22:31:14", "api_name": "trade_cal", "params": {"exchange": "SSE", "start_date": "20260904", "end_date": "20260904"}, "rows": 1, "elapsed_seconds": 2.566, "attempts": 1}
+{"recorded_at": "2026-09-04T22:31:19", "api_name": "daily", "params": {"trade_date": "20260904"}, "rows": 5550, "elapsed_seconds": 4.675, "attempts": 1}
+{"recorded_at": "2026-09-04T22:31:21", "api_name": "daily_basic", "params": {"trade_date": "20260904"}, "rows": 5548, "elapsed_seconds": 2.692, "attempts": 1}
+{"recorded_at": "2026-09-04T22:31:23", "api_name": "stk_limit", "params": {"trade_date": "20260904"}, "rows": 7593, "elapsed_seconds": 1.825, "attempts": 1}
+{"recorded_at": "2026-09-04T22:31:29", "api_name": "moneyflow", "params": {"trade_date": "20260904"}, "rows": 5548, "elapsed_seconds": 5.444, "attempts": 1}
+{"recorded_at": "2026-09-04T22:31:30", "api_name": "top_list", "params": {"trade_date": "20260904"}, "rows": 57, "elapsed_seconds": 1.237, "attempts": 1}
+{"recorded_at": "2026-09-04T22:31:31", "api_name": "margin", "params": {"trade_date": "20260904"}, "rows": 0, "elapsed_seconds": 1.221, "attempts": 1}
+{"recorded_at": "2026-09-04T22:31:33", "api_name": "margin_detail", "params": {"trade_date": "20260904"}, "rows": 0, "elapsed_seconds": 2.047, "attempts": 1}
+{"recorded_at": "2026-09-04T22:31:35", "api_name": "sw_daily", "params": {"trade_date": "20260904"}, "rows": 439, "elapsed_seconds": 1.517, "attempts": 1}
+{"recorded_at": "2026-09-04T22:31:40", "api_name": "stock_basic", "params": {"exchange": "", "list_status": "L", "fields": "ts_code,symbol,name,area,industry,market,list_date"}, "rows": 5558, "elapsed_seconds": 5.241, "attempts": 1}
+{"recorded_at": "2026-09-06T01:15:13", "api_name": "limit_list_d", "params": {"trade_date": "20260904"}, "rows": 96, "elapsed_seconds": 1.653, "attempts": 1}
+{"recorded_at": "2026-09-06T01:15:14", "api_name": "margin", "params": {"trade_date": "20260904"}, "rows": 1, "elapsed_seconds": 1.151, "attempts": 1}
+{"recorded_at": "2026-09-06T01:15:17", "api_name": "margin_detail", "params": {"trade_date": "20260904"}, "rows": 2000, "elapsed_seconds": 2.02, "attempts": 1}
+{"recorded_at": "2026-09-07T21:14:49", "api_name": "trade_cal", "params": {"exchange": "SSE", "start_date": "20260907", "end_date": "20260907"}, "rows": 1, "elapsed_seconds": 1.569, "attempts": 1}
+{"recorded_at": "2026-09-07T21:15:05", "api_name": "daily", "params": {"trade_date": "20260907"}, "rows": 5551, "elapsed_seconds": 3.611, "attempts": 1}
+{"recorded_at": "2026-09-07T21:15:09", "api_name": "daily_basic", "params": {"trade_date": "20260907"}, "rows": 5549, "elapsed_seconds": 3.459, "attempts": 1}
+{"recorded_at": "2026-09-07T21:15:11", "api_name": "stk_limit", "params": {"trade_date": "20260907"}, "rows": 7609, "elapsed_seconds": 2.039, "attempts": 1}
+{"recorded_at": "2026-09-07T23:58:12", "api_name": "limit_list_d", "params": {"trade_date": "20260907"}, "rows": 114, "elapsed_seconds": 1.71, "attempts": 1}
+{"recorded_at": "2026-09-07T23:58:14", "api_name": "top_list", "params": {"trade_date": "20260907"}, "rows": 67, "elapsed_seconds": 1.645, "attempts": 1}
+{"recorded_at": "2026-09-07T23:58:16", "api_name": "margin", "params": {"trade_date": "20260907"}, "rows": 0, "elapsed_seconds": 1.959, "attempts": 1}
+{"recorded_at": "2026-09-08T01:18:52", "api_name": "margin_detail", "params": {"trade_date": "20260907"}, "rows": 0, "elapsed_seconds": 91.974, "attempts": 2}
+{"recorded_at": "2026-09-08T02:16:03", "api_name": "sw_daily", "params": {"trade_date": "20260907"}, "rows": 439, "elapsed_seconds": 78.71, "attempts": 2}
+{"recorded_at": "2026-09-08T02:16:05", "api_name": "stock_basic", "params": {"exchange": "", "list_status": "L", "fields": "ts_code,symbol,name,area,industry,market,list_date"}, "rows": 5560, "elapsed_seconds": 2.255, "attempts": 1}
+{"recorded_at": "2026-09-08T03:08:26", "api_name": "trade_cal", "params": {"exchange": "SSE", "start_date": "20260907", "end_date": "20260907"}, "rows": 1, "elapsed_seconds": 2.092, "attempts": 1}
+{"recorded_at": "2026-09-08T03:08:29", "api_name": "daily", "params": {"trade_date": "20260907"}, "rows": 5551, "elapsed_seconds": 2.843, "attempts": 1}
+{"recorded_at": "2026-09-08T04:02:12", "api_name": "daily_basic", "params": {"trade_date": "20260907"}, "rows": 5549, "elapsed_seconds": 69.49, "attempts": 2}
+{"recorded_at": "2026-09-08T04:49:58", "api_name": "trade_cal", "params": {"exchange": "SSE", "start_date": "20260907", "end_date": "20260907"}, "rows": 1, "elapsed_seconds": 1.596, "attempts": 1}
+{"recorded_at": "2026-09-08T05:41:52", "api_name": "daily", "params": {"trade_date": "20260907"}, "rows": 5551, "elapsed_seconds": 69.622, "attempts": 2}
+{"recorded_at": "2026-09-08T05:41:55", "api_name": "daily_basic", "params": {"trade_date": "20260907"}, "rows": 5549, "elapsed_seconds": 2.741, "attempts": 1}
+{"recorded_at": "2026-09-08T06:29:40", "api_name": "trade_cal", "params": {"exchange": "SSE", "start_date": "20260907", "end_date": "20260907"}, "rows": 1, "elapsed_seconds": 2.817, "attempts": 1}
+{"recorded_at": "2026-09-08T06:29:43", "api_name": "daily", "params": {"trade_date": "20260907"}, "rows": 5551, "elapsed_seconds": 2.846, "attempts": 1}
+{"recorded_at": "2026-09-08T07:26:51", "api_name": "daily_basic", "params": {"trade_date": "20260907"}, "rows": 5549, "elapsed_seconds": 78.941, "attempts": 2}
+{"recorded_at": "2026-09-08T07:31:57", "api_name": "limit_list_d", "params": {"trade_date": "20260903"}, "rows": 93, "elapsed_seconds": 2.1, "attempts": 1}
+{"recorded_at": "2026-09-08T07:31:59", "api_name": "limit_list_d", "params": {"trade_date": "20260902"}, "rows": 75, "elapsed_seconds": 1.77, "attempts": 1}
+{"recorded_at": "2026-09-08T07:32:00", "api_name": "limit_list_d", "params": {"trade_date": "20260901"}, "rows": 89, "elapsed_seconds": 1.409, "attempts": 1}
+{"recorded_at": "2026-09-08T07:32:02", "api_name": "limit_list_d", "params": {"trade_date": "20260831"}, "rows": 129, "elapsed_seconds": 1.461, "attempts": 1}
+{"recorded_at": "2026-09-08T07:32:04", "api_name": "limit_list_d", "params": {"trade_date": "20260828"}, "rows": 99, "elapsed_seconds": 1.938, "attempts": 1}
+{"recorded_at": "2026-09-14T21:50:04", "api_name": "trade_cal", "params": {"exchange": "SSE", "start_date": "20260914", "end_date": "20260914"}, "rows": 1, "elapsed_seconds": 1.256, "attempts": 1}
+{"recorded_at": "2026-09-14T21:50:07", "api_name": "daily", "params": {"trade_date": "20260914"}, "rows": 5562, "elapsed_seconds": 2.8, "attempts": 1}
+{"recorded_at": "2026-09-14T21:50:11", "api_name": "daily_basic", "params": {"trade_date": "20260914"}, "rows": 5550, "elapsed_seconds": 4.499, "attempts": 1}
+{"recorded_at": "2026-09-14T21:50:15", "api_name": "stk_limit", "params": {"trade_date": "20260914"}, "rows": 7628, "elapsed_seconds": 4.17, "attempts": 1}
+{"recorded_at": "2026-09-14T21:50:19", "api_name": "moneyflow", "params": {"trade_date": "20260914"}, "rows": 5550, "elapsed_seconds": 3.725, "attempts": 1}
+{"recorded_at": "2026-09-14T21:50:21", "api_name": "limit_list_d", "params": {"trade_date": "20260914"}, "rows": 100, "elapsed_seconds": 1.904, "attempts": 1}
+{"recorded_at": "2026-09-14T21:50:23", "api_name": "top_list", "params": {"trade_date": "20260914"}, "rows": 75, "elapsed_seconds": 1.65, "attempts": 1}
+{"recorded_at": "2026-09-14T21:50:24", "api_name": "margin", "params": {"trade_date": "20260914"}, "rows": 0, "elapsed_seconds": 1.265, "attempts": 1}
+{"recorded_at": "2026-09-14T21:50:25", "api_name": "margin_detail", "params": {"trade_date": "20260914"}, "rows": 0, "elapsed_seconds": 1.395, "attempts": 1}
+{"recorded_at": "2026-09-14T21:50:27", "api_name": "sw_daily", "params": {"trade_date": "20260914"}, "rows": 439, "elapsed_seconds": 1.671, "attempts": 1}
+{"recorded_at": "2026-09-14T21:50:29", "api_name": "stock_basic", "params": {"exchange": "", "list_status": "L", "fields": "ts_code,symbol,name,area,industry,market,list_date"}, "rows": 5563, "elapsed_seconds": 2.165, "attempts": 1}
+{"recorded_at": "2026-09-14T21:51:51", "api_name": "fina_mainbz", "params": {"ts_code": "301132.SZ", "type": "P"}, "rows": 55, "elapsed_seconds": 3.977, "attempts": 1}
+{"recorded_at": "2026-09-14T21:51:52", "api_name": "fina_mainbz", "params": {"ts_code": "300903.SZ", "type": "P"}, "rows": 83, "elapsed_seconds": 1.433, "attempts": 1}
+{"recorded_at": "2026-09-14T21:51:54", "api_name": "fina_mainbz", "params": {"ts_code": "002579.SZ", "type": "P"}, "rows": 150, "elapsed_seconds": 1.531, "attempts": 1}
+{"recorded_at": "2026-09-14T21:51:56", "api_name": "fina_mainbz", "params": {"ts_code": "000823.SZ", "type": "P"}, "rows": 150, "elapsed_seconds": 2.564, "attempts": 1}
+{"recorded_at": "2026-09-14T21:51:58", "api_name": "fina_mainbz", "params": {"ts_code": "603936.SH", "type": "P"}, "rows": 124, "elapsed_seconds": 1.642, "attempts": 1}
+{"recorded_at": "2026-09-14T21:52:00", "api_name": "fina_mainbz", "params": {"ts_code": "000636.SZ", "type": "P"}, "rows": 150, "elapsed_seconds": 1.824, "attempts": 1}
+{"recorded_at": "2026-09-14T21:52:01", "api_name": "fina_mainbz", "params": {"ts_code": "300430.SZ", "type": "P"}, "rows": 150, "elapsed_seconds": 1.182, "attempts": 1}
+{"recorded_at": "2026-09-14T21:52:02", "api_name": "fina_mainbz", "params": {"ts_code": "301528.SZ", "type": "P"}, "rows": 84, "elapsed_seconds": 1.239, "attempts": 1}
+{"recorded_at": "2026-09-14T21:52:04", "api_name": "fina_mainbz", "params": {"ts_code": "600172.SH", "type": "P"}, "rows": 150, "elapsed_seconds": 1.281, "attempts": 1}
+{"recorded_at": "2026-09-14T21:52:07", "api_name": "fina_mainbz", "params": {"ts_code": "603400.SH", "type": "P"}, "rows": 150, "elapsed_seconds": 3.042, "attempts": 1}
+{"recorded_at": "2026-09-14T21:53:11", "api_name": "trade_cal", "params": {"exchange": "SSE", "start_date": "20260907", "end_date": "20260911", "is_open": "1"}, "rows": 5, "elapsed_seconds": 1.509, "attempts": 1}
+{"recorded_at": "2026-09-14T21:53:12", "api_name": "trade_cal", "params": {"exchange": "SSE", "start_date": "20260907", "end_date": "20260907"}, "rows": 1, "elapsed_seconds": 1.497, "attempts": 1}
+{"recorded_at": "2026-09-14T21:53:15", "api_name": "daily", "params": {"trade_date": "20260907"}, "rows": 5551, "elapsed_seconds": 2.616, "attempts": 1}
+{"recorded_at": "2026-09-14T21:53:17", "api_name": "sw_daily", "params": {"trade_date": "20260907"}, "rows": 439, "elapsed_seconds": 1.955, "attempts": 1}
+{"recorded_at": "2026-09-14T21:53:19", "api_name": "trade_cal", "params": {"exchange": "SSE", "start_date": "20260908", "end_date": "20260908"}, "rows": 1, "elapsed_seconds": 2.069, "attempts": 1}
+{"recorded_at": "2026-09-14T21:53:21", "api_name": "daily", "params": {"trade_date": "20260908"}, "rows": 5551, "elapsed_seconds": 2.221, "attempts": 1}
+{"recorded_at": "2026-09-14T21:53:23", "api_name": "sw_daily", "params": {"trade_date": "20260908"}, "rows": 439, "elapsed_seconds": 1.54, "attempts": 1}
+{"recorded_at": "2026-09-14T21:53:24", "api_name": "trade_cal", "params": {"exchange": "SSE", "start_date": "20260909", "end_date": "20260909"}, "rows": 1, "elapsed_seconds": 1.35, "attempts": 1}
+{"recorded_at": "2026-09-14T21:53:27", "api_name": "daily", "params": {"trade_date": "20260909"}, "rows": 5552, "elapsed_seconds": 2.197, "attempts": 1}
+{"recorded_at": "2026-09-14T21:53:28", "api_name": "sw_daily", "params": {"trade_date": "20260909"}, "rows": 439, "elapsed_seconds": 1.869, "attempts": 1}
+{"recorded_at": "2026-09-14T21:53:30", "api_name": "trade_cal", "params": {"exchange": "SSE", "start_date": "20260910", "end_date": "20260910"}, "rows": 1, "elapsed_seconds": 1.212, "attempts": 1}
+{"recorded_at": "2026-09-14T21:53:32", "api_name": "daily", "params": {"trade_date": "20260910"}, "rows": 5552, "elapsed_seconds": 2.212, "attempts": 1}
+{"recorded_at": "2026-09-14T21:53:33", "api_name": "sw_daily", "params": {"trade_date": "20260910"}, "rows": 439, "elapsed_seconds": 1.517, "attempts": 1}
+{"recorded_at": "2026-09-14T21:53:35", "api_name": "trade_cal", "params": {"exchange": "SSE", "start_date": "20260911", "end_date": "20260911"}, "rows": 1, "elapsed_seconds": 1.17, "attempts": 1}
+{"recorded_at": "2026-09-14T21:53:40", "api_name": "daily", "params": {"trade_date": "20260911"}, "rows": 5552, "elapsed_seconds": 5.619, "attempts": 1}
+{"recorded_at": "2026-09-14T21:53:42", "api_name": "sw_daily", "params": {"trade_date": "20260911"}, "rows": 439, "elapsed_seconds": 1.548, "attempts": 1}
+{"recorded_at": "2026-09-14T21:56:28", "api_name": "fina_mainbz", "params": {"ts_code": "603228.SH", "type": "P"}, "rows": 94, "elapsed_seconds": 1.812, "attempts": 1}
+{"recorded_at": "2026-09-14T21:56:30", "api_name": "fina_mainbz", "params": {"ts_code": "300476.SZ", "type": "P"}, "rows": 92, "elapsed_seconds": 1.839, "attempts": 1}
+{"recorded_at": "2026-09-14T21:56:31", "api_name": "fina_mainbz", "params": {"ts_code": "002384.SZ", "type": "P"}, "rows": 150, "elapsed_seconds": 1.912, "attempts": 1}
+{"recorded_at": "2026-09-15T21:58:46", "api_name": "trade_cal", "params": {"exchange": "SSE", "start_date": "20260915", "end_date": "20260915"}, "rows": 1, "elapsed_seconds": 2.719, "attempts": 1}
+{"recorded_at": "2026-09-15T21:58:58", "api_name": "daily", "params": {"trade_date": "20260915"}, "rows": 5562, "elapsed_seconds": 7.438, "attempts": 1}
+{"recorded_at": "2026-09-15T21:59:08", "api_name": "daily_basic", "params": {"trade_date": "20260915"}, "rows": 5548, "elapsed_seconds": 10.679, "attempts": 1}
+{"recorded_at": "2026-09-15T21:59:15", "api_name": "stk_limit", "params": {"trade_date": "20260915"}, "rows": 7628, "elapsed_seconds": 6.878, "attempts": 1}
+{"recorded_at": "2026-09-15T21:59:27", "api_name": "moneyflow", "params": {"trade_date": "20260915"}, "rows": 5548, "elapsed_seconds": 11.57, "attempts": 1}
+{"recorded_at": "2026-09-15T21:59:29", "api_name": "limit_list_d", "params": {"trade_date": "20260915"}, "rows": 83, "elapsed_seconds": 2.531, "attempts": 1}
+{"recorded_at": "2026-09-15T21:59:35", "api_name": "top_list", "params": {"trade_date": "20260915"}, "rows": 64, "elapsed_seconds": 5.554, "attempts": 1}
+{"recorded_at": "2026-09-15T21:59:38", "api_name": "margin", "params": {"trade_date": "20260915"}, "rows": 0, "elapsed_seconds": 3.284, "attempts": 1}
+{"recorded_at": "2026-09-15T21:59:40", "api_name": "margin_detail", "params": {"trade_date": "20260915"}, "rows": 0, "elapsed_seconds": 1.986, "attempts": 1}
+{"recorded_at": "2026-09-15T21:59:43", "api_name": "sw_daily", "params": {"trade_date": "20260915"}, "rows": 439, "elapsed_seconds": 2.816, "attempts": 1}
+{"recorded_at": "2026-09-15T21:59:49", "api_name": "stock_basic", "params": {"exchange": "", "list_status": "L", "fields": "ts_code,symbol,name,area,industry,market,list_date"}, "rows": 5563, "elapsed_seconds": 5.579, "attempts": 1}
+{"recorded_at": "2026-09-15T22:04:53", "api_name": "fina_mainbz", "params": {"ts_code": "688072.SH", "type": "P", "start_date": "20250101", "end_date": "20260915"}, "rows": 10, "elapsed_seconds": 5.059, "attempts": 1}
+{"recorded_at": "2026-09-15T22:05:15", "api_name": "fina_indicator", "params": {"ts_code": "688072.SH", "start_date": "20250101", "end_date": "20260915"}, "rows": 7, "elapsed_seconds": 3.245, "attempts": 1}
+{"recorded_at": "2026-09-15T22:05:17", "api_name": "fina_mainbz", "params": {"ts_code": "688120.SH", "type": "P", "start_date": "20250101", "end_date": "20260915"}, "rows": 7, "elapsed_seconds": 2.795, "attempts": 1}
+{"recorded_at": "2026-09-15T22:05:21", "api_name": "fina_indicator", "params": {"ts_code": "688120.SH", "start_date": "20250101", "end_date": "20260915"}, "rows": 9, "elapsed_seconds": 3.07, "attempts": 1}
+{"recorded_at": "2026-09-15T22:05:22", "api_name": "fina_mainbz", "params": {"ts_code": "300604.SZ", "type": "P", "start_date": "20250101", "end_date": "20260915"}, "rows": 13, "elapsed_seconds": 1.827, "attempts": 1}
+{"recorded_at": "2026-09-15T22:05:25", "api_name": "fina_indicator", "params": {"ts_code": "300604.SZ", "start_date": "20250101", "end_date": "20260915"}, "rows": 8, "elapsed_seconds": 2.359, "attempts": 1}
+{"recorded_at": "2026-09-15T22:05:28", "api_name": "fina_mainbz", "params": {"ts_code": "688146.SH", "type": "P", "start_date": "20250101", "end_date": "20260915"}, "rows": 10, "elapsed_seconds": 3.349, "attempts": 1}
+{"recorded_at": "2026-09-15T22:05:31", "api_name": "fina_indicator", "params": {"ts_code": "688146.SH", "start_date": "20250101", "end_date": "20260915"}, "rows": 8, "elapsed_seconds": 3.361, "attempts": 1}
+{"recorded_at": "2026-09-15T22:05:34", "api_name": "fina_mainbz", "params": {"ts_code": "300666.SZ", "type": "P", "start_date": "20250101", "end_date": "20260915"}, "rows": 14, "elapsed_seconds": 2.954, "attempts": 1}
+{"recorded_at": "2026-09-15T22:05:38", "api_name": "fina_indicator", "params": {"ts_code": "300666.SZ", "start_date": "20250101", "end_date": "20260915"}, "rows": 8, "elapsed_seconds": 3.464, "attempts": 1}
+{"recorded_at": "2026-09-15T22:05:41", "api_name": "fina_mainbz", "params": {"ts_code": "688256.SH", "type": "P", "start_date": "20250101", "end_date": "20260915"}, "rows": 13, "elapsed_seconds": 2.712, "attempts": 1}
+{"recorded_at": "2026-09-15T22:05:43", "api_name": "fina_indicator", "params": {"ts_code": "688256.SH", "start_date": "20250101", "end_date": "20260915"}, "rows": 9, "elapsed_seconds": 1.924, "attempts": 1}
+{"recorded_at": "2026-09-15T22:05:45", "api_name": "fina_mainbz", "params": {"ts_code": "600183.SH", "type": "P", "start_date": "20250101", "end_date": "20260915"}, "rows": 14, "elapsed_seconds": 2.481, "attempts": 1}
+{"recorded_at": "2026-09-15T22:05:48", "api_name": "fina_indicator", "params": {"ts_code": "600183.SH", "start_date": "20250101", "end_date": "20260915"}, "rows": 9, "elapsed_seconds": 2.514, "attempts": 1}
+{"recorded_at": "2026-09-15T22:05:49", "api_name": "fina_mainbz", "params": {"ts_code": "603186.SH", "type": "P", "start_date": "20250101", "end_date": "20260915"}, "rows": 19, "elapsed_seconds": 1.72, "attempts": 1}
+{"recorded_at": "2026-09-15T22:05:52", "api_name": "fina_indicator", "params": {"ts_code": "603186.SH", "start_date": "20250101", "end_date": "20260915"}, "rows": 9, "elapsed_seconds": 2.588, "attempts": 1}
+{"recorded_at": "2026-09-15T22:05:54", "api_name": "fina_mainbz", "params": {"ts_code": "000823.SZ", "type": "P", "start_date": "20250101", "end_date": "20260915"}, "rows": 15, "elapsed_seconds": 2.527, "attempts": 1}
+{"recorded_at": "2026-09-15T22:05:57", "api_name": "fina_indicator", "params": {"ts_code": "000823.SZ", "start_date": "20250101", "end_date": "20260915"}, "rows": 8, "elapsed_seconds": 2.315, "attempts": 1}
+{"recorded_at": "2026-09-15T22:06:00", "api_name": "fina_mainbz", "params": {"ts_code": "300903.SZ", "type": "P", "start_date": "20250101", "end_date": "20260915"}, "rows": 12, "elapsed_seconds": 3.399, "attempts": 1}
+{"recorded_at": "2026-09-15T22:06:03", "api_name": "fina_indicator", "params": {"ts_code": "300903.SZ", "start_date": "20250101", "end_date": "20260915"}, "rows": 8, "elapsed_seconds": 3.273, "attempts": 1}
+{"recorded_at": "2026-09-15T22:06:06", "api_name": "fina_mainbz", "params": {"ts_code": "000657.SZ", "type": "P", "start_date": "20250101", "end_date": "20260915"}, "rows": 19, "elapsed_seconds": 2.546, "attempts": 1}
+{"recorded_at": "2026-09-15T22:06:09", "api_name": "fina_indicator", "params": {"ts_code": "000657.SZ", "start_date": "20250101", "end_date": "20260915"}, "rows": 8, "elapsed_seconds": 2.604, "attempts": 1}
+{"recorded_at": "2026-09-15T22:06:11", "api_name": "fina_mainbz", "params": {"ts_code": "600549.SH", "type": "P", "start_date": "20250101", "end_date": "20260915"}, "rows": 16, "elapsed_seconds": 2.398, "attempts": 1}
+{"recorded_at": "2026-09-15T22:06:14", "api_name": "fina_indicator", "params": {"ts_code": "600549.SH", "start_date": "20250101", "end_date": "20260915"}, "rows": 11, "elapsed_seconds": 2.939, "attempts": 1}
+{"recorded_at": "2026-09-15T22:06:16", "api_name": "fina_mainbz", "params": {"ts_code": "002842.SZ", "type": "P", "start_date": "20250101", "end_date": "20260915"}, "rows": 16, "elapsed_seconds": 1.858, "attempts": 1}
+{"recorded_at": "2026-09-15T22:06:18", "api_name": "fina_indicator", "params": {"ts_code": "002842.SZ", "start_date": "20250101", "end_date": "20260915"}, "rows": 10, "elapsed_seconds": 1.956, "attempts": 1}
+{"recorded_at": "2026-09-15T22:06:20", "api_name": "fina_mainbz", "params": {"ts_code": "002585.SZ", "type": "P", "start_date": "20250101", "end_date": "20260915"}, "rows": 22, "elapsed_seconds": 1.926, "attempts": 1}
+{"recorded_at": "2026-09-15T22:06:22", "api_name": "fina_indicator", "params": {"ts_code": "002585.SZ", "start_date": "20250101", "end_date": "20260915"}, "rows": 9, "elapsed_seconds": 2.346, "attempts": 1}
+{"recorded_at": "2026-09-15T22:06:30", "api_name": "fina_mainbz", "params": {"ts_code": "300806.SZ", "type": "P", "start_date": "20250101", "end_date": "20260915"}, "rows": 21, "elapsed_seconds": 7.458, "attempts": 1}
+{"recorded_at": "2026-09-15T22:06:32", "api_name": "fina_indicator", "params": {"ts_code": "300806.SZ", "start_date": "20250101", "end_date": "20260915"}, "rows": 8, "elapsed_seconds": 2.356, "attempts": 1}
+{"recorded_at": "2026-09-15T22:06:36", "api_name": "fina_mainbz", "params": {"ts_code": "601208.SH", "type": "P", "start_date": "20250101", "end_date": "20260915"}, "rows": 28, "elapsed_seconds": 3.677, "attempts": 1}
+{"recorded_at": "2026-09-15T22:06:38", "api_name": "fina_indicator", "params": {"ts_code": "601208.SH", "start_date": "20250101", "end_date": "20260915"}, "rows": 8, "elapsed_seconds": 2.715, "attempts": 1}
+{"recorded_at": "2026-09-16T20:44:47", "api_name": "trade_cal", "params": {"exchange": "SSE", "start_date": "20260916", "end_date": "20260916"}, "rows": 1, "elapsed_seconds": 2.784, "attempts": 1}
+{"recorded_at": "2026-09-16T20:44:51", "api_name": "daily", "params": {"trade_date": "20260916"}, "rows": 5564, "elapsed_seconds": 3.849, "attempts": 1}
+{"recorded_at": "2026-09-16T20:44:57", "api_name": "daily_basic", "params": {"trade_date": "20260916"}, "rows": 5550, "elapsed_seconds": 5.486, "attempts": 1}
+{"recorded_at": "2026-09-16T20:45:00", "api_name": "stk_limit", "params": {"trade_date": "20260916"}, "rows": 7633, "elapsed_seconds": 3.072, "attempts": 1}
+{"recorded_at": "2026-09-16T20:45:07", "api_name": "moneyflow", "params": {"trade_date": "20260916"}, "rows": 5550, "elapsed_seconds": 6.807, "attempts": 1}
+{"recorded_at": "2026-09-16T20:45:10", "api_name": "limit_list_d", "params": {"trade_date": "20260916"}, "rows": 104, "elapsed_seconds": 3.748, "attempts": 1}
+{"recorded_at": "2026-09-16T20:45:13", "api_name": "top_list", "params": {"trade_date": "20260916"}, "rows": 73, "elapsed_seconds": 2.895, "attempts": 1}
+{"recorded_at": "2026-09-16T20:45:15", "api_name": "margin", "params": {"trade_date": "20260916"}, "rows": 0, "elapsed_seconds": 1.99, "attempts": 1}
+{"recorded_at": "2026-09-16T20:45:18", "api_name": "margin_detail", "params": {"trade_date": "20260916"}, "rows": 0, "elapsed_seconds": 2.583, "attempts": 1}
+{"recorded_at": "2026-09-16T20:45:20", "api_name": "sw_daily", "params": {"trade_date": "20260916"}, "rows": 439, "elapsed_seconds": 2.358, "attempts": 1}
+{"recorded_at": "2026-09-16T20:45:23", "api_name": "stock_basic", "params": {"exchange": "", "list_status": "L", "fields": "ts_code,symbol,name,area,industry,market,list_date"}, "rows": 5566, "elapsed_seconds": 3.363, "attempts": 1}
+{"recorded_at": "2026-09-17T21:18:03", "api_name": "trade_cal", "params": {"exchange": "SSE", "start_date": "20260917", "end_date": "20260917"}, "rows": 1, "elapsed_seconds": 1.911, "attempts": 1}
+{"recorded_at": "2026-09-17T21:18:08", "api_name": "daily", "params": {"trade_date": "20260917"}, "rows": 5565, "elapsed_seconds": 4.911, "attempts": 1}
+{"recorded_at": "2026-09-17T21:18:12", "api_name": "daily_basic", "params": {"trade_date": "20260917"}, "rows": 5553, "elapsed_seconds": 4.12, "attempts": 1}
+{"recorded_at": "2026-09-17T21:18:16", "api_name": "stk_limit", "params": {"trade_date": "20260917"}, "rows": 7717, "elapsed_seconds": 3.337, "attempts": 1}
+{"recorded_at": "2026-09-17T21:18:21", "api_name": "moneyflow", "params": {"trade_date": "20260917"}, "rows": 5553, "elapsed_seconds": 5.445, "attempts": 1}
+{"recorded_at": "2026-09-17T21:18:23", "api_name": "limit_list_d", "params": {"trade_date": "20260917"}, "rows": 68, "elapsed_seconds": 1.709, "attempts": 1}
+{"recorded_at": "2026-09-17T21:18:25", "api_name": "top_list", "params": {"trade_date": "20260917"}, "rows": 58, "elapsed_seconds": 2.654, "attempts": 1}
+{"recorded_at": "2026-09-17T21:18:27", "api_name": "margin", "params": {"trade_date": "20260917"}, "rows": 0, "elapsed_seconds": 1.938, "attempts": 1}
+{"recorded_at": "2026-09-17T21:18:30", "api_name": "margin_detail", "params": {"trade_date": "20260917"}, "rows": 0, "elapsed_seconds": 2.64, "attempts": 1}
+{"recorded_at": "2026-09-17T21:18:33", "api_name": "sw_daily", "params": {"trade_date": "20260917"}, "rows": 439, "elapsed_seconds": 3.059, "attempts": 1}
+{"recorded_at": "2026-09-17T21:18:37", "api_name": "stock_basic", "params": {"exchange": "", "list_status": "L", "fields": "ts_code,symbol,name,area,industry,market,list_date"}, "rows": 5567, "elapsed_seconds": 4.208, "attempts": 1}
+{"recorded_at": "2026-09-17T21:23:52", "api_name": "fina_indicator", "params": {"ts_code": "000725.SZ", "start_date": "20250101", "end_date": "20260917", "limit": "8"}, "rows": 8, "elapsed_seconds": 2.366, "attempts": 1}
+{"recorded_at": "2026-09-17T21:23:56", "api_name": "fina_mainbz", "params": {"ts_code": "000725.SZ", "type": "P", "start_date": "20250101", "end_date": "20260917"}, "rows": 23, "elapsed_seconds": 3.973, "attempts": 1}
+{"recorded_at": "2026-09-17T21:24:00", "api_name": "forecast", "params": {"ts_code": "000725.SZ", "start_date": "20260101", "end_date": "20260917"}, "rows": 1, "elapsed_seconds": 3.374, "attempts": 1}
+{"recorded_at": "2026-09-17T21:24:02", "api_name": "share_float", "params": {"ts_code": "000725.SZ", "start_date": "20260918", "end_date": "20261231"}, "rows": 0, "elapsed_seconds": 2.501, "attempts": 1}
+{"recorded_at": "2026-09-17T21:24:05", "api_name": "fina_indicator", "params": {"ts_code": "300939.SZ", "start_date": "20250101", "end_date": "20260917", "limit": "8"}, "rows": 8, "elapsed_seconds": 3.034, "attempts": 1}
+{"recorded_at": "2026-09-17T21:24:07", "api_name": "fina_mainbz", "params": {"ts_code": "300939.SZ", "type": "P", "start_date": "20250101", "end_date": "20260917"}, "rows": 18, "elapsed_seconds": 2.174, "attempts": 1}
+{"recorded_at": "2026-09-17T21:24:09", "api_name": "forecast", "params": {"ts_code": "300939.SZ", "start_date": "20260101", "end_date": "20260917"}, "rows": 0, "elapsed_seconds": 1.735, "attempts": 1}
+{"recorded_at": "2026-09-17T21:24:11", "api_name": "share_float", "params": {"ts_code": "300939.SZ", "start_date": "20260918", "end_date": "20261231"}, "rows": 0, "elapsed_seconds": 1.91, "attempts": 1}
+{"recorded_at": "2026-09-17T21:24:14", "api_name": "fina_indicator", "params": {"ts_code": "002041.SZ", "start_date": "20250101", "end_date": "20260917", "limit": "8"}, "rows": 8, "elapsed_seconds": 3.234, "attempts": 1}
+{"recorded_at": "2026-09-17T21:24:17", "api_name": "fina_mainbz", "params": {"ts_code": "002041.SZ", "type": "P", "start_date": "20250101", "end_date": "20260917"}, "rows": 26, "elapsed_seconds": 2.597, "attempts": 1}
+{"recorded_at": "2026-09-17T21:24:19", "api_name": "forecast", "params": {"ts_code": "002041.SZ", "start_date": "20260101", "end_date": "20260917"}, "rows": 2, "elapsed_seconds": 2.332, "attempts": 1}
+{"recorded_at": "2026-09-17T21:24:21", "api_name": "share_float", "params": {"ts_code": "002041.SZ", "start_date": "20260918", "end_date": "20261231"}, "rows": 0, "elapsed_seconds": 2.042, "attempts": 1}
+{"recorded_at": "2026-09-17T21:24:24", "api_name": "fina_indicator", "params": {"ts_code": "300189.SZ", "start_date": "20250101", "end_date": "20260917", "limit": "8"}, "rows": 8, "elapsed_seconds": 2.356, "attempts": 1}
+{"recorded_at": "2026-09-17T21:24:27", "api_name": "fina_mainbz", "params": {"ts_code": "300189.SZ", "type": "P", "start_date": "20250101", "end_date": "20260917"}, "rows": 33, "elapsed_seconds": 2.891, "attempts": 1}
+{"recorded_at": "2026-09-17T21:24:29", "api_name": "forecast", "params": {"ts_code": "300189.SZ", "start_date": "20260101", "end_date": "20260917"}, "rows": 2, "elapsed_seconds": 2.762, "attempts": 1}
+{"recorded_at": "2026-09-17T21:24:32", "api_name": "share_float", "params": {"ts_code": "300189.SZ", "start_date": "20260918", "end_date": "20261231"}, "rows": 0, "elapsed_seconds": 2.616, "attempts": 1}
+{"recorded_at": "2026-09-17T21:24:34", "api_name": "fina_indicator", "params": {"ts_code": "600354.SH", "start_date": "20250101", "end_date": "20260917", "limit": "8"}, "rows": 8, "elapsed_seconds": 1.668, "attempts": 1}
+{"recorded_at": "2026-09-17T21:24:37", "api_name": "fina_mainbz", "params": {"ts_code": "600354.SH", "type": "P", "start_date": "20250101", "end_date": "20260917"}, "rows": 19, "elapsed_seconds": 3.502, "attempts": 1}
+{"recorded_at": "2026-09-17T21:24:40", "api_name": "forecast", "params": {"ts_code": "600354.SH", "start_date": "20260101", "end_date": "20260917"}, "rows": 1, "elapsed_seconds": 3.308, "attempts": 1}
+{"recorded_at": "2026-09-17T21:24:43", "api_name": "share_float", "params": {"ts_code": "600354.SH", "start_date": "20260918", "end_date": "20261231"}, "rows": 0, "elapsed_seconds": 2.566, "attempts": 1}
+{"recorded_at": "2026-09-17T21:24:45", "api_name": "fina_indicator", "params": {"ts_code": "600371.SH", "start_date": "20250101", "end_date": "20260917", "limit": "8"}, "rows": 8, "elapsed_seconds": 1.792, "attempts": 1}
+{"recorded_at": "2026-09-17T21:24:47", "api_name": "fina_mainbz", "params": {"ts_code": "600371.SH", "type": "P", "start_date": "20250101", "end_date": "20260917"}, "rows": 11, "elapsed_seconds": 2.487, "attempts": 1}
+{"recorded_at": "2026-09-17T21:24:50", "api_name": "forecast", "params": {"ts_code": "600371.SH", "start_date": "20260101", "end_date": "20260917"}, "rows": 1, "elapsed_seconds": 2.56, "attempts": 1}
+{"recorded_at": "2026-09-17T21:24:52", "api_name": "share_float", "params": {"ts_code": "600371.SH", "start_date": "20260918", "end_date": "20261231"}, "rows": 0, "elapsed_seconds": 2.345, "attempts": 1}
+{"recorded_at": "2026-09-17T21:24:55", "api_name": "fina_indicator", "params": {"ts_code": "300741.SZ", "start_date": "20250101", "end_date": "20260917", "limit": "8"}, "rows": 8, "elapsed_seconds": 2.775, "attempts": 1}
+{"recorded_at": "2026-09-17T21:24:58", "api_name": "fina_mainbz", "params": {"ts_code": "300741.SZ", "type": "P", "start_date": "20250101", "end_date": "20260917"}, "rows": 17, "elapsed_seconds": 3.204, "attempts": 1}
+{"recorded_at": "2026-09-17T21:25:02", "api_name": "forecast", "params": {"ts_code": "300741.SZ", "start_date": "20260101", "end_date": "20260917"}, "rows": 1, "elapsed_seconds": 3.788, "attempts": 1}
+{"recorded_at": "2026-09-17T21:25:04", "api_name": "share_float", "params": {"ts_code": "300741.SZ", "start_date": "20260918", "end_date": "20261231"}, "rows": 0, "elapsed_seconds": 2.311, "attempts": 1}
+{"recorded_at": "2026-09-17T21:25:06", "api_name": "fina_indicator", "params": {"ts_code": "300829.SZ", "start_date": "20250101", "end_date": "20260917", "limit": "8"}, "rows": 8, "elapsed_seconds": 1.928, "attempts": 1}
+{"recorded_at": "2026-09-17T21:25:09", "api_name": "fina_mainbz", "params": {"ts_code": "300829.SZ", "type": "P", "start_date": "20250101", "end_date": "20260917"}, "rows": 16, "elapsed_seconds": 3.043, "attempts": 1}
+{"recorded_at": "2026-09-17T21:25:12", "api_name": "forecast", "params": {"ts_code": "300829.SZ", "start_date": "20260101", "end_date": "20260917"}, "rows": 2, "elapsed_seconds": 2.487, "attempts": 1}
+{"recorded_at": "2026-09-17T21:25:14", "api_name": "share_float", "params": {"ts_code": "300829.SZ", "start_date": "20260918", "end_date": "20261231"}, "rows": 0, "elapsed_seconds": 2.257, "attempts": 1}
+{"recorded_at": "2026-09-19T09:57:48", "api_name": "trade_cal", "params": {"exchange": "SSE", "start_date": "20260918", "end_date": "20260918"}, "rows": 1, "elapsed_seconds": 1.859, "attempts": 1}
+{"recorded_at": "2026-09-19T09:57:51", "api_name": "daily", "params": {"trade_date": "20260918"}, "rows": 5565, "elapsed_seconds": 2.77, "attempts": 1}
+{"recorded_at": "2026-09-19T09:57:54", "api_name": "daily_basic", "params": {"trade_date": "20260918"}, "rows": 5553, "elapsed_seconds": 3.304, "attempts": 1}
+{"recorded_at": "2026-09-19T09:57:56", "api_name": "stk_limit", "params": {"trade_date": "20260918"}, "rows": 7602, "elapsed_seconds": 2.377, "attempts": 1}
+{"recorded_at": "2026-09-19T09:57:59", "api_name": "moneyflow", "params": {"trade_date": "20260918"}, "rows": 5553, "elapsed_seconds": 3.033, "attempts": 1}
+{"recorded_at": "2026-09-19T09:58:01", "api_name": "limit_list_d", "params": {"trade_date": "20260918"}, "rows": 103, "elapsed_seconds": 1.911, "attempts": 1}
+{"recorded_at": "2026-09-19T09:58:03", "api_name": "top_list", "params": {"trade_date": "20260918"}, "rows": 55, "elapsed_seconds": 1.507, "attempts": 1}
+{"recorded_at": "2026-09-19T09:58:05", "api_name": "margin", "params": {"trade_date": "20260918"}, "rows": 1, "elapsed_seconds": 2.063, "attempts": 1}
+{"recorded_at": "2026-09-19T09:58:08", "api_name": "margin_detail", "params": {"trade_date": "20260918"}, "rows": 2002, "elapsed_seconds": 2.579, "attempts": 1}
+{"recorded_at": "2026-09-19T09:58:10", "api_name": "sw_daily", "params": {"trade_date": "20260918"}, "rows": 439, "elapsed_seconds": 2.011, "attempts": 1}
+{"recorded_at": "2026-09-19T09:58:13", "api_name": "stock_basic", "params": {"exchange": "", "list_status": "L", "fields": "ts_code,symbol,name,area,industry,market,list_date"}, "rows": 5568, "elapsed_seconds": 3.389, "attempts": 1}
+{"recorded_at": "2026-09-19T10:17:34", "api_name": "fina_indicator", "params": {"ts_code": "688766.SH", "start_date": "20250101", "end_date": "20260918"}, "rows": 9, "elapsed_seconds": 1.942, "attempts": 1}
+{"recorded_at": "2026-09-19T10:17:36", "api_name": "fina_mainbz", "params": {"ts_code": "688766.SH", "period": "20260630", "type": "P"}, "rows": 2, "elapsed_seconds": 1.55, "attempts": 1}
+{"recorded_at": "2026-09-19T10:17:38", "api_name": "forecast", "params": {"ts_code": "688766.SH", "start_date": "20260101", "end_date": "20260918"}, "rows": 3, "elapsed_seconds": 1.864, "attempts": 1}
+{"recorded_at": "2026-09-19T10:17:40", "api_name": "share_float", "params": {"ts_code": "688766.SH", "start_date": "20260919", "end_date": "20261231"}, "rows": 0, "elapsed_seconds": 1.744, "attempts": 1}
+{"recorded_at": "2026-09-19T10:17:41", "api_name": "fina_indicator", "params": {"ts_code": "301536.SZ", "start_date": "20250101", "end_date": "20260918"}, "rows": 8, "elapsed_seconds": 1.931, "attempts": 1}
+{"recorded_at": "2026-09-19T10:17:43", "api_name": "fina_mainbz", "params": {"ts_code": "301536.SZ", "period": "20260630", "type": "P"}, "rows": 5, "elapsed_seconds": 1.929, "attempts": 1}
+{"recorded_at": "2026-09-19T10:17:45", "api_name": "forecast", "params": {"ts_code": "301536.SZ", "start_date": "20260101", "end_date": "20260918"}, "rows": 1, "elapsed_seconds": 1.842, "attempts": 1}
+{"recorded_at": "2026-09-19T10:17:47", "api_name": "share_float", "params": {"ts_code": "301536.SZ", "start_date": "20260919", "end_date": "20261231"}, "rows": 0, "elapsed_seconds": 1.941, "attempts": 1}
+{"recorded_at": "2026-09-19T10:17:49", "api_name": "fina_indicator", "params": {"ts_code": "300077.SZ", "start_date": "20250101", "end_date": "20260918"}, "rows": 8, "elapsed_seconds": 2.152, "attempts": 1}
+{"recorded_at": "2026-09-19T10:17:51", "api_name": "fina_mainbz", "params": {"ts_code": "300077.SZ", "period": "20260630", "type": "P"}, "rows": 4, "elapsed_seconds": 1.722, "attempts": 1}
+{"recorded_at": "2026-09-19T10:17:53", "api_name": "forecast", "params": {"ts_code": "300077.SZ", "start_date": "20260101", "end_date": "20260918"}, "rows": 1, "elapsed_seconds": 1.636, "attempts": 1}
+{"recorded_at": "2026-09-19T10:17:54", "api_name": "share_float", "params": {"ts_code": "300077.SZ", "start_date": "20260919", "end_date": "20261231"}, "rows": 0, "elapsed_seconds": 1.684, "attempts": 1}
+{"recorded_at": "2026-09-19T10:17:56", "api_name": "fina_indicator", "params": {"ts_code": "688361.SH", "start_date": "20250101", "end_date": "20260918"}, "rows": 10, "elapsed_seconds": 1.795, "attempts": 1}
+{"recorded_at": "2026-09-19T10:17:58", "api_name": "fina_mainbz", "params": {"ts_code": "688361.SH", "period": "20260630", "type": "P"}, "rows": 5, "elapsed_seconds": 1.722, "attempts": 1}
+{"recorded_at": "2026-09-19T10:18:00", "api_name": "forecast", "params": {"ts_code": "688361.SH", "start_date": "20260101", "end_date": "20260918"}, "rows": 1, "elapsed_seconds": 1.827, "attempts": 1}
+{"recorded_at": "2026-09-19T10:18:02", "api_name": "share_float", "params": {"ts_code": "688361.SH", "start_date": "20260919", "end_date": "20261231"}, "rows": 0, "elapsed_seconds": 1.853, "attempts": 1}
+{"recorded_at": "2026-09-19T10:18:03", "api_name": "fina_indicator", "params": {"ts_code": "688072.SH", "start_date": "20250101", "end_date": "20260918"}, "rows": 7, "elapsed_seconds": 1.715, "attempts": 1}
+{"recorded_at": "2026-09-19T10:18:05", "api_name": "fina_mainbz", "params": {"ts_code": "688072.SH", "period": "20260630", "type": "P"}, "rows": 3, "elapsed_seconds": 1.575, "attempts": 1}
+{"recorded_at": "2026-09-19T10:18:07", "api_name": "forecast", "params": {"ts_code": "688072.SH", "start_date": "20260101", "end_date": "20260918"}, "rows": 0, "elapsed_seconds": 1.631, "attempts": 1}
+{"recorded_at": "2026-09-19T10:18:09", "api_name": "share_float", "params": {"ts_code": "688072.SH", "start_date": "20260919", "end_date": "20261231"}, "rows": 0, "elapsed_seconds": 2.227, "attempts": 1}
+{"recorded_at": "2026-09-19T10:18:10", "api_name": "fina_indicator", "params": {"ts_code": "300604.SZ", "start_date": "20250101", "end_date": "20260918"}, "rows": 8, "elapsed_seconds": 1.507, "attempts": 1}
+{"recorded_at": "2026-09-19T10:18:12", "api_name": "fina_mainbz", "params": {"ts_code": "300604.SZ", "period": "20260630", "type": "P"}, "rows": 5, "elapsed_seconds": 1.863, "attempts": 1}
+{"recorded_at": "2026-09-19T10:18:14", "api_name": "forecast", "params": {"ts_code": "300604.SZ", "start_date": "20260101", "end_date": "20260918"}, "rows": 2, "elapsed_seconds": 2.096, "attempts": 1}
+{"recorded_at": "2026-09-19T10:18:16", "api_name": "share_float", "params": {"ts_code": "300604.SZ", "start_date": "20260919", "end_date": "20261231"}, "rows": 0, "elapsed_seconds": 1.569, "attempts": 1}
+{"recorded_at": "2026-09-19T10:18:18", "api_name": "fina_indicator", "params": {"ts_code": "688200.SH", "start_date": "20250101", "end_date": "20260918"}, "rows": 9, "elapsed_seconds": 1.961, "attempts": 1}
+{"recorded_at": "2026-09-19T10:18:20", "api_name": "fina_mainbz", "params": {"ts_code": "688200.SH", "period": "20260630", "type": "P"}, "rows": 4, "elapsed_seconds": 1.759, "attempts": 1}
+{"recorded_at": "2026-09-19T10:18:21", "api_name": "forecast", "params": {"ts_code": "688200.SH", "start_date": "20260101", "end_date": "20260918"}, "rows": 1, "elapsed_seconds": 1.852, "attempts": 1}
+{"recorded_at": "2026-09-19T10:18:23", "api_name": "share_float", "params": {"ts_code": "688200.SH", "start_date": "20260919", "end_date": "20261231"}, "rows": 0, "elapsed_seconds": 1.586, "attempts": 1}
+{"recorded_at": "2026-09-19T10:18:25", "api_name": "fina_indicator", "params": {"ts_code": "002185.SZ", "start_date": "20250101", "end_date": "20260918"}, "rows": 9, "elapsed_seconds": 1.741, "attempts": 1}
+{"recorded_at": "2026-09-19T10:18:27", "api_name": "fina_mainbz", "params": {"ts_code": "002185.SZ", "period": "20260630", "type": "P"}, "rows": 3, "elapsed_seconds": 1.972, "attempts": 1}
+{"recorded_at": "2026-09-19T10:18:29", "api_name": "forecast", "params": {"ts_code": "002185.SZ", "start_date": "20260101", "end_date": "20260918"}, "rows": 1, "elapsed_seconds": 2.001, "attempts": 1}
+{"recorded_at": "2026-09-19T10:18:30", "api_name": "share_float", "params": {"ts_code": "002185.SZ", "start_date": "20260919", "end_date": "20261231"}, "rows": 0, "elapsed_seconds": 1.593, "attempts": 1}
+{"recorded_at": "2026-09-19T10:18:32", "api_name": "fina_indicator", "params": {"ts_code": "300308.SZ", "start_date": "20250101", "end_date": "20260918"}, "rows": 7, "elapsed_seconds": 2.102, "attempts": 1}
+{"recorded_at": "2026-09-19T10:18:34", "api_name": "fina_mainbz", "params": {"ts_code": "300308.SZ", "period": "20260630", "type": "P"}, "rows": 5, "elapsed_seconds": 1.52, "attempts": 1}
+{"recorded_at": "2026-09-19T10:18:36", "api_name": "forecast", "params": {"ts_code": "300308.SZ", "start_date": "20260101", "end_date": "20260918"}, "rows": 2, "elapsed_seconds": 1.824, "attempts": 1}
+{"recorded_at": "2026-09-19T10:18:38", "api_name": "share_float", "params": {"ts_code": "300308.SZ", "start_date": "20260919", "end_date": "20261231"}, "rows": 0, "elapsed_seconds": 1.94, "attempts": 1}
+{"recorded_at": "2026-09-19T10:18:40", "api_name": "fina_indicator", "params": {"ts_code": "300502.SZ", "start_date": "20250101", "end_date": "20260918"}, "rows": 9, "elapsed_seconds": 1.919, "attempts": 1}
+{"recorded_at": "2026-09-19T10:18:42", "api_name": "fina_mainbz", "params": {"ts_code": "300502.SZ", "period": "20260630", "type": "P"}, "rows": 4, "elapsed_seconds": 2.065, "attempts": 1}
+{"recorded_at": "2026-09-19T10:18:44", "api_name": "forecast", "params": {"ts_code": "300502.SZ", "start_date": "20260101", "end_date": "20260918"}, "rows": 3, "elapsed_seconds": 1.929, "attempts": 1}
+{"recorded_at": "2026-09-19T10:18:46", "api_name": "share_float", "params": {"ts_code": "300502.SZ", "start_date": "20260919", "end_date": "20261231"}, "rows": 0, "elapsed_seconds": 2.069, "attempts": 1}
+{"recorded_at": "2026-09-19T10:18:48", "api_name": "fina_indicator", "params": {"ts_code": "000725.SZ", "start_date": "20250101", "end_date": "20260918"}, "rows": 8, "elapsed_seconds": 2.364, "attempts": 1}
+{"recorded_at": "2026-09-19T10:18:50", "api_name": "fina_mainbz", "params": {"ts_code": "000725.SZ", "period": "20260630", "type": "P"}, "rows": 9, "elapsed_seconds": 1.637, "attempts": 1}
+{"recorded_at": "2026-09-19T10:18:51", "api_name": "forecast", "params": {"ts_code": "000725.SZ", "start_date": "20260101", "end_date": "20260918"}, "rows": 1, "elapsed_seconds": 1.579, "attempts": 1}
+{"recorded_at": "2026-09-19T10:18:53", "api_name": "share_float", "params": {"ts_code": "000725.SZ", "start_date": "20260919", "end_date": "20261231"}, "rows": 0, "elapsed_seconds": 1.48, "attempts": 1}
+{"recorded_at": "2026-09-23T12:00:31", "api_name": "trade_cal", "params": {"exchange": "SSE", "start_date": "20260922", "end_date": "20260922"}, "rows": 1, "elapsed_seconds": 136.187, "attempts": 3}
+{"recorded_at": "2026-09-23T12:00:34", "api_name": "daily", "params": {"trade_date": "20260922"}, "rows": 5555, "elapsed_seconds": 2.723, "attempts": 1}
+{"recorded_at": "2026-09-23T13:29:29", "api_name": "daily_basic", "params": {"trade_date": "20260922"}, "rows": 5554, "elapsed_seconds": 136.015, "attempts": 3}
+{"recorded_at": "2026-09-23T13:29:32", "api_name": "stk_limit", "params": {"trade_date": "20260922"}, "rows": 7684, "elapsed_seconds": 2.737, "attempts": 1}
+{"recorded_at": "2026-09-23T14:40:38", "api_name": "moneyflow", "params": {"trade_date": "20260922"}, "rows": 5554, "elapsed_seconds": 84.401, "attempts": 2}
+{"recorded_at": "2026-09-23T15:43:57", "api_name": "limit_list_d", "params": {"trade_date": "20260922"}, "rows": 84, "elapsed_seconds": 68.371, "attempts": 2}
+{"recorded_at": "2026-09-23T15:43:59", "api_name": "top_list", "params": {"trade_date": "20260922"}, "rows": 74, "elapsed_seconds": 1.91, "attempts": 1}
+{"recorded_at": "2026-09-23T15:44:00", "api_name": "margin", "params": {"trade_date": "20260922"}, "rows": 3, "elapsed_seconds": 1.826, "attempts": 1}
+{"recorded_at": "2026-09-23T16:46:08", "api_name": "margin_detail", "params": {"trade_date": "20260922"}, "rows": 4450, "elapsed_seconds": 76.385, "attempts": 2}
+{"recorded_at": "2026-09-23T16:46:11", "api_name": "sw_daily", "params": {"trade_date": "20260922"}, "rows": 439, "elapsed_seconds": 2.634, "attempts": 1}
+{"recorded_at": "2026-09-23T18:41:26", "api_name": "stock_basic", "params": {"exchange": "", "list_status": "L", "fields": "ts_code,symbol,name,area,industry,market,list_date"}, "rows": 5570, "elapsed_seconds": 2.67, "attempts": 1}
+{"recorded_at": "2026-09-23T18:52:34", "api_name": "stock_basic", "params": {"exchange": "", "list_status": "L", "fields": "ts_code,symbol,name,area,industry,market,list_date"}, "rows": 5570, "elapsed_seconds": 2.628, "attempts": 1}
+{"recorded_at": "2026-09-24T20:47:22", "api_name": "trade_cal", "params": {"exchange": "SSE", "start_date": "20260924", "end_date": "20260924"}, "rows": 1, "elapsed_seconds": 2.752, "attempts": 1}
+{"recorded_at": "2026-09-24T20:47:27", "api_name": "daily", "params": {"trade_date": "20260924"}, "rows": 5558, "elapsed_seconds": 4.882, "attempts": 1}
+{"recorded_at": "2026-09-24T20:47:31", "api_name": "daily_basic", "params": {"trade_date": "20260924"}, "rows": 5557, "elapsed_seconds": 4.22, "attempts": 1}
+{"recorded_at": "2026-09-24T20:47:33", "api_name": "stk_limit", "params": {"trade_date": "20260924"}, "rows": 5651, "elapsed_seconds": 2.472, "attempts": 1}
+{"recorded_at": "2026-09-24T20:47:37", "api_name": "moneyflow", "params": {"trade_date": "20260924"}, "rows": 5569, "elapsed_seconds": 3.58, "attempts": 1}
+{"recorded_at": "2026-09-24T20:47:39", "api_name": "limit_list_d", "params": {"trade_date": "20260924"}, "rows": 75, "elapsed_seconds": 2.376, "attempts": 1}
+{"recorded_at": "2026-09-24T20:47:41", "api_name": "top_list", "params": {"trade_date": "20260924"}, "rows": 72, "elapsed_seconds": 1.839, "attempts": 1}
+{"recorded_at": "2026-09-24T20:47:43", "api_name": "margin", "params": {"trade_date": "20260924"}, "rows": 0, "elapsed_seconds": 2.046, "attempts": 1}
+{"recorded_at": "2026-09-24T20:47:45", "api_name": "margin_detail", "params": {"trade_date": "20260924"}, "rows": 0, "elapsed_seconds": 1.793, "attempts": 1}
+{"recorded_at": "2026-09-24T20:47:47", "api_name": "sw_daily", "params": {"trade_date": "20260924"}, "rows": 439, "elapsed_seconds": 2.252, "attempts": 1}
+{"recorded_at": "2026-09-24T20:47:51", "api_name": "stock_basic", "params": {"exchange": "", "list_status": "L", "fields": "ts_code,symbol,name,area,industry,market,list_date"}, "rows": 5572, "elapsed_seconds": 3.731, "attempts": 1}
+{"recorded_at": "2026-09-24T22:14:53", "api_name": "fina_mainbz", "params": {"ts_code": "301689.SZ", "period": "20260630", "type": "P"}, "rows": 6, "elapsed_seconds": 1.879, "attempts": 1}
+{"recorded_at": "2026-09-24T22:14:55", "api_name": "fina_indicator", "params": {"ts_code": "301689.SZ", "start_date": "20240101", "end_date": "20260924"}, "rows": 4, "elapsed_seconds": 1.809, "attempts": 1}
+{"recorded_at": "2026-09-24T22:14:57", "api_name": "fina_mainbz", "params": {"ts_code": "301311.SZ", "period": "20260630", "type": "P"}, "rows": 6, "elapsed_seconds": 2.15, "attempts": 1}
+{"recorded_at": "2026-09-24T22:15:00", "api_name": "fina_indicator", "params": {"ts_code": "301311.SZ", "start_date": "20240101", "end_date": "20260924"}, "rows": 13, "elapsed_seconds": 2.781, "attempts": 1}
+{"recorded_at": "2026-09-24T22:15:04", "api_name": "fina_mainbz", "params": {"ts_code": "002164.SZ", "period": "20260630", "type": "P"}, "rows": 3, "elapsed_seconds": 3.964, "attempts": 1}
+{"recorded_at": "2026-09-24T22:15:06", "api_name": "fina_indicator", "params": {"ts_code": "002164.SZ", "start_date": "20240101", "end_date": "20260924"}, "rows": 14, "elapsed_seconds": 2.759, "attempts": 1}
+{"recorded_at": "2026-09-24T22:15:09", "api_name": "fina_mainbz", "params": {"ts_code": "002849.SZ", "period": "20260630", "type": "P"}, "rows": 7, "elapsed_seconds": 2.791, "attempts": 1}
+{"recorded_at": "2026-09-24T22:15:11", "api_name": "fina_indicator", "params": {"ts_code": "002849.SZ", "start_date": "20240101", "end_date": "20260924"}, "rows": 13, "elapsed_seconds": 2.225, "attempts": 1}
+{"recorded_at": "2026-09-24T22:15:13", "api_name": "fina_mainbz", "params": {"ts_code": "603230.SH", "period": "20260630", "type": "P"}, "rows": 5, "elapsed_seconds": 2.018, "attempts": 1}
+{"recorded_at": "2026-09-24T22:15:18", "api_name": "fina_indicator", "params": {"ts_code": "603230.SH", "start_date": "20240101", "end_date": "20260924"}, "rows": 13, "elapsed_seconds": 4.204, "attempts": 1}
+{"recorded_at": "2026-09-24T22:15:20", "api_name": "fina_mainbz", "params": {"ts_code": "601811.SH", "period": "20260630", "type": "P"}, "rows": 25, "elapsed_seconds": 2.336, "attempts": 1}
+{"recorded_at": "2026-09-24T22:15:22", "api_name": "fina_indicator", "params": {"ts_code": "601811.SH", "start_date": "20240101", "end_date": "20260924"}, "rows": 13, "elapsed_seconds": 1.909, "attempts": 1}
+{"recorded_at": "2026-09-24T22:15:24", "api_name": "fina_mainbz", "params": {"ts_code": "600825.SH", "period": "20260630", "type": "P"}, "rows": 3, "elapsed_seconds": 2.17, "attempts": 1}
+{"recorded_at": "2026-09-24T22:15:26", "api_name": "fina_indicator", "params": {"ts_code": "600825.SH", "start_date": "20240101", "end_date": "20260924"}, "rows": 13, "elapsed_seconds": 2.346, "attempts": 1}
+{"recorded_at": "2026-09-24T22:15:29", "api_name": "fina_mainbz", "params": {"ts_code": "002181.SZ", "period": "20260630", "type": "P"}, "rows": 11, "elapsed_seconds": 2.071, "attempts": 1}
+{"recorded_at": "2026-09-24T22:15:30", "api_name": "fina_indicator", "params": {"ts_code": "002181.SZ", "start_date": "20240101", "end_date": "20260924"}, "rows": 13, "elapsed_seconds": 1.966, "attempts": 1}
+{"recorded_at": "2026-09-24T22:15:33", "api_name": "fina_mainbz", "params": {"ts_code": "301560.SZ", "period": "20260630", "type": "P"}, "rows": 5, "elapsed_seconds": 2.153, "attempts": 1}
+{"recorded_at": "2026-09-24T22:15:35", "api_name": "fina_indicator", "params": {"ts_code": "301560.SZ", "start_date": "20240101", "end_date": "20260924"}, "rows": 14, "elapsed_seconds": 2.075, "attempts": 1}
+{"recorded_at": "2026-09-24T22:15:40", "api_name": "fina_mainbz", "params": {"ts_code": "000678.SZ", "period": "20260630", "type": "P"}, "rows": 6, "elapsed_seconds": 3.936, "attempts": 1}
+{"recorded_at": "2026-09-24T22:15:42", "api_name": "fina_indicator", "params": {"ts_code": "000678.SZ", "start_date": "20240101", "end_date": "20260924"}, "rows": 14, "elapsed_seconds": 1.819, "attempts": 1}
+{"recorded_at": "2026-09-24T22:15:45", "api_name": "fina_mainbz", "params": {"ts_code": "605018.SH", "period": "20260630", "type": "P"}, "rows": 3, "elapsed_seconds": 2.48, "attempts": 1}
+{"recorded_at": "2026-09-24T22:15:47", "api_name": "fina_indicator", "params": {"ts_code": "605018.SH", "start_date": "20240101", "end_date": "20260924"}, "rows": 19, "elapsed_seconds": 2.659, "attempts": 1}
+{"recorded_at": "2026-09-24T22:15:50", "api_name": "fina_mainbz", "params": {"ts_code": "603767.SH", "period": "20260630", "type": "P"}, "rows": 7, "elapsed_seconds": 2.379, "attempts": 1}
+{"recorded_at": "2026-09-24T22:15:52", "api_name": "fina_indicator", "params": {"ts_code": "603767.SH", "start_date": "20240101", "end_date": "20260924"}, "rows": 15, "elapsed_seconds": 2.005, "attempts": 1}
+{"recorded_at": "2026-09-24T22:15:54", "api_name": "fina_mainbz", "params": {"ts_code": "000592.SZ", "period": "20260630", "type": "P"}, "rows": 15, "elapsed_seconds": 2.749, "attempts": 1}
+{"recorded_at": "2026-09-24T22:15:57", "api_name": "fina_indicator", "params": {"ts_code": "000592.SZ", "start_date": "20240101", "end_date": "20260924"}, "rows": 13, "elapsed_seconds": 2.793, "attempts": 1}
+{"recorded_at": "2026-09-24T22:16:00", "api_name": "fina_mainbz", "params": {"ts_code": "002679.SZ", "period": "20260630", "type": "P"}, "rows": 26, "elapsed_seconds": 2.683, "attempts": 1}
+{"recorded_at": "2026-09-24T22:16:03", "api_name": "fina_indicator", "params": {"ts_code": "002679.SZ", "start_date": "20240101", "end_date": "20260924"}, "rows": 13, "elapsed_seconds": 2.762, "attempts": 1}
+{"recorded_at": "2026-09-24T22:16:06", "api_name": "fina_mainbz", "params": {"ts_code": "000504.SZ", "period": "20260630", "type": "P"}, "rows": 7, "elapsed_seconds": 3.66, "attempts": 1}
+{"recorded_at": "2026-09-24T22:16:09", "api_name": "fina_indicator", "params": {"ts_code": "000504.SZ", "start_date": "20240101", "end_date": "20260924"}, "rows": 15, "elapsed_seconds": 2.366, "attempts": 1}
+{"recorded_at": "2026-09-24T22:16:11", "api_name": "fina_mainbz", "params": {"ts_code": "688315.SH", "period": "20260630", "type": "P"}, "rows": 8, "elapsed_seconds": 1.83, "attempts": 1}
+{"recorded_at": "2026-09-24T22:16:12", "api_name": "fina_indicator", "params": {"ts_code": "688315.SH", "start_date": "20240101", "end_date": "20260924"}, "rows": 14, "elapsed_seconds": 1.73, "attempts": 1}
+{"recorded_at": "2026-09-24T22:16:15", "api_name": "fina_mainbz", "params": {"ts_code": "301699.SZ", "period": "20260630", "type": "P"}, "rows": 4, "elapsed_seconds": 2.658, "attempts": 1}
+{"recorded_at": "2026-09-24T22:16:17", "api_name": "fina_indicator", "params": {"ts_code": "301699.SZ", "start_date": "20240101", "end_date": "20260924"}, "rows": 4, "elapsed_seconds": 1.781, "attempts": 1}
+{"recorded_at": "2026-09-24T22:16:23", "api_name": "fina_mainbz", "params": {"ts_code": "601218.SH", "period": "20260630", "type": "P"}, "rows": 5, "elapsed_seconds": 6.093, "attempts": 1}
+{"recorded_at": "2026-09-24T22:19:56", "api_name": "fina_indicator", "params": {"ts_code": "601218.SH", "start_date": "20240101", "end_date": "20260924"}, "rows": 14, "elapsed_seconds": 54.327, "attempts": 2}
+{"recorded_at": "2026-09-24T22:19:59", "api_name": "top_inst", "params": {"trade_date": "20260924"}, "rows": 810, "elapsed_seconds": 2.564, "attempts": 1}
+{"recorded_at": "2026-09-24T22:43:13", "api_name": "trade_cal", "params": {"exchange": "SSE", "start_date": "20260921", "end_date": "20260921"}, "rows": 1, "elapsed_seconds": 2.67, "attempts": 1}
+{"recorded_at": "2026-09-24T22:43:16", "api_name": "daily", "params": {"trade_date": "20260921"}, "rows": 5565, "elapsed_seconds": 3.183, "attempts": 1}
+{"recorded_at": "2026-09-24T22:43:21", "api_name": "daily_basic", "params": {"trade_date": "20260921"}, "rows": 5553, "elapsed_seconds": 5.491, "attempts": 1}
+{"recorded_at": "2026-09-24T22:43:25", "api_name": "stk_limit", "params": {"trade_date": "20260921"}, "rows": 5647, "elapsed_seconds": 3.454, "attempts": 1}
+{"recorded_at": "2026-09-24T22:43:30", "api_name": "moneyflow", "params": {"trade_date": "20260921"}, "rows": 5553, "elapsed_seconds": 5.078, "attempts": 1}
+{"recorded_at": "2026-09-24T22:43:32", "api_name": "limit_list_d", "params": {"trade_date": "20260921"}, "rows": 130, "elapsed_seconds": 2.173, "attempts": 1}
+{"recorded_at": "2026-09-24T22:43:35", "api_name": "top_list", "params": {"trade_date": "20260921"}, "rows": 66, "elapsed_seconds": 2.545, "attempts": 1}
+{"recorded_at": "2026-09-24T22:43:37", "api_name": "margin", "params": {"trade_date": "20260921"}, "rows": 3, "elapsed_seconds": 2.875, "attempts": 1}
+{"recorded_at": "2026-09-24T22:43:41", "api_name": "margin_detail", "params": {"trade_date": "20260921"}, "rows": 4448, "elapsed_seconds": 3.117, "attempts": 1}
+{"recorded_at": "2026-09-24T22:43:44", "api_name": "sw_daily", "params": {"trade_date": "20260921"}, "rows": 439, "elapsed_seconds": 3.632, "attempts": 1}
+{"recorded_at": "2026-09-24T22:43:47", "api_name": "stock_basic", "params": {"exchange": "", "list_status": "L", "fields": "ts_code,symbol,name,area,industry,market,list_date"}, "rows": 5572, "elapsed_seconds": 3.076, "attempts": 1}
+{"recorded_at": "2026-09-24T22:45:28", "api_name": "trade_cal", "params": {"exchange": "SSE", "start_date": "20260923", "end_date": "20260923"}, "rows": 1, "elapsed_seconds": 4.11, "attempts": 1}
+{"recorded_at": "2026-09-24T22:45:32", "api_name": "daily", "params": {"trade_date": "20260923"}, "rows": 5568, "elapsed_seconds": 4.394, "attempts": 1}
+{"recorded_at": "2026-09-24T22:45:36", "api_name": "daily_basic", "params": {"trade_date": "20260923"}, "rows": 5556, "elapsed_seconds": 4.438, "attempts": 1}
+{"recorded_at": "2026-09-24T22:45:40", "api_name": "stk_limit", "params": {"trade_date": "20260923"}, "rows": 5649, "elapsed_seconds": 3.347, "attempts": 1}
+{"recorded_at": "2026-09-24T22:45:46", "api_name": "moneyflow", "params": {"trade_date": "20260923"}, "rows": 5555, "elapsed_seconds": 6.235, "attempts": 1}
+{"recorded_at": "2026-09-24T22:45:48", "api_name": "limit_list_d", "params": {"trade_date": "20260923"}, "rows": 90, "elapsed_seconds": 2.053, "attempts": 1}
+{"recorded_at": "2026-09-24T22:45:51", "api_name": "top_list", "params": {"trade_date": "20260923"}, "rows": 69, "elapsed_seconds": 2.476, "attempts": 1}
+{"recorded_at": "2026-09-24T22:45:53", "api_name": "margin", "params": {"trade_date": "20260923"}, "rows": 3, "elapsed_seconds": 2.567, "attempts": 1}
+{"recorded_at": "2026-09-24T22:45:57", "api_name": "margin_detail", "params": {"trade_date": "20260923"}, "rows": 4451, "elapsed_seconds": 3.577, "attempts": 1}
+{"recorded_at": "2026-09-24T22:45:59", "api_name": "sw_daily", "params": {"trade_date": "20260923"}, "rows": 439, "elapsed_seconds": 2.267, "attempts": 1}
+{"recorded_at": "2026-09-24T22:46:02", "api_name": "stock_basic", "params": {"exchange": "", "list_status": "L", "fields": "ts_code,symbol,name,area,industry,market,list_date"}, "rows": 5572, "elapsed_seconds": 2.781, "attempts": 1}
+{"recorded_at": "2026-09-24T22:47:32", "api_name": "margin", "params": {"trade_date": "20260924"}, "rows": 0, "elapsed_seconds": 3.095, "attempts": 1}
+{"recorded_at": "2026-09-24T22:47:35", "api_name": "margin_detail", "params": {"trade_date": "20260924"}, "rows": 0, "elapsed_seconds": 2.25, "attempts": 1}
+{"recorded_at": "2026-09-25T21:34:45", "api_name": "margin", "params": {"trade_date": "20260924"}, "rows": 1, "elapsed_seconds": 2.259, "attempts": 1}
+{"recorded_at": "2026-09-25T21:34:49", "api_name": "margin_detail", "params": {"trade_date": "20260924"}, "rows": 2002, "elapsed_seconds": 3.666, "attempts": 1}

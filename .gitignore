@@ -8,12 +8,12 @@ __pycache__/
 .env.*
 !.env.example
 
-/data/
-/data_cache/
+# /data/
+# /data_cache/
 /automation_outputs/
-*.parquet
-*.csv
-*.db
+# *.parquet
+# *.csv
+# *.db
 *.sqlite
 *.sqlite3
 daily_git_commit_result.txt

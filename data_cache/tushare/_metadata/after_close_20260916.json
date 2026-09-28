@@ -1,0 +1,136 @@
+{
+  "requested_date": "20260916",
+  "trade_date": "20260916",
+  "is_requested_date_open": true,
+  "data_ready_for_requested_date": true,
+  "cache_root": "data_cache/tushare",
+  "results": [
+    {
+      "api_name": "trade_cal",
+      "status": "ok",
+      "rows": 1,
+      "path": "data_cache/tushare/trade_cal/20260916.parquet",
+      "message": null
+    },
+    {
+      "api_name": "daily",
+      "status": "ok",
+      "rows": 5564,
+      "path": "data_cache/tushare/daily/20260916.parquet",
+      "message": null
+    },
+    {
+      "api_name": "daily_basic",
+      "status": "ok",
+      "rows": 5550,
+      "path": "data_cache/tushare/daily_basic/20260916.parquet",
+      "message": null
+    },
+    {
+      "api_name": "stk_limit",
+      "status": "ok",
+      "rows": 7633,
+      "path": "data_cache/tushare/stk_limit/20260916.parquet",
+      "message": null
+    },
+    {
+      "api_name": "moneyflow",
+      "status": "ok",
+      "rows": 5550,
+      "path": "data_cache/tushare/moneyflow/20260916.parquet",
+      "message": null
+    },
+    {
+      "api_name": "limit_list_d",
+      "status": "ok",
+      "rows": 104,
+      "path": "data_cache/tushare/limit_list_d/20260916.parquet",
+      "message": null
+    },
+    {
+      "api_name": "top_list",
+      "status": "ok",
+      "rows": 73,
+      "path": "data_cache/tushare/top_list/20260916.parquet",
+      "message": null
+    },
+    {
+      "api_name": "margin",
+      "status": "empty",
+      "rows": 0,
+      "path": null,
+      "message": null
+    },
+    {
+      "api_name": "margin_detail",
+      "status": "empty",
+      "rows": 0,
+      "path": null,
+      "message": null
+    },
+    {
+      "api_name": "sw_daily",
+      "status": "ok",
+      "rows": 439,
+      "path": "data_cache/tushare/sw_daily/20260916.parquet",
+      "message": null
+    },
+    {
+      "api_name": "stock_basic",
+      "status": "ok",
+      "rows": 5566,
+      "path": "data_cache/tushare/stock_basic/20260916.parquet",
+      "message": null
+    },
+    {
+      "api_name": "index_daily_selected",
+      "status": "ok",
+      "rows": 8,
+      "path": "data_cache/tushare/index_daily_selected/20260916.parquet",
+      "message": null
+    }
+  ],
+  "notes": [],
+  "readiness": {
+    "trade_date": "20260916",
+    "required_api_names": [
+      "trade_cal",
+      "daily",
+      "daily_basic"
+    ],
+    "required_ready": true,
+    "required_retries": 3,
+    "required_retry_wait_seconds": 60.0,
+    "waited_seconds": 0.0,
+    "cache_rechecked": false,
+    "attempts": [
+      {
+        "attempt": 0,
+        "ready": true,
+        "missing_required": [],
+        "results": [
+          {
+            "api_name": "trade_cal",
+            "status": "ok",
+            "rows": 1,
+            "message": null
+          },
+          {
+            "api_name": "daily",
+            "status": "ok",
+            "rows": 5564,
+            "message": null
+          },
+          {
+            "api_name": "daily_basic",
+            "status": "ok",
+            "rows": 5550,
+            "message": null
+          }
+        ]
+      }
+    ],
+    "final_missing_required": [],
+    "fallback_reason": null
+  }
+}

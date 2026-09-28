@@ -1,0 +1,82 @@
+{
+  "trade_cal": {
+    "available": true,
+    "last_checked": "2026-08-24T22:39:16",
+    "sample_rows": 1
+  },
+  "daily": {
+    "available": true,
+    "last_checked": "2026-08-24T22:39:16",
+    "sample_rows": 5547
+  },
+  "daily_basic": {
+    "available": true,
+    "last_checked": "2026-08-24T22:39:16",
+    "sample_rows": 5545
+  },
+  "stk_limit": {
+    "available": true,
+    "last_checked": "2026-08-24T22:39:16",
+    "sample_rows": 7552
+  },
+  "moneyflow": {
+    "available": true,
+    "last_checked": "2026-08-24T22:39:16",
+    "sample_rows": 5545
+  },
+  "sw_daily": {
+    "available": true,
+    "last_checked": "2026-08-24T22:39:16",
+    "sample_rows": 439
+  },
+  "top_list": {
+    "available": true,
+    "last_checked": "2026-08-24T22:39:16",
+    "sample_rows": 64
+  },
+  "top_inst": {
+    "available": true,
+    "last_checked": "2026-08-24T22:39:16",
+    "sample_rows": 670
+  },
+  "margin": {
+    "available": true,
+    "last_checked": "2026-08-24T22:39:16",
+    "sample_rows": 0
+  },
+  "margin_detail": {
+    "available": true,
+    "last_checked": "2026-08-24T22:39:16",
+    "sample_rows": 0
+  },
+  "index_daily": {
+    "available": false,
+    "last_checked": "2026-08-24T22:39:16",
+    "reason": "必填参数, 标的"
+  },
+  "index_dailybasic": {
+    "available": true,
+    "last_checked": "2026-08-24T22:39:16",
+    "sample_rows": 12
+  },
+  "stock_basic": {
+    "available": true,
+    "last_checked": "2026-08-24T22:39:16",
+    "sample_rows": 5551
+  },
+  "index_basic": {
+    "available": true,
+    "last_checked": "2026-08-24T22:39:16",
+    "sample_rows": 621
+  },
+  "index_classify": {
+    "available": true,
+    "last_checked": "2026-08-24T22:39:16",
+    "sample_rows": 511
+  },
+  "index_member_all": {
+    "available": true,
+    "last_checked": "2026-08-24T22:39:16",
+    "sample_rows": 2000
+  }
+}

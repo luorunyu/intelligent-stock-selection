@@ -1,0 +1,32 @@
+{
+  "trade_date": "20260909",
+  "datasets": {
+    "trade_cal": true,
+    "daily": true,
+    "sw_daily": true
+  },
+  "complete": true,
+  "results": [
+    {
+      "api_name": "trade_cal",
+      "status": "ok",
+      "rows": 1,
+      "path": "data_cache/tushare/trade_cal/20260909.parquet",
+      "message": null
+    },
+    {
+      "api_name": "daily",
+      "status": "ok",
+      "rows": 5552,
+      "path": "data_cache/tushare/daily/20260909.parquet",
+      "message": null
+    },
+    {
+      "api_name": "sw_daily",
+      "status": "ok",
+      "rows": 439,
+      "path": "data_cache/tushare/sw_daily/20260909.parquet",
+      "message": null
+    }
+  ]
+}
