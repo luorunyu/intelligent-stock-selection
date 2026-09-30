@@ -19,6 +19,12 @@ OUTPUT_COLUMNS = [
     "industry_code",
     "industry_name",
     "industry_level",
+    "l1_code",
+    "l1_name",
+    "l2_code",
+    "l2_name",
+    "l3_code",
+    "l3_name",
     "window",
     "observations",
     "direction_observations",
@@ -91,6 +97,12 @@ def calculate_stock_industry_direction(
             industry_code=membership.industry_code,
             industry_name=membership.industry_name,
             industry_level=normalised_level,
+            l1_code=membership.l1_code,
+            l1_name=membership.l1_name,
+            l2_code=membership.l2_code,
+            l2_name=membership.l2_name,
+            l3_code=membership.l3_code,
+            l3_name=membership.l3_name,
             window=window,
             include_st=include_st,
         )
@@ -137,6 +149,7 @@ def build_stock_industry_memberships(
     if not isinstance(index, dict):
         raise ValueError(f"industry dictionary does not contain {SUPPORTED_LEVELS[normalised_level]}")
     selected = None if industry_codes is None else {str(code).strip() for code in industry_codes}
+    paths = _industry_paths(industry_dictionary)
     rows = []
     for industry_code, entry in sorted(index.items()):
         if selected is not None and industry_code not in selected:
@@ -144,17 +157,89 @@ def build_stock_industry_memberships(
         if not isinstance(entry, dict):
             continue
         for ts_code in entry.get("stock_codes") or []:
-            rows.append(
-                {
-                    "ts_code": str(ts_code).strip(),
-                    "industry_code": str(industry_code).strip(),
-                    "industry_name": str(entry.get("name") or "").strip(),
-                }
-            )
-    columns = ["ts_code", "industry_code", "industry_name"]
+            code = str(ts_code).strip()
+            matching_paths = [
+                path for path in paths
+                if path["ts_code"] == code and path[f"{normalised_level.lower()}_code"] == industry_code
+            ]
+            if not matching_paths:
+                matching_paths = [{
+                    "ts_code": code,
+                    "l1_code": "",
+                    "l1_name": "",
+                    "l2_code": industry_code if normalised_level == "L2" else "",
+                    "l2_name": str(entry.get("name") or "").strip() if normalised_level == "L2" else "",
+                    "l3_code": industry_code if normalised_level == "L3" else "",
+                    "l3_name": str(entry.get("name") or "").strip() if normalised_level == "L3" else "",
+                }]
+            for path in matching_paths:
+                rows.append(
+                    {
+                        "ts_code": code,
+                        "industry_code": str(industry_code).strip(),
+                        "industry_name": str(entry.get("name") or "").strip(),
+                        "l1_code": path["l1_code"],
+                        "l1_name": path["l1_name"],
+                        "l2_code": path["l2_code"],
+                        "l2_name": path["l2_name"],
+                        "l3_code": path["l3_code"],
+                        "l3_name": path["l3_name"],
+                    }
+                )
+    columns = [
+        "ts_code", "industry_code", "industry_name",
+        "l1_code", "l1_name", "l2_code", "l2_name", "l3_code", "l3_name",
+    ]
     if not rows:
         return pd.DataFrame(columns=columns)
-    return pd.DataFrame(rows, columns=columns).drop_duplicates().reset_index(drop=True)
+    result = pd.DataFrame(rows, columns=columns)
+    group_columns = ["ts_code", "industry_code", "industry_name"]
+    result = (
+        result.groupby(group_columns, dropna=False, sort=True, as_index=False)
+        .agg({
+            "l1_code": _join_unique,
+            "l1_name": _join_unique,
+            "l2_code": _join_unique,
+            "l2_name": _join_unique,
+            "l3_code": _join_unique,
+            "l3_name": _join_unique,
+        })
+    )
+    return result[columns].reset_index(drop=True)
+
+
+def _industry_paths(industry_dictionary: dict[str, Any]) -> list[dict[str, str]]:
+    """Flatten the hierarchy into stock-to-L1/L2/L3 paths."""
+    paths: list[dict[str, str]] = []
+    level1 = industry_dictionary.get("level1")
+    if not isinstance(level1, dict):
+        return paths
+    for l1_code, l1_entry in level1.items():
+        if not isinstance(l1_entry, dict):
+            continue
+        for l2_code, l2_entry in (l1_entry.get("children") or {}).items():
+            if not isinstance(l2_entry, dict):
+                continue
+            for l3_code, l3_entry in (l2_entry.get("children") or {}).items():
+                if not isinstance(l3_entry, dict):
+                    continue
+                for ts_code in l3_entry.get("stock_codes") or []:
+                    paths.append(
+                        {
+                            "ts_code": str(ts_code).strip(),
+                            "l1_code": str(l1_code).strip(),
+                            "l1_name": str(l1_entry.get("name") or "").strip(),
+                            "l2_code": str(l2_code).strip(),
+                            "l2_name": str(l2_entry.get("name") or "").strip(),
+                            "l3_code": str(l3_code).strip(),
+                            "l3_name": str(l3_entry.get("name") or "").strip(),
+                        }
+                    )
+    return paths
+
+
+def _join_unique(values: pd.Series) -> str:
+    return "; ".join(sorted({str(value).strip() for value in values if str(value).strip()}))
 
 
 def read_cached_direction_inputs(
@@ -250,6 +335,12 @@ def _calculate_one(
     industry_code: str,
     industry_name: str,
     industry_level: str,
+    l1_code: str,
+    l1_name: str,
+    l2_code: str,
+    l2_name: str,
+    l3_code: str,
+    l3_name: str,
     window: int,
     include_st: bool,
 ) -> dict[str, Any]:
@@ -262,6 +353,12 @@ def _calculate_one(
             "industry_code": industry_code,
             "industry_name": industry_name,
             "industry_level": industry_level,
+            "l1_code": l1_code,
+            "l1_name": l1_name,
+            "l2_code": l2_code,
+            "l2_name": l2_name,
+            "l3_code": l3_code,
+            "l3_name": l3_name,
             "window": window,
             "observations": 0,
             "direction_observations": 0,

@@ -99,6 +99,40 @@ def test_membership_inversion_preserves_multiple_industries():
     assert set(memberships["industry_code"]) == {"850101.SI", "850102.SI"}
 
 
+def test_membership_inversion_includes_full_l1_l2_l3_path():
+    dictionary = _dictionary()
+    dictionary["level1"] = {
+        "801000.SI": {
+            "name": "一级行业",
+            "children": {
+                "801010.SI": {
+                    "name": "二级行业",
+                    "children": {
+                        "850101.SI": {
+                            "name": "三级行业A",
+                            "stock_codes": ["000001.SZ"],
+                        },
+                        "850102.SI": {
+                            "name": "三级行业B",
+                            "stock_codes": ["000001.SZ"],
+                        },
+                    },
+                }
+            },
+        }
+    }
+
+    memberships = build_stock_industry_memberships(dictionary, "L2")
+    row = memberships.iloc[0]
+
+    assert row["l1_code"] == "801000.SI"
+    assert row["l1_name"] == "一级行业"
+    assert row["l2_code"] == "801010.SI"
+    assert row["l2_name"] == "二级行业"
+    assert row["l3_code"] == "850101.SI; 850102.SI"
+    assert row["l3_name"] == "三级行业A; 三级行业B"
+
+
 def test_st_is_excluded_by_default():
     stock, industry = _frames([1] * 20, [1] * 20, stock_name="*ST样例")
 

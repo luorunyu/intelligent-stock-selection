@@ -29,10 +29,20 @@ def parse_args() -> argparse.Namespace:
         description="Calculate the same-direction ratio between stocks and SW2021 L2/L3 indexes."
     )
     parser.add_argument("--date", default=date.today().strftime("%Y%m%d"))
-    parser.add_argument("--level", choices=("L2", "L3", "l2", "l3"), required=True)
+    parser.add_argument(
+        "--level",
+        choices=("L2", "L3", "l2", "l3"),
+        default="L2",
+        help="Industry level, default L2.",
+    )
     parser.add_argument("--window", type=int, default=20)
     parser.add_argument("--industry-code", action="append", default=None)
-    parser.add_argument("--min-ratio", type=float, default=None, help="Decimal, for example 0.6.")
+    parser.add_argument(
+        "--min-ratio",
+        type=float,
+        default=0.60,
+        help="Minimum same-direction ratio, default 0.60.",
+    )
     parser.add_argument("--include-st", action="store_true")
     parser.add_argument("--cache-root", default=None)
     parser.add_argument(

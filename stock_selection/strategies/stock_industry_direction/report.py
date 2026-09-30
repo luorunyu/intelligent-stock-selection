@@ -136,7 +136,13 @@ def render_stock_industry_direction_markdown(report: dict[str, Any]) -> str:
     for row in report["results"]:
         lines.append(
             f"| {row['ts_code']} {row.get('stock_name') or ''} | "
-            f"{row['industry_code']} {row.get('industry_name') or ''} | "
+            f"{row['industry_code']} {row.get('industry_name') or ''} "
+            f"(L1 {row.get('l1_code') or '-'} {row.get('l1_name') or ''}; "
+            f"L2 {row.get('l2_code') or '-'} {row.get('l2_name') or ''}; "
+            f"L3 {row.get('l3_code') or '-'} {row.get('l3_name') or ''}) | "
+            f"L1 {row.get('l1_code') or '-'} {row.get('l1_name') or ''} | "
+            f"L2 {row.get('l2_code') or '-'} {row.get('l2_name') or ''} | "
+            f"L3 {row.get('l3_code') or '-'} {row.get('l3_name') or ''} | "
             f"{_format_percent(row.get('same_direction_ratio'))} | "
             f"{row.get('same_direction_days', '-')} | {row.get('same_up_days', '-')} | "
             f"{row.get('same_down_days', '-')} | {row.get('opposite_direction_days', '-')} | "
