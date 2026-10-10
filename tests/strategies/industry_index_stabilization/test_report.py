@@ -6,6 +6,7 @@ from stock_selection.strategies.industry_index_stabilization.report import (
     build_industry_index_stabilization_report,
     render_industry_index_stabilization_markdown,
     save_industry_index_stabilization_report,
+    save_industry_index_stabilization_outputs,
 )
 
 
@@ -99,3 +100,45 @@ def test_report_saves_csv_json_and_markdown(tmp_path):
     assert json.loads(json_path.read_text(encoding="utf-8"))["summary"]["successes"] == 1
     assert markdown_path.read_text(encoding="utf-8").startswith("# 申万L3")
     assert "-L3-stabilization-backtest" in markdown_path.stem
+
+
+def test_state_output_saves_states_and_episodes_together(tmp_path):
+    signals = _signals()
+    states = pd.DataFrame(
+        [
+            {
+                "index_code": "L2A",
+                "name": "行业A",
+                "trade_date": "20260924",
+                "close": 100.0,
+                "state": 20,
+                "state_description": "已确认企稳区间",
+                "state_days": 5,
+            }
+        ]
+    )
+    report = build_industry_index_stabilization_report(
+        signals,
+        states=states,
+        as_of_date="20260924",
+        level="L2",
+        trend_lookback=120,
+        min_decline_days=20,
+        min_decline_pct=0.30,
+        min_stable_days=5,
+        max_stable_range_points=10,
+        forward_window=60,
+        target_peak_ratio=0.80,
+    )
+
+    paths = save_industry_index_stabilization_outputs(
+        report,
+        signals,
+        states,
+        output_root=tmp_path,
+    )
+
+    assert paths["states"].name == "states.csv"
+    assert paths["episodes"].name == "episodes.csv"
+    assert all(path.exists() for path in paths.values())
+    assert report["summary"]["state_rows"] == 1

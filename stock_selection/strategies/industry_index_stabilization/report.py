@@ -10,6 +10,13 @@ from typing import Any
 import numpy as np
 import pandas as pd
 
+from stock_selection.strategies.industry_index_stabilization.screen import (
+    latest_industry_stabilization_states,
+)
+
+
+DEFAULT_OUTPUT_ROOT = Path(__file__).resolve().parent / "output"
+
 
 def build_industry_index_stabilization_report(
     signals: pd.DataFrame,
@@ -23,8 +30,15 @@ def build_industry_index_stabilization_report(
     max_stable_range_points: float,
     forward_window: int,
     target_peak_ratio: float,
+    states: pd.DataFrame | None = None,
 ) -> dict[str, Any]:
     """Build an effectiveness report from historical stabilization signals."""
+    latest_states = latest_industry_stabilization_states(states)
+    latest_state_counts = (
+        latest_states["state_description"].value_counts().sort_index().to_dict()
+        if not latest_states.empty
+        else {}
+    )
     status_counts = (
         signals["validation_status"]
         .value_counts()
@@ -62,7 +76,12 @@ def build_industry_index_stabilization_report(
                 if not signals.empty
                 else None
             ),
+            "state_rows": int(len(states)) if states is not None else 0,
+            "latest_state_counts": {
+                str(key): int(value) for key, value in latest_state_counts.items()
+            },
         },
+        "latest_states": _records(latest_states),
         "signals": _records(signals),
     }
 
@@ -95,13 +114,31 @@ def render_industry_index_stabilization_markdown(report: dict[str, Any]) -> str:
         f"- 已完成样本成功率：{_format_percent(summary['success_rate'])}",
         "- 后续最高收盘价/下跌起点高点的中位数："
         f"{_format_percent(summary['median_max_forward_peak_ratio'])}",
+        f"- 逐日状态记录：{summary.get('state_rows', 0)}",
+        "",
+        "## 最新状态",
+        "",
+        "| 行业 | 日期 | 收盘价 | 枚举值 | 状态 | 状态天数 |",
+        "| --- | --- | ---: | ---: | --- | ---: |",
+    ]
+    if not report.get("latest_states"):
+        lines.append("| - | - | - | - | - | - |")
+    for row in report.get("latest_states", []):
+        lines.append(
+            f"| {row['index_code']} {row.get('name') or ''} | "
+            f"{row['trade_date']} | {row['close']:.2f} | {row['state']} | "
+            f"{row['state_description']} | {row['state_days']} |"
+        )
+    lines.extend(
+        [
         "",
         "## 信号明细",
         "",
         "| 信号日 | 行业 | 下跌天数 | 最大跌幅 | 企稳区间 | "
         "目标收盘价 | 后续最高/前高 | 状态 | 达标日 |",
         "| --- | --- | ---: | ---: | ---: | ---: | ---: | --- | --- |",
-    ]
+        ]
+    )
     if not report["signals"]:
         lines.append("| - | - | - | - | - | - | - | - | - |")
     for row in report["signals"]:
@@ -147,6 +184,38 @@ def save_industry_index_stabilization_report(
         render_industry_index_stabilization_markdown(report), encoding="utf-8"
     )
     return csv_path, json_path, markdown_path
+
+
+def save_industry_index_stabilization_outputs(
+    report: dict[str, Any],
+    signals: pd.DataFrame,
+    states: pd.DataFrame,
+    *,
+    output_root: str | Path = DEFAULT_OUTPUT_ROOT,
+) -> dict[str, Path]:
+    """Save daily states, extracted episodes, JSON, and Markdown."""
+    date_text = str(report["metadata"]["as_of_date"])
+    directory = Path(output_root) / (
+        f"{date_text[:4]}-{date_text[4:6]}-{date_text[6:8]}"
+    )
+    directory.mkdir(parents=True, exist_ok=True)
+    paths = {
+        "states": directory / "states.csv",
+        "episodes": directory / "episodes.csv",
+        "json": directory / "report.json",
+        "markdown": directory / "report.md",
+    }
+    states.to_csv(paths["states"], index=False, encoding="utf-8-sig")
+    signals.to_csv(paths["episodes"], index=False, encoding="utf-8-sig")
+    paths["json"].write_text(
+        json.dumps(_json_safe(report), ensure_ascii=False, indent=2, allow_nan=False)
+        + "\n",
+        encoding="utf-8",
+    )
+    paths["markdown"].write_text(
+        render_industry_index_stabilization_markdown(report), encoding="utf-8"
+    )
+    return paths
 
 
 def _records(data: pd.DataFrame) -> list[dict[str, Any]]:

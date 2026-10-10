@@ -15,6 +15,9 @@ from stock_selection.strategies.stock_short_high_state.screen import (
 )
 
 
+DEFAULT_OUTPUT_ROOT = Path(__file__).resolve().parent / "output"
+
+
 def build_stock_short_state_report(
     states: pd.DataFrame,
     *,
@@ -101,17 +104,16 @@ def save_stock_short_state_report(
     report: dict[str, Any],
     states: pd.DataFrame,
     *,
-    records_root: str | Path = "analysis_records",
+    records_root: str | Path = DEFAULT_OUTPUT_ROOT,
 ) -> tuple[Path, Path, Path]:
     date_text = str(report["metadata"]["as_of_date"])
-    directory = Path(records_root) / "stock_short_high_state" / (
-        f"{date_text[:4]}-{date_text[4:6]}"
+    directory = Path(records_root) / (
+        f"{date_text[:4]}-{date_text[4:6]}-{date_text[6:8]}"
     )
     directory.mkdir(parents=True, exist_ok=True)
-    stem = f"{date_text[:4]}-{date_text[4:6]}-{date_text[6:8]}-short-high-state"
-    csv_path = directory / f"{stem}.csv"
-    json_path = directory / f"{stem}.json"
-    markdown_path = directory / f"{stem}.md"
+    csv_path = directory / "states.csv"
+    json_path = directory / "report.json"
+    markdown_path = directory / "report.md"
     states.to_csv(csv_path, index=False, encoding="utf-8-sig")
     json_path.write_text(
         json.dumps(_json_safe(report), ensure_ascii=False, indent=2, allow_nan=False)

@@ -34,5 +34,9 @@ def test_report_saves_full_daily_states(tmp_path):
     )
 
     assert csv_path.exists()
+    assert csv_path.name == "states.csv"
+    assert csv_path.parent.name == "2026-09-30"
+    assert json_path.name == "report.json"
+    assert markdown_path.name == "report.md"
     assert json.loads(json_path.read_text(encoding="utf-8"))["summary"]["stocks"] == 1
     assert "策略五" in markdown_path.read_text(encoding="utf-8")

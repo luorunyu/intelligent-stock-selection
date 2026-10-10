@@ -14,6 +14,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from stock_selection.strategies.stock_short_high_state.report import (
+    DEFAULT_OUTPUT_ROOT,
     build_stock_short_state_report,
     save_stock_short_state_report,
 )
@@ -50,7 +51,7 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--include-st", action="store_true")
     parser.add_argument("--write-report", action="store_true")
-    parser.add_argument("--records-root", default="analysis_records")
+    parser.add_argument("--records-root", default=str(DEFAULT_OUTPUT_ROOT))
     return parser.parse_args()
 
 

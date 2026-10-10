@@ -1,8 +1,12 @@
 import pandas as pd
 
 from stock_selection.strategies.industry_index_stabilization.screen import (
+    IndustryStabilizationState,
     _trailing_stable_starts,
     calculate_industry_index_stabilization,
+    calculate_industry_index_stabilization_states,
+    extract_stabilization_episodes,
+    latest_industry_stabilization_states,
     normalise_industry_index_data,
     screen_industry_index_stabilization,
 )
@@ -145,6 +149,17 @@ def test_linear_stable_window_matches_longest_trailing_intervals():
     assert _trailing_stable_starts(data, 10) == [0, 0, 0, 2, 2, 2]
 
 
+def test_stable_window_handles_single_day_wider_than_price_band():
+    data = pd.DataFrame(
+        {
+            "open": [100, 120, 105],
+            "close": [101, 100, 106],
+        }
+    )
+
+    assert _trailing_stable_starts(data, 10) == [0, 2, 2]
+
+
 def test_filters_to_dictionary_l2_codes_and_supports_result_screening():
     data = pd.concat(
         [
@@ -192,3 +207,55 @@ def test_normalise_requires_valid_open_and_close():
     data.loc[data.index[0], "open"] = None
     result = normalise_industry_index_data(data)
     assert len(result) == 1
+
+
+def test_daily_states_backfill_confirmed_stabilization_interval():
+    data = _bars("L2A", [110, 120, 130])
+    states = calculate_industry_index_stabilization_states(
+        data,
+        _dictionary("L2A"),
+    )
+
+    confirmed = states[
+        states["state"].eq(int(IndustryStabilizationState.STABILIZED))
+    ]
+    assert len(confirmed) == 5
+    assert confirmed["episode_id"].nunique() == 1
+    assert confirmed["state_days"].tolist() == [1, 2, 3, 4, 5]
+    assert confirmed["signal_date"].nunique() == 1
+    assert confirmed["signal_date"].iloc[0] == confirmed["trade_date"].iloc[-1]
+
+
+def test_incomplete_stabilization_remains_candidate_without_event():
+    data = _bars("L2A", []).iloc[:-1].copy()
+    states = calculate_industry_index_stabilization_states(
+        data,
+        _dictionary("L2A"),
+    )
+    latest = latest_industry_stabilization_states(states).iloc[0]
+    episodes = extract_stabilization_episodes(states)
+
+    assert latest["state"] == int(
+        IndustryStabilizationState.STABILIZING_CANDIDATE
+    )
+    assert episodes.empty
+
+
+def test_event_extraction_uses_full_confirmed_segment_dates():
+    data = _bars("L2A", [102, 103, 104, 120])
+    states = calculate_industry_index_stabilization_states(
+        data,
+        _dictionary("L2A"),
+    )
+    episodes = extract_stabilization_episodes(states, forward_window=2)
+
+    assert len(episodes) == 1
+    episode = episodes.iloc[0]
+    assert episode["stable_start_date"] < episode["signal_date"]
+    assert episode["stable_end_date"] >= episode["signal_date"]
+    assert episode["stable_days"] == 5
+    assert episode["episode_trading_days"] == len(
+        states[
+            states["state"].eq(int(IndustryStabilizationState.STABILIZED))
+        ]
+    )

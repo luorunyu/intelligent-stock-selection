@@ -11,6 +11,7 @@ __pycache__/
 # /data/
 # /data_cache/
 /automation_outputs/
+stock_selection/strategies/stock_short_high_state/output/
 # *.parquet
 # *.csv
 # *.db

@@ -1,6 +1,8 @@
 import pandas as pd
 
 from stock_selection.strategies.stock_peak_pullback_rebound.screen import (
+    PeakPullbackReboundState,
+    calculate_peak_pullback_rebound_states,
     calculate_peak_pullback_rebounds,
     normalise_stock_daily,
 )
@@ -90,3 +92,57 @@ def test_excludes_st_by_default_and_normalises_invalid_close():
         peak_lookforward_days=10,
         max_rebound_days=8,
     ).empty
+
+
+def test_returns_daily_active_and_time_limited_ended_states():
+    closes = [10, 10, 10, 12, 10.5, 10.6, 11.5, 10.3, 10.2, 10.1, 10.0]
+
+    result = calculate_peak_pullback_rebound_states(
+        _bars("000001.SZ", closes),
+        peak_lookback_days=3,
+        max_rebound_days=20,
+        rebound_ended_state_days=3,
+    )
+
+    assert len(result) == len(closes)
+    assert result.loc[5, "state"] == int(
+        PeakPullbackReboundState.REBOUND_ACTIVE
+    )
+    assert result.loc[6, "state_description"] == "高点回落后反弹中"
+    assert result.loc[7:9, "state"].tolist() == [
+        int(PeakPullbackReboundState.REBOUND_ENDED)
+    ] * 3
+    assert result.loc[7, "state_days"] == 1
+    assert pd.isna(result.loc[10, "state"])
+
+
+def test_breaking_reference_high_adds_warning_and_resets_state():
+    closes = [10, 10, 10, 12, 10.5, 10.6, 12.1]
+
+    result = calculate_peak_pullback_rebound_states(
+        _bars("000001.SZ", closes),
+        peak_lookback_days=3,
+        max_rebound_days=20,
+    )
+
+    assert result.loc[5, "state"] == int(
+        PeakPullbackReboundState.REBOUND_ACTIVE
+    )
+    assert pd.isna(result.loc[6, "state"])
+    assert result.loc[6, "alert_code"] == "BREAK_PREVIOUS_HIGH"
+    assert "原高点定义可能无效" in result.loc[6, "alert_message"]
+
+
+def test_latest_day_can_be_classified_without_future_prices():
+    closes = [10, 10, 10, 12, 10.5, 10.6]
+
+    result = calculate_peak_pullback_rebound_states(
+        _bars("000001.SZ", closes),
+        peak_lookback_days=3,
+        max_rebound_days=20,
+    )
+
+    latest = result.iloc[-1]
+    assert latest["state"] == int(PeakPullbackReboundState.REBOUND_ACTIVE)
+    assert latest["reference_high_close"] == 12
+    assert latest["reference_low_close"] == 10.5

@@ -1,7 +1,17 @@
-# 策略三：申万L2/L3行业指数企稳反转历史验证
+# 策略三：申万L2/L3行业指数企稳状态与历史验证
 
-该策略扫描指定层级申万行业指数的全部历史交易日，而不是只判断最新交易日。
+该策略为指定层级申万行业指数的每个历史交易日计算企稳状态，再从连续状态
+区间中提取企稳信号并验证后续表现，而不是只判断最新交易日。
 `--level` 支持 `L2` 和 `L3`，默认是 `L2`。
+
+## 状态值
+
+- `0 NORMAL`：普通状态。
+- `10 STABILIZING_CANDIDATE`：前期下跌条件成立，正在形成企稳价格带，但尚未达到最少企稳天数。
+- `20 STABILIZED`：企稳价格带达到最少天数，整段价格带回填为已确认企稳状态。
+
+每个确认区间使用独立的 `episode_id`。一个连续企稳阶段仍然只产生一个正式
+信号，信号日是首次达到最少企稳天数的日期。
 
 ## 信号规则
 
@@ -26,6 +36,19 @@ python scripts/screen_industry_index_stabilization.py `
   --write-report
 ```
 
+默认输出：
+
+```text
+stock_selection/strategies/industry_index_stabilization/output/2026-09-24/
+├── states.csv
+├── episodes.csv
+├── report.json
+└── report.md
+```
+
+- `states.csv`：每个行业、每个交易日的状态。
+- `episodes.csv`：每个确认企稳区间一行，包含后续验证结果。
+
 扫描L3行业：
 
 ```powershell
@@ -34,3 +57,25 @@ python scripts/screen_industry_index_stabilization.py `
   --level L3 `
   --write-report
 ```
+
+## K线状态图
+
+先编辑：
+
+```text
+stock_selection/strategies/industry_index_stabilization/strategy_three_chart_codes.txt
+```
+
+一行填写一个申万行业指数代码，然后运行：
+
+```powershell
+python scripts/plot_industry_index_stabilization.py --date 20260924
+```
+
+图表保存到对应日期输出目录的 `charts/` 下：
+
+- 浅蓝背景：正在形成的企稳候选区间；
+- 黄色背景：已经确认的企稳区间；
+- 黄色三角：首次确认企稳的信号日；
+- 绿色星形：后续达到目标价的日期；
+- 虚线：确认企稳区间的价格上下沿。

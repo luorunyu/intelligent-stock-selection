@@ -14,11 +14,13 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from stock_selection.strategies.industry_index_stabilization.report import (
+    DEFAULT_OUTPUT_ROOT,
     build_industry_index_stabilization_report,
-    save_industry_index_stabilization_report,
+    save_industry_index_stabilization_outputs,
 )
 from stock_selection.strategies.industry_index_stabilization.screen import (
-    calculate_industry_index_stabilization,
+    calculate_industry_index_stabilization_states,
+    extract_stabilization_episodes,
     load_industry_dictionary,
     read_cached_industry_index_data,
 )
@@ -45,14 +47,14 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--forward-window", type=int, default=60)
     parser.add_argument("--target-peak-ratio", type=float, default=0.80)
     parser.add_argument("--write-report", action="store_true")
-    parser.add_argument("--records-root", default="analysis_records")
+    parser.add_argument("--records-root", default=str(DEFAULT_OUTPUT_ROOT))
     return parser.parse_args()
 
 
 def main() -> int:
     args = parse_args()
     level = args.level.upper()
-    signals = calculate_industry_index_stabilization(
+    states = calculate_industry_index_stabilization_states(
         read_cached_industry_index_data(cache_root=args.cache_root),
         load_industry_dictionary(args.dictionary),
         level=level,
@@ -62,9 +64,12 @@ def main() -> int:
         min_decline_pct=args.min_decline_pct,
         min_stable_days=args.min_stable_days,
         max_stable_range_points=args.max_stable_range_points,
+        industry_codes=args.industry_code,
+    )
+    signals = extract_stabilization_episodes(
+        states,
         forward_window=args.forward_window,
         target_peak_ratio=args.target_peak_ratio,
-        industry_codes=args.industry_code,
     )
     report = build_industry_index_stabilization_report(
         signals,
@@ -77,15 +82,18 @@ def main() -> int:
         max_stable_range_points=args.max_stable_range_points,
         forward_window=args.forward_window,
         target_peak_ratio=args.target_peak_ratio,
+        states=states,
     )
     if args.write_report:
-        csv_path, json_path, markdown_path = save_industry_index_stabilization_report(
-            report, signals, records_root=args.records_root
+        paths = save_industry_index_stabilization_outputs(
+            report,
+            signals,
+            states,
+            output_root=args.records_root,
         )
         output = {
-            "csv": str(csv_path),
-            "json": str(json_path),
-            "markdown": str(markdown_path),
+            key: str(path) for key, path in paths.items()
+        } | {
             "summary": report["summary"],
         }
     else:
