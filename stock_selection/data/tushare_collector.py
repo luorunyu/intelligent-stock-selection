@@ -184,6 +184,11 @@ class TushareCollector:
             return CollectionResult(api_name, "skipped", message="cache exists")
         return self._collect_one(api_name, params, trade_date=cache_key)
 
+    def fetch(self, api_name: str, params: dict[str, Any]) -> Any:
+        """Call a registered API through the shared limiter, retry, and audit path."""
+        get_spec(api_name)
+        return self._call(api_name, params)
+
     def latest_trade_date(self) -> str:
         """查询近 45 天交易日历，返回最近已开市日期。"""
         today = date.today()

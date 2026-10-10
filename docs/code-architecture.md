@@ -6,6 +6,7 @@
 
 | 文件 | 作用 | 主要输出 |
 | --- | --- | --- |
+| `backfill_tushare_history.py` | 按交易日区间增量回填核心行情、估值、资金流、行业和宽基指数数据。 | `data_cache/tushare/` 下的 Parquet 与调用日志。 |
 | `backfill_tmp_automation_cache.py` | 将旧自动化遗留 CSV 迁移到正式缓存。 | `data_cache/tushare/` 下的 Parquet。 |
 | `build_after_close_research_context.py` | 合并多日行情、历史报告和热点发现，供盘后报告阅读。 | `analysis_records/research_context/...md`。 |
 | `collect_tushare_daily.py` | 采集日频或静态 Tushare 数据。 | 正式缓存与运行日志。 |

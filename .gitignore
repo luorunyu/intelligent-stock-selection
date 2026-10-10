@@ -8,15 +8,16 @@ __pycache__/
 .env.*
 !.env.example
 
-# /data/
-# /data_cache/
+/data/
+/data_cache/
 /automation_outputs/
-stock_selection/strategies/stock_short_high_state/output/
-# *.parquet
-# *.csv
-# *.db
+*.parquet
+*.csv
+*.db
 *.sqlite
 *.sqlite3
+*.md
+*.json
 daily_git_commit_result.txt
 
 .DS_Store
