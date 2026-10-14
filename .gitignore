@@ -19,6 +19,7 @@ __pycache__/
 *.md
 *.json
 daily_git_commit_result.txt
+*.html
 
 .DS_Store
 Thumbs.db
