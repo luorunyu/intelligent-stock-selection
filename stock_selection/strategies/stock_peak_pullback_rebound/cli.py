@@ -13,6 +13,8 @@ ROOT = Path(__file__).resolve().parents[3]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+from stock_selection.data.market_cap import load_cached_market_caps, merge_market_caps
+
 from stock_selection.strategies.stock_peak_pullback_rebound.report import (
     DEFAULT_OUTPUT_ROOT,
     build_peak_pullback_rebound_state_report,
@@ -86,6 +88,14 @@ def main() -> int:
         stock_basic=basic,
         include_st=args.include_st,
     )
+    if not states.empty:
+        market_caps = load_cached_market_caps(
+            start_date=str(states["trade_date"].min()),
+            end_date=str(states["trade_date"].max()),
+            stock_codes=states["ts_code"].unique(),
+            cache_root=args.cache_root,
+        )
+        states = merge_market_caps(states, market_caps)
     report = build_peak_pullback_rebound_state_report(
         states,
         as_of_date=args.date,

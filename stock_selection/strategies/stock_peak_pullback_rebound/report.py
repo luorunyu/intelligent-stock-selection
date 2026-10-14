@@ -10,6 +10,7 @@ from typing import Any
 import numpy as np
 import pandas as pd
 
+from stock_selection.data.market_cap import format_market_cap
 from stock_selection.strategies.stock_peak_pullback_rebound.screen import (
     latest_peak_pullback_rebound_states,
 )
@@ -90,18 +91,20 @@ def render_peak_pullback_rebound_state_markdown(
         "",
         "## 最新状态",
         "",
-        "| 股票 | 日期 | 收盘价 | 枚举值 | 状态 | 告警 |",
-        "| --- | --- | ---: | ---: | --- | --- |",
+        "| 股票 | 日期 | 收盘价 | 总市值 | 流通市值 | 枚举值 | 状态 | 告警 |",
+        "| --- | --- | ---: | ---: | ---: | ---: | --- | --- |",
     ]
     if not report["latest_states"]:
-        lines.append("| - | - | - | - | - | - |")
+        lines.append("| - | - | - | - | - | - | - | - |")
     for row in report["latest_states"]:
         state = "-" if row.get("state") is None else str(row["state"])
         description = row.get("state_description") or "-"
         alert = row.get("alert_message") or "-"
         lines.append(
             f"| {row['ts_code']} {row.get('stock_name') or ''} | "
-            f"{row['trade_date']} | {row['close']:.2f} | {state} | "
+            f"{row['trade_date']} | {row['close']:.2f} | "
+            f"{format_market_cap(row.get('total_mv'))} | "
+            f"{format_market_cap(row.get('circ_mv'))} | {state} | "
             f"{description} | {alert} |"
         )
     return "\n".join(lines) + "\n"

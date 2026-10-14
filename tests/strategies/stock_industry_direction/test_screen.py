@@ -4,6 +4,7 @@ import pytest
 from stock_selection.strategies.stock_industry_direction.screen import (
     build_stock_industry_memberships,
     calculate_stock_industry_direction,
+    calculate_stock_industry_direction_history,
     read_cached_direction_inputs,
     screen_stock_industry_direction,
 )
@@ -65,6 +66,95 @@ def test_calculates_same_direction_ratio_and_excludes_zero_days():
     assert row["opposite_direction_days"] == 2
     assert row["neutral_days"] == 2
     assert row["same_direction_ratio"] == pytest.approx(0.5)
+    expected_correlation = pd.Series([1, -1, 1, -1, 0, 1]).corr(
+        pd.Series([2, -2, -2, 2, 1, 0])
+    )
+    assert row["regression_observations"] == 6
+    assert row["return_correlation"] == pytest.approx(expected_correlation)
+    assert row["industry_r_squared"] == pytest.approx(expected_correlation**2)
+
+
+def test_regression_metrics_use_returns_and_keep_zero_return_days():
+    stock, industry = _frames(
+        [-2, -1, 0, 1, 2],
+        [-1, -0.5, 0, 0.5, 1],
+    )
+
+    row = calculate_stock_industry_direction(
+        stock,
+        industry,
+        _dictionary(),
+        level="L2",
+        window=5,
+    ).iloc[0]
+
+    assert row["direction_observations"] == 4
+    assert row["neutral_days"] == 1
+    assert row["regression_observations"] == 5
+    assert row["return_correlation"] == pytest.approx(1.0)
+    assert row["industry_beta"] == pytest.approx(2.0)
+    assert row["industry_r_squared"] == pytest.approx(1.0)
+    assert row["regression_quality"] == "ok"
+
+
+def test_history_returns_one_row_per_complete_rolling_window():
+    stock, industry = _frames(
+        [-2, -1, 0, 1, 2, 3],
+        [-1, -0.5, 0, 0.5, 1, 1.5],
+    )
+
+    history = calculate_stock_industry_direction_history(
+        stock,
+        industry,
+        _dictionary(),
+        level="L2",
+        window=4,
+    )
+
+    assert history["as_of_date"].tolist() == stock["trade_date"].tolist()[3:]
+    assert history["ts_code"].tolist() == ["000001.SZ"] * 3
+    assert history["observations"].tolist() == [4, 4, 4]
+    assert history["return_correlation"].tolist() == pytest.approx([1.0, 1.0, 1.0])
+    assert history["industry_beta"].tolist() == pytest.approx([2.0, 2.0, 2.0])
+    assert history["industry_r_squared"].tolist() == pytest.approx([1.0, 1.0, 1.0])
+
+
+def test_history_start_date_filters_output_without_losing_lookback():
+    stock, industry = _frames(
+        [-2, -1, 0, 1, 2, 3],
+        [-1, -0.5, 0, 0.5, 1, 1.5],
+    )
+    last_date = stock["trade_date"].iloc[-1]
+
+    history = calculate_stock_industry_direction_history(
+        stock,
+        industry,
+        _dictionary(),
+        level="L2",
+        window=4,
+        start_date=last_date,
+        end_date=last_date,
+    )
+
+    assert history["as_of_date"].tolist() == [last_date]
+    assert history.iloc[0]["industry_beta"] == pytest.approx(2.0)
+
+
+def test_constant_industry_returns_mark_regression_unavailable():
+    stock, industry = _frames([1, 2, 3, 4], [1, 1, 1, 1])
+
+    row = calculate_stock_industry_direction(
+        stock,
+        industry,
+        _dictionary(),
+        level="L2",
+        window=4,
+    ).iloc[0]
+
+    assert row["regression_quality"] == "zero_industry_variance"
+    assert pd.isna(row["return_correlation"])
+    assert pd.isna(row["industry_beta"])
+    assert pd.isna(row["industry_r_squared"])
 
 
 def test_filter_uses_only_ratio_and_valid_rows():

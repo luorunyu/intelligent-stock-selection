@@ -5,10 +5,15 @@ from __future__ import annotations
 from dataclasses import dataclass
 from html import escape
 from pathlib import Path
-from typing import Any
+from typing import Any, Iterable
 
 import pandas as pd
 
+from stock_selection.data.market_cap import (
+    format_market_cap,
+    load_cached_market_caps,
+    merge_market_caps,
+)
 from stock_selection.strategies.stock_peak_pullback_rebound.report import (
     DEFAULT_OUTPUT_ROOT,
 )
@@ -191,6 +196,7 @@ def build_peak_pullback_rebound_figure(
                 "fillcolor": "#169c72",
             },
             name="K线",
+            hoverinfo="skip",
         ),
         row=1,
         col=1,
@@ -293,6 +299,21 @@ def build_peak_pullback_rebound_figure(
             col=1,
         )
 
+    figure.add_trace(
+        go.Scatter(
+            x=data["date"],
+            y=data["close"],
+            mode="markers",
+            marker={"size": 12, "color": "rgba(0,0,0,0.001)"},
+            text=[_state_hover(row) for row in data.to_dict("records")],
+            hovertemplate="%{text}<extra></extra>",
+            name="状态详情",
+            showlegend=False,
+        ),
+        row=1,
+        col=1,
+    )
+
     for row in (1, 2):
         figure.update_xaxes(
             rangeslider_visible=False,
@@ -311,9 +332,15 @@ def build_peak_pullback_rebound_figure(
             figure.update_xaxes(range=initial_range, row=row, col=1)
 
     title_name = f"{stock_name} " if stock_name else ""
+    latest = data.iloc[-1]
+    latest_market_cap = (
+        f"最新总市值 {format_market_cap(latest.get('total_mv'))} · "
+        f"流通市值 {format_market_cap(latest.get('circ_mv'))}"
+    )
     figure.update_layout(
         title={
-            "text": f"{title_name}{stock_code} 策略四状态检查",
+            "text": f"{title_name}{stock_code} 策略四状态检查"
+            f"<br><sup>{latest_market_cap}</sup>",
             "x": 0.01,
             "xanchor": "left",
         },
@@ -321,7 +348,7 @@ def build_peak_pullback_rebound_figure(
         template="plotly_white",
         paper_bgcolor="#ffffff",
         plot_bgcolor="#ffffff",
-        margin={"l": 72, "r": 32, "t": 72, "b": 48},
+        margin={"l": 72, "r": 32, "t": 92, "b": 48},
         hovermode="x unified",
         dragmode="zoom",
         bargap=0.16,
@@ -346,7 +373,7 @@ def write_peak_pullback_rebound_html(
     stock_name: str = "",
     initial_bars: int | None = 250,
 ) -> Path:
-    """Write one self-contained strategy-four chart."""
+    """Write one strategy-four chart using a shared local Plotly bundle."""
     path = Path(output_path)
     path.parent.mkdir(parents=True, exist_ok=True)
     figure = build_peak_pullback_rebound_figure(
@@ -357,7 +384,7 @@ def write_peak_pullback_rebound_html(
     )
     figure.write_html(
         path,
-        include_plotlyjs=True,
+        include_plotlyjs="directory",
         full_html=True,
         config={
             "displaylogo": False,
@@ -373,6 +400,7 @@ def generate_peak_pullback_rebound_charts(
     *,
     states_csv: str | Path,
     codes_file: str | Path = DEFAULT_CODES_FILE,
+    stock_codes: Iterable[str] | None = None,
     cache_root: str | Path | None = None,
     output_directory: str | Path | None = None,
     initial_bars: int | None = 250,
@@ -380,7 +408,7 @@ def generate_peak_pullback_rebound_charts(
     """Generate one strategy-four chart per requested stock."""
     state_path = Path(states_csv)
     states = read_saved_states(state_path)
-    codes, input_errors = read_chart_codes(codes_file)
+    codes, input_errors = _resolve_chart_codes(codes_file, stock_codes)
     if not codes:
         raise ValueError("chart code file contains no valid stock codes")
     selected_states = states[states["ts_code"].isin(codes)]
@@ -390,6 +418,12 @@ def generate_peak_pullback_rebound_charts(
         codes,
         start_date=str(selected_states["trade_date"].min()),
         end_date=str(selected_states["trade_date"].max()),
+        cache_root=cache_root,
+    )
+    market_caps = load_cached_market_caps(
+        start_date=str(selected_states["trade_date"].min()),
+        end_date=str(selected_states["trade_date"].max()),
+        stock_codes=codes,
         cache_root=cache_root,
     )
     output = (
@@ -412,6 +446,7 @@ def generate_peak_pullback_rebound_charts(
             continue
         try:
             chart_data = merge_bars_and_states(bars, stock_states)
+            chart_data = merge_market_caps(chart_data, market_caps)
             stock_name = _latest_nonempty(stock_states["stock_name"])
             filename = f"{code.replace('.', '_')}.html"
             write_peak_pullback_rebound_html(
@@ -422,7 +457,7 @@ def generate_peak_pullback_rebound_charts(
                 initial_bars=initial_bars,
             )
             intervals = build_state_intervals(stock_states)
-            latest = stock_states.sort_values("trade_date").iloc[-1]
+            latest = chart_data.sort_values("trade_date").iloc[-1]
             chart_rows.append(
                 {
                     "ts_code": code,
@@ -439,6 +474,8 @@ def generate_peak_pullback_rebound_charts(
                         for item in intervals
                     ),
                     "alerts": int(stock_states["alert_code"].ne("").sum()),
+                    "total_mv": latest.get("total_mv"),
+                    "circ_mv": latest.get("circ_mv"),
                     "filename": filename,
                 }
             )
@@ -468,12 +505,14 @@ def _write_chart_index(
         f"<td>{item['active_intervals']}</td>"
         f"<td>{item['ended_intervals']}</td>"
         f"<td>{item['alerts']}</td>"
+        f"<td>{escape(format_market_cap(item.get('total_mv')))}</td>"
+        f"<td>{escape(format_market_cap(item.get('circ_mv')))}</td>"
         f"<td><a href=\"{escape(item['filename'])}\">查看图表</a></td>"
         "</tr>"
         for item in chart_rows
     ]
     if not rows:
-        rows.append("<tr><td colspan=\"7\">没有生成图表</td></tr>")
+        rows.append("<tr><td colspan=\"9\">没有生成图表</td></tr>")
     error_items = "".join(f"<li>{escape(error)}</li>" for error in errors)
     html = f"""<!doctype html>
 <html lang="zh-CN">
@@ -494,7 +533,7 @@ a{{color:#1565c0}}
 <p>状态文件：{escape(str(states_csv))}</p>
 <p>黄色表示反弹中，蓝色表示反弹结束，紫色叉号表示突破前高告警。</p>
 <table>
-<thead><tr><th>股票</th><th>名称</th><th>最新状态</th><th>反弹区间</th><th>结束区间</th><th>告警</th><th>图表</th></tr></thead>
+<thead><tr><th>股票</th><th>名称</th><th>最新状态</th><th>反弹区间</th><th>结束区间</th><th>告警</th><th>总市值</th><th>流通市值</th><th>图表</th></tr></thead>
 <tbody>{''.join(rows)}</tbody>
 </table>
 {f'<h2>未生成项目</h2><ul>{error_items}</ul>' if errors else ''}
@@ -522,6 +561,47 @@ def _latest_nonempty(values: pd.Series) -> str:
     nonempty = values.fillna("").astype(str).str.strip()
     nonempty = nonempty[nonempty.ne("")]
     return str(nonempty.iloc[-1]) if not nonempty.empty else ""
+
+
+def _resolve_chart_codes(
+    codes_file: str | Path,
+    stock_codes: Iterable[str] | None,
+) -> tuple[list[str], list[str]]:
+    if stock_codes is None:
+        return read_chart_codes(codes_file)
+    codes: list[str] = []
+    errors: list[str] = []
+    seen: set[str] = set()
+    for raw_code in stock_codes:
+        code = str(raw_code).strip().upper()
+        if not code:
+            continue
+        if code not in seen:
+            seen.add(code)
+            codes.append(code)
+    return codes, errors
+
+
+def _state_hover(row: dict[str, Any]) -> str:
+    return (
+        f"{row.get('trade_date', '')}"
+        f"<br>开盘：{_format_number(row.get('open'))}"
+        f"<br>最高：{_format_number(row.get('high'))}"
+        f"<br>最低：{_format_number(row.get('low'))}"
+        f"<br>收盘：{_format_number(row.get('close'))}"
+        f"<br>总市值：{format_market_cap(row.get('total_mv'))}"
+        f"<br>流通市值：{format_market_cap(row.get('circ_mv'))}"
+        f"<br>成交量：{_format_number(row.get('vol'), digits=0)}"
+        f"<br>状态：{row.get('state_description', '') or '-'}"
+        f"<br>周期：{row.get('cycle_id', 0)}"
+        f"<br>告警：{row.get('alert_code', '') or '-'}"
+    )
+
+
+def _format_number(value: Any, *, digits: int = 2) -> str:
+    if value is None or pd.isna(value):
+        return "-"
+    return f"{float(value):,.{digits}f}"
 
 
 def _normalise_date(value: Any) -> str:

@@ -33,6 +33,8 @@ def _states() -> pd.DataFrame:
                 "20260109",
             ],
             "close": [10.5, 11.5, 11.0, 10.2, 10.0],
+            "total_mv": [120000, 121000, 122000, 123000, 123456],
+            "circ_mv": [90000, 91000, 92000, 93000, 100000],
             "state": [
                 None,
                 int(PeakPullbackReboundState.REBOUND_ACTIVE),
@@ -125,3 +127,6 @@ def test_figure_marks_both_states_without_changing_candle_colors():
     assert ACTIVE_FILL_COLOR in fill_colors
     assert ENDED_FILL_COLOR in fill_colors
     assert any(trace.name == "突破前高告警" for trace in figure.data)
+    assert "12.35亿元" in figure.layout.title.text
+    assert "10.00亿元" in figure.layout.title.text
+    assert any(trace.name == "状态详情" for trace in figure.data)

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from html import escape
 from pathlib import Path
 from typing import Any
 
@@ -427,7 +428,9 @@ def generate_industry_stabilization_charts(
             index_name=index_name,
             initial_bars=initial_bars,
         )
-        figure.write_html(output / filename, include_plotlyjs=True)
+        # Batch chart runs share one local Plotly bundle instead of embedding it
+        # into every HTML file, which keeps large result sets practical offline.
+        figure.write_html(output / filename, include_plotlyjs="directory")
         intervals = build_stabilization_state_intervals(industry_states)
         latest = industry_states.sort_values("trade_date").iloc[-1]
         charts.append(
@@ -440,13 +443,66 @@ def generate_industry_stabilization_charts(
                 "filename": filename,
             }
         )
+    index_path = _write_chart_index(output, charts, errors, state_path)
     return {
+        "index": str(index_path),
         "states_csv": str(state_path),
         "episodes_csv": str(episodes_csv),
         "output_directory": str(output),
         "charts": charts,
         "errors": errors,
     }
+
+
+def _write_chart_index(
+    output_directory: Path,
+    charts: list[dict[str, Any]],
+    errors: list[str],
+    states_csv: Path,
+) -> Path:
+    rows = [
+        "<tr>"
+        f"<td>{escape(item['index_code'])}</td>"
+        f"<td>{escape(item['name'])}</td>"
+        f"<td>{escape(item['latest_state'])}</td>"
+        f"<td>{item['intervals']}</td>"
+        f"<td>{item['confirmed_episodes']}</td>"
+        f"<td><a href=\"{escape(item['filename'])}\">查看图表</a></td>"
+        "</tr>"
+        for item in charts
+    ]
+    if not rows:
+        rows.append('<tr><td colspan="6">没有生成图表</td></tr>')
+    error_items = "".join(f"<li>{escape(error)}</li>" for error in errors)
+    html = f"""<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>策略三图表入口</title>
+<style>
+body{{font-family:Arial,"Microsoft YaHei",sans-serif;margin:28px;color:#222}}
+table{{border-collapse:collapse;width:100%;max-width:1000px}}
+th,td{{border:1px solid #ddd;padding:9px;text-align:left}}
+th{{background:#f4f6f8}}
+a{{color:#1565c0}}
+</style>
+</head>
+<body>
+<h1>策略三：申万行业指数企稳状态</h1>
+<p>状态文件：{escape(str(states_csv))}</p>
+<p>浅蓝色表示企稳候选区间，黄色表示已确认企稳区间。</p>
+<table>
+<thead><tr><th>行业指数</th><th>名称</th><th>最新状态</th><th>状态区间</th><th>确认周期</th><th>图表</th></tr></thead>
+<tbody>{''.join(rows)}</tbody>
+</table>
+{f'<h2>未生成项目</h2><ul>{error_items}</ul>' if errors else ''}
+</body>
+</html>
+"""
+    path = output_directory / "index.html"
+    path.write_text(html, encoding="utf-8")
+    return path
 
 
 def _finish_interval(active: dict[str, Any]) -> StabilizationInterval:

@@ -29,6 +29,8 @@ def _states() -> pd.DataFrame:
                 "20260109",
             ],
             "close": [10.5, 11.5, 11.0, 12.0, 11.0],
+            "total_mv": [120000, 121000, 122000, 123000, 123456],
+            "circ_mv": [90000, 91000, 92000, 93000, 100000],
             "state": [
                 int(StockShortState.NORMAL),
                 int(StockShortState.HIGH_CANDIDATE),
@@ -137,3 +139,5 @@ def test_figure_keeps_red_green_candles_and_adds_yellow_regions():
     assert any(shape.fillcolor == SHORT_FILL_COLOR for shape in figure.layout.shapes)
     assert any(trace.name == "做空区域开始" for trace in figure.data)
     assert any(trace.name == "策略异常" for trace in figure.data)
+    assert "12.35亿元" in figure.layout.title.text
+    assert "10.00亿元" in figure.layout.title.text

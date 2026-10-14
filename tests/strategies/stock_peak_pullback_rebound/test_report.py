@@ -55,6 +55,8 @@ def test_state_report_saves_inside_dated_output(tmp_path):
                 "stock_name": "测试股票",
                 "trade_date": "20261009",
                 "close": 10.5,
+                "total_mv": 1_234_567.89,
+                "circ_mv": 987_654.32,
                 "state": 10,
                 "state_name": "REBOUND_ACTIVE",
                 "state_description": "高点回落后反弹中",
@@ -81,4 +83,7 @@ def test_state_report_saves_inside_dated_output(tmp_path):
 
     assert csv_path == tmp_path / "2026-10-09" / "states.csv"
     assert json.loads(json_path.read_text(encoding="utf-8"))["summary"]["stocks"] == 1
-    assert "高点回落后反弹中" in markdown_path.read_text(encoding="utf-8")
+    markdown = markdown_path.read_text(encoding="utf-8")
+    assert "高点回落后反弹中" in markdown
+    assert "123.46亿元" in markdown
+    assert "98.77亿元" in markdown

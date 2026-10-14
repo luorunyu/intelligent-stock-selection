@@ -1,11 +1,12 @@
-"""策略二：计算个股与申万二级或三级行业指数的同方向比例。"""
+"""策略二：计算个股与申万二级或三级行业指数的收益联动。"""
 
 from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Any, Iterable, Iterator
 
+import numpy as np
 import pandas as pd
 
 from stock_selection.data.tushare_cache import DEFAULT_CACHE_ROOT
@@ -34,6 +35,11 @@ OUTPUT_COLUMNS = [
     "opposite_direction_days",
     "neutral_days",
     "same_direction_ratio",
+    "regression_observations",
+    "return_correlation",
+    "industry_beta",
+    "industry_r_squared",
+    "regression_quality",
     "data_quality",
     "missing_reason",
     "latest_stock_date",
@@ -53,10 +59,11 @@ def calculate_stock_industry_direction(
     include_st: bool = False,
     industry_codes: Iterable[str] | None = None,
 ) -> pd.DataFrame:
-    """按当前申万成分关系计算每只股票与行业的同方向比例。
+    """按当前申万成分关系计算每只股票与行业的最新窗口指标。
 
     一只股票如果属于多个指定层级行业，会保留多行结果。零涨跌日没有明确方向，
-    因此记入 ``neutral_days``，但不进入同方向比例的分母。
+    因此记入 ``neutral_days``，但不进入同方向比例的分母。相关系数、Beta 和
+    R² 使用同一窗口内的全部已对齐收益率，包含零收益日。
     """
     normalised_level = str(level).strip().upper()
     if normalised_level not in SUPPORTED_LEVELS:
@@ -115,6 +122,131 @@ def calculate_stock_industry_direction(
         ascending=[True, False, True, True],
         na_position="last",
     ).reset_index(drop=True)
+
+
+def calculate_stock_industry_direction_history(
+    stock_daily: pd.DataFrame,
+    industry_daily: pd.DataFrame,
+    industry_dictionary: dict[str, Any],
+    *,
+    level: str,
+    window: int = 20,
+    start_date: str | None = None,
+    end_date: str | None = None,
+    stock_basic: pd.DataFrame | None = None,
+    include_st: bool = False,
+    industry_codes: Iterable[str] | None = None,
+) -> pd.DataFrame:
+    """一次计算所有完整历史滚动窗口。
+
+    返回长表，每行是一个“日期-股票-行业”关系。``start_date`` 只限制
+    输出日期，计算该日窗口时仍会使用更早的已加载数据。
+    """
+    batches = list(
+        iter_stock_industry_direction_history(
+            stock_daily,
+            industry_daily,
+            industry_dictionary,
+            level=level,
+            window=window,
+            start_date=start_date,
+            end_date=end_date,
+            stock_basic=stock_basic,
+            include_st=include_st,
+            industry_codes=industry_codes,
+        )
+    )
+    if not batches:
+        return pd.DataFrame(columns=OUTPUT_COLUMNS)
+    return pd.concat(batches, ignore_index=True)[OUTPUT_COLUMNS].sort_values(
+        ["as_of_date", "industry_code", "ts_code"],
+        ascending=[True, True, True],
+    ).reset_index(drop=True)
+
+
+def iter_stock_industry_direction_history(
+    stock_daily: pd.DataFrame,
+    industry_daily: pd.DataFrame,
+    industry_dictionary: dict[str, Any],
+    *,
+    level: str,
+    window: int = 20,
+    start_date: str | None = None,
+    end_date: str | None = None,
+    stock_basic: pd.DataFrame | None = None,
+    include_st: bool = False,
+    industry_codes: Iterable[str] | None = None,
+    batch_relationships: int = 50,
+) -> Iterator[pd.DataFrame]:
+    """分批产生历史滚动长表，供大规模历史输出流式写入。"""
+    normalised_level = str(level).strip().upper()
+    if normalised_level not in SUPPORTED_LEVELS:
+        raise ValueError("level must be L2 or L3")
+    if window <= 1:
+        raise ValueError("window must be greater than 1")
+    if batch_relationships <= 0:
+        raise ValueError("batch_relationships must be greater than zero")
+
+    first_output_date = _normalise_optional_date(start_date, "start_date")
+    last_output_date = _normalise_optional_date(end_date, "end_date")
+    if first_output_date and last_output_date and first_output_date > last_output_date:
+        raise ValueError("start_date must be on or before end_date")
+
+    stocks = normalise_stock_daily(stock_daily, stock_basic=stock_basic)
+    industries = normalise_industry_daily(industry_daily)
+    if last_output_date:
+        stocks = stocks[stocks["trade_date"].le(last_output_date)]
+        industries = industries[industries["trade_date"].le(last_output_date)]
+
+    memberships = build_stock_industry_memberships(
+        industry_dictionary,
+        normalised_level,
+        industry_codes=industry_codes,
+    )
+    stock_groups = {
+        code: group.set_index("trade_date")
+        for code, group in stocks.groupby("ts_code")
+    }
+    industry_groups = {
+        code: group.set_index("trade_date")
+        for code, group in industries.groupby("industry_code")
+    }
+    names = _stock_name_map(stocks, stock_basic)
+
+    frames: list[pd.DataFrame] = []
+    for membership in memberships.itertuples(index=False):
+        stock_name = names.get(membership.ts_code, "")
+        if _is_st_name(stock_name) and not include_st:
+            continue
+        stock = stock_groups.get(membership.ts_code)
+        industry = industry_groups.get(membership.industry_code)
+        if stock is None or stock.empty or industry is None or industry.empty:
+            continue
+        frame = _calculate_one_history(
+            stock=stock,
+            industry=industry,
+            ts_code=membership.ts_code,
+            stock_name=stock_name,
+            industry_code=membership.industry_code,
+            industry_name=membership.industry_name,
+            industry_level=normalised_level,
+            l1_code=membership.l1_code,
+            l1_name=membership.l1_name,
+            l2_code=membership.l2_code,
+            l2_name=membership.l2_name,
+            l3_code=membership.l3_code,
+            l3_name=membership.l3_name,
+            window=window,
+            start_date=first_output_date,
+        )
+        if not frame.empty:
+            frames.append(frame)
+        if len(frames) >= batch_relationships:
+            yield pd.concat(frames, ignore_index=True)[OUTPUT_COLUMNS]
+            frames.clear()
+
+    if frames:
+        yield pd.concat(frames, ignore_index=True)[OUTPUT_COLUMNS]
 
 
 def screen_stock_industry_direction(
@@ -362,6 +494,7 @@ def _calculate_one(
             "window": window,
             "observations": 0,
             "direction_observations": 0,
+            "regression_observations": 0,
             "latest_stock_date": _latest_index(stock),
             "latest_industry_date": _latest_index(industry),
         }
@@ -392,6 +525,8 @@ def _calculate_one(
             f"requires {window} aligned returns but found {len(aligned)}",
         )
 
+    row.update(_calculate_regression_metrics(aligned))
+
     directional = aligned[
         aligned["stock_return"].ne(0) & aligned["industry_return"].ne(0)
     ]
@@ -417,6 +552,151 @@ def _calculate_one(
         }
     )
     return row
+
+
+def _calculate_one_history(
+    *,
+    stock: pd.DataFrame,
+    industry: pd.DataFrame,
+    ts_code: str,
+    stock_name: str,
+    industry_code: str,
+    industry_name: str,
+    industry_level: str,
+    l1_code: str,
+    l1_name: str,
+    l2_code: str,
+    l2_name: str,
+    l3_code: str,
+    l3_name: str,
+    window: int,
+    start_date: str,
+) -> pd.DataFrame:
+    aligned = stock[["return_pct"]].rename(columns={"return_pct": "stock_return"}).join(
+        industry[["return_pct"]].rename(columns={"return_pct": "industry_return"}),
+        how="inner",
+    )
+    aligned = aligned.dropna().sort_index()
+    if len(aligned) < window:
+        return pd.DataFrame(columns=OUTPUT_COLUMNS)
+
+    stock_returns = aligned["stock_return"].astype(float) / 100.0
+    industry_returns = aligned["industry_return"].astype(float) / 100.0
+    directional = stock_returns.ne(0) & industry_returns.ne(0)
+    same_up = (stock_returns.gt(0) & industry_returns.gt(0)).astype("int64")
+    same_down = (stock_returns.lt(0) & industry_returns.lt(0)).astype("int64")
+    opposite = (
+        directional & ((stock_returns.gt(0) & industry_returns.lt(0))
+                       | (stock_returns.lt(0) & industry_returns.gt(0)))
+    ).astype("int64")
+
+    rolling = pd.DataFrame(index=aligned.index)
+    rolling["same_up_days"] = same_up.rolling(window, min_periods=window).sum()
+    rolling["same_down_days"] = same_down.rolling(window, min_periods=window).sum()
+    rolling["opposite_direction_days"] = opposite.rolling(window, min_periods=window).sum()
+    rolling["direction_observations"] = (
+        directional.astype("int64").rolling(window, min_periods=window).sum()
+    )
+    rolling["neutral_days"] = window - rolling["direction_observations"]
+    rolling["same_direction_days"] = (
+        rolling["same_up_days"] + rolling["same_down_days"]
+    )
+    rolling["same_direction_ratio"] = (
+        rolling["same_direction_days"] / rolling["direction_observations"]
+    ).where(rolling["direction_observations"].gt(0))
+
+    industry_variance = industry_returns.rolling(window, min_periods=window).var()
+    stock_variance = stock_returns.rolling(window, min_periods=window).var()
+    covariance = stock_returns.rolling(window, min_periods=window).cov(industry_returns)
+    correlation = stock_returns.rolling(window, min_periods=window).corr(industry_returns)
+    industry_constant = industry_variance.abs().le(_VARIANCE_EPSILON)
+    stock_constant = stock_variance.abs().le(_VARIANCE_EPSILON)
+    rolling["industry_beta"] = (covariance / industry_variance).where(~industry_constant)
+    rolling["return_correlation"] = correlation.where(
+        ~industry_constant & ~stock_constant
+    )
+    rolling["industry_r_squared"] = rolling["return_correlation"].pow(2).clip(0, 1)
+    rolling["regression_quality"] = np.select(
+        [industry_constant, stock_constant],
+        ["zero_industry_variance", "zero_stock_variance"],
+        default="ok",
+    )
+
+    rolling = rolling.iloc[window - 1 :].copy()
+    if start_date:
+        rolling = rolling[rolling.index >= start_date]
+    if rolling.empty:
+        return pd.DataFrame(columns=OUTPUT_COLUMNS)
+
+    integer_columns = [
+        "direction_observations",
+        "same_direction_days",
+        "same_up_days",
+        "same_down_days",
+        "opposite_direction_days",
+        "neutral_days",
+    ]
+    rolling[integer_columns] = rolling[integer_columns].astype("int64")
+    rolling.insert(0, "as_of_date", rolling.index.astype(str))
+    rolling["ts_code"] = ts_code
+    rolling["stock_name"] = stock_name
+    rolling["industry_code"] = industry_code
+    rolling["industry_name"] = industry_name
+    rolling["industry_level"] = industry_level
+    rolling["l1_code"] = l1_code
+    rolling["l1_name"] = l1_name
+    rolling["l2_code"] = l2_code
+    rolling["l2_name"] = l2_name
+    rolling["l3_code"] = l3_code
+    rolling["l3_name"] = l3_name
+    rolling["window"] = int(window)
+    rolling["observations"] = int(window)
+    rolling["regression_observations"] = int(window)
+    rolling["data_quality"] = np.where(
+        rolling["direction_observations"].gt(0),
+        "ok",
+        "no_direction_observations",
+    )
+    rolling["missing_reason"] = np.where(
+        rolling["direction_observations"].gt(0),
+        "",
+        "all aligned returns contain zero",
+    )
+    rolling["latest_stock_date"] = rolling["as_of_date"]
+    rolling["latest_industry_date"] = rolling["as_of_date"]
+    return rolling.reset_index(drop=True)
+
+
+_VARIANCE_EPSILON = 1e-15
+
+
+def _calculate_regression_metrics(aligned: pd.DataFrame) -> dict[str, Any]:
+    """使用日收益率计算带截距一元回归的相关系数、Beta 和 R²。"""
+    stock_returns = aligned["stock_return"].astype(float) / 100.0
+    industry_returns = aligned["industry_return"].astype(float) / 100.0
+    result: dict[str, Any] = {
+        "regression_observations": int(len(aligned)),
+        "return_correlation": None,
+        "industry_beta": None,
+        "industry_r_squared": None,
+        "regression_quality": "ok",
+    }
+    industry_variance = float(industry_returns.var(ddof=1))
+    stock_variance = float(stock_returns.var(ddof=1))
+    if abs(industry_variance) <= _VARIANCE_EPSILON:
+        result["regression_quality"] = "zero_industry_variance"
+        return result
+
+    covariance = float(stock_returns.cov(industry_returns))
+    result["industry_beta"] = covariance / industry_variance
+    if abs(stock_variance) <= _VARIANCE_EPSILON:
+        result["regression_quality"] = "zero_stock_variance"
+        return result
+
+    correlation = float(stock_returns.corr(industry_returns))
+    result["return_correlation"] = correlation
+    result["industry_r_squared"] = min(1.0, max(0.0, correlation**2))
+    return result
 
 
 def _read_daily_directory(directory: Path, as_of_date: str | None) -> pd.DataFrame:
@@ -463,3 +743,12 @@ def _normalise_date(value: Any) -> str:
         return ""
     text = str(value).strip().replace("-", "")
     return text[:8] if len(text) >= 8 and text[:8].isdigit() else ""
+
+
+def _normalise_optional_date(value: Any, parameter_name: str) -> str:
+    if value is None:
+        return ""
+    normalised = _normalise_date(value)
+    if not normalised:
+        raise ValueError(f"{parameter_name} must be a valid date")
+    return normalised

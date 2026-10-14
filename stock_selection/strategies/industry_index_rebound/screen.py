@@ -38,8 +38,8 @@ def calculate_industry_index_screen(
     window: int = 20,
 ) -> pd.DataFrame:
     """按行业指数计算近月低点后的简单涨跌统计。"""
-   
-    data = index_data.copy()
+
+    data = normalise_industry_index_data(index_data)
     if as_of_date is not None:
         target_date = _normalise_date(as_of_date)
         if not target_date:
