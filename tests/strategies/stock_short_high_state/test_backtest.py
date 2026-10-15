@@ -20,10 +20,11 @@ def _states(closes: list[float]):
     return calculate_stock_short_states(
         _bars(closes),
         lookback_days=5,
+        candidate_pullback_pct=0.15,
         confirm_drawdown_pct=0.30,
         rebound_pct=0.10,
         high_heat_days=3,
-        trough_heat_days=3,
+        trough_confirm_days=3,
     )
 
 
@@ -39,50 +40,52 @@ def test_backtest_pairs_candidate_and_numbered_peak_states():
             21,
             14,
             12,
-            13.2,
-            14,
-            13.2,
-            11,
+            12.2,
             12.1,
-            12.8,
+            13.3,
+            13.0,
+            12.2,
+            13.4,
             12.1,
         ]
     )
-    states.loc[states["trade_date"].eq("20250106"), "total_mv"] = 1_000_000
+    states.loc[states["trade_date"].eq("20250108"), "total_mv"] = 1_000_000
 
-    backtest = build_short_trade_backtest(states, as_of_date="20250116")
+    backtest = build_short_trade_backtest(states, as_of_date="20250117")
 
     assert backtest["summary"]["signals"] == 3
     assert backtest["summary"]["completed_trades"] == 3
-    assert backtest["summary"]["wins"] == 1
-    assert backtest["summary"]["breakeven"] == 2
-    assert backtest["summary"]["win_rate"] == pytest.approx(1 / 3)
+    assert backtest["summary"]["wins"] == 3
+    assert backtest["summary"]["breakeven"] == 0
+    assert backtest["summary"]["win_rate"] == pytest.approx(1)
 
     candidate = backtest["trades"][0]
-    assert candidate["entry_state"] == "HIGH_CANDIDATE"
-    assert candidate["entry_source"] == "RECONSTRUCTED_STATE_START"
-    assert candidate["entry_date"] == "20250106"
-    assert candidate["entry_close"] == 20
+    assert candidate["entry_state"] == "HIGH_CANDIDATE_PULLBACK"
+    assert candidate["entry_source"] == "OBSERVED_HIGH_CANDIDATE_PULLBACK"
+    assert candidate["entry_date"] == "20250108"
+    assert candidate["entry_close"] == 17.8
     assert candidate["entry_total_mv"] == 1_000_000
     assert candidate["average_total_mv"] == 1_000_000
     assert candidate["market_cap_observation_days"] == 1
-    assert candidate["exit_state"] == "TROUGH_WAIT_REBOUND"
-    assert candidate["exit_date"] == "20250108"
+    assert candidate["exit_state"] == "TROUGH_CANDIDATE"
+    assert candidate["exit_date"] == "20250109"
     assert candidate["exit_close"] == 14
-    assert candidate["return_pct"] == pytest.approx(20 / 14 - 1)
-    assert candidate["max_drawdown_pct"] == pytest.approx(1 - (20 / 21))
+    assert candidate["return_pct"] == pytest.approx(1 - 14 / 17.8)
+    assert candidate["max_drawdown_pct"] == pytest.approx(0)
 
     first_peak = backtest["trades"][1]
     assert first_peak["entry_state"] == "PEAK_1"
-    assert first_peak["exit_state"] == "PEAK_1_PULLBACK"
-    assert first_peak["return_pct"] == pytest.approx(0)
-    assert first_peak["mae_pct"] == pytest.approx(14 / 13.2 - 1)
+    assert first_peak["exit_state"] == "TROUGH_REGION"
+    assert first_peak["return_pct"] == pytest.approx(1 - 12.2 / 13.3)
+    assert first_peak["mae_pct"] == pytest.approx(0)
 
 
 def test_backtest_separates_open_and_invalidated_trades():
     backtest = build_short_trade_backtest(
-        _states([10, 10, 10, 10, 10, 20, 21, 14, 12, 13.2, 22, 23]),
-        as_of_date="20250112",
+        _states(
+            [10, 10, 10, 10, 10, 20, 21, 14, 12, 12.2, 12.1, 13.3, 22, 23]
+        ),
+        as_of_date="20250114",
     )
 
     assert backtest["summary"]["completed_trades"] == 1
@@ -96,14 +99,14 @@ def test_backtest_separates_open_and_invalidated_trades():
     )
     assert invalidated["entry_state"] == "PEAK_1"
     assert invalidated["return_pct"] is None
-    assert invalidated["evaluation_date"] == "20250111"
+    assert invalidated["evaluation_date"] == "20250113"
 
     open_trade = next(
         trade for trade in backtest["trades"] if trade["status"] == "OPEN"
     )
     assert open_trade["entry_state"] == "HIGH_CANDIDATE"
     assert open_trade["entry_source"] == "OBSERVED_HIGH_CANDIDATE"
-    assert open_trade["entry_date"] == "20250112"
+    assert open_trade["entry_date"] == "20250114"
     assert open_trade["entry_close"] == 23
     assert open_trade["return_pct"] is None
 
@@ -121,7 +124,7 @@ def test_backtest_report_is_saved_as_an_additional_markdown_file(tmp_path):
     markdown = path.read_text(encoding="utf-8")
     assert "状态做空回测" in markdown
     assert "HIGH_CANDIDATE" in markdown
-    assert "42.86%" in markdown
+    assert "30.00%" in markdown
     assert "已确认周期" in markdown
     assert "short_trade_backtest.html" in markdown
 
@@ -133,12 +136,30 @@ def test_backtest_report_is_saved_as_an_additional_markdown_file(tmp_path):
     assert "<th>最大回撤</th>" in html
     assert "main{width:100%;max-width:none;margin:0}" in html
     assert "HIGH_CANDIDATE" in html
-    assert "42.86%" in html
+    assert "30.00%" in html
 
 
 def test_backtest_splits_trades_by_holding_period_average_market_cap(tmp_path):
     low = _states(
-        [10, 10, 10, 10, 10, 20, 21, 14, 12, 13.2, 14, 13.2]
+        [
+            10,
+            10,
+            10,
+            10,
+            10,
+            20,
+            21,
+            17.8,
+            14,
+            12,
+            12.2,
+            12.1,
+            13.3,
+            13.0,
+            12.2,
+            13.4,
+            12.1,
+        ]
     )
     low["total_mv"] = 2_000_000
     boundary = low.copy()
@@ -152,12 +173,12 @@ def test_backtest_splits_trades_by_holding_period_average_market_cap(tmp_path):
 
     backtest = build_short_trade_backtest(
         pd.concat([low, boundary, missing], ignore_index=True),
-        as_of_date="20250112",
+        as_of_date="20250116",
     )
     split = split_short_trade_backtest_by_average_market_cap(backtest)
 
-    assert split["below"]["summary"]["signals"] == 2
-    assert split["at_least"]["summary"]["signals"] == 2
+    assert split["below"]["summary"]["signals"] == 3
+    assert split["at_least"]["summary"]["signals"] == 3
     assert {
         trade["ts_code"] for trade in split["below"]["trades"]
     } == {"000001.SZ"}
@@ -165,7 +186,7 @@ def test_backtest_splits_trades_by_holding_period_average_market_cap(tmp_path):
         trade["ts_code"] for trade in split["at_least"]["trades"]
     } == {"600000.SH"}
     market_cap_filter = split["below"]["metadata"]["market_cap_filter"]
-    assert market_cap_filter["missing_market_cap_trades_excluded"] == 2
+    assert market_cap_filter["missing_market_cap_trades_excluded"] == 3
 
     below_path = save_short_trade_backtest_report(
         split["below"],
@@ -180,8 +201,27 @@ def test_backtest_splits_trades_by_holding_period_average_market_cap(tmp_path):
 
 def test_backtest_filters_a_fixed_lendable_stock_pool(tmp_path):
     backtest = build_short_trade_backtest(
-        _states([10, 10, 10, 10, 10, 20, 21, 14, 12, 13.2, 14, 13.2]),
-        as_of_date="20250112",
+        _states(
+            [
+                10,
+                10,
+                10,
+                10,
+                10,
+                20,
+                21,
+                14,
+                12,
+                12.2,
+                12.1,
+                13.3,
+                13.0,
+                12.2,
+                13.4,
+                12.1,
+            ]
+        ),
+        as_of_date="20250116",
     )
 
     filtered = filter_short_trade_backtest_by_stock_pool(
@@ -195,7 +235,7 @@ def test_backtest_filters_a_fixed_lendable_stock_pool(tmp_path):
         matched_state_stock_count=1,
     )
 
-    assert filtered["summary"]["signals"] == 2
+    assert filtered["summary"]["signals"] == 3
     pool = filtered["metadata"]["stock_pool_filter"]
     assert pool["eligible_code_count"] == 2
     assert pool["matched_state_stock_count"] == 1

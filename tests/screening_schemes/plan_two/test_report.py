@@ -35,10 +35,11 @@ def test_saves_csv_json_and_markdown(tmp_path):
         min_available_quantity=1,
         required_lending_status="正常",
         lookback_days=120,
+        candidate_pullback_pct=0.15,
         confirm_drawdown_pct=0.30,
         rebound_pct=0.10,
         high_heat_days=10,
-        trough_heat_days=5,
+        trough_confirm_days=5,
         include_st=False,
         allow_stale_market_data=False,
     )

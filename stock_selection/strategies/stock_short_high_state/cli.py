@@ -7,6 +7,7 @@ from datetime import date
 import json
 from pathlib import Path
 import sys
+from time import time
 
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -32,11 +33,12 @@ from stock_selection.strategies.stock_short_high_state.report import (
     save_stock_short_state_report,
 )
 from stock_selection.strategies.stock_short_high_state.screen import (
+    DEFAULT_CANDIDATE_PULLBACK_PCT,
     DEFAULT_CONFIRM_DRAWDOWN_PCT,
     DEFAULT_HIGH_HEAT_DAYS,
     DEFAULT_LOOKBACK_DAYS,
     DEFAULT_REBOUND_PCT,
-    DEFAULT_TROUGH_HEAT_DAYS,
+    DEFAULT_TROUGH_CONFIRM_DAYS,
     calculate_stock_short_states,
     read_cached_stock_daily,
 )
@@ -51,6 +53,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--stock-code", action="append", default=None)
     parser.add_argument("--lookback-days", type=int, default=DEFAULT_LOOKBACK_DAYS)
     parser.add_argument(
+        "--candidate-pullback-pct",
+        type=float,
+        default=DEFAULT_CANDIDATE_PULLBACK_PCT,
+    )
+    parser.add_argument(
         "--confirm-drawdown-pct",
         type=float,
         default=DEFAULT_CONFIRM_DRAWDOWN_PCT,
@@ -60,10 +67,14 @@ def parse_args() -> argparse.Namespace:
         "--high-heat-days", type=int, default=DEFAULT_HIGH_HEAT_DAYS
     )
     parser.add_argument(
-        "--trough-heat-days", type=int, default=DEFAULT_TROUGH_HEAT_DAYS
+        "--trough-confirm-days",
+        "--trough-heat-days",
+        dest="trough_confirm_days",
+        type=int,
+        default=DEFAULT_TROUGH_CONFIRM_DAYS,
     )
     parser.add_argument("--include-st", action="store_true")
-    parser.add_argument("--write-report", action="store_true")
+    parser.add_argument("--write-report", action="store_true",default=True)
     parser.add_argument("--records-root", default=str(DEFAULT_OUTPUT_ROOT))
     parser.add_argument("--lending-file", default=None)
     parser.add_argument("--lending-root", default=str(DEFAULT_LENDING_ROOT))
@@ -71,23 +82,27 @@ def parse_args() -> argparse.Namespace:
 
 
 def main() -> int:
+    begin_time = time()
     args = parse_args()
     daily, basic = read_cached_stock_daily(
         cache_root=args.cache_root,
         as_of_date=args.date,
     )
+    data_cost_time = time()
     states = calculate_stock_short_states(
         daily,
         as_of_date=args.date,
         lookback_days=args.lookback_days,
+        candidate_pullback_pct=args.candidate_pullback_pct,
         confirm_drawdown_pct=args.confirm_drawdown_pct,
         rebound_pct=args.rebound_pct,
         high_heat_days=args.high_heat_days,
-        trough_heat_days=args.trough_heat_days,
+        trough_confirm_days=args.trough_confirm_days,
         stock_codes=args.stock_code,
         stock_basic=basic,
         include_st=args.include_st,
     )
+    state_cal_time = time()
     if not states.empty:
         market_caps = load_cached_market_caps(
             start_date=str(states["trade_date"].min()),
@@ -96,18 +111,20 @@ def main() -> int:
             cache_root=args.cache_root,
         )
         states = merge_market_caps(states, market_caps)
+    state_merge_time = time()
     report = build_stock_short_state_report(
         states,
         as_of_date=args.date,
         lookback_days=args.lookback_days,
+        candidate_pullback_pct=args.candidate_pullback_pct,
         confirm_drawdown_pct=args.confirm_drawdown_pct,
         rebound_pct=args.rebound_pct,
         high_heat_days=args.high_heat_days,
-        trough_heat_days=args.trough_heat_days,
+        trough_confirm_days=args.trough_confirm_days,
     )
     if args.write_report:
         backtest = build_short_trade_backtest(states, as_of_date=args.date)
-        csv_path, json_path, markdown_path = save_stock_short_state_report(
+        csv_path  = save_stock_short_state_report(
             report,
             states,
             records_root=args.records_root,
@@ -165,8 +182,8 @@ def main() -> int:
             )
         output = {
             "csv": str(csv_path),
-            "json": str(json_path),
-            "markdown": str(markdown_path),
+            # "json": str(json_path),
+            # "markdown": str(markdown_path),
             "short_trade_backtest": str(backtest_path),
             "short_trade_backtest_avg_mv_below_300yi": str(below_300yi_path),
             "short_trade_backtest_avg_mv_at_least_300yi": str(
@@ -185,9 +202,11 @@ def main() -> int:
         if lending_backtest is not None and lending_backtest_path is not None:
             output["short_trade_backtest_lendable"] = str(lending_backtest_path)
             output["backtest_summary_lendable"] = lending_backtest["summary"]
-    else:
-        output = report
-    print(json.dumps(output, ensure_ascii=False, indent=2, default=str))
+    # else:
+        # output = report
+    # print(json.dumps(output, ensure_ascii=False, indent=2, default=str))
+    end_time = time()
+    print(f"读数据花费 {data_cost_time - begin_time}秒，计算状态花费{state_cal_time - data_cost_time}秒,状态merge花了{state_merge_time-state_cal_time}秒， 回撤花了{end_time - state_merge_time}秒")
     return 0
 
 

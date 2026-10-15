@@ -26,6 +26,7 @@ _TRADE_STATUS_LABELS = {
 }
 _ENTRY_SOURCE_LABELS = {
     "OBSERVED_HIGH_CANDIDATE": "实时候选",
+    "OBSERVED_HIGH_CANDIDATE_PULLBACK": "候选回调",
     "RECONSTRUCTED_STATE_START": "候选起点重建",
     "OBSERVED_PEAK_START": "波峰开始",
 }
@@ -36,10 +37,11 @@ def build_stock_short_state_report(
     *,
     as_of_date: str,
     lookback_days: int,
+    candidate_pullback_pct: float,
     confirm_drawdown_pct: float,
     rebound_pct: float,
     high_heat_days: int,
-    trough_heat_days: int,
+    trough_confirm_days: int,
 ) -> dict[str, Any]:
     latest = latest_stock_short_states(states)
     alerts = (
@@ -57,10 +59,11 @@ def build_stock_short_state_report(
             "report_type": "stock_short_high_state",
             "as_of_date": as_of_date,
             "lookback_days": lookback_days,
+            "candidate_pullback_pct": candidate_pullback_pct,
             "confirm_drawdown_pct": confirm_drawdown_pct,
             "rebound_pct": rebound_pct,
             "high_heat_days": high_heat_days,
-            "trough_heat_days": trough_heat_days,
+            "trough_confirm_days": trough_confirm_days,
             "generated_at": datetime.now().astimezone().isoformat(timespec="seconds"),
         },
         "summary": {
@@ -85,10 +88,11 @@ def render_stock_short_state_markdown(report: dict[str, Any]) -> str:
         "## 默认规则",
         "",
         f"- 半年窗口：{metadata['lookback_days']}个交易日",
+        f"- 候选回调起点：{metadata['candidate_pullback_pct']:.1%}",
         f"- 最高点确认回落：{metadata['confirm_drawdown_pct']:.1%}",
         f"- 波峰开启反弹：{metadata['rebound_pct']:.1%}",
         f"- 最高点热度窗口：{metadata['high_heat_days']}个交易日",
-        f"- 波谷热度窗口：{metadata['trough_heat_days']}个交易日",
+        f"- 波谷确认窗口：{metadata['trough_confirm_days']}个交易日",
         "",
         "## 汇总",
         "",
@@ -127,18 +131,8 @@ def save_stock_short_state_report(
     )
     directory.mkdir(parents=True, exist_ok=True)
     csv_path = directory / "states.csv"
-    json_path = directory / "report.json"
-    markdown_path = directory / "report.md"
     states.to_csv(csv_path, index=False, encoding="utf-8-sig")
-    json_path.write_text(
-        json.dumps(_json_safe(report), ensure_ascii=False, indent=2, allow_nan=False)
-        + "\n",
-        encoding="utf-8",
-    )
-    markdown_path.write_text(
-        render_stock_short_state_markdown(report), encoding="utf-8"
-    )
-    return csv_path, json_path, markdown_path
+    return csv_path
 
 
 def render_short_trade_backtest_markdown(
@@ -170,9 +164,8 @@ def render_short_trade_backtest_markdown(
         "",
         "## 交易规则",
         "",
-        "- 做空开仓：首次进入 `HIGH_CANDIDATE`，或首次进入某个 `PEAK_n`。连续状态不重复开仓。",
-        "- 做空结束：`HIGH_CANDIDATE` 对应首次进入 `TROUGH_WAIT_REBOUND`；`PEAK_n` 对应首次进入同序号的 `PEAK_n_PULLBACK`。",
-        "- 已确认周期中的 `HIGH_CANDIDATE` 已被状态算法回填为 `HIGH_CONFIRMED`，报告使用 `state_start_date/state_start_close` 重建当时实际可见的候选开仓点，不把 `HIGH_CONFIRMED` 当作事后开仓信号。",
+        "- 做空开仓：首次进入 `HIGH_CANDIDATE_PULLBACK`，或首次进入某个 `PEAK_n`。连续状态不重复开仓。",
+        "- 做空结束：`HIGH_CANDIDATE_PULLBACK` 对应首次进入 `TROUGH_CANDIDATE`；`PEAK_n` 对应重新进入 `TROUGH_REGION`。",
         "- 新高失效或周期异常切换且未到结束状态的交易标记为失效；截至报告日未到结束状态的交易标记为持仓中。两者均不计入已完成交易的收益和胜率。",
         "- 收益率按 `开仓价 / 平仓价 - 1` 计算。未计手续费、滑点、融券成本、涨跌停限制和实际可融券约束。",
         "- `PEAK_n_PULLBACK` 本身定义为收盘价回到或跌破波峰开仓价，所以正常结束的波峰交易按构造不会产生负收益；波峰胜率是有条件完成样本的统计，必须同时看持仓中、失效数量和回撤，不能单独解释为预测能力。",
@@ -419,8 +412,8 @@ th:first-child,td:first-child,th:nth-child(3),td:nth-child(3),th:nth-child(4),td
 <h1>{escape(title)}</h1>
 <h2>交易规则</h2>
 <ul class="rules">
-<li>做空开仓：首次进入 <code>HIGH_CANDIDATE</code>，或首次进入某个 <code>PEAK_n</code>。连续状态不重复开仓。</li>
-<li>做空结束：<code>HIGH_CANDIDATE</code> 对应首次进入 <code>TROUGH_WAIT_REBOUND</code>；<code>PEAK_n</code> 对应首次进入同序号的 <code>PEAK_n_PULLBACK</code>。</li>
+<li>做空开仓：首次进入 <code>HIGH_CANDIDATE_PULLBACK</code>，或首次进入某个 <code>PEAK_n</code>。连续状态不重复开仓。</li>
+<li>做空结束：<code>HIGH_CANDIDATE_PULLBACK</code> 对应首次进入 <code>TROUGH_CANDIDATE</code>；<code>PEAK_n</code> 对应重新进入 <code>TROUGH_REGION</code>。</li>
 <li>已确认周期使用 <code>state_start_date/state_start_close</code> 重建当时可见的候选开仓点，不把事后回填的 <code>HIGH_CONFIRMED</code> 当作开仓信号。</li>
 <li>失效和持仓中交易不计入已完成交易的收益和胜率。</li>
 <li>收益率按“开仓价 / 平仓价 - 1”计算，未计手续费、滑点、融券成本、涨跌停限制和实际可融券约束。</li>

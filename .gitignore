@@ -8,18 +8,19 @@ __pycache__/
 .env.*
 !.env.example
 
-# /data/
-# /data_cache/
-# /automation_outputs/
-# *.parquet
-# *.csv
-# *.db
-# *.sqlite
-# *.sqlite3
-# *.md
-# *.json
+/data/
+/data_cache/
+/automation_outputs/
+*.parquet
+*.csv
+*.db
+*.sqlite
+*.sqlite3
+*.md
+*.json
 daily_git_commit_result.txt
 *.html
+/review_record
 
 .DS_Store
 Thumbs.db

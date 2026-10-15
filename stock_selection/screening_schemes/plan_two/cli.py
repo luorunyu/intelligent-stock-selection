@@ -24,11 +24,12 @@ from stock_selection.screening_schemes.plan_two.report import (
 )
 from stock_selection.screening_schemes.plan_two.scheme import run_plan_two
 from stock_selection.strategies.stock_short_high_state.screen import (
+    DEFAULT_CANDIDATE_PULLBACK_PCT,
     DEFAULT_CONFIRM_DRAWDOWN_PCT,
     DEFAULT_HIGH_HEAT_DAYS,
     DEFAULT_LOOKBACK_DAYS,
     DEFAULT_REBOUND_PCT,
-    DEFAULT_TROUGH_HEAT_DAYS,
+    DEFAULT_TROUGH_CONFIRM_DAYS,
     read_cached_stock_daily,
 )
 
@@ -45,6 +46,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--required-lending-status", default="正常")
     parser.add_argument("--lookback-days", type=int, default=DEFAULT_LOOKBACK_DAYS)
     parser.add_argument(
+        "--candidate-pullback-pct",
+        type=float,
+        default=DEFAULT_CANDIDATE_PULLBACK_PCT,
+    )
+    parser.add_argument(
         "--confirm-drawdown-pct",
         type=float,
         default=DEFAULT_CONFIRM_DRAWDOWN_PCT,
@@ -54,7 +60,11 @@ def parse_args() -> argparse.Namespace:
         "--high-heat-days", type=int, default=DEFAULT_HIGH_HEAT_DAYS
     )
     parser.add_argument(
-        "--trough-heat-days", type=int, default=DEFAULT_TROUGH_HEAT_DAYS
+        "--trough-confirm-days",
+        "--trough-heat-days",
+        dest="trough_confirm_days",
+        type=int,
+        default=DEFAULT_TROUGH_CONFIRM_DAYS,
     )
     parser.add_argument("--include-st", action="store_true")
     parser.add_argument("--allow-stale-market-data", action="store_true")
@@ -82,10 +92,11 @@ def main() -> int:
         min_available_quantity=args.min_available_quantity,
         required_lending_status=args.required_lending_status,
         lookback_days=args.lookback_days,
+        candidate_pullback_pct=args.candidate_pullback_pct,
         confirm_drawdown_pct=args.confirm_drawdown_pct,
         rebound_pct=args.rebound_pct,
         high_heat_days=args.high_heat_days,
-        trough_heat_days=args.trough_heat_days,
+        trough_confirm_days=args.trough_confirm_days,
         stock_basic=stock_basic,
         include_st=args.include_st,
         allow_stale_market_data=args.allow_stale_market_data,
@@ -99,10 +110,11 @@ def main() -> int:
         min_available_quantity=args.min_available_quantity,
         required_lending_status=args.required_lending_status,
         lookback_days=args.lookback_days,
+        candidate_pullback_pct=args.candidate_pullback_pct,
         confirm_drawdown_pct=args.confirm_drawdown_pct,
         rebound_pct=args.rebound_pct,
         high_heat_days=args.high_heat_days,
-        trough_heat_days=args.trough_heat_days,
+        trough_confirm_days=args.trough_confirm_days,
         include_st=args.include_st,
         allow_stale_market_data=args.allow_stale_market_data,
     )

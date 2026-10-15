@@ -16,6 +16,9 @@ from stock_selection.data.market_cap import (
     merge_market_caps,
 )
 from stock_selection.data.tushare_cache import DEFAULT_CACHE_ROOT
+from stock_selection.strategies.stock_short_high_state.backtest import (
+    build_short_trade_backtest,
+)
 from stock_selection.strategies.stock_short_high_state.report import (
     DEFAULT_OUTPUT_ROOT,
 )
@@ -542,7 +545,7 @@ def generate_stock_short_state_charts(
     output_directory: str | Path | None = None,
     initial_bars: int | None = 250,
 ) -> dict[str, Any]:
-    """Generate one chart per requested stock plus an HTML index."""
+    """Generate return-classified charts plus HTML indexes."""
     state_path = Path(states_csv)
     states = read_saved_states(state_path)
     codes, input_errors = _resolve_chart_codes(codes_file, stock_codes)
@@ -571,9 +574,22 @@ def generate_stock_short_state_charts(
         else state_path.parent / "charts"
     )
     output.mkdir(parents=True, exist_ok=True)
+    positive_output = output / "positive"
+    negative_output = output / "negative"
+    positive_output.mkdir(parents=True, exist_ok=True)
+    negative_output.mkdir(parents=True, exist_ok=True)
 
     chart_rows: list[dict[str, Any]] = []
+    category_rows = {"positive": [], "negative": []}
     errors = list(input_errors)
+    backtest = build_short_trade_backtest(
+        selected_states,
+        as_of_date=end_date,
+    )
+    trades_by_code: dict[str, list[dict[str, Any]]] = {}
+    for trade in backtest.get("trades", []):
+        trades_by_code.setdefault(str(trade["ts_code"]), []).append(trade)
+
     for code in codes:
         stock_states = states[states["ts_code"].eq(code)].copy()
         if stock_states.empty:
@@ -587,10 +603,33 @@ def generate_stock_short_state_charts(
             chart_data = merge_bars_and_states(bars, stock_states)
             chart_data = merge_market_caps(chart_data, market_caps)
             stock_name = _latest_nonempty(stock_states["stock_name"])
+            stock_trades = trades_by_code.get(code, [])
+            if not stock_trades:
+                errors.append(f"{code}: no backtest trade to classify return")
+                continue
+            evaluated_returns = [
+                trade.get("return_pct")
+                if trade.get("status") == "COMPLETED"
+                else trade.get("mark_return_pct")
+                for trade in stock_trades
+            ]
+            finite_returns = [
+                float(value)
+                for value in evaluated_returns
+                if value is not None and np.isfinite(float(value))
+            ]
+            if not finite_returns:
+                errors.append(f"{code}: no finite backtest return to classify")
+                continue
+            classified_return = float(sum(finite_returns))
+            category = "positive" if classified_return > 0 else "negative"
+            category_output = (
+                positive_output if category == "positive" else negative_output
+            )
             filename = f"{code.replace('.', '_')}.html"
             write_stock_short_state_html(
                 chart_data,
-                output / filename,
+                category_output / filename,
                 stock_code=code,
                 stock_name=stock_name,
                 initial_bars=initial_bars,
@@ -616,16 +655,37 @@ def generate_stock_short_state_charts(
                     "alerts": int(stock_states["state"].eq(ALERT_STATE).sum()),
                     "total_mv": latest.get("total_mv"),
                     "circ_mv": latest.get("circ_mv"),
-                    "filename": filename,
+                    "filename": f"{category}/{filename}",
+                    "classified_return_pct": classified_return,
+                    "return_category": category,
                 }
             )
+            category_row = dict(chart_rows[-1])
+            category_row["filename"] = filename
+            category_rows[category].append(category_row)
         except (ValueError, FileNotFoundError) as exc:
             errors.append(f"{code}: {exc}")
 
+    positive_index = _write_chart_index(
+        positive_output,
+        category_rows["positive"],
+        [],
+        state_path,
+    )
+    negative_index = _write_chart_index(
+        negative_output,
+        category_rows["negative"],
+        [],
+        state_path,
+    )
     index_path = _write_chart_index(output, chart_rows, errors, state_path)
     return {
         "index": str(index_path),
         "output_directory": str(output),
+        "positive_directory": str(positive_output),
+        "negative_directory": str(negative_output),
+        "positive_index": str(positive_index),
+        "negative_index": str(negative_index),
         "charts": chart_rows,
         "errors": errors,
     }

@@ -16,7 +16,7 @@ def test_report_saves_full_daily_states(tmp_path):
         _bars([10, 10, 10, 10, 10, 11, 12, 8.4]),
         lookback_days=5,
         high_heat_days=3,
-        trough_heat_days=3,
+        trough_confirm_days=3,
     )
     states.loc[states.index[-1], "total_mv"] = 1_234_567.89
     states.loc[states.index[-1], "circ_mv"] = 987_654.32
@@ -24,10 +24,11 @@ def test_report_saves_full_daily_states(tmp_path):
         states,
         as_of_date="20260930",
         lookback_days=5,
+        candidate_pullback_pct=0.15,
         confirm_drawdown_pct=0.30,
         rebound_pct=0.10,
         high_heat_days=3,
-        trough_heat_days=3,
+        trough_confirm_days=3,
     )
     csv_path, json_path, markdown_path = save_stock_short_state_report(
         report,

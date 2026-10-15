@@ -10,13 +10,11 @@ import pandas as pd
 
 from stock_selection.strategies.stock_short_high_state.screen import (
     StockShortState,
-    state_for_peak_pullback,
 )
 
 
 ENTRY_STATES = {
-    int(StockShortState.HIGH_CANDIDATE),
-    int(StockShortState.HIGH_CONFIRMED),
+    int(StockShortState.HIGH_CANDIDATE_PULLBACK),
     int(StockShortState.PEAK_1),
     int(StockShortState.PEAK_2),
     int(StockShortState.PEAK_3),
@@ -59,9 +57,9 @@ def build_short_trade_backtest(
             "report_type": "stock_short_state_trade_backtest",
             "as_of_date": str(as_of_date),
             "generated_at": datetime.now().astimezone().isoformat(timespec="seconds"),
-            "entry_states": ["HIGH_CANDIDATE", "PEAK_n"],
-            "exit_states": ["TROUGH_WAIT_REBOUND", "PEAK_n_PULLBACK"],
-            "return_formula": "entry_close / exit_close - 1",
+            "entry_states": ["HIGH_CANDIDATE_PULLBACK", "PEAK_n"],
+            "exit_states": ["TROUGH_CANDIDATE/TROUGH_REGION", "TROUGH_REGION"],
+            "return_formula": "1 - exit_close / entry_close",
         },
         "summary": _summarise_trades(trades),
         "by_entry_state": _summarise_by_entry_state(trades),
@@ -180,38 +178,24 @@ def _candidate_trades(stock_rows: pd.DataFrame) -> list[dict[str, Any]]:
         "cycle_id", sort=True
     ):
         candidate_rows = cycle_rows[
-            cycle_rows["state"].isin(
-                [
-                    int(StockShortState.HIGH_CANDIDATE),
-                    int(StockShortState.HIGH_CONFIRMED),
-                ]
+            cycle_rows["state"].eq(
+                int(StockShortState.HIGH_CANDIDATE_PULLBACK)
             )
         ].sort_values("trade_date")
         if candidate_rows.empty:
             continue
 
-        signal = candidate_rows.iloc[0]
-        state_start_date = _valid_date(signal.get("state_start_date"))
-        state_start_rows = candidate_rows[
-            candidate_rows["trade_date"].eq(state_start_date)
-        ]
-        entry_row = (
-            state_start_rows.iloc[0] if not state_start_rows.empty else signal
-        )
+        entry_row = candidate_rows.iloc[0]
         entry_date = str(entry_row["trade_date"])
         entry_close = float(entry_row["close"])
-        observed_candidate = candidate_rows[
-            candidate_rows["state"].eq(int(StockShortState.HIGH_CANDIDATE))
-            & candidate_rows["trade_date"].eq(entry_date)
-        ]
-        entry_source = (
-            "OBSERVED_HIGH_CANDIDATE"
-            if not observed_candidate.empty
-            else "RECONSTRUCTED_STATE_START"
-        )
 
         exits = cycle_rows[
-            cycle_rows["state"].eq(int(StockShortState.TROUGH_WAIT_REBOUND))
+            cycle_rows["state"].isin(
+                [
+                    int(StockShortState.TROUGH_CANDIDATE),
+                    int(StockShortState.TROUGH_REGION),
+                ]
+            )
             & cycle_rows["trade_date"].ge(entry_date)
         ].sort_values("trade_date")
         invalidations = cycle_rows[
@@ -224,11 +208,11 @@ def _candidate_trades(stock_rows: pd.DataFrame) -> list[dict[str, Any]]:
                 cycle_rows=cycle_rows,
                 cycle_id=int(cycle_id),
                 peak_number=0,
-                entry_state="HIGH_CANDIDATE",
-                entry_source=entry_source,
+                entry_state="HIGH_CANDIDATE_PULLBACK",
+                entry_source="OBSERVED_HIGH_CANDIDATE_PULLBACK",
                 entry_date=entry_date,
                 entry_close=entry_close,
-                exit_state="TROUGH_WAIT_REBOUND",
+                exit_state="TROUGH_CANDIDATE_OR_REGION",
                 exits=exits,
                 invalidations=invalidations,
             )
@@ -252,9 +236,8 @@ def _peak_trades(stock_rows: pd.DataFrame) -> list[dict[str, Any]]:
         if entry_close is None:
             entry_close = float(signal["close"])
         cycle_rows = stock_rows[stock_rows["cycle_id"].eq(int(cycle_id))]
-        pullback_state = int(state_for_peak_pullback(int(peak_number)))
         exits = cycle_rows[
-            cycle_rows["state"].eq(pullback_state)
+            cycle_rows["state"].eq(int(StockShortState.TROUGH_REGION))
             & cycle_rows["peak_number"].eq(int(peak_number))
             & cycle_rows["trade_date"].ge(entry_date)
         ].sort_values("trade_date")
@@ -272,7 +255,7 @@ def _peak_trades(stock_rows: pd.DataFrame) -> list[dict[str, Any]]:
                 entry_source="OBSERVED_PEAK_START",
                 entry_date=entry_date,
                 entry_close=entry_close,
-                exit_state=f"PEAK_{int(peak_number)}_PULLBACK",
+                exit_state="TROUGH_REGION",
                 exits=exits,
                 invalidations=invalidations,
             )
@@ -329,8 +312,8 @@ def _build_trade(
     if len(path_closes) == 0:
         path_closes = np.array([entry_close, evaluation_close], dtype=float)
 
-    mark_return = entry_close / evaluation_close - 1.0
-    equity = entry_close / path_closes
+    mark_return = 1.0 - evaluation_close / entry_close
+    equity = 2.0 - path_closes / entry_close
     running_max = np.maximum.accumulate(equity)
     drawdowns = 1.0 - equity / running_max
     entry_row = _row_for_date(stock_rows, entry_date)
@@ -353,7 +336,11 @@ def _build_trade(
             float(total_market_caps.mean()) if not total_market_caps.empty else None
         ),
         "market_cap_observation_days": int(len(total_market_caps)),
-        "exit_state": exit_state,
+        "exit_state": (
+            str(exit_row["state_name"])
+            if status == "COMPLETED" and exit_row is not None
+            else exit_state
+        ),
         "exit_date": evaluation_date if status == "COMPLETED" else None,
         "exit_close": evaluation_close if status == "COMPLETED" else None,
         "status": status,
@@ -363,7 +350,7 @@ def _build_trade(
         "return_pct": float(mark_return) if status == "COMPLETED" else None,
         "mark_return_pct": float(mark_return),
         "holding_trade_days": max(len(path_closes) - 1, 0),
-        "mfe_pct": float(entry_close / np.min(path_closes) - 1.0),
+        "mfe_pct": float(1.0 - np.min(path_closes) / entry_close),
         "mae_pct": float(np.max(path_closes) / entry_close - 1.0),
         "max_drawdown_pct": float(np.max(drawdowns)),
     }
@@ -446,7 +433,7 @@ def _normalise_states(states: pd.DataFrame) -> pd.DataFrame:
         data["ts_code"].ne("")
         & data["trade_date"].ne("")
         & data["close"].gt(0)
-        & data["state"].isin(ENTRY_STATES | {INVALID_STATE, 30, 40, 61, 62, 63, 69, 0})
+        & data["state"].isin({int(state) for state in StockShortState})
         & data["cycle_id"].notna()
         & data["peak_number"].notna()
     ].copy()
@@ -530,7 +517,7 @@ def _sequential_max_drawdown(trades: list[dict[str, Any]]) -> float | None:
 
 
 def _entry_state_sort_key(value: str) -> tuple[int, int]:
-    if value == "HIGH_CANDIDATE":
+    if value == "HIGH_CANDIDATE_PULLBACK":
         return (0, 0)
     try:
         return (1, int(value.removeprefix("PEAK_")))

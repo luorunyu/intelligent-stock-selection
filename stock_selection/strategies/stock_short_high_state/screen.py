@@ -11,12 +11,23 @@ import pandas as pd
 
 from stock_selection.data.tushare_cache import DEFAULT_CACHE_ROOT
 
+"""默认参数：
+
+- 半年窗口：120个交易日；
+- 最高点确认：从运行最高收盘价回落30%；
+- 候选回调：从运行最高收盘价回落15%；
+- 波峰开启：离开波谷区域并从区域下沿反弹10%；
+- 波峰结束：收盘价重新进入第一波谷价格范围；
+- 最高点热度：当前收盘价相对前10个交易日均价的涨幅；
+- 波谷确认：候选低点后4个交易日的收盘价均不低于候选低点。"""
 
 DEFAULT_LOOKBACK_DAYS = 120
+DEFAULT_CANDIDATE_PULLBACK_PCT = 0.15
 DEFAULT_CONFIRM_DRAWDOWN_PCT = 0.30
 DEFAULT_REBOUND_PCT = 0.10
 DEFAULT_HIGH_HEAT_DAYS = 10
-DEFAULT_TROUGH_HEAT_DAYS = 5
+DEFAULT_TROUGH_CONFIRM_DAYS = 5
+DEFAULT_TROUGH_HEAT_DAYS = DEFAULT_TROUGH_CONFIRM_DAYS
 
 
 class StockShortState(IntEnum):
@@ -24,9 +35,12 @@ class StockShortState(IntEnum):
 
     NORMAL = 0
     HIGH_CANDIDATE = 10
+    HIGH_CANDIDATE_PULLBACK = 15
     HIGH_CONFIRMED = 20
     HIGH_DRAWDOWN = 30
     TROUGH_WAIT_REBOUND = 40
+    TROUGH_CANDIDATE = 41
+    TROUGH_REGION = 45
     PEAK_1 = 51
     PEAK_2 = 52
     PEAK_3 = 53
@@ -41,9 +55,12 @@ class StockShortState(IntEnum):
 STATE_DESCRIPTIONS = {
     StockShortState.NORMAL: "普通状态",
     StockShortState.HIGH_CANDIDATE: "最高点候选区域",
-    StockShortState.HIGH_CONFIRMED: "已确认最高点区域",
+    StockShortState.HIGH_CANDIDATE_PULLBACK: "最高点候选回调区域",
+    StockShortState.HIGH_CONFIRMED: "已确认最高点",
     StockShortState.HIGH_DRAWDOWN: "最高点后的确认前回落",
     StockShortState.TROUGH_WAIT_REBOUND: "回落已达阈值，寻找波谷并等待反弹",
+    StockShortState.TROUGH_CANDIDATE: "波谷候选区域，等待后续交易日确认止跌",
+    StockShortState.TROUGH_REGION: "已确认波谷区域",
     StockShortState.PEAK_1: "第一波峰区域",
     StockShortState.PEAK_2: "第二波峰区域",
     StockShortState.PEAK_3: "第三波峰区域",
@@ -74,6 +91,9 @@ OUTPUT_COLUMNS = [
     "reference_high_close",
     "reference_low_date",
     "reference_low_close",
+    "trough_zone_low",
+    "trough_zone_high",
+    "trough_confirm_date",
     "heat",
     "alert_code",
 ]
@@ -84,10 +104,12 @@ def calculate_stock_short_states(
     *,
     as_of_date: str | None = None,
     lookback_days: int = DEFAULT_LOOKBACK_DAYS,
+    candidate_pullback_pct: float = DEFAULT_CANDIDATE_PULLBACK_PCT,
     confirm_drawdown_pct: float = DEFAULT_CONFIRM_DRAWDOWN_PCT,
     rebound_pct: float = DEFAULT_REBOUND_PCT,
     high_heat_days: int = DEFAULT_HIGH_HEAT_DAYS,
-    trough_heat_days: int = DEFAULT_TROUGH_HEAT_DAYS,
+    trough_confirm_days: int = DEFAULT_TROUGH_CONFIRM_DAYS,
+    trough_heat_days: int | None = None,
     stock_codes: Iterable[str] | None = None,
     stock_basic: pd.DataFrame | None = None,
     include_st: bool = False,
@@ -95,17 +117,22 @@ def calculate_stock_short_states(
     """Return one state row for every stock trading day.
 
     A high candidate starts when the close reaches the highest close of the
-    preceding ``lookback_days`` trading days. The candidate is confirmed only
-    after price falls ``confirm_drawdown_pct`` from the running high. A rebound
-    peak starts after price rises ``rebound_pct`` from the current trough and
-    ends after price returns to the close where that rebound peak started.
+    preceding ``lookback_days`` trading days. Pullback begins after price falls
+    ``candidate_pullback_pct`` from the running high. The actual high is
+    confirmed only after price falls ``confirm_drawdown_pct``. A trough region
+    is confirmed when the following ``trough_confirm_days - 1`` closes do not
+    fall below its candidate low. Rebound peaks start after price leaves the
+    trough region and rises ``rebound_pct`` from its lower bound.
     """
+    if trough_heat_days is not None:
+        trough_confirm_days = trough_heat_days
     _validate_parameters(
         lookback_days=lookback_days,
+        candidate_pullback_pct=candidate_pullback_pct,
         confirm_drawdown_pct=confirm_drawdown_pct,
         rebound_pct=rebound_pct,
         high_heat_days=high_heat_days,
-        trough_heat_days=trough_heat_days,
+        trough_confirm_days=trough_confirm_days,
     )
     data = normalise_stock_daily(stock_daily, stock_basic=stock_basic)
     target_date = _normalise_date(as_of_date)
@@ -129,10 +156,11 @@ def calculate_stock_short_states(
                 ts_code=ts_code,
                 stock_name=_latest_name(group["stock_name"]),
                 lookback_days=lookback_days,
+                candidate_pullback_pct=candidate_pullback_pct,
                 confirm_drawdown_pct=confirm_drawdown_pct,
                 rebound_pct=rebound_pct,
                 high_heat_days=high_heat_days,
-                trough_heat_days=trough_heat_days,
+                trough_confirm_days=trough_confirm_days,
             )
         )
     return pd.DataFrame(rows, columns=OUTPUT_COLUMNS).sort_values(
@@ -261,25 +289,19 @@ def _calculate_one_stock(
     ts_code: str,
     stock_name: str,
     lookback_days: int,
+    candidate_pullback_pct: float,
     confirm_drawdown_pct: float,
     rebound_pct: float,
     high_heat_days: int,
-    trough_heat_days: int,
+    trough_confirm_days: int,
 ) -> list[dict[str, Any]]:
-    series = group.sort_values("trade_date").reset_index(drop=True)
-    closes = series["close"].to_numpy(dtype=float)
-    dates = series["trade_date"].astype(str).to_numpy()
+    ordered_group = group.sort_values("trade_date").reset_index(drop=True)
+    closes = ordered_group["close"].to_numpy(dtype=float)
+    dates = ordered_group["trade_date"].astype(str).to_numpy()
     high_heat_means = (
         pd.Series(closes)
         .shift(1)
         .rolling(high_heat_days, min_periods=high_heat_days)
-        .mean()
-        .to_numpy()
-    )
-    trough_heat_means = (
-        pd.Series(closes)
-        .shift(1)
-        .rolling(trough_heat_days, min_periods=trough_heat_days)
         .mean()
         .to_numpy()
     )
@@ -290,10 +312,12 @@ def _calculate_one_stock(
             trade_date=dates[position],
             close=closes[position],
         )
-        for position in range(len(series))
+        for position in range(len(ordered_group))
     ]
+    """
+    """
 
-    phase = "normal"
+    phase = "normal"  #判断当前属于哪个阶段
     next_cycle_id = 0
     cycle_id = 0
     candidate_start = -1
@@ -301,11 +325,14 @@ def _calculate_one_stock(
     high_close = np.nan
     trough_position = -1
     trough_close = np.nan
+    trough_zone_low = np.nan
+    trough_zone_high = np.nan
+    trough_confirm_position = -1
     peak_number = 0
     peak_start_position = -1
-    peak_start_close = np.nan
 
     for position, close in enumerate(closes):
+        #normal阶段，判断是否进入HIGH_CANDIDATE状态
         if phase == "normal":
             if position < lookback_days:
                 continue
@@ -330,14 +357,20 @@ def _calculate_one_stock(
                 heat=_ratio_heat(close, high_heat_means[position]),
             )
             continue
-
+        # 到candidate阶段，判断是否进入HIGH_CANDIDATE_PULLBACK 和 HIGH_CONFIRMED状态
         if phase == "candidate":
             if close >= high_close:
                 high_position = position
                 high_close = close
+            drawdown = 1.0 - close / high_close
+            state = (
+                StockShortState.HIGH_CANDIDATE
+                if drawdown + 1e-12 < candidate_pullback_pct
+                else StockShortState.HIGH_CANDIDATE_PULLBACK
+            )
             _set_record(
                 records[position],
-                StockShortState.HIGH_CANDIDATE,
+                state,
                 cycle_id=cycle_id,
                 state_start_position=candidate_start,
                 dates=dates,
@@ -345,18 +378,15 @@ def _calculate_one_stock(
                 reference_high_position=high_position,
                 heat=_ratio_heat(close, high_heat_means[position]),
             )
-            drawdown = 1.0 - close / high_close
             if drawdown + 1e-12 < confirm_drawdown_pct:
                 continue
 
-            for historical_position in range(candidate_start, high_position + 1):
-                if (
-                    records[historical_position]["state"]
-                    == int(StockShortState.INVALID_HIGH_NEW_HIGH)
-                ):
-                    continue
+            if (
+                records[high_position]["state"]
+                != int(StockShortState.INVALID_HIGH_NEW_HIGH)
+            ):
                 _set_record(
-                    records[historical_position],
+                    records[high_position],
                     StockShortState.HIGH_CONFIRMED,
                     cycle_id=cycle_id,
                     state_start_position=candidate_start,
@@ -364,26 +394,20 @@ def _calculate_one_stock(
                     closes=closes,
                     reference_high_position=high_position,
                     heat=_ratio_heat(
-                        closes[historical_position],
-                        high_heat_means[historical_position],
+                        closes[high_position],
+                        high_heat_means[high_position],
                     ),
-                )
-            for historical_position in range(high_position + 1, position):
-                _set_record(
-                    records[historical_position],
-                    StockShortState.HIGH_DRAWDOWN,
-                    cycle_id=cycle_id,
-                    state_start_position=high_position + 1,
-                    dates=dates,
-                    closes=closes,
-                    reference_high_position=high_position,
                 )
             trough_position = position
             trough_close = close
-            phase = "waiting_rebound"
+            trough_zone_low = np.nan
+            trough_zone_high = np.nan
+            trough_confirm_position = -1
+            phase = "trough_candidate"
+
             _set_record(
                 records[position],
-                StockShortState.TROUGH_WAIT_REBOUND,
+                StockShortState.TROUGH_CANDIDATE,
                 cycle_id=cycle_id,
                 state_start_position=position,
                 dates=dates,
@@ -414,43 +438,24 @@ def _calculate_one_stock(
             high_close = close
             trough_position = -1
             trough_close = np.nan
+            trough_zone_low = np.nan
+            trough_zone_high = np.nan
+            trough_confirm_position = -1
             peak_number = 0
             peak_start_position = -1
-            peak_start_close = np.nan
             phase = "candidate"
             continue
-
-        if phase == "waiting_rebound":
-            if close <= trough_close:
+        #进入到到HIGH_DRAWDOWN ，也意味着开始TROUGH_CANDIDATE，寻找TROUGH_REGION
+        if phase == "trough_candidate":
+            #不断创新低，则一直往后更新值，状态为TROUGH_CANDIDATE
+            if close < trough_close - 1e-12:
                 trough_position = position
                 trough_close = close
-            rebound = close / trough_close - 1.0
-            if rebound + 1e-12 >= rebound_pct:
-                peak_number += 1
-                peak_start_position = position
-                peak_start_close = close
-                phase = "peak"
+            confirmation_end = trough_position + trough_confirm_days - 1
+            if position < confirmation_end:
                 _set_record(
                     records[position],
-                    state_for_peak(peak_number),
-                    cycle_id=cycle_id,
-                    peak_number=peak_number,
-                    state_start_position=peak_start_position,
-                    dates=dates,
-                    closes=closes,
-                    reference_high_position=high_position,
-                    reference_low_position=trough_position,
-                    heat=_ratio_heat(close, trough_heat_means[trough_position]),
-                )
-            else:
-                state = (
-                    StockShortState.TROUGH_WAIT_REBOUND
-                    if peak_number == 0
-                    else state_for_peak_pullback(peak_number)
-                )
-                _set_record(
-                    records[position],
-                    state,
+                    StockShortState.TROUGH_CANDIDATE,
                     cycle_id=cycle_id,
                     peak_number=peak_number,
                     state_start_position=trough_position,
@@ -459,16 +464,48 @@ def _calculate_one_stock(
                     reference_high_position=high_position,
                     reference_low_position=trough_position,
                 )
+                continue
+            #position 大于 confirmation_end 连续几天不创新低了
+            trough_confirm_position = position
+            trough_zone_low = trough_close
+            trough_zone_high = float(
+                np.max(closes[trough_position : trough_confirm_position + 1])
+            )
+            for historical_position in range(
+                trough_position, trough_confirm_position + 1
+            ):
+                _set_record(
+                    records[historical_position],
+                    StockShortState.TROUGH_REGION,
+                    cycle_id=cycle_id,
+                    peak_number=peak_number,
+                    state_start_position=trough_position,
+                    dates=dates,
+                    closes=closes,
+                    reference_high_position=high_position,
+                    reference_low_position=trough_position,
+                    trough_zone_low=trough_zone_low,
+                    trough_zone_high=trough_zone_high,
+                    trough_confirm_position=trough_confirm_position,
+                    heat=_ratio_heat(
+                        closes[historical_position],
+                        trough_zone_low,
+                    ),
+                )
+            phase = "trough_region"
             continue
-
-        if phase == "peak":
-            if position > peak_start_position and close <= peak_start_close + 1e-12:
-                phase = "waiting_rebound"
+        #trough_region 阶段，
+        if phase == "trough_region":
+            if close < trough_zone_low - 1e-12:
+                phase = "trough_candidate"
                 trough_position = position
                 trough_close = close
+                trough_zone_low = np.nan
+                trough_zone_high = np.nan
+                trough_confirm_position = -1
                 _set_record(
                     records[position],
-                    state_for_peak_pullback(peak_number),
+                    StockShortState.TROUGH_CANDIDATE,
                     cycle_id=cycle_id,
                     peak_number=peak_number,
                     state_start_position=position,
@@ -477,19 +514,69 @@ def _calculate_one_stock(
                     reference_high_position=high_position,
                     reference_low_position=trough_position,
                 )
+                continue
+
+            rebound = close / trough_zone_low - 1.0
+            if close > trough_zone_high + 1e-12 and rebound + 1e-12 >= rebound_pct:
+                peak_number += 1
+                peak_start_position = position
+                phase = "peak"
+                state = state_for_peak(peak_number)
             else:
-                _set_record(
-                    records[position],
-                    state_for_peak(peak_number),
-                    cycle_id=cycle_id,
-                    peak_number=peak_number,
-                    state_start_position=peak_start_position,
-                    dates=dates,
-                    closes=closes,
-                    reference_high_position=high_position,
-                    reference_low_position=trough_position,
-                    heat=_ratio_heat(close, trough_heat_means[trough_position]),
-                )
+                state = StockShortState.TROUGH_REGION
+            _set_record(
+                records[position],
+                state,
+                cycle_id=cycle_id,
+                peak_number=peak_number,
+                state_start_position=(
+                    peak_start_position
+                    if state != StockShortState.TROUGH_REGION
+                    else trough_position
+                ),
+                dates=dates,
+                closes=closes,
+                reference_high_position=high_position,
+                reference_low_position=trough_position,
+                trough_zone_low=trough_zone_low,
+                trough_zone_high=trough_zone_high,
+                trough_confirm_position=trough_confirm_position,
+                heat=_ratio_heat(close, trough_zone_low),
+            )
+            continue
+
+        if phase == "peak":
+            if close < trough_zone_low - 1e-12:
+                phase = "trough_candidate"
+                trough_position = position
+                trough_close = close
+                trough_zone_low = np.nan
+                trough_zone_high = np.nan
+                trough_confirm_position = -1
+                state = StockShortState.TROUGH_CANDIDATE
+                state_start_position = position
+            elif close <= trough_zone_high + 1e-12:
+                phase = "trough_region"
+                state = StockShortState.TROUGH_REGION
+                state_start_position = trough_position
+            else:
+                state = state_for_peak(peak_number)
+                state_start_position = peak_start_position
+            _set_record(
+                records[position],
+                state,
+                cycle_id=cycle_id,
+                peak_number=peak_number,
+                state_start_position=state_start_position,
+                dates=dates,
+                closes=closes,
+                reference_high_position=high_position,
+                reference_low_position=trough_position,
+                trough_zone_low=trough_zone_low,
+                trough_zone_high=trough_zone_high,
+                trough_confirm_position=trough_confirm_position,
+                heat=_ratio_heat(close, trough_zone_low),
+            )
 
     return records
 
@@ -520,6 +607,9 @@ def _base_record(
         "reference_high_close": np.nan,
         "reference_low_date": "",
         "reference_low_close": np.nan,
+        "trough_zone_low": np.nan,
+        "trough_zone_high": np.nan,
+        "trough_confirm_date": "",
         "heat": np.nan,
         "alert_code": "",
     }
@@ -536,6 +626,9 @@ def _set_record(
     state_start_position: int = -1,
     reference_high_position: int = -1,
     reference_low_position: int = -1,
+    trough_zone_low: float = np.nan,
+    trough_zone_high: float = np.nan,
+    trough_confirm_position: int = -1,
     heat: float = np.nan,
     alert_code: str = "",
 ) -> None:
@@ -562,6 +655,15 @@ def _set_record(
             "reference_low_close": _position_value(
                 closes, reference_low_position, np.nan, float
             ),
+            "trough_zone_low": (
+                float(trough_zone_low) if np.isfinite(trough_zone_low) else np.nan
+            ),
+            "trough_zone_high": (
+                float(trough_zone_high) if np.isfinite(trough_zone_high) else np.nan
+            ),
+            "trough_confirm_date": _position_value(
+                dates, trough_confirm_position, ""
+            ),
             "heat": float(heat) if np.isfinite(heat) else np.nan,
             "alert_code": alert_code,
         }
@@ -587,13 +689,21 @@ def _ratio_heat(value: float, reference: float) -> float:
 
 
 def _validate_parameters(**parameters: Any) -> None:
-    for name in ("lookback_days", "high_heat_days", "trough_heat_days"):
+    for name in ("lookback_days", "high_heat_days", "trough_confirm_days"):
         if int(parameters[name]) <= 0:
             raise ValueError(f"{name} must be greater than zero")
-    for name in ("confirm_drawdown_pct", "rebound_pct"):
+    if int(parameters["trough_confirm_days"]) < 2:
+        raise ValueError("trough_confirm_days must be at least two")
+    for name in ("candidate_pullback_pct", "confirm_drawdown_pct", "rebound_pct"):
         value = float(parameters[name])
         if not 0 < value < 1:
             raise ValueError(f"{name} must be greater than zero and less than one")
+    if float(parameters["candidate_pullback_pct"]) >= float(
+        parameters["confirm_drawdown_pct"]
+    ):
+        raise ValueError(
+            "candidate_pullback_pct must be less than confirm_drawdown_pct"
+        )
 
 
 def _series_from(data: pd.DataFrame, choices: tuple[str, ...], default: Any) -> pd.Series:
