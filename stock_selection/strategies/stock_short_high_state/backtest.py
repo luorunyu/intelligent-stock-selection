@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from datetime import datetime
+from dataclasses import dataclass
 from typing import Any, Iterable
 
 import numpy as np
@@ -13,20 +14,37 @@ from stock_selection.strategies.stock_short_high_state.screen import (
 )
 
 
+@dataclass(frozen=True)
+class ShortTradeBacktestConfig:
+    candidate_entry_state: StockShortState = (
+        StockShortState.HIGH_CANDIDATE_PULLBACK
+    )
+    candidate_exit_states: frozenset[StockShortState] = frozenset(
+        {
+            StockShortState.TROUGH_CANDIDATE,
+            StockShortState.TROUGH_REGION,
+        }
+    )
+    candidate_exit_label: str = "TROUGH_CANDIDATE_OR_REGION"
+    peak_entry_states: frozenset[StockShortState] = frozenset(
+        {
+            StockShortState.PEAK_1,
+            StockShortState.PEAK_2,
+            StockShortState.PEAK_3,
+            StockShortState.PEAK_N,
+        }
+    )
+    peak_exit_state: StockShortState = StockShortState.TROUGH_REGION
+    invalidation_state: StockShortState = StockShortState.INVALID_HIGH_NEW_HIGH
+
+
+BACKTEST_CONFIG = ShortTradeBacktestConfig()
 ENTRY_STATES = {
-    int(StockShortState.HIGH_CANDIDATE_PULLBACK),
-    int(StockShortState.PEAK_1),
-    int(StockShortState.PEAK_2),
-    int(StockShortState.PEAK_3),
-    int(StockShortState.PEAK_N),
+    int(BACKTEST_CONFIG.candidate_entry_state),
+    *(int(state) for state in BACKTEST_CONFIG.peak_entry_states),
 }
-PEAK_ENTRY_STATES = {
-    int(StockShortState.PEAK_1),
-    int(StockShortState.PEAK_2),
-    int(StockShortState.PEAK_3),
-    int(StockShortState.PEAK_N),
-}
-INVALID_STATE = int(StockShortState.INVALID_HIGH_NEW_HIGH)
+PEAK_ENTRY_STATES = {int(state) for state in BACKTEST_CONFIG.peak_entry_states}
+INVALID_STATE = int(BACKTEST_CONFIG.invalidation_state)
 DEFAULT_MARKET_CAP_THRESHOLD = 3_000_000.0
 
 
@@ -34,6 +52,7 @@ def build_short_trade_backtest(
     states: pd.DataFrame,
     *,
     as_of_date: str,
+    config: ShortTradeBacktestConfig = BACKTEST_CONFIG,
 ) -> dict[str, Any]:
     """Build state-transition short trades and aggregate performance metrics."""
     data = _normalise_states(states)
@@ -41,8 +60,8 @@ def build_short_trade_backtest(
     if not data.empty:
         for _, stock_rows in data.groupby("ts_code", sort=True):
             stock_rows = stock_rows.sort_values("trade_date").reset_index(drop=True)
-            trades.extend(_candidate_trades(stock_rows))
-            trades.extend(_peak_trades(stock_rows))
+            trades.extend(_candidate_trades(stock_rows, config=config))
+            trades.extend(_peak_trades(stock_rows, config=config))
 
     trades.sort(
         key=lambda trade: (
@@ -57,8 +76,28 @@ def build_short_trade_backtest(
             "report_type": "stock_short_state_trade_backtest",
             "as_of_date": str(as_of_date),
             "generated_at": datetime.now().astimezone().isoformat(timespec="seconds"),
-            "entry_states": ["HIGH_CANDIDATE_PULLBACK", "PEAK_n"],
-            "exit_states": ["TROUGH_CANDIDATE/TROUGH_REGION", "TROUGH_REGION"],
+            "entry_states": [
+                config.candidate_entry_state.name,
+                *(state.name for state in sorted(
+                    config.peak_entry_states,
+                    key=lambda state: int(state),
+                )),
+            ],
+            "exit_states": list(
+                dict.fromkeys(
+                    [
+                        *(
+                            state.name
+                            for state in sorted(
+                                config.candidate_exit_states,
+                                key=lambda state: int(state),
+                            )
+                        ),
+                        config.peak_exit_state.name,
+                    ]
+                )
+            ),
+            "invalidation_state": config.invalidation_state.name,
             "return_formula": "1 - exit_close / entry_close",
         },
         "summary": _summarise_trades(trades),
@@ -172,15 +211,17 @@ def filter_short_trade_backtest_by_stock_pool(
     }
 
 
-def _candidate_trades(stock_rows: pd.DataFrame) -> list[dict[str, Any]]:
+def _candidate_trades(
+    stock_rows: pd.DataFrame,
+    *,
+    config: ShortTradeBacktestConfig,
+) -> list[dict[str, Any]]:
     trades: list[dict[str, Any]] = []
     for cycle_id, cycle_rows in stock_rows[stock_rows["cycle_id"].gt(0)].groupby(
         "cycle_id", sort=True
     ):
         candidate_rows = cycle_rows[
-            cycle_rows["state"].eq(
-                int(StockShortState.HIGH_CANDIDATE_PULLBACK)
-            )
+            cycle_rows["state"].eq(int(config.candidate_entry_state))
         ].sort_values("trade_date")
         if candidate_rows.empty:
             continue
@@ -191,15 +232,12 @@ def _candidate_trades(stock_rows: pd.DataFrame) -> list[dict[str, Any]]:
 
         exits = cycle_rows[
             cycle_rows["state"].isin(
-                [
-                    int(StockShortState.TROUGH_CANDIDATE),
-                    int(StockShortState.TROUGH_REGION),
-                ]
+                [int(state) for state in config.candidate_exit_states]
             )
             & cycle_rows["trade_date"].ge(entry_date)
         ].sort_values("trade_date")
         invalidations = cycle_rows[
-            cycle_rows["state"].eq(INVALID_STATE)
+            cycle_rows["state"].eq(int(config.invalidation_state))
             & cycle_rows["trade_date"].ge(entry_date)
         ].sort_values("trade_date")
         trades.append(
@@ -208,11 +246,11 @@ def _candidate_trades(stock_rows: pd.DataFrame) -> list[dict[str, Any]]:
                 cycle_rows=cycle_rows,
                 cycle_id=int(cycle_id),
                 peak_number=0,
-                entry_state="HIGH_CANDIDATE_PULLBACK",
+                entry_state=config.candidate_entry_state.name,
                 entry_source="OBSERVED_HIGH_CANDIDATE_PULLBACK",
                 entry_date=entry_date,
                 entry_close=entry_close,
-                exit_state="TROUGH_CANDIDATE_OR_REGION",
+                exit_state=config.candidate_exit_label,
                 exits=exits,
                 invalidations=invalidations,
             )
@@ -220,8 +258,16 @@ def _candidate_trades(stock_rows: pd.DataFrame) -> list[dict[str, Any]]:
     return trades
 
 
-def _peak_trades(stock_rows: pd.DataFrame) -> list[dict[str, Any]]:
-    peak_rows = stock_rows[stock_rows["state"].isin(PEAK_ENTRY_STATES)]
+def _peak_trades(
+    stock_rows: pd.DataFrame,
+    *,
+    config: ShortTradeBacktestConfig,
+) -> list[dict[str, Any]]:
+    peak_rows = stock_rows[
+        stock_rows["state"].isin(
+            [int(state) for state in config.peak_entry_states]
+        )
+    ]
     trades: list[dict[str, Any]] = []
     for (cycle_id, peak_number), rows in peak_rows.groupby(
         ["cycle_id", "peak_number"], sort=True
@@ -237,12 +283,12 @@ def _peak_trades(stock_rows: pd.DataFrame) -> list[dict[str, Any]]:
             entry_close = float(signal["close"])
         cycle_rows = stock_rows[stock_rows["cycle_id"].eq(int(cycle_id))]
         exits = cycle_rows[
-            cycle_rows["state"].eq(int(StockShortState.TROUGH_REGION))
+            cycle_rows["state"].eq(int(config.peak_exit_state))
             & cycle_rows["peak_number"].eq(int(peak_number))
             & cycle_rows["trade_date"].ge(entry_date)
         ].sort_values("trade_date")
         invalidations = cycle_rows[
-            cycle_rows["state"].eq(INVALID_STATE)
+            cycle_rows["state"].eq(int(config.invalidation_state))
             & cycle_rows["trade_date"].ge(entry_date)
         ].sort_values("trade_date")
         trades.append(
@@ -255,7 +301,7 @@ def _peak_trades(stock_rows: pd.DataFrame) -> list[dict[str, Any]]:
                 entry_source="OBSERVED_PEAK_START",
                 entry_date=entry_date,
                 entry_close=entry_close,
-                exit_state="TROUGH_REGION",
+                exit_state=config.peak_exit_state.name,
                 exits=exits,
                 invalidations=invalidations,
             )
