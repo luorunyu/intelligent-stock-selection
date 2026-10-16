@@ -19,14 +19,18 @@ from stock_selection.data.tushare_cache import DEFAULT_CACHE_ROOT
 - 波峰开启：离开波谷区域并从区域下沿反弹10%；
 - 波峰结束：收盘价重新进入第一波谷价格范围；
 - 最高点热度：当前收盘价相对前10个交易日均价的涨幅；
-- 波谷确认：候选低点后4个交易日的收盘价均不低于候选低点。"""
+- 波谷确认：候选低点后4个交易日的收盘价均不低于候选低点；
+- 周期结束：从本轮参考最高收盘价下跌35%，结束后不恢复旧周期；
+- 反转确认：含候选低点当天共10个交易日，没有更低收盘价。"""
 
 DEFAULT_LOOKBACK_DAYS = 120
 DEFAULT_CANDIDATE_PULLBACK_PCT = 0.15
 DEFAULT_CONFIRM_DRAWDOWN_PCT = 0.30
+DEFAULT_CYCLE_END_DRAWDOWN_PCT = 0.35
 DEFAULT_REBOUND_PCT = 0.10
 DEFAULT_HIGH_HEAT_DAYS = 10
 DEFAULT_TROUGH_CONFIRM_DAYS = 5
+DEFAULT_REVERSAL_CONFIRM_DAYS = 10
 DEFAULT_TROUGH_HEAT_DAYS = DEFAULT_TROUGH_CONFIRM_DAYS
 
 
@@ -49,6 +53,8 @@ class StockShortState(IntEnum):
     PEAK_2_PULLBACK = 62
     PEAK_3_PULLBACK = 63
     PEAK_N_PULLBACK = 69
+    CYCLE_ENDED = 70
+    REVERSAL_CONFIRMED = 75
     INVALID_HIGH_NEW_HIGH = 90
 
 
@@ -69,6 +75,8 @@ STATE_DESCRIPTIONS = {
     StockShortState.PEAK_2_PULLBACK: "第二波峰结束后的回落",
     StockShortState.PEAK_3_PULLBACK: "第三波峰结束后的回落",
     StockShortState.PEAK_N_PULLBACK: "第N波峰结束后的回落",
+    StockShortState.CYCLE_ENDED: "本轮行情结束，等待反转点确认",
+    StockShortState.REVERSAL_CONFIRMED: "已确认反转点",
     StockShortState.INVALID_HIGH_NEW_HIGH: "最高点确认后再次创新高，原判断失效",
 }
 
@@ -94,6 +102,12 @@ OUTPUT_COLUMNS = [
     "trough_zone_low",
     "trough_zone_high",
     "trough_confirm_date",
+    "cycle_end_date",
+    "cycle_end_close",
+    "cycle_end_threshold_close",
+    "reversal_low_date",
+    "reversal_low_close",
+    "reversal_confirm_date",
     "heat",
     "alert_code",
 ]
@@ -106,9 +120,11 @@ def calculate_stock_short_states(
     lookback_days: int = DEFAULT_LOOKBACK_DAYS,
     candidate_pullback_pct: float = DEFAULT_CANDIDATE_PULLBACK_PCT,
     confirm_drawdown_pct: float = DEFAULT_CONFIRM_DRAWDOWN_PCT,
+    cycle_end_drawdown_pct: float = DEFAULT_CYCLE_END_DRAWDOWN_PCT,
     rebound_pct: float = DEFAULT_REBOUND_PCT,
     high_heat_days: int = DEFAULT_HIGH_HEAT_DAYS,
     trough_confirm_days: int = DEFAULT_TROUGH_CONFIRM_DAYS,
+    reversal_confirm_days: int = DEFAULT_REVERSAL_CONFIRM_DAYS,
     trough_heat_days: int | None = None,
     stock_codes: Iterable[str] | None = None,
     stock_basic: pd.DataFrame | None = None,
@@ -123,6 +139,9 @@ def calculate_stock_short_states(
     is confirmed when the following ``trough_confirm_days - 1`` closes do not
     fall below its candidate low. Rebound peaks start after price leaves the
     trough region and rises ``rebound_pct`` from its lower bound.
+    A drawdown of ``cycle_end_drawdown_pct`` permanently ends the old rebound
+    cycle. Its subsequent low is confirmed after ``reversal_confirm_days``
+    bars including the low day, without backdating the observable signal.
     """
     if trough_heat_days is not None:
         trough_confirm_days = trough_heat_days
@@ -130,9 +149,11 @@ def calculate_stock_short_states(
         lookback_days=lookback_days,
         candidate_pullback_pct=candidate_pullback_pct,
         confirm_drawdown_pct=confirm_drawdown_pct,
+        cycle_end_drawdown_pct=cycle_end_drawdown_pct,
         rebound_pct=rebound_pct,
         high_heat_days=high_heat_days,
         trough_confirm_days=trough_confirm_days,
+        reversal_confirm_days=reversal_confirm_days,
     )
     data = normalise_stock_daily(stock_daily, stock_basic=stock_basic)
     target_date = _normalise_date(as_of_date)
@@ -158,9 +179,11 @@ def calculate_stock_short_states(
                 lookback_days=lookback_days,
                 candidate_pullback_pct=candidate_pullback_pct,
                 confirm_drawdown_pct=confirm_drawdown_pct,
+                cycle_end_drawdown_pct=cycle_end_drawdown_pct,
                 rebound_pct=rebound_pct,
                 high_heat_days=high_heat_days,
                 trough_confirm_days=trough_confirm_days,
+                reversal_confirm_days=reversal_confirm_days,
             )
         )
     return pd.DataFrame(rows, columns=OUTPUT_COLUMNS).sort_values(
@@ -291,15 +314,17 @@ def _calculate_one_stock(
     lookback_days: int,
     candidate_pullback_pct: float,
     confirm_drawdown_pct: float,
+    cycle_end_drawdown_pct: float,
     rebound_pct: float,
     high_heat_days: int,
     trough_confirm_days: int,
+    reversal_confirm_days: int,
 ) -> list[dict[str, Any]]:
     ordered_group = group.sort_values("trade_date").reset_index(drop=True)
     # 调试：仅使用 2025-10-15 之后的行情重新计算状态。
-    ordered_group = ordered_group.loc[
-        ordered_group["trade_date"].gt("20251015")
-    ].reset_index(drop=True)
+    # ordered_group = ordered_group.loc[
+    #     ordered_group["trade_date"].gt("20251015")
+    # ].reset_index(drop=True)
     closes = ordered_group["close"].to_numpy(dtype=float)
     dates = ordered_group["trade_date"].astype(str).to_numpy()
     high_heat_means = (
@@ -334,8 +359,114 @@ def _calculate_one_stock(
     trough_confirm_position = -1
     peak_number = 0
     peak_start_position = -1
+    cycle_end_position = -1
+    reversal_low_position = -1
+    reversal_confirm_position = -1
 
     for position, close in enumerate(closes):
+        # 旧周期结束后只跟踪反转低点，不再进入旧周期的波谷或波峰分支。
+        if phase in {"cycle_ended", "reversal_confirmed"}:
+            previous_high = float(np.max(closes[position - lookback_days : position]))
+            if close >= previous_high:
+                next_cycle_id += 1
+                cycle_id = next_cycle_id
+                candidate_start = position
+                high_position = position
+                high_close = close
+                trough_position = -1
+                trough_close = np.nan
+                trough_zone_low = np.nan
+                trough_zone_high = np.nan
+                trough_confirm_position = -1
+                peak_number = 0
+                peak_start_position = -1
+                cycle_end_position = -1
+                reversal_low_position = -1
+                reversal_confirm_position = -1
+                phase = "candidate"
+                _set_record(
+                    records[position],
+                    StockShortState.HIGH_CANDIDATE,
+                    cycle_id=cycle_id,
+                    state_start_position=position,
+                    dates=dates,
+                    closes=closes,
+                    reference_high_position=position,
+                    heat=_ratio_heat(close, high_heat_means[position]),
+                )
+                continue
+
+            if close < closes[reversal_low_position] - 1e-12:
+                reversal_low_position = position
+                reversal_confirm_position = -1
+                phase = "cycle_ended"
+            if position >= reversal_low_position + reversal_confirm_days - 1:
+                if reversal_confirm_position < 0:
+                    reversal_confirm_position = position
+                phase = "reversal_confirmed"
+            _set_record(
+                records[position],
+                StockShortState.REVERSAL_CONFIRMED
+                if phase == "reversal_confirmed"
+                else StockShortState.CYCLE_ENDED,
+                cycle_id=cycle_id,
+                peak_number=peak_number,
+                state_start_position=(
+                    reversal_confirm_position
+                    if phase == "reversal_confirmed"
+                    else cycle_end_position
+                ),
+                dates=dates,
+                closes=closes,
+                reference_high_position=high_position,
+                reference_low_position=reversal_low_position,
+                cycle_end_position=cycle_end_position,
+                cycle_end_drawdown_pct=cycle_end_drawdown_pct,
+                reversal_low_position=reversal_low_position,
+                reversal_confirm_position=reversal_confirm_position,
+            )
+            continue
+
+        # 所有活跃阶段都优先检查周期结束，跳空直达阈值也不先产生反弹点。
+        if (
+            phase != "normal"
+            and 1.0 - close / high_close + 1e-12 >= cycle_end_drawdown_pct
+        ):
+            if phase == "candidate" and records[high_position]["state"] != int(
+                StockShortState.INVALID_HIGH_NEW_HIGH
+            ):
+                _set_record(
+                    records[high_position],
+                    StockShortState.HIGH_CONFIRMED,
+                    cycle_id=cycle_id,
+                    state_start_position=candidate_start,
+                    dates=dates,
+                    closes=closes,
+                    reference_high_position=high_position,
+                    heat=_ratio_heat(
+                        closes[high_position], high_heat_means[high_position]
+                    ),
+                )
+            phase = "cycle_ended"
+            cycle_end_position = position
+            reversal_low_position = position
+            reversal_confirm_position = -1
+            _set_record(
+                records[position],
+                StockShortState.CYCLE_ENDED,
+                cycle_id=cycle_id,
+                peak_number=peak_number,
+                state_start_position=position,
+                dates=dates,
+                closes=closes,
+                reference_high_position=high_position,
+                reference_low_position=position,
+                cycle_end_position=position,
+                cycle_end_drawdown_pct=cycle_end_drawdown_pct,
+                reversal_low_position=position,
+            )
+            continue
+
         #normal阶段，判断是否进入HIGH_CANDIDATE状态
         if phase == "normal":
             if position < lookback_days:
@@ -614,6 +745,12 @@ def _base_record(
         "trough_zone_low": np.nan,
         "trough_zone_high": np.nan,
         "trough_confirm_date": "",
+        "cycle_end_date": "",
+        "cycle_end_close": np.nan,
+        "cycle_end_threshold_close": np.nan,
+        "reversal_low_date": "",
+        "reversal_low_close": np.nan,
+        "reversal_confirm_date": "",
         "heat": np.nan,
         "alert_code": "",
     }
@@ -633,6 +770,10 @@ def _set_record(
     trough_zone_low: float = np.nan,
     trough_zone_high: float = np.nan,
     trough_confirm_position: int = -1,
+    cycle_end_position: int = -1,
+    cycle_end_drawdown_pct: float = np.nan,
+    reversal_low_position: int = -1,
+    reversal_confirm_position: int = -1,
     heat: float = np.nan,
     alert_code: str = "",
 ) -> None:
@@ -668,6 +809,22 @@ def _set_record(
             "trough_confirm_date": _position_value(
                 dates, trough_confirm_position, ""
             ),
+            "cycle_end_date": _position_value(dates, cycle_end_position, ""),
+            "cycle_end_close": _position_value(
+                closes, cycle_end_position, np.nan, float
+            ),
+            "cycle_end_threshold_close": (
+                float(closes[reference_high_position] * (1.0 - cycle_end_drawdown_pct))
+                if cycle_end_position >= 0 and np.isfinite(cycle_end_drawdown_pct)
+                else np.nan
+            ),
+            "reversal_low_date": _position_value(dates, reversal_low_position, ""),
+            "reversal_low_close": _position_value(
+                closes, reversal_low_position, np.nan, float
+            ),
+            "reversal_confirm_date": _position_value(
+                dates, reversal_confirm_position, ""
+            ),
             "heat": float(heat) if np.isfinite(heat) else np.nan,
             "alert_code": alert_code,
         }
@@ -693,12 +850,22 @@ def _ratio_heat(value: float, reference: float) -> float:
 
 
 def _validate_parameters(**parameters: Any) -> None:
-    for name in ("lookback_days", "high_heat_days", "trough_confirm_days"):
+    for name in (
+        "lookback_days", "high_heat_days", "trough_confirm_days",
+        "reversal_confirm_days",
+    ):
         if int(parameters[name]) <= 0:
             raise ValueError(f"{name} must be greater than zero")
     if int(parameters["trough_confirm_days"]) < 2:
         raise ValueError("trough_confirm_days must be at least two")
-    for name in ("candidate_pullback_pct", "confirm_drawdown_pct", "rebound_pct"):
+    if int(parameters["reversal_confirm_days"]) <= int(
+        parameters["trough_confirm_days"]
+    ):
+        raise ValueError("reversal_confirm_days must be greater than trough_confirm_days")
+    for name in (
+        "candidate_pullback_pct", "confirm_drawdown_pct",
+        "cycle_end_drawdown_pct", "rebound_pct",
+    ):
         value = float(parameters[name])
         if not 0 < value < 1:
             raise ValueError(f"{name} must be greater than zero and less than one")
@@ -708,6 +875,10 @@ def _validate_parameters(**parameters: Any) -> None:
         raise ValueError(
             "candidate_pullback_pct must be less than confirm_drawdown_pct"
         )
+    if float(parameters["cycle_end_drawdown_pct"]) <= float(
+        parameters["confirm_drawdown_pct"]
+    ):
+        raise ValueError("cycle_end_drawdown_pct must be greater than confirm_drawdown_pct")
 
 
 def _series_from(data: pd.DataFrame, choices: tuple[str, ...], default: Any) -> pd.Series:

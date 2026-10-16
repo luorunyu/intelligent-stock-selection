@@ -13,6 +13,8 @@ import pandas as pd
 
 from stock_selection.data.market_cap import format_market_cap
 from stock_selection.strategies.stock_short_high_state.screen import (
+    DEFAULT_CYCLE_END_DRAWDOWN_PCT,
+    DEFAULT_REVERSAL_CONFIRM_DAYS,
     latest_stock_short_states,
 )
 
@@ -42,6 +44,8 @@ def build_stock_short_state_report(
     rebound_pct: float,
     high_heat_days: int,
     trough_confirm_days: int,
+    cycle_end_drawdown_pct: float = DEFAULT_CYCLE_END_DRAWDOWN_PCT,
+    reversal_confirm_days: int = DEFAULT_REVERSAL_CONFIRM_DAYS,
 ) -> dict[str, Any]:
     latest = latest_stock_short_states(states)
     alerts = (
@@ -61,9 +65,11 @@ def build_stock_short_state_report(
             "lookback_days": lookback_days,
             "candidate_pullback_pct": candidate_pullback_pct,
             "confirm_drawdown_pct": confirm_drawdown_pct,
+            "cycle_end_drawdown_pct": cycle_end_drawdown_pct,
             "rebound_pct": rebound_pct,
             "high_heat_days": high_heat_days,
             "trough_confirm_days": trough_confirm_days,
+            "reversal_confirm_days": reversal_confirm_days,
             "generated_at": datetime.now().astimezone().isoformat(timespec="seconds"),
         },
         "summary": {
@@ -90,9 +96,12 @@ def render_stock_short_state_markdown(report: dict[str, Any]) -> str:
         f"- 半年窗口：{metadata['lookback_days']}个交易日",
         f"- 候选回调起点：{metadata['candidate_pullback_pct']:.1%}",
         f"- 最高点确认回落：{metadata['confirm_drawdown_pct']:.1%}",
+        f"- 本轮行情结束跌幅：{metadata['cycle_end_drawdown_pct']:.1%}，结束后不再识别旧周期反弹波峰/波谷",
         f"- 波峰开启反弹：{metadata['rebound_pct']:.1%}",
         f"- 最高点热度窗口：{metadata['high_heat_days']}个交易日",
         f"- 波谷确认窗口：{metadata['trough_confirm_days']}个交易日",
+        f"- 反转点确认窗口：{metadata['reversal_confirm_days']}个交易日（含低点当天），出现更低收盘价重新计时",
+        "- 反转点在确认日输出，低点日期单独记录；新周期仍按前述新高窗口独立启动。",
         "",
         "## 汇总",
         "",
@@ -164,11 +173,12 @@ def render_short_trade_backtest_markdown(
         "",
         "## 交易规则",
         "",
-        "- 做空开仓：首次进入 `HIGH_CANDIDATE_PULLBACK`，或首次进入某个 `PEAK_n`。连续状态不重复开仓。",
-        "- 做空结束：`HIGH_CANDIDATE_PULLBACK` 对应首次进入 `TROUGH_CANDIDATE`；`PEAK_n` 对应重新进入 `TROUGH_REGION`。",
+        "- 做空开仓：默认仅在每周期首次进入 `HIGH_CANDIDATE_PULLBACK` 时开仓，连续状态不重复开仓；不再以 `PEAK_n` 新开仓。",
+        "- 做空结束：首次遇到 `TROUGH_CANDIDATE`、`TROUGH_REGION`、`CYCLE_ENDED` 或 `REVERSAL_CONFIRMED` 时按当日收盘价退出，取最早出现的退出点。通常 `CYCLE_ENDED` 早于反转确认。",
+        "- 周期结束后停止旧周期的波峰/波谷编号；`REVERSAL_CONFIRMED` 为低点持续未被跌破后的确认状态，低点日期与确认日期分开记录，不使用事后低点价生成交易。",
         "- 新高失效或周期异常切换且未到结束状态的交易标记为失效；截至报告日未到结束状态的交易标记为持仓中。两者均不计入已完成交易的收益和胜率。",
         "- 收益率按 `1 - 平仓价 / 开仓价` 计算。未计手续费、滑点、融券成本、涨跌停限制和实际可融券约束。",
-        "- `PEAK_n_PULLBACK` 本身定义为收盘价回到或跌破波峰开仓价，所以正常结束的波峰交易按构造不会产生负收益；波峰胜率是有条件完成样本的统计，必须同时看持仓中、失效数量和回撤，不能单独解释为预测能力。",
+        "- 退出条件会筛选完成样本；解读胜率时需要同时看持仓中、失效数量、持有时间和回撤。",
         "- 逐笔复利和逐笔复利最大回撤按平仓日期依次连接所有已完成交易，只用于比较信号，不是考虑重叠持仓、仓位和资金占用的真实组合净值。",
         "- 若已完成交易中存在亏损超过100%的交易，逐笔复利收益及其最大回撤显示为“-”（净值模型不适用），逐笔亏损保留原值。若无超过100%的亏损但有恰好亏损100%的交易，则复利收益为-100%、最大回撤为100%，资金归零后不再复投。",
     ]
@@ -190,7 +200,7 @@ def render_short_trade_backtest_markdown(
             [
                 f"- 本报告股票池：{stock_pool_filter['label']}，快照日期 `{stock_pool_filter['pool_date']}`，筛选规则为“{stock_pool_filter['selection_rule']}”。",
                 f"- 股票池来源：`{stock_pool_filter['source_file']}`；源记录 {stock_pool_filter.get('source_record_count') or '-'} 条，符合条件代码 {stock_pool_filter['eligible_code_count']} 个，其中进入策略五状态数据 {matched_state_text} 只、产生交易信号 {stock_pool_filter['matched_trade_stock_count']} 只。",
-                "- 这是按报告日融券快照构成的固定股票池，只回答这些股票上的历史状态收益；它不能证明历史开仓日当时有券可借，也没有计入可借数量变化、融券费率和强制归还风险。",
+                "- 这是按所标注日期的融券快照构成的固定股票池，只回答这些股票上的历史状态收益；它不能证明历史开仓日当时有券可借，也没有计入可借数量变化、融券费率和强制归还风险。",
             ]
         )
     lines.extend(
@@ -301,7 +311,7 @@ def render_short_trade_backtest_html(backtest: dict[str, Any]) -> str:
             [
                 f"本报告股票池：{escape(str(stock_pool_filter['label']))}，快照日期 <code>{escape(str(stock_pool_filter['pool_date']))}</code>，筛选规则为“{escape(str(stock_pool_filter['selection_rule']))}”。",
                 f"股票池来源：<code>{escape(str(stock_pool_filter['source_file']))}</code>；源记录 {stock_pool_filter.get('source_record_count') or '-'} 条，符合条件代码 {int(stock_pool_filter['eligible_code_count'])} 个，其中进入策略五状态数据 {matched_state_text} 只、产生交易信号 {int(stock_pool_filter['matched_trade_stock_count'])} 只。",
-                "这是按报告日融券快照构成的固定股票池，只回答这些股票上的历史状态收益；它不能证明历史开仓日当时有券可借，也没有计入可借数量变化、融券费率和强制归还风险。",
+                "这是按所标注日期的融券快照构成的固定股票池，只回答这些股票上的历史状态收益；它不能证明历史开仓日当时有券可借，也没有计入可借数量变化、融券费率和强制归还风险。",
             ]
         )
 
@@ -413,12 +423,13 @@ th:first-child,td:first-child,th:nth-child(3),td:nth-child(3),th:nth-child(4),td
 <h1>{escape(title)}</h1>
 <h2>交易规则</h2>
 <ul class="rules">
-<li>做空开仓：首次进入 <code>HIGH_CANDIDATE_PULLBACK</code>，或首次进入某个 <code>PEAK_n</code>。连续状态不重复开仓。</li>
-<li>做空结束：<code>HIGH_CANDIDATE_PULLBACK</code> 对应首次进入 <code>TROUGH_CANDIDATE</code>；<code>PEAK_n</code> 对应重新进入 <code>TROUGH_REGION</code>。</li>
+<li>做空开仓：默认仅在每周期首次进入 <code>HIGH_CANDIDATE_PULLBACK</code> 时开仓，连续状态不重复开仓；不再以 <code>PEAK_n</code> 新开仓。</li>
+<li>做空结束：首次遇到 <code>TROUGH_CANDIDATE</code>、<code>TROUGH_REGION</code>、<code>CYCLE_ENDED</code> 或 <code>REVERSAL_CONFIRMED</code> 时按当日收盘价退出，取最早出现的退出点。通常周期结束早于反转确认。</li>
+<li>周期结束后停止旧周期反弹编号；<code>REVERSAL_CONFIRMED</code> 分开记录低点与确认日期，不用事后低点价生成交易。</li>
 <li>已确认周期使用 <code>state_start_date/state_start_close</code> 重建当时可见的候选开仓点，不把事后回填的 <code>HIGH_CONFIRMED</code> 当作开仓信号。</li>
 <li>失效和持仓中交易不计入已完成交易的收益和胜率。</li>
 <li>收益率按“1 - 平仓价 / 开仓价”计算，未计手续费、滑点、融券成本、涨跌停限制和实际可融券约束。</li>
-<li><code>PEAK_n_PULLBACK</code> 的完成样本存在条件筛选，需同时看持仓中、失效数量和回撤。</li>
+<li>退出条件会筛选完成样本，需同时看持仓中、失效数量、持有时间和回撤。</li>
 <li>逐笔复利按平仓日期连接已完成交易，不是考虑重叠持仓、仓位和资金占用的真实组合净值。</li>
 <li>若已完成交易中存在亏损超过100%的交易，逐笔复利收益及其最大回撤显示为“-”（净值模型不适用），逐笔亏损保留原值。若无超过100%的亏损但有恰好亏损100%的交易，则复利收益为-100%、最大回撤为100%，资金归零后不再复投。</li>
 </ul>
@@ -454,6 +465,7 @@ def save_short_trade_backtest_report(
     )
     directory.mkdir(parents=True, exist_ok=True)
     markdown_path = directory / filename
+    markdown_path.parent.mkdir(parents=True, exist_ok=True)
     html_path = markdown_path.with_suffix(".html")
     markdown_path.write_text(
         render_short_trade_backtest_markdown(
@@ -466,6 +478,61 @@ def save_short_trade_backtest_report(
         encoding="utf-8",
     )
     return markdown_path
+
+
+def save_short_trade_backtest_sections(
+    sections: dict[str, dict[str, Any]],
+    *,
+    records_root: str | Path = DEFAULT_OUTPUT_ROOT,
+    missing_lending_note: str | None = None,
+) -> dict[str, Any]:
+    """Save one report per scope (MD/HTML), plus a linked index."""
+    labels = {
+        "overall": "整体",
+        "avg_mv_at_least_300yi": "整体：平均市值300亿元及以上",
+        "avg_mv_below_300yi": "整体：平均市值低于300亿元",
+        "lendable": "可融券股票池（包含零数量）",
+    }
+    paths: dict[str, Any] = {}
+    index_rows = []
+    for key, backtest in sections.items():
+        if key == "overall":
+            filename = "short_trade_backtest.md"
+        elif key == "lendable":
+            snapshot_date = backtest["metadata"]["stock_pool_filter"]["pool_date"]
+            filename = f"short_trade_backtest_lendable_{snapshot_date}.md"
+        else:
+            filename = f"short_trade_backtest_{key}.md"
+        summary_path = save_short_trade_backtest_report(
+            backtest, records_root=records_root, filename=filename
+        )
+        paths[key] = {"all": str(summary_path)}
+        label = labels.get(key, key)
+        if key == "lendable":
+            label += f" · 快照{snapshot_date}"
+        index_rows.append(
+            f'<tr><td>{escape(label)}</td><td>{backtest["summary"]["signals"]}</td>'
+            f'<td><a href="{escape(summary_path.with_suffix(".html").name)}">查看报告</a></td></tr>'
+        )
+    if paths:
+        first = Path(next(iter(paths.values()))["all"])
+        index_path = first.parent / "backtest_index.html"
+        note = f"<p>{escape(missing_lending_note)}</p>" if missing_lending_note else ""
+        index_path.write_text(
+            '<!doctype html><html lang="zh-CN"><meta charset="utf-8">'
+            '<title>策略五回测报告入口</title><style>'
+            'body{font-family:Arial,"PingFang SC",sans-serif;margin:28px}'
+            'table{border-collapse:collapse;width:100%}td,th{border:1px solid #ddd;padding:12px;text-align:left}'
+            '</style><h1>策略五回测报告入口</h1>'
+            '<p>整体、市值低于300亿元、市值300亿元及以上、可融券池各一份报告。'
+            'positive / negative 分类仅用于画图。</p>'
+            '<p>不指定 --stock-code 时分析全部缓存股票；指定股票时，“整体”仅指所选股票。</p>'
+            + note
+            + '<table><tr><th>部分</th><th>交易信号</th><th>报告</th></tr>'
+            + "".join(index_rows) + '</table></html>', encoding="utf-8",
+        )
+        return {"index": str(index_path), "sections": paths}
+    return {"index": None, "sections": paths}
 
 
 def _records(data: pd.DataFrame) -> list[dict[str, Any]]:

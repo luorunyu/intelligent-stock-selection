@@ -8,7 +8,7 @@ from pathlib import Path
 import sys
 
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[3]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
@@ -34,7 +34,9 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--cache-root", default=None)
     parser.add_argument("--output-root", default=str(DEFAULT_OUTPUT_ROOT))
     parser.add_argument("--output", default=None)
-    parser.add_argument("--initial-bars", type=int, default=250)
+    parser.add_argument("--initial-bars", type=int, default=200)
+    parser.add_argument("--lending-file", default=None)
+    parser.add_argument("--lending-root", default=None)
     return parser.parse_args()
 
 
@@ -51,6 +53,8 @@ def main() -> int:
         cache_root=args.cache_root,
         output_directory=args.output,
         initial_bars=args.initial_bars or None,
+        lending_file=args.lending_file,
+        lending_root=args.lending_root,
     )
     print(json.dumps(result, ensure_ascii=False, indent=2, default=str))
     return 0

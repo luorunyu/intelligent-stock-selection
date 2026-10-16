@@ -48,6 +48,8 @@ SHORT_SCOPE_STATES = {
 }
 
 NON_SHORT_SCOPE_STATES = {
+    StockShortState.CYCLE_ENDED,
+    StockShortState.REVERSAL_CONFIRMED,
     StockShortState.NORMAL,
     StockShortState.HIGH_CANDIDATE_PULLBACK,
     StockShortState.HIGH_DRAWDOWN,
@@ -88,6 +90,12 @@ RESULT_COLUMNS = [
     "trough_zone_low",
     "trough_zone_high",
     "trough_confirm_date",
+    "cycle_end_date",
+    "cycle_end_close",
+    "cycle_end_threshold_close",
+    "reversal_low_date",
+    "reversal_low_close",
+    "reversal_confirm_date",
     "alert_code",
     "classification",
     "classification_name",
@@ -258,6 +266,12 @@ def _join_results(
         "trough_zone_low",
         "trough_zone_high",
         "trough_confirm_date",
+        "cycle_end_date",
+        "cycle_end_close",
+        "cycle_end_threshold_close",
+        "reversal_low_date",
+        "reversal_low_close",
+        "reversal_confirm_date",
         "alert_code",
     ]
     if latest_states.empty:

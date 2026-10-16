@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from html import escape
+from os.path import relpath
 from pathlib import Path
 from typing import Any, Iterable
 
@@ -18,6 +19,8 @@ from stock_selection.data.market_cap import (
 from stock_selection.data.tushare_cache import DEFAULT_CACHE_ROOT
 from stock_selection.strategies.stock_short_high_state.backtest import (
     build_short_trade_backtest,
+    build_short_trade_backtest_sections,
+    stock_trade_return,
 )
 from stock_selection.strategies.stock_short_high_state.report import (
     DEFAULT_OUTPUT_ROOT,
@@ -163,6 +166,9 @@ def read_saved_states(path: str | Path) -> pd.DataFrame:
             "state_name": str,
             "state_description": str,
             "alert_code": str,
+            "cycle_end_date": str,
+            "reversal_low_date": str,
+            "reversal_confirm_date": str,
         },
         low_memory=False,
     )
@@ -444,6 +450,8 @@ def build_stock_short_state_figure(
             col=1,
         )
 
+    _add_cycle_lifecycle_markers(figure, data, go)
+
     figure.add_trace(
         go.Scatter(
             x=dates,
@@ -505,6 +513,70 @@ def build_stock_short_state_figure(
     return figure
 
 
+def _add_cycle_lifecycle_markers(figure: Any, data: pd.DataFrame, go: Any) -> None:
+    """Show observable end/confirmation dates and the retrospectively known low."""
+    if "cycle_end_date" not in data:
+        return
+    ended = data[data["trade_date"].eq(data["cycle_end_date"])]
+    if not ended.empty:
+        figure.add_trace(
+            go.Scatter(
+                x=ended["date"], y=ended["close"], mode="markers",
+                marker={"symbol": "diamond", "size": 12, "color": "#64748b"},
+                text=[
+                    f"本轮行情结束<br>日期：{row['trade_date']}"
+                    f"<br>参考高点：{_format_number(row.get('reference_high_close'))}"
+                    f"<br>结束收盘价：{_format_number(row['close'])}"
+                    f"<br>结束阈值价：{_format_number(row.get('cycle_end_threshold_close'))}"
+                    for row in ended.to_dict("records")
+                ],
+                hovertemplate="%{text}<extra></extra>", name="本轮行情结束",
+            ), row=1, col=1,
+        )
+        if "cycle_end_threshold_close" in ended:
+            for event in ended.to_dict("records"):
+                threshold = event.get("cycle_end_threshold_close")
+                if threshold is not None and pd.notna(threshold):
+                    figure.add_shape(
+                        type="line",
+                        x0=pd.to_datetime(event["reference_high_date"], format="%Y%m%d"),
+                        x1=event["date"], y0=threshold, y1=threshold,
+                        line={"color": "#64748b", "width": 1, "dash": "dot"},
+                        row=1, col=1,
+                    )
+    if "reversal_confirm_date" not in data or "reversal_low_date" not in data:
+        return
+    confirmed = data[
+        data["state"].eq(int(StockShortState.REVERSAL_CONFIRMED))
+        & data["trade_date"].eq(data["reversal_confirm_date"])
+    ]
+    if confirmed.empty:
+        return
+    hover = [
+        f"反转低点（事后确认）<br>低点日期：{row['reversal_low_date']}"
+        f"<br>低点收盘价：{_format_number(row['reversal_low_close'])}"
+        f"<br>确认日期：{row['reversal_confirm_date']}"
+        f"<br>确认日收盘价：{_format_number(row['close'])}"
+        for row in confirmed.to_dict("records")
+    ]
+    figure.add_trace(
+        go.Scatter(
+            x=pd.to_datetime(confirmed["reversal_low_date"], format="%Y%m%d"),
+            y=confirmed["reversal_low_close"], mode="markers",
+            marker={"symbol": "triangle-up", "size": 13, "color": "#0284c7"},
+            text=hover, hovertemplate="%{text}<extra></extra>",
+            name="反转低点（事后确认）",
+        ), row=1, col=1,
+    )
+    figure.add_trace(
+        go.Scatter(
+            x=confirmed["date"], y=confirmed["close"], mode="markers",
+            marker={"symbol": "circle-open", "size": 12, "color": "#0284c7"},
+            text=hover, hovertemplate="%{text}<extra></extra>", name="反转确认日",
+        ), row=1, col=1,
+    )
+
+
 def write_stock_short_state_html(
     chart_data: pd.DataFrame,
     output_path: str | Path,
@@ -544,6 +616,8 @@ def generate_stock_short_state_charts(
     cache_root: str | Path | None = None,
     output_directory: str | Path | None = None,
     initial_bars: int | None = 250,
+    lending_file: str | None = None,
+    lending_root: str | None = None,
 ) -> dict[str, Any]:
     """Generate charts for the requested codes, or all stocks if the list is empty."""
     state_path = Path(states_csv)
@@ -591,9 +665,14 @@ def generate_stock_short_state_charts(
     chart_rows: list[dict[str, Any]] = []
     category_rows = {category: [] for category in category_outputs}
     errors = list(input_errors)
+    selected_states = merge_market_caps(selected_states, market_caps)
     backtest = build_short_trade_backtest(
         selected_states,
         as_of_date=end_date,
+    )
+    sections = build_short_trade_backtest_sections(
+        selected_states, backtest, as_of_date=end_date,
+        lending_file=lending_file, lending_root=lending_root,
     )
     trades_by_code: dict[str, list[dict[str, Any]]] = {}
     for trade in backtest.get("trades", []):
@@ -613,21 +692,9 @@ def generate_stock_short_state_charts(
             chart_data = merge_market_caps(chart_data, market_caps)
             stock_name = _latest_nonempty(stock_states["stock_name"])
             stock_trades = trades_by_code.get(code, [])
-            evaluated_returns = [
-                trade.get("return_pct")
-                if trade.get("status") == "COMPLETED"
-                else trade.get("mark_return_pct")
-                for trade in stock_trades
-            ]
-            finite_returns = [
-                float(value)
-                for value in evaluated_returns
-                if value is not None and np.isfinite(float(value))
-            ]
-            classified_return = None
+            classified_return = stock_trade_return(stock_trades)
             category = "unclassified"
-            if finite_returns:
-                classified_return = float(sum(finite_returns))
+            if classified_return is not None:
                 category = "positive" if classified_return > 0 else "negative"
             category_output = category_outputs[category]
             filename = f"{code.replace('.', '_')}.html"
@@ -679,7 +746,15 @@ def generate_stock_short_state_charts(
         )
         for category, directory in category_outputs.items()
     }
-    index_path = _write_chart_index(output, chart_rows, errors, state_path)
+    scope_indexes = _write_chart_scope_indexes(output, chart_rows, sections, state_path)
+    scope_indexes["overall"] = {
+        "label": "整体", "index": str(output / "index.html"),
+        "charts": chart_rows,
+        **{f"{category}_index": str(path) for category, path in category_indexes.items()},
+    }
+    index_path = _write_chart_index(
+        output, chart_rows, errors, state_path, scope_indexes=scope_indexes,
+    )
     return {
         "index": str(index_path),
         "output_directory": str(output),
@@ -692,8 +767,74 @@ def generate_stock_short_state_charts(
             for category, path in category_indexes.items()
         },
         "charts": chart_rows,
+        "sections": scope_indexes,
         "errors": errors,
     }
+
+
+def _write_chart_scope_indexes(
+    output: Path,
+    chart_rows: list[dict[str, Any]],
+    sections: dict[str, dict[str, Any]],
+    states_csv: Path,
+) -> dict[str, dict[str, Any]]:
+    """Reuse stock charts while classifying returns separately in each pool."""
+    labels = {
+        "avg_mv_below_300yi": "整体：平均市值低于300亿元",
+        "avg_mv_at_least_300yi": "整体：平均市值300亿元及以上",
+        "lendable": "可融券股票池（包含零数量）",
+    }
+    result = {}
+    for key, backtest in sections.items():
+        if key == "overall":
+            continue
+        trades_by_code: dict[str, list[dict[str, Any]]] = {}
+        for trade in backtest.get("trades", []):
+            trades_by_code.setdefault(str(trade["ts_code"]), []).append(trade)
+        membership = set(trades_by_code)
+        label = labels[key]
+        if key == "lendable":
+            pool = backtest["metadata"]["stock_pool_filter"]
+            membership = set(pool["stock_codes"])
+            label += f" · 快照{pool['pool_date']}"
+        directory = output / "scopes" / key
+        directory.mkdir(parents=True, exist_ok=True)
+        rows = []
+        categories: dict[str, list[dict[str, Any]]] = {
+            "positive": [], "negative": [], "unclassified": [],
+        }
+        for source in chart_rows:
+            code = source["ts_code"]
+            if code not in membership:
+                continue
+            value = stock_trade_return(trades_by_code.get(code, []))
+            category = "unclassified" if value is None else (
+                "positive" if value > 0 else "negative"
+            )
+            target = output / source["filename"]
+            row = {
+                **source, "classified_return_pct": value, "return_category": category,
+                "filename": Path(relpath(target, directory)).as_posix(),
+            }
+            rows.append(row)
+            categories[category].append({
+                **row, "filename": Path(relpath(target, directory / category)).as_posix(),
+            })
+        indexes = {}
+        for category, members in categories.items():
+            category_directory = directory / category
+            category_directory.mkdir(parents=True, exist_ok=True)
+            indexes[f"{category}_index"] = str(_write_chart_index(
+                category_directory, members, [], states_csv,
+                title=f"{label} · {category}",
+            ))
+        entry = {"label": label, "charts": rows, **indexes}
+        entry["index"] = str(_write_chart_index(
+            directory, rows, [], states_csv, title=label,
+            scope_indexes={key: entry},
+        ))
+        result[key] = entry
+    return result
 
 
 def _write_chart_index(
@@ -701,7 +842,20 @@ def _write_chart_index(
     chart_rows: list[dict[str, Any]],
     errors: list[str],
     states_csv: Path,
+    *,
+    title: str = "策略五状态图表",
+    scope_indexes: dict[str, dict[str, Any]] | None = None,
 ) -> Path:
+    scope_links = []
+    for key in ("overall", "avg_mv_below_300yi", "avg_mv_at_least_300yi", "lendable"):
+        scope = (scope_indexes or {}).get(key)
+        if scope is None:
+            continue
+        links = " · ".join(
+            f'<a href="{escape(Path(relpath(scope[f"{category}_index"], output_directory)).as_posix())}">{category}</a>'
+            for category in ("positive", "negative", "unclassified")
+        )
+        scope_links.append(f'<li>{escape(scope["label"])}：{links}</li>')
     rows = []
     category_labels = {
         "positive": "正收益",
@@ -731,7 +885,7 @@ def _write_chart_index(
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>策略五图表入口</title>
+<title>{escape(title)}</title>
 <style>
 body{{font-family:Arial,"Microsoft YaHei",sans-serif;margin:28px;color:#222}}
 table{{border-collapse:collapse;width:100%;max-width:1100px}}
@@ -741,9 +895,11 @@ th{{background:#f5f5f5}}a{{color:#0969da}}code{{background:#f5f5f5;padding:2px 5
 </style>
 </head>
 <body>
-<h1>策略五状态图表</h1>
+<h1>{escape(title)}</h1>
 <p class="note">黄色背景表示可做空状态区域；K线继续保持红涨绿跌。</p>
 <p>未分类表示没有可用于收益分类的回测收益，仍保留状态图。</p>
+<p>每个池子内按股票汇总已实现收益和其他交易的浮动收益：positive 大于0，negative 小于或等于0。市值分组沿用交易持有期间平均市值。同一股票可以在不同池子中归入不同收益组。</p>
+{f'<ul>{"".join(scope_links)}</ul>' if scope_links else ''}
 <p>状态来源：<code>{escape(str(states_csv))}</code></p>
 <table>
 <thead><tr><th>股票</th><th>名称</th><th>最新状态</th><th>做空区间</th><th>波峰区间</th><th>异常</th><th>总市值</th><th>流通市值</th><th>收益分类</th><th>图表</th></tr></thead>
@@ -791,6 +947,10 @@ def _state_hover(row: dict[str, Any]) -> str:
         f"{_format_number(row.get('reference_high_close'))}"
         f"<br>参考低点：{row.get('reference_low_date', '')} "
         f"{_format_number(row.get('reference_low_close'))}"
+        f"<br>本轮结束日：{row.get('cycle_end_date', '') or '-'}"
+        f"<br>反转候选低点：{row.get('reversal_low_date', '') or '-'} "
+        f"{_format_number(row.get('reversal_low_close'))}"
+        f"<br>反转确认日：{row.get('reversal_confirm_date', '') or '-'}"
         f"<br>告警：{row.get('alert_code', '') or '-'}"
     )
 

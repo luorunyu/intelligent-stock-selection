@@ -1,4 +1,5 @@
 from pathlib import Path
+import re
 
 import pandas as pd
 import pytest
@@ -168,6 +169,11 @@ def chart_inputs(tmp_path):
             states["alert_code"] = ""
         else:
             states.loc[states.index[-1], "close"] = final_close
+            states.loc[states.index[-2], "state"] = int(
+                StockShortState.HIGH_CANDIDATE_PULLBACK
+            )
+            states.loc[states.index[-2], "state_name"] = "HIGH_CANDIDATE_PULLBACK"
+            states.loc[states.index[-2], "state_description"] = "最高点候选回调区域"
         stock_states.append(states)
         bars = _bars()
         bars["ts_code"] = code
@@ -273,3 +279,51 @@ def test_nonfinite_backtest_return_still_generates_an_unclassified_chart(
     assert chart["classified_return_pct"] is None
     assert (Path(result["output_directory"]) / chart["filename"]).is_file()
     assert result["errors"] == []
+
+
+def test_four_chart_scopes_classify_each_pool_and_include_zero_lending_quantity(
+    chart_inputs, tmp_path,
+):
+    states = pd.read_csv(chart_inputs["states_csv"], dtype={"ts_code": str, "trade_date": str})
+    chosen = states["ts_code"].eq("000001.SZ")
+    states.loc[chosen, "close"] = [10, 7, 10, 11, 11]
+    sequence = [StockShortState.HIGH_CANDIDATE_PULLBACK, StockShortState.TROUGH_CANDIDATE] * 2 + [StockShortState.NORMAL]
+    states.loc[chosen, "state"] = [int(state) for state in sequence]
+    states.loc[chosen, "state_name"] = [state.name for state in sequence]
+    states.loc[chosen, "cycle_id"] = [1, 1, 2, 2, 0]
+    states.loc[chosen, "peak_number"] = 0
+    states.loc[chosen, "total_mv"] = [2_000_000, 2_000_000, 4_000_000, 4_000_000, 4_000_000]
+    states.loc[states["ts_code"].eq("600000.SH"), "total_mv"] = 3_000_000
+    states.to_csv(chart_inputs["states_csv"], index=False)
+    for path in (chart_inputs["cache_root"] / "daily").glob("*.parquet"):
+        bars = pd.read_parquet(path)
+        price = states.loc[chosen & states["trade_date"].eq(path.stem), "close"].iloc[0]
+        bars.loc[bars["ts_code"].eq("000001.SZ"), ["close", "open", "high", "low"]] = [price, price, price + 1, price - 1]
+        bars.to_parquet(path, index=False)
+    lending = tmp_path / "20260109.tsv"
+    pd.DataFrame({
+        "市场类别": ["深圳Ａ", "上海Ａ", "上海Ａ", "深圳Ａ"],
+        "证券代码": ["000001", "600000", "600001", "300750"],
+        "证券名称": ["测试"] * 4, "可用数量": [0, 100, 0, 0],
+        "保证金比例(%)": [100] * 4, "融券状态": ["正常", "正常", "暂停", "正常"],
+    }).to_csv(lending, sep="\t", index=False, encoding="gb18030")
+
+    result = generate_stock_short_state_charts(**chart_inputs, lending_file=str(lending))
+    assert result["errors"] == []
+    assert set(result["sections"]) == {"overall", "avg_mv_below_300yi", "avg_mv_at_least_300yi", "lendable"}
+    overall = {row["ts_code"]: row for row in result["charts"]}
+    large = {row["ts_code"]: row for row in result["sections"]["avg_mv_at_least_300yi"]["charts"]}
+    small = {row["ts_code"]: row for row in result["sections"]["avg_mv_below_300yi"]["charts"]}
+    pool = {row["ts_code"]: row for row in result["sections"]["lendable"]["charts"]}
+    assert overall["000001.SZ"]["return_category"] == "positive"
+    assert large["000001.SZ"]["return_category"] == "negative"
+    assert small["000001.SZ"]["return_category"] == "positive"
+    assert "600000.SH" in large  # Exactly 300亿 belongs to the >= group.
+    assert "000001.SZ" in pool  # Zero available quantity is still in the pool.
+    assert "600001.SH" not in pool
+    assert pool["300750.SZ"]["return_category"] == "unclassified"
+    for section in result["sections"].values():
+        for key in ("index", "positive_index", "negative_index", "unclassified_index"):
+            entry = Path(section[key])
+            for href in re.findall(r'href="([^"]+)"', entry.read_text(encoding="utf-8")):
+                assert (entry.parent / href).is_file(), (entry, href)

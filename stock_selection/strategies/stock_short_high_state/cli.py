@@ -8,6 +8,9 @@ import json
 from pathlib import Path
 import sys
 from time import time
+from typing import Any
+
+import pandas as pd
 
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -18,26 +21,25 @@ from stock_selection.data.market_cap import load_cached_market_caps, merge_marke
 
 from stock_selection.screening_schemes.plan_two.lending import (
     DEFAULT_LENDING_ROOT,
-    read_lending_file,
-    resolve_lending_file,
 )
 from stock_selection.strategies.stock_short_high_state.backtest import (
     build_short_trade_backtest,
-    filter_short_trade_backtest_by_stock_pool,
-    split_short_trade_backtest_by_average_market_cap,
+    build_short_trade_backtest_sections,
 )
 from stock_selection.strategies.stock_short_high_state.report import (
     DEFAULT_OUTPUT_ROOT,
     build_stock_short_state_report,
-    save_short_trade_backtest_report,
+    save_short_trade_backtest_sections,
     save_stock_short_state_report,
 )
 from stock_selection.strategies.stock_short_high_state.screen import (
     DEFAULT_CANDIDATE_PULLBACK_PCT,
     DEFAULT_CONFIRM_DRAWDOWN_PCT,
+    DEFAULT_CYCLE_END_DRAWDOWN_PCT,
     DEFAULT_HIGH_HEAT_DAYS,
     DEFAULT_LOOKBACK_DAYS,
     DEFAULT_REBOUND_PCT,
+    DEFAULT_REVERSAL_CONFIRM_DAYS,
     DEFAULT_TROUGH_CONFIRM_DAYS,
     calculate_stock_short_states,
     read_cached_stock_daily,
@@ -50,7 +52,10 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--date", default=date.today().strftime("%Y%m%d"))
     parser.add_argument("--cache-root", default=None)
-    parser.add_argument("--stock-code", action="append", default=None)
+    parser.add_argument(
+        "--stock-code", action="append", default=None,
+        help="Limit to this stock (repeatable); omit to analyse all cached stocks.",
+    )
     parser.add_argument("--lookback-days", type=int, default=DEFAULT_LOOKBACK_DAYS)
     parser.add_argument(
         "--candidate-pullback-pct",
@@ -63,6 +68,13 @@ def parse_args() -> argparse.Namespace:
         default=DEFAULT_CONFIRM_DRAWDOWN_PCT,
     )
     parser.add_argument("--rebound-pct", type=float, default=DEFAULT_REBOUND_PCT)
+    parser.add_argument(
+        "--cycle-end-drawdown-pct", type=float, default=DEFAULT_CYCLE_END_DRAWDOWN_PCT
+    )
+    parser.add_argument(
+        "--reversal-confirm-days", type=int, default=DEFAULT_REVERSAL_CONFIRM_DAYS,
+        help="Reversal confirmation bars, including the low day (default: 10).",
+    )
     parser.add_argument(
         "--high-heat-days", type=int, default=DEFAULT_HIGH_HEAT_DAYS
     )
@@ -84,9 +96,6 @@ def parse_args() -> argparse.Namespace:
 def main() -> int:
     begin_time = time()
     args = parse_args()
-    if args.stock_code is None:
-        args.stock_code = ["000068.SZ"]
-
     daily, basic = read_cached_stock_daily(
         cache_root=args.cache_root,
         as_of_date=args.date,
@@ -98,9 +107,11 @@ def main() -> int:
         lookback_days=args.lookback_days,
         candidate_pullback_pct=args.candidate_pullback_pct,
         confirm_drawdown_pct=args.confirm_drawdown_pct,
+        cycle_end_drawdown_pct=args.cycle_end_drawdown_pct,
         rebound_pct=args.rebound_pct,
         high_heat_days=args.high_heat_days,
         trough_confirm_days=args.trough_confirm_days,
+        reversal_confirm_days=args.reversal_confirm_days,
         stock_codes=args.stock_code,
         stock_basic=basic,
         include_st=args.include_st,
@@ -121,9 +132,11 @@ def main() -> int:
         lookback_days=args.lookback_days,
         candidate_pullback_pct=args.candidate_pullback_pct,
         confirm_drawdown_pct=args.confirm_drawdown_pct,
+        cycle_end_drawdown_pct=args.cycle_end_drawdown_pct,
         rebound_pct=args.rebound_pct,
         high_heat_days=args.high_heat_days,
         trough_confirm_days=args.trough_confirm_days,
+        reversal_confirm_days=args.reversal_confirm_days,
     )
     if args.write_report:
         backtest = build_short_trade_backtest(states, as_of_date=args.date)
@@ -132,98 +145,30 @@ def main() -> int:
             states,
             records_root=args.records_root,
         )
-        backtest_path = save_short_trade_backtest_report(
-            backtest,
-            records_root=args.records_root,
-        )
-        market_cap_backtests = split_short_trade_backtest_by_average_market_cap(
-            backtest
-        )
-        below_300yi_path = save_short_trade_backtest_report(
-            market_cap_backtests["below"],
-            records_root=args.records_root,
-            filename="short_trade_backtest_avg_mv_below_300yi.md",
-        )
-        at_least_300yi_path = save_short_trade_backtest_report(
-            market_cap_backtests["at_least"],
-            records_root=args.records_root,
-            filename="short_trade_backtest_avg_mv_at_least_300yi.md",
-        )
-        lending_path = _resolve_optional_lending_file(args)
-        lending_backtest = None
-        lending_backtest_path = None
-        if lending_path is not None:
-            lending_data = read_lending_file(lending_path)
-            lending_dates = set(lending_data["lending_date"].dropna().astype(str))
-            if lending_dates != {str(args.date)}:
-                raise ValueError(
-                    "lending data date must match the strategy report date: "
-                    f"expected {args.date}, found {', '.join(sorted(lending_dates))}"
-                )
-            eligible_lending = lending_data[
-                lending_data["available_quantity"].gt(0)
-                & lending_data["lending_status"].eq("正常")
-                & lending_data["ts_code"].ne("")
-            ].copy()
-            eligible_codes = set(eligible_lending["ts_code"])
-            lending_backtest = filter_short_trade_backtest_by_stock_pool(
-                backtest,
-                eligible_codes,
-                pool_label=f"{args.date}可融券股票池",
-                pool_date=args.date,
-                source_file=str(lending_path),
-                selection_rule="融券状态正常且可用数量大于0",
-                source_record_count=len(lending_data),
-                matched_state_stock_count=len(
-                    eligible_codes.intersection(set(states["ts_code"]))
-                ),
-            )
-            lending_backtest_path = save_short_trade_backtest_report(
-                lending_backtest,
-                records_root=args.records_root,
-                filename=f"short_trade_backtest_lendable_{args.date}.md",
-            )
-        output = {
-            "csv": str(csv_path),
-            # "json": str(json_path),
-            # "markdown": str(markdown_path),
-            "short_trade_backtest": str(backtest_path),
-            "short_trade_backtest_avg_mv_below_300yi": str(below_300yi_path),
-            "short_trade_backtest_avg_mv_at_least_300yi": str(
-                at_least_300yi_path
+        sections = _build_backtest_sections(states, backtest, args=args)
+        output = save_short_trade_backtest_sections(
+            sections, records_root=args.records_root,
+            missing_lending_note=(
+                "未找到报告日或更早的融券名单，本次未生成可融券部分。"
+                if "lendable" not in sections else None
             ),
-            "summary": report["summary"],
-            "backtest_summary": backtest["summary"],
-            "backtest_summary_avg_mv_below_300yi": market_cap_backtests["below"][
-                "summary"
-            ],
-            "backtest_summary_avg_mv_at_least_300yi": market_cap_backtests[
-                "at_least"
-            ]["summary"],
-            "latest_states": report["latest_states"],
-        }
-        if lending_backtest is not None and lending_backtest_path is not None:
-            output["short_trade_backtest_lendable"] = str(lending_backtest_path)
-            output["backtest_summary_lendable"] = lending_backtest["summary"]
-    # else:
-        # output = report
-    # print(json.dumps(output, ensure_ascii=False, indent=2, default=str))
+        )
+        output["csv"] = str(csv_path)
+        output["summaries"] = {key: value["summary"] for key, value in sections.items()}
+        print(json.dumps(output, ensure_ascii=False, indent=2, default=str))
     end_time = time()
-    print(f"读数据花费 {data_cost_time - begin_time}秒，计算状态花费{state_cal_time - data_cost_time}秒,状态merge花了{state_merge_time-state_cal_time}秒， 回撤花了{end_time - state_merge_time}秒")
+    print(f"读数据花费 {data_cost_time - begin_time}秒，计算状态花费{state_cal_time - data_cost_time}秒,状态merge花了{state_merge_time-state_cal_time}秒， 回测报告花了{end_time - state_merge_time}秒")
     return 0
 
 
-def _resolve_optional_lending_file(args: argparse.Namespace) -> Path | None:
-    try:
-        return resolve_lending_file(
-            as_of_date=args.date,
-            lending_file=args.lending_file,
-            lending_root=args.lending_root,
-        )
-    except FileNotFoundError:
-        if args.lending_file is not None:
-            raise
-        return None
+def _build_backtest_sections(
+    states: pd.DataFrame, backtest: dict[str, Any], *, args: argparse.Namespace,
+) -> dict[str, dict[str, Any]]:
+    """Build the four report scopes without splitting reports by return."""
+    return build_short_trade_backtest_sections(
+        states, backtest, as_of_date=args.date,
+        lending_file=args.lending_file, lending_root=args.lending_root,
+    )
 
 
 if __name__ == "__main__":

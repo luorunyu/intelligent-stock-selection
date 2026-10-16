@@ -9,6 +9,10 @@ from typing import Any, Iterable
 import numpy as np
 import pandas as pd
 
+from stock_selection.screening_schemes.plan_two.lending import (
+    read_lending_file,
+    resolve_lending_file,
+)
 from stock_selection.strategies.stock_short_high_state.screen import (
     StockShortState,
 )
@@ -23,9 +27,11 @@ class ShortTradeBacktestConfig:
         {
             StockShortState.TROUGH_CANDIDATE,
             StockShortState.TROUGH_REGION,
+            StockShortState.REVERSAL_CONFIRMED,
         }
     )
-    candidate_exit_label: str = "TROUGH_CANDIDATE_OR_REGION"
+    candidate_exit_label: str = "TROUGH_OR_REVERSAL_CONFIRMED"
+    include_peak_entries: bool = False
     peak_entry_states: frozenset[StockShortState] = frozenset(
         {
             StockShortState.PEAK_1,
@@ -35,13 +41,13 @@ class ShortTradeBacktestConfig:
         }
     )
     peak_exit_state: StockShortState = StockShortState.TROUGH_REGION
+    cycle_end_state: StockShortState = StockShortState.CYCLE_ENDED
     invalidation_state: StockShortState = StockShortState.INVALID_HIGH_NEW_HIGH
 
 
 BACKTEST_CONFIG = ShortTradeBacktestConfig()
 ENTRY_STATES = {
     int(BACKTEST_CONFIG.candidate_entry_state),
-    *(int(state) for state in BACKTEST_CONFIG.peak_entry_states),
 }
 PEAK_ENTRY_STATES = {int(state) for state in BACKTEST_CONFIG.peak_entry_states}
 INVALID_STATE = int(BACKTEST_CONFIG.invalidation_state)
@@ -56,12 +62,15 @@ def build_short_trade_backtest(
 ) -> dict[str, Any]:
     """Build state-transition short trades and aggregate performance metrics."""
     data = _normalise_states(states)
+    if not data.empty:
+        data = data[data["trade_date"].le(str(as_of_date).replace("-", ""))]
     trades: list[dict[str, Any]] = []
     if not data.empty:
         for _, stock_rows in data.groupby("ts_code", sort=True):
             stock_rows = stock_rows.sort_values("trade_date").reset_index(drop=True)
             trades.extend(_candidate_trades(stock_rows, config=config))
-            trades.extend(_peak_trades(stock_rows, config=config))
+            if config.include_peak_entries:
+                trades.extend(_peak_trades(stock_rows, config=config))
 
     trades.sort(
         key=lambda trade: (
@@ -81,7 +90,7 @@ def build_short_trade_backtest(
                 *(state.name for state in sorted(
                     config.peak_entry_states,
                     key=lambda state: int(state),
-                )),
+                ) if config.include_peak_entries),
             ],
             "exit_states": list(
                 dict.fromkeys(
@@ -94,10 +103,13 @@ def build_short_trade_backtest(
                             )
                         ),
                         config.peak_exit_state.name,
+                        config.cycle_end_state.name,
                     ]
                 )
             ),
             "invalidation_state": config.invalidation_state.name,
+            "cycle_end_state": config.cycle_end_state.name,
+            "include_peak_entries": config.include_peak_entries,
             "return_formula": "1 - exit_close / entry_close",
         },
         "summary": _summarise_trades(trades),
@@ -199,6 +211,7 @@ def filter_short_trade_backtest_by_stock_pool(
                 "selection_rule": str(selection_rule),
                 "source_record_count": source_record_count,
                 "eligible_code_count": len(codes),
+                "stock_codes": sorted(codes),
                 "matched_state_stock_count": matched_state_stock_count,
                 "matched_trade_stock_count": len(matched_trade_codes),
                 "excluded_trade_count": len(backtest.get("trades", []))
@@ -209,6 +222,64 @@ def filter_short_trade_backtest_by_stock_pool(
         "by_entry_state": _summarise_by_entry_state(trades),
         "trades": trades,
     }
+
+
+def stock_trade_return(trades: Iterable[dict[str, Any]]) -> float | None:
+    """Match chart classification: realised returns plus other marked returns."""
+    values = []
+    for trade in trades:
+        value = (
+            trade.get("return_pct")
+            if trade.get("status") == "COMPLETED"
+            else trade.get("mark_return_pct")
+        )
+        if value is not None and np.isfinite(float(value)):
+            values.append(float(value))
+    return float(sum(values)) if values else None
+
+
+def build_short_trade_backtest_sections(
+    states: pd.DataFrame,
+    backtest: dict[str, Any],
+    *,
+    as_of_date: str,
+    lending_file: str | None = None,
+    lending_root: str | None = None,
+) -> dict[str, dict[str, Any]]:
+    """Share the same four scopes between reports and chart indexes."""
+    market_caps = split_short_trade_backtest_by_average_market_cap(backtest)
+    sections = {
+        "overall": backtest,
+        "avg_mv_at_least_300yi": market_caps["at_least"],
+        "avg_mv_below_300yi": market_caps["below"],
+    }
+    try:
+        path = resolve_lending_file(
+            as_of_date=as_of_date, lending_file=lending_file,
+            lending_root=lending_root, allow_previous=True,
+        )
+    except FileNotFoundError:
+        if lending_file is not None:
+            raise
+        return sections
+    lending_data = read_lending_file(path)
+    dates = set(lending_data["lending_date"].dropna().astype(str))
+    if len(dates) != 1 or next(iter(dates)) > str(as_of_date):
+        raise ValueError("lending snapshot must have one date on or before the report date")
+    snapshot_date = next(iter(dates))
+    eligible = lending_data[
+        lending_data["lending_status"].eq("正常") & lending_data["ts_code"].ne("")
+    ]
+    codes = set(eligible["ts_code"])
+    sections["lendable"] = filter_short_trade_backtest_by_stock_pool(
+        backtest, codes,
+        pool_label=f"{snapshot_date}可融券股票池（含可用数量为0）",
+        pool_date=snapshot_date, source_file=str(path),
+        selection_rule="融券状态正常且代码有效，不限制可用数量（包含0）",
+        source_record_count=len(lending_data),
+        matched_state_stock_count=len(codes.intersection(set(states["ts_code"]))),
+    )
+    return sections
 
 
 def _candidate_trades(
@@ -233,6 +304,7 @@ def _candidate_trades(
         exits = cycle_rows[
             cycle_rows["state"].isin(
                 [int(state) for state in config.candidate_exit_states]
+                + [int(config.cycle_end_state)]
             )
             & cycle_rows["trade_date"].ge(entry_date)
         ].sort_values("trade_date")
@@ -253,6 +325,7 @@ def _candidate_trades(
                 exit_state=config.candidate_exit_label,
                 exits=exits,
                 invalidations=invalidations,
+                cycle_end_state=config.cycle_end_state,
             )
         )
     return trades
@@ -283,8 +356,13 @@ def _peak_trades(
             entry_close = float(signal["close"])
         cycle_rows = stock_rows[stock_rows["cycle_id"].eq(int(cycle_id))]
         exits = cycle_rows[
-            cycle_rows["state"].eq(int(config.peak_exit_state))
-            & cycle_rows["peak_number"].eq(int(peak_number))
+            (
+                (
+                    cycle_rows["state"].eq(int(config.peak_exit_state))
+                    & cycle_rows["peak_number"].eq(int(peak_number))
+                )
+                | cycle_rows["state"].eq(int(config.cycle_end_state))
+            )
             & cycle_rows["trade_date"].ge(entry_date)
         ].sort_values("trade_date")
         invalidations = cycle_rows[
@@ -304,6 +382,7 @@ def _peak_trades(
                 exit_state=config.peak_exit_state.name,
                 exits=exits,
                 invalidations=invalidations,
+                cycle_end_state=config.cycle_end_state,
             )
         )
     return trades
@@ -322,6 +401,7 @@ def _build_trade(
     exit_state: str,
     exits: pd.DataFrame,
     invalidations: pd.DataFrame,
+    cycle_end_state: StockShortState,
 ) -> dict[str, Any]:
     exit_row = exits.iloc[0] if not exits.empty else None
     invalid_row = invalidations.iloc[0] if not invalidations.empty else None
@@ -330,7 +410,11 @@ def _build_trade(
         or str(exit_row["trade_date"]) <= str(invalid_row["trade_date"])
     ):
         status = "COMPLETED"
-        status_reason = "EXIT_STATE_REACHED"
+        status_reason = (
+            "CYCLE_END_DRAWDOWN"
+            if int(exit_row["state"]) == int(cycle_end_state)
+            else "EXIT_STATE_REACHED"
+        )
         evaluation_row = exit_row
     elif invalid_row is not None:
         status = "INVALIDATED"
