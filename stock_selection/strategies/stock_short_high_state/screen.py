@@ -296,6 +296,10 @@ def _calculate_one_stock(
     trough_confirm_days: int,
 ) -> list[dict[str, Any]]:
     ordered_group = group.sort_values("trade_date").reset_index(drop=True)
+    # 调试：仅使用 2025-10-15 之后的行情重新计算状态。
+    ordered_group = ordered_group.loc[
+        ordered_group["trade_date"].gt("20251015")
+    ].reset_index(drop=True)
     closes = ordered_group["close"].to_numpy(dtype=float)
     dates = ordered_group["trade_date"].astype(str).to_numpy()
     high_heat_means = (

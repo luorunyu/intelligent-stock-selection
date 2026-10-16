@@ -84,6 +84,9 @@ def parse_args() -> argparse.Namespace:
 def main() -> int:
     begin_time = time()
     args = parse_args()
+    if args.stock_code is None:
+        args.stock_code = ["000068.SZ"]
+
     daily, basic = read_cached_stock_daily(
         cache_root=args.cache_root,
         as_of_date=args.date,

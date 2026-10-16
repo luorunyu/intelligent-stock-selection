@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import pandas as pd
 import pytest
 
@@ -6,6 +8,7 @@ from stock_selection.strategies.stock_short_high_state.visualization import (
     SHORT_FILL_COLOR,
     build_short_state_intervals,
     build_stock_short_state_figure,
+    generate_stock_short_state_charts,
     merge_bars_and_states,
     normalise_stock_code,
     read_chart_codes,
@@ -141,3 +144,132 @@ def test_figure_keeps_red_green_candles_and_adds_yellow_regions():
     assert any(trace.name == "策略异常" for trace in figure.data)
     assert "12.35亿元" in figure.layout.title.text
     assert "10.00亿元" in figure.layout.title.text
+
+
+@pytest.fixture
+def chart_inputs(tmp_path):
+    pytest.importorskip("pyarrow")
+    stock_states = []
+    stock_bars = []
+    for code, final_close in (
+        ("000001.SZ", 11.0),
+        ("600000.SH", 13.0),
+        ("600001.SH", 12.0),
+        ("300750.SZ", None),
+    ):
+        states = _states()
+        states["ts_code"] = code
+        if final_close is None:
+            states["state"] = int(StockShortState.NORMAL)
+            states["state_name"] = "NORMAL"
+            states["state_description"] = "普通状态"
+            states["cycle_id"] = 0
+            states["peak_number"] = 0
+            states["alert_code"] = ""
+        else:
+            states.loc[states.index[-1], "close"] = final_close
+        stock_states.append(states)
+        bars = _bars()
+        bars["ts_code"] = code
+        bars["close"] = states["close"]
+        bars["open"] = bars["close"]
+        bars["high"] = bars["close"] + 1
+        bars["low"] = bars["close"] - 1
+        stock_bars.append(bars)
+
+    states_path = tmp_path / "states.csv"
+    pd.concat(stock_states, ignore_index=True).to_csv(states_path, index=False)
+    cache_root = tmp_path / "cache"
+    daily = cache_root / "daily"
+    daily.mkdir(parents=True)
+    for date, bars in pd.concat(stock_bars, ignore_index=True).groupby("trade_date"):
+        bars.to_parquet(daily / f"{date}.parquet", index=False)
+    codes_path = tmp_path / "codes.txt"
+    codes_path.write_text("", encoding="utf-8")
+    return {
+        "states_csv": states_path,
+        "codes_file": codes_path,
+        "cache_root": cache_root,
+        "output_directory": tmp_path / "charts",
+    }
+
+
+@pytest.mark.parametrize("contents", ["", "\n \t\n", "\ufeff# 只含注释\n\n"])
+def test_empty_code_file_charts_all_states_including_stocks_without_trades(
+    chart_inputs, contents,
+):
+    chart_inputs["codes_file"].write_text(contents, encoding="utf-8")
+
+    result = generate_stock_short_state_charts(**chart_inputs)
+
+    charts = {item["ts_code"]: item for item in result["charts"]}
+    assert set(charts) == {"000001.SZ", "600000.SH", "600001.SH", "300750.SZ"}
+    assert result["errors"] == []
+    assert charts["000001.SZ"]["return_category"] == "positive"
+    assert charts["600000.SH"]["return_category"] == "negative"
+    assert charts["600001.SH"]["return_category"] == "negative"
+    assert charts["600001.SH"]["classified_return_pct"] == 0
+    assert charts["300750.SZ"]["return_category"] == "unclassified"
+    assert charts["300750.SZ"]["classified_return_pct"] is None
+    index_path = Path(result["index"])
+    index = index_path.read_text(encoding="utf-8")
+    for chart in charts.values():
+        assert (index_path.parent / chart["filename"]).is_file()
+        assert f'href="{chart["filename"]}"' in index
+    unclassified_index = Path(result["unclassified_index"])
+    assert 'href="300750_SZ.html"' in unclassified_index.read_text(encoding="utf-8")
+    assert (unclassified_index.parent / "plotly.min.js").is_file()
+
+
+def test_nonempty_code_file_only_charts_requested_stocks(chart_inputs):
+    chart_inputs["codes_file"].write_text(
+        "300750\n300750.SZ\n", encoding="utf-8"
+    )
+
+    result = generate_stock_short_state_charts(**chart_inputs)
+
+    assert [item["ts_code"] for item in result["charts"]] == ["300750.SZ"]
+    assert result["errors"] == []
+
+
+def test_invalid_only_code_file_does_not_fall_back_to_all_stocks(chart_inputs):
+    chart_inputs["codes_file"].write_text("bad\n", encoding="utf-8")
+
+    with pytest.raises(ValueError, match="invalid stock code 'bad'"):
+        generate_stock_short_state_charts(**chart_inputs)
+    assert not chart_inputs["output_directory"].exists()
+
+
+def test_missing_code_file_does_not_fall_back_to_all_stocks(chart_inputs, tmp_path):
+    chart_inputs["codes_file"] = tmp_path / "missing.txt"
+
+    with pytest.raises(FileNotFoundError, match="chart code file does not exist"):
+        generate_stock_short_state_charts(**chart_inputs)
+
+
+def test_nonfinite_backtest_return_still_generates_an_unclassified_chart(
+    chart_inputs, monkeypatch,
+):
+    chart_inputs["codes_file"].write_text("000001.SZ\n", encoding="utf-8")
+    monkeypatch.setattr(
+        "stock_selection.strategies.stock_short_high_state.visualization."
+        "build_short_trade_backtest",
+        lambda *args, **kwargs: {
+            "trades": [
+                {
+                    "ts_code": "000001.SZ",
+                    "status": "OPEN",
+                    "mark_return_pct": float("nan"),
+                }
+            ]
+        },
+    )
+
+    result = generate_stock_short_state_charts(**chart_inputs)
+
+    assert len(result["charts"]) == 1
+    chart = result["charts"][0]
+    assert chart["return_category"] == "unclassified"
+    assert chart["classified_return_pct"] is None
+    assert (Path(result["output_directory"]) / chart["filename"]).is_file()
+    assert result["errors"] == []

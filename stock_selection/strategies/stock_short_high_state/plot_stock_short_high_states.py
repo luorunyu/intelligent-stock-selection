@@ -26,7 +26,11 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--date", default=None, help="State date, YYYYMMDD")
     parser.add_argument("--states-csv", default=None)
-    parser.add_argument("--codes-file", default=str(DEFAULT_CODES_FILE))
+    parser.add_argument(
+        "--codes-file",
+        default=str(DEFAULT_CODES_FILE),
+        help="Stock code list; an empty or comments-only file selects all stocks in states.csv",
+    )
     parser.add_argument("--cache-root", default=None)
     parser.add_argument("--output-root", default=str(DEFAULT_OUTPUT_ROOT))
     parser.add_argument("--output", default=None)

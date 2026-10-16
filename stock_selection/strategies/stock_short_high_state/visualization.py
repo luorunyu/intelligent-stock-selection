@@ -545,12 +545,19 @@ def generate_stock_short_state_charts(
     output_directory: str | Path | None = None,
     initial_bars: int | None = 250,
 ) -> dict[str, Any]:
-    """Generate return-classified charts plus HTML indexes."""
+    """Generate charts for the requested codes, or all stocks if the list is empty."""
     state_path = Path(states_csv)
     states = read_saved_states(state_path)
+    if states.empty:
+        raise ValueError("states CSV contains no stock data to chart")
     codes, input_errors = _resolve_chart_codes(codes_file, stock_codes)
     if not codes:
-        raise ValueError("chart code file contains no valid stock codes")
+        if input_errors:
+            raise ValueError(
+                "chart code file contains no valid stock codes: "
+                + "; ".join(input_errors)
+            )
+        codes = states["ts_code"].drop_duplicates().tolist()
     selected_states = states[states["ts_code"].isin(codes)]
     if selected_states.empty:
         raise ValueError("none of the requested stock codes exist in the states CSV")
@@ -574,13 +581,15 @@ def generate_stock_short_state_charts(
         else state_path.parent / "charts"
     )
     output.mkdir(parents=True, exist_ok=True)
-    positive_output = output / "positive"
-    negative_output = output / "negative"
-    positive_output.mkdir(parents=True, exist_ok=True)
-    negative_output.mkdir(parents=True, exist_ok=True)
+    category_outputs = {
+        category: output / category
+        for category in ("positive", "negative", "unclassified")
+    }
+    for directory in category_outputs.values():
+        directory.mkdir(parents=True, exist_ok=True)
 
     chart_rows: list[dict[str, Any]] = []
-    category_rows = {"positive": [], "negative": []}
+    category_rows = {category: [] for category in category_outputs}
     errors = list(input_errors)
     backtest = build_short_trade_backtest(
         selected_states,
@@ -604,9 +613,6 @@ def generate_stock_short_state_charts(
             chart_data = merge_market_caps(chart_data, market_caps)
             stock_name = _latest_nonempty(stock_states["stock_name"])
             stock_trades = trades_by_code.get(code, [])
-            if not stock_trades:
-                errors.append(f"{code}: no backtest trade to classify return")
-                continue
             evaluated_returns = [
                 trade.get("return_pct")
                 if trade.get("status") == "COMPLETED"
@@ -618,14 +624,12 @@ def generate_stock_short_state_charts(
                 for value in evaluated_returns
                 if value is not None and np.isfinite(float(value))
             ]
-            if not finite_returns:
-                errors.append(f"{code}: no finite backtest return to classify")
-                continue
-            classified_return = float(sum(finite_returns))
-            category = "positive" if classified_return > 0 else "negative"
-            category_output = (
-                positive_output if category == "positive" else negative_output
-            )
+            classified_return = None
+            category = "unclassified"
+            if finite_returns:
+                classified_return = float(sum(finite_returns))
+                category = "positive" if classified_return > 0 else "negative"
+            category_output = category_outputs[category]
             filename = f"{code.replace('.', '_')}.html"
             write_stock_short_state_html(
                 chart_data,
@@ -666,26 +670,27 @@ def generate_stock_short_state_charts(
         except (ValueError, FileNotFoundError) as exc:
             errors.append(f"{code}: {exc}")
 
-    positive_index = _write_chart_index(
-        positive_output,
-        category_rows["positive"],
-        [],
-        state_path,
-    )
-    negative_index = _write_chart_index(
-        negative_output,
-        category_rows["negative"],
-        [],
-        state_path,
-    )
+    category_indexes = {
+        category: _write_chart_index(
+            directory,
+            category_rows[category],
+            [],
+            state_path,
+        )
+        for category, directory in category_outputs.items()
+    }
     index_path = _write_chart_index(output, chart_rows, errors, state_path)
     return {
         "index": str(index_path),
         "output_directory": str(output),
-        "positive_directory": str(positive_output),
-        "negative_directory": str(negative_output),
-        "positive_index": str(positive_index),
-        "negative_index": str(negative_index),
+        **{
+            f"{category}_directory": str(directory)
+            for category, directory in category_outputs.items()
+        },
+        **{
+            f"{category}_index": str(path)
+            for category, path in category_indexes.items()
+        },
         "charts": chart_rows,
         "errors": errors,
     }
@@ -698,6 +703,11 @@ def _write_chart_index(
     states_csv: Path,
 ) -> Path:
     rows = []
+    category_labels = {
+        "positive": "正收益",
+        "negative": "非正收益",
+        "unclassified": "未分类",
+    }
     for item in chart_rows:
         rows.append(
             "<tr>"
@@ -709,11 +719,12 @@ def _write_chart_index(
             f"<td>{item['alerts']}</td>"
             f"<td>{escape(format_market_cap(item.get('total_mv')))}</td>"
             f"<td>{escape(format_market_cap(item.get('circ_mv')))}</td>"
+            f"<td>{category_labels[item['return_category']]}</td>"
             f"<td><a href=\"{escape(item['filename'])}\">查看图表</a></td>"
             "</tr>"
         )
     if not rows:
-        rows.append("<tr><td colspan=\"9\">没有生成图表</td></tr>")
+        rows.append("<tr><td colspan=\"10\">没有生成图表</td></tr>")
     error_items = "".join(f"<li>{escape(error)}</li>" for error in errors)
     html = f"""<!doctype html>
 <html lang="zh-CN">
@@ -732,9 +743,10 @@ th{{background:#f5f5f5}}a{{color:#0969da}}code{{background:#f5f5f5;padding:2px 5
 <body>
 <h1>策略五状态图表</h1>
 <p class="note">黄色背景表示可做空状态区域；K线继续保持红涨绿跌。</p>
+<p>未分类表示没有可用于收益分类的回测收益，仍保留状态图。</p>
 <p>状态来源：<code>{escape(str(states_csv))}</code></p>
 <table>
-<thead><tr><th>股票</th><th>名称</th><th>最新状态</th><th>做空区间</th><th>波峰区间</th><th>异常</th><th>总市值</th><th>流通市值</th><th>图表</th></tr></thead>
+<thead><tr><th>股票</th><th>名称</th><th>最新状态</th><th>做空区间</th><th>波峰区间</th><th>异常</th><th>总市值</th><th>流通市值</th><th>收益分类</th><th>图表</th></tr></thead>
 <tbody>{''.join(rows)}</tbody>
 </table>
 {f'<h2>未生成项目</h2><ul>{error_items}</ul>' if errors else ''}

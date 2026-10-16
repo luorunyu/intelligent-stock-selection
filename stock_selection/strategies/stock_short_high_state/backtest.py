@@ -539,6 +539,12 @@ def _max_trade_value(trades: list[dict[str, Any]], key: str) -> float | None:
 def _compounded_return(returns: np.ndarray) -> float | None:
     if not len(returns):
         return None
+    # A negative capital balance cannot be compounded by this equity model.
+    # Keep the individual trade losses intact and mark this statistic unavailable.
+    if not np.isfinite(returns).all() or np.any(returns < -1.0):
+        return None
+    if np.any(returns == -1.0):
+        return -1.0
     log_return = float(np.sum(np.log1p(returns)))
     if log_return > np.log(np.finfo(float).max):
         return None
@@ -557,9 +563,13 @@ def _sequential_max_drawdown(trades: list[dict[str, Any]]) -> float | None:
         ),
     )
     returns = np.array([trade["return_pct"] for trade in ordered], dtype=float)
+    if not np.isfinite(returns).all() or np.any(returns < -1.0):
+        return None
+    if np.any(returns == -1.0):
+        return 1.0
     log_equity = np.concatenate(([0.0], np.cumsum(np.log1p(returns))))
     running_max = np.maximum.accumulate(log_equity)
-    return float(np.max(1.0 - np.exp(log_equity - running_max)))
+    return float(np.max(-np.expm1(log_equity - running_max)))
 
 
 def _entry_state_sort_key(value: str) -> tuple[int, int]:

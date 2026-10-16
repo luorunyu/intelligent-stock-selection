@@ -1,7 +1,10 @@
+import numpy as np
 import pandas as pd
 import pytest
 
 from stock_selection.strategies.stock_short_high_state.backtest import (
+    _compounded_return,
+    _sequential_max_drawdown,
     build_short_trade_backtest,
     filter_short_trade_backtest_by_stock_pool,
     split_short_trade_backtest_by_average_market_cap,
@@ -10,6 +13,7 @@ from stock_selection.strategies.stock_short_high_state.report import (
     save_short_trade_backtest_report,
 )
 from stock_selection.strategies.stock_short_high_state.screen import (
+    StockShortState,
     calculate_stock_short_states,
 )
 
@@ -250,3 +254,96 @@ def test_backtest_filters_a_fixed_lendable_stock_pool(tmp_path):
     assert "20250112可融券股票池" in markdown
     assert "源记录 10 条" in markdown
     assert "不能证明历史开仓日当时有券可借" in markdown
+
+
+@pytest.mark.parametrize(
+    "returns, expected_return, expected_drawdown",
+    [
+        ([], None, None),
+        ([0.1, -0.2, 0.05], -0.076, 0.2),
+        ([-0.2, 0.1], -0.12, 0.2),
+        ([-0.999999], -0.999999, 0.999999),
+        ([0.1, -1.0, 0.5], -1.0, 1.0),
+        ([-1.5], None, None),
+        ([-1.0, -1.5], None, None),
+        ([float("nan")], None, None),
+        ([float("inf")], None, None),
+        ([0.5] * 3000, None, 0.0),
+    ],
+)
+def test_sequential_statistics_handle_capital_exhaustion_without_numeric_warnings(
+    returns, expected_return, expected_drawdown,
+):
+    trades = [
+        {
+            "ts_code": "000001.SZ",
+            "entry_date": f"{index:08d}",
+            "exit_date": f"{index + 1:08d}",
+            "return_pct": value,
+        }
+        for index, value in reversed(list(enumerate(returns)))
+    ]
+
+    with np.errstate(all="raise"):
+        compounded = _compounded_return(np.array(returns, dtype=float))
+        drawdown = _sequential_max_drawdown(trades)
+
+    if expected_return is None:
+        assert compounded is None
+    else:
+        assert compounded == pytest.approx(expected_return)
+    if expected_drawdown is None:
+        assert drawdown is None
+    else:
+        assert drawdown == pytest.approx(expected_drawdown)
+
+
+@pytest.mark.parametrize(
+    "exit_close, expected_return, expected_drawdown",
+    [(20.0, -1.0, 1.0), (25.0, None, None)],
+)
+def test_backtest_preserves_losses_when_sequential_equity_cannot_continue(
+    tmp_path, exit_close, expected_return, expected_drawdown,
+):
+    states = pd.DataFrame(
+        {
+            "ts_code": ["000001.SZ"] * 4,
+            "trade_date": ["20260105", "20260106", "20260107", "20260108"],
+            "close": [10.0, exit_close, 10.0, 1.0],
+            "state": [
+                int(StockShortState.HIGH_CANDIDATE_PULLBACK),
+                int(StockShortState.TROUGH_CANDIDATE),
+            ] * 2,
+            "state_name": ["HIGH_CANDIDATE_PULLBACK", "TROUGH_CANDIDATE"] * 2,
+            "cycle_id": [1, 1, 2, 2],
+            "peak_number": [0] * 4,
+        }
+    )
+
+    with np.errstate(all="raise"):
+        backtest = build_short_trade_backtest(states, as_of_date="20260108")
+
+    summary = backtest["summary"]
+    loss = 1 - exit_close / 10
+    assert summary["completed_trades"] == 2
+    assert summary["wins"] == 1
+    assert summary["losses"] == 1
+    assert summary["win_rate"] == 0.5
+    assert summary["worst_return_pct"] == loss
+    assert summary["average_return_pct"] == pytest.approx((loss + 0.9) / 2)
+    assert backtest["trades"][0]["return_pct"] == loss
+    assert summary["compounded_return_pct"] == expected_return
+    assert summary["sequential_max_drawdown_pct"] == expected_drawdown
+
+    report_path = save_short_trade_backtest_report(backtest, records_root=tmp_path)
+    markdown = report_path.read_text(encoding="utf-8")
+    html = report_path.with_suffix(".html").read_text(encoding="utf-8")
+    assert "亏损超过100%" in markdown
+    assert "亏损超过100%" in html
+    assert "1 - 平仓价 / 开仓价" in markdown
+    if expected_return is None:
+        assert "逐笔复利收益：-\n" in markdown
+        assert "逐笔复利最大回撤：-\n" in markdown
+    else:
+        assert "逐笔复利收益：-100.00%" in markdown
+        assert "逐笔复利最大回撤：100.00%" in markdown
