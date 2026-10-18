@@ -36,6 +36,11 @@ class ShortTradeBacktestConfig:
     )
     peak_exit_state: StockShortState = StockShortState.TROUGH_REGION
     invalidation_state: StockShortState = StockShortState.INVALID_HIGH_NEW_HIGH
+    max_drawdown_pct: float = 0.50
+
+    def __post_init__(self) -> None:
+        if not np.isfinite(self.max_drawdown_pct) or not 0 < self.max_drawdown_pct < 1:
+            raise ValueError("max_drawdown_pct must be a finite number between 0 and 1")
 
 
 BACKTEST_CONFIG = ShortTradeBacktestConfig()
@@ -46,6 +51,7 @@ ENTRY_STATES = {
 PEAK_ENTRY_STATES = {int(state) for state in BACKTEST_CONFIG.peak_entry_states}
 INVALID_STATE = int(BACKTEST_CONFIG.invalidation_state)
 DEFAULT_MARKET_CAP_THRESHOLD = 3_000_000.0
+MAX_DRAWDOWN_STOP = "MAX_DRAWDOWN_STOP"
 
 
 def build_short_trade_backtest(
@@ -94,11 +100,15 @@ def build_short_trade_backtest(
                             )
                         ),
                         config.peak_exit_state.name,
+                        MAX_DRAWDOWN_STOP,
                     ]
                 )
             ),
             "invalidation_state": config.invalidation_state.name,
             "return_formula": "1 - exit_close / entry_close",
+            "equity_formula": "2 - close / entry_close",
+            "max_drawdown_stop_pct": float(config.max_drawdown_pct),
+            "stop_execution": "DAILY_CLOSE_TRIGGER_THRESHOLD_PRICE_FILL",
         },
         "summary": _summarise_trades(trades),
         "by_entry_state": _summarise_by_entry_state(trades),
@@ -253,6 +263,7 @@ def _candidate_trades(
                 exit_state=config.candidate_exit_label,
                 exits=exits,
                 invalidations=invalidations,
+                max_drawdown_pct=config.max_drawdown_pct,
             )
         )
     return trades
@@ -304,6 +315,7 @@ def _peak_trades(
                 exit_state=config.peak_exit_state.name,
                 exits=exits,
                 invalidations=invalidations,
+                max_drawdown_pct=config.max_drawdown_pct,
             )
         )
     return trades
@@ -322,6 +334,7 @@ def _build_trade(
     exit_state: str,
     exits: pd.DataFrame,
     invalidations: pd.DataFrame,
+    max_drawdown_pct: float,
 ) -> dict[str, Any]:
     exit_row = exits.iloc[0] if not exits.empty else None
     invalid_row = invalidations.iloc[0] if not invalidations.empty else None
@@ -347,21 +360,47 @@ def _build_trade(
 
     evaluation_date = str(evaluation_row["trade_date"])
     evaluation_close = float(evaluation_row["close"])
+    resolved_exit_state = (
+        str(exit_row["state_name"])
+        if status == "COMPLETED" and exit_row is not None
+        else exit_state
+    )
     path = stock_rows[
         stock_rows["trade_date"].between(entry_date, evaluation_date)
     ].sort_values("trade_date")
-    path_closes = path["close"].to_numpy(dtype=float)
+    path_closes = path["close"].to_numpy(dtype=float, copy=True)
+    path_dates = path["trade_date"].astype(str).to_numpy()
     if path.empty or str(path.iloc[0]["trade_date"]) != entry_date:
         path_closes = np.insert(path_closes, 0, entry_close)
-    elif not np.isclose(path_closes[0], entry_close):
+        path_dates = np.insert(path_dates, 0, entry_date)
+    else:
         path_closes[0] = entry_close
-    if len(path_closes) == 0:
-        path_closes = np.array([entry_close, evaluation_close], dtype=float)
 
-    mark_return = 1.0 - evaluation_close / entry_close
     equity = 2.0 - path_closes / entry_close
     running_max = np.maximum.accumulate(equity)
     drawdowns = 1.0 - equity / running_max
+    # Only inspect the holding period, up to the original exit/invalidation date.
+    # A threshold fill models the requested cap even when a daily close overshoots.
+    stop_positions = np.flatnonzero(drawdowns[1:] + 1e-12 >= max_drawdown_pct) + 1
+    stop_trigger_close = None
+    if len(stop_positions):
+        stop_position = int(stop_positions[0])
+        evaluation_date = str(path_dates[stop_position])
+        stop_trigger_close = float(path_closes[stop_position])
+        stop_equity = float(running_max[stop_position] * (1.0 - max_drawdown_pct))
+        evaluation_close = float(entry_close * (2.0 - stop_equity))
+        status = "COMPLETED"
+        status_reason = MAX_DRAWDOWN_STOP
+        resolved_exit_state = MAX_DRAWDOWN_STOP
+        path = path[path["trade_date"].le(evaluation_date)]
+        path_closes = path_closes[:stop_position + 1].copy()
+        path_closes[-1] = evaluation_close
+        drawdowns = drawdowns[:stop_position + 1].copy()
+        drawdowns[-1] = max_drawdown_pct
+        mark_return = stop_equity - 1.0
+    else:
+        mark_return = 1.0 - evaluation_close / entry_close
+
     entry_row = _row_for_date(stock_rows, entry_date)
     total_market_caps = pd.to_numeric(path["total_mv"], errors="coerce")
     total_market_caps = total_market_caps[
@@ -382,17 +421,14 @@ def _build_trade(
             float(total_market_caps.mean()) if not total_market_caps.empty else None
         ),
         "market_cap_observation_days": int(len(total_market_caps)),
-        "exit_state": (
-            str(exit_row["state_name"])
-            if status == "COMPLETED" and exit_row is not None
-            else exit_state
-        ),
+        "exit_state": resolved_exit_state,
         "exit_date": evaluation_date if status == "COMPLETED" else None,
         "exit_close": evaluation_close if status == "COMPLETED" else None,
         "status": status,
         "status_reason": status_reason,
         "evaluation_date": evaluation_date,
         "evaluation_close": evaluation_close,
+        "stop_trigger_close": stop_trigger_close,
         "return_pct": float(mark_return) if status == "COMPLETED" else None,
         "mark_return_pct": float(mark_return),
         "holding_trade_days": max(len(path_closes) - 1, 0),
@@ -411,6 +447,9 @@ def _summarise_trades(trades: list[dict[str, Any]]) -> dict[str, Any]:
     return {
         "signals": len(trades),
         "completed_trades": len(completed),
+        "drawdown_stop_trades": sum(
+            trade.get("status_reason") == MAX_DRAWDOWN_STOP for trade in completed
+        ),
         "open_trades": sum(trade["status"] == "OPEN" for trade in trades),
         "invalidated_trades": sum(
             trade["status"] == "INVALIDATED" for trade in trades

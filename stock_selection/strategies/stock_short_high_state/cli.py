@@ -91,6 +91,7 @@ def main() -> int:
     args = parse_args()
     daily, basic = read_cached_stock_daily(
         cache_root=args.cache_root,
+        start_date=args.start_date,
         as_of_date=args.date,
     )
     data_cost_time = time()
@@ -211,7 +212,7 @@ def main() -> int:
         # output = report
     # print(json.dumps(output, ensure_ascii=False, indent=2, default=str))
     end_time = time()
-    print(f"读数据花费 {data_cost_time - begin_time}秒，计算状态花费{state_cal_time - data_cost_time}秒,状态merge花了{state_merge_time-state_cal_time}秒， 回撤花了{end_time - state_merge_time}秒")
+    print(f"读数据花费 {data_cost_time - begin_time}秒，计算状态花费{state_cal_time - data_cost_time}秒,状态merge花了{state_merge_time-state_cal_time}秒， 回测花了{end_time - state_merge_time}秒")
     return 0
 
 

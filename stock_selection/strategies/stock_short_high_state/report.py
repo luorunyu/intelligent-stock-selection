@@ -165,10 +165,11 @@ def render_short_trade_backtest_markdown(
         "## 交易规则",
         "",
         "- 做空开仓：首次进入 `HIGH_CANDIDATE_PULLBACK`，或首次进入某个 `PEAK_n`。连续状态不重复开仓。",
-        "- 做空结束：`HIGH_CANDIDATE_PULLBACK` 对应首次进入 `TROUGH_CANDIDATE`；`PEAK_n` 对应重新进入 `TROUGH_REGION`。",
+        "- 做空结束：`HIGH_CANDIDATE_PULLBACK` 对应首次进入 `TROUGH_CANDIDATE` 或 `TROUGH_REGION`；`PEAK_n` 对应重新进入相同波峰序号的 `TROUGH_REGION`。",
+        *(f"- {rule}" for rule in _drawdown_stop_rules(metadata)),
         "- 新高失效或周期异常切换且未到结束状态的交易标记为失效；截至报告日未到结束状态的交易标记为持仓中。两者均不计入已完成交易的收益和胜率。",
-        "- 收益率按 `开仓价 / 平仓价 - 1` 计算。未计手续费、滑点、融券成本、涨跌停限制和实际可融券约束。",
-        "- `PEAK_n_PULLBACK` 本身定义为收盘价回到或跌破波峰开仓价，所以正常结束的波峰交易按构造不会产生负收益；波峰胜率是有条件完成样本的统计，必须同时看持仓中、失效数量和回撤，不能单独解释为预测能力。",
+        "- 收益率按 `1 - 平仓价 / 开仓价` 计算。未计手续费、滑点、融券成本、涨跌停限制和实际可融券约束。",
+        "- 波峰交易也受回撤止损约束，已完成交易可能包含止损亏损；胜率需结合持仓中、失效数量和回撤解读。",
         "- 逐笔复利和逐笔复利最大回撤按平仓日期依次连接所有已完成交易，只用于比较信号，不是考虑重叠持仓、仓位和资金占用的真实组合净值。",
     ]
     if market_cap_filter is not None:
@@ -199,6 +200,7 @@ def render_short_trade_backtest_markdown(
             "",
             f"- 信号总数：{summary['signals']}",
             f"- 已完成：{summary['completed_trades']}",
+            f"- 其中回撤止损平仓：{summary.get('drawdown_stop_trades', 0)}",
             f"- 持仓中：{summary['open_trades']}",
             f"- 已失效：{summary['invalidated_trades']}",
             f"- 胜 / 负 / 平：{summary['wins']} / {summary['losses']} / {summary['breakeven']}",
@@ -307,6 +309,7 @@ def render_short_trade_backtest_html(backtest: dict[str, Any]) -> str:
     summary_items = [
         ("信号总数", summary["signals"]),
         ("已完成", summary["completed_trades"]),
+        ("其中回撤止损", summary.get("drawdown_stop_trades", 0)),
         ("持仓中", summary["open_trades"]),
         ("已失效", summary["invalidated_trades"]),
         ("胜 / 负 / 平", f"{summary['wins']} / {summary['losses']} / {summary['breakeven']}"),
@@ -380,6 +383,9 @@ def render_short_trade_backtest_html(backtest: dict[str, Any]) -> str:
         trade_rows.append('<tr><td colspan="20">没有逐笔交易</td></tr>')
 
     notes_html = "".join(f'<p class="note">{note}</p>' for note in filter_notes)
+    stop_rules_html = "".join(
+        f"<li>{escape(rule)}</li>" for rule in _drawdown_stop_rules(metadata)
+    )
     return f"""<!doctype html>
 <html lang="zh-CN">
 <head>
@@ -413,11 +419,12 @@ th:first-child,td:first-child,th:nth-child(3),td:nth-child(3),th:nth-child(4),td
 <h2>交易规则</h2>
 <ul class="rules">
 <li>做空开仓：首次进入 <code>HIGH_CANDIDATE_PULLBACK</code>，或首次进入某个 <code>PEAK_n</code>。连续状态不重复开仓。</li>
-<li>做空结束：<code>HIGH_CANDIDATE_PULLBACK</code> 对应首次进入 <code>TROUGH_CANDIDATE</code>；<code>PEAK_n</code> 对应重新进入 <code>TROUGH_REGION</code>。</li>
-<li>已确认周期使用 <code>state_start_date/state_start_close</code> 重建当时可见的候选开仓点，不把事后回填的 <code>HIGH_CONFIRMED</code> 当作开仓信号。</li>
+<li>做空结束：<code>HIGH_CANDIDATE_PULLBACK</code> 对应首次进入 <code>TROUGH_CANDIDATE</code> 或 <code>TROUGH_REGION</code>；<code>PEAK_n</code> 对应重新进入相同波峰序号的 <code>TROUGH_REGION</code>。</li>
+{stop_rules_html}
+<li>候选交易只使用实际输出的 <code>HIGH_CANDIDATE_PULLBACK</code> 记录，不把事后回填的 <code>HIGH_CONFIRMED</code> 当作开仓信号。</li>
 <li>失效和持仓中交易不计入已完成交易的收益和胜率。</li>
-<li>收益率按“开仓价 / 平仓价 - 1”计算，未计手续费、滑点、融券成本、涨跌停限制和实际可融券约束。</li>
-<li><code>PEAK_n_PULLBACK</code> 的完成样本存在条件筛选，需同时看持仓中、失效数量和回撤。</li>
+<li>收益率按“1 - 平仓价 / 开仓价”计算，未计手续费、滑点、融券成本、涨跌停限制和实际可融券约束。</li>
+<li>波峰交易也受回撤止损约束，已完成交易可能包含止损亏损；胜率需结合持仓中、失效数量和回撤解读。</li>
 <li>逐笔复利按平仓日期连接已完成交易，不是考虑重叠持仓、仓位和资金占用的真实组合净值。</li>
 </ul>
 {notes_html}
@@ -482,6 +489,18 @@ def _json_safe(value: Any) -> Any:
     if pd.isna(value):
         return None
     return value
+
+
+def _drawdown_stop_rules(metadata: dict[str, Any]) -> list[str]:
+    threshold = metadata.get("max_drawdown_stop_pct")
+    if threshold is None:
+        return []
+    return [
+        f"单笔回撤止损：做空权益（2 - 当日价格 / 开仓价）相对持仓期间峰值回撤达到{_format_percent(threshold)}时强制平仓，结束状态记为 MAX_DRAWDOWN_STOP。同日优先于状态退出或失效。",
+        "成交假设：以每日收盘价判断首次触发日期，按该日回撤阈值对应的价格模拟成交；该价格可能不同于当日收盘价，未模拟跳空和无法成交时的超额亏损。",
+        "止损计入已完成交易的收益和胜率，持有天数、MFE、MAE、最大回撤及平均市值只统计到止损日；同一候选或同一序号波峰止损后不重复开仓。",
+        f"回撤相对权益峰值计算，盈利后也可能触发；{_format_percent(threshold)}约束适用于单笔交易，多笔亏损累积的逐笔复利最大回撤仍可能超过该阈值。",
+    ]
 
 
 def _format_percent(value: Any) -> str:
