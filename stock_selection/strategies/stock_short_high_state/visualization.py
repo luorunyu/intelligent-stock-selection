@@ -22,20 +22,10 @@ from stock_selection.strategies.stock_short_high_state.backtest import (
 from stock_selection.strategies.stock_short_high_state.report import (
     DEFAULT_OUTPUT_ROOT,
 )
-from stock_selection.strategies.stock_short_high_state.screen import StockShortState
 
 
 STRATEGY_DIRECTORY = Path(__file__).resolve().parent
 DEFAULT_CODES_FILE = STRATEGY_DIRECTORY / "strategy_five_chart_codes.txt"
-SHORT_SCOPE_STATES = {
-    int(StockShortState.HIGH_CANDIDATE),
-    int(StockShortState.HIGH_CONFIRMED),
-    int(StockShortState.PEAK_1),
-    int(StockShortState.PEAK_2),
-    int(StockShortState.PEAK_3),
-    int(StockShortState.PEAK_N),
-}
-ALERT_STATE = int(StockShortState.INVALID_HIGH_NEW_HIGH)
 RISE_COLOR = "#d84a3a"
 FALL_COLOR = "#169c72"
 SHORT_FILL_COLOR = "rgba(255, 215, 0, 0.22)"
@@ -64,7 +54,7 @@ REQUIRED_STATE_COLUMNS = {
 
 @dataclass(frozen=True)
 class StateInterval:
-    """One continuous region with the same short-scope state."""
+    """One backtest holding interval, including its entry and end dates."""
 
     start_date: str
     end_date: str
@@ -267,43 +257,38 @@ def merge_bars_and_states(
     return merged.sort_values("trade_date").reset_index(drop=True)
 
 
-def build_short_state_intervals(states: pd.DataFrame) -> list[StateInterval]:
-    """Merge consecutive rows with the same short-scope state and cycle."""
+def build_short_state_intervals(
+    states: pd.DataFrame,
+    *,
+    trades: Iterable[dict[str, Any]] | None = None,
+) -> list[StateInterval]:
+    """Derive holding intervals from backtest trades, without separate state rules."""
+    if states.empty:
+        return []
+    if trades is None:
+        trades = build_short_trade_backtest(
+            states, as_of_date=str(states["trade_date"].max()),
+        )["trades"]
     intervals: list[StateInterval] = []
-    active: dict[str, Any] | None = None
-    ordered = states.sort_values("trade_date").reset_index(drop=True)
-    for row in ordered.itertuples(index=False):
-        state = int(row.state)
-        is_short = state in SHORT_SCOPE_STATES
-        identity = (
-            state,
-            int(_number_or_zero(row.cycle_id)),
-            int(_number_or_zero(row.peak_number)),
-        )
-        if not is_short:
-            if active is not None:
-                intervals.append(_finish_interval(active))
-                active = None
-            continue
-        if active is None or active["identity"] != identity:
-            if active is not None:
-                intervals.append(_finish_interval(active))
-            active = {
-                "identity": identity,
-                "start_date": str(row.trade_date),
-                "end_date": str(row.trade_date),
-                "state": state,
-                "state_name": str(row.state_name),
-                "state_description": str(row.state_description),
-                "cycle_id": identity[1],
-                "peak_number": identity[2],
-                "trading_days": 1,
-            }
-        else:
-            active["end_date"] = str(row.trade_date)
-            active["trading_days"] += 1
-    if active is not None:
-        intervals.append(_finish_interval(active))
+    for trade in trades:
+        entry_rows = states[
+            states["ts_code"].eq(trade["ts_code"])
+            & states["trade_date"].eq(trade["entry_date"])
+        ]
+        entry_row = entry_rows.iloc[0] if not entry_rows.empty else None
+        intervals.append(StateInterval(
+            start_date=str(trade["entry_date"]),
+            end_date=str(trade.get("exit_date") or trade["evaluation_date"]),
+            state=int(entry_row["state"]) if entry_row is not None else 0,
+            state_name=str(trade["entry_state"]),
+            state_description=(
+                str(entry_row["state_description"])
+                if entry_row is not None else str(trade["entry_state"])
+            ),
+            cycle_id=int(trade["cycle_id"]),
+            peak_number=int(trade["peak_number"]),
+            trading_days=int(trade["holding_trade_days"]) + 1,
+        ))
     return intervals
 
 
@@ -313,12 +298,21 @@ def build_stock_short_state_figure(
     stock_code: str,
     stock_name: str = "",
     initial_bars: int | None = 250,
+    trade_backtest: dict[str, Any] | None = None,
 ) -> Any:
-    """Build one interactive K-line chart with yellow short-scope regions."""
+    """Plot backtest holding regions, entry/exit markers, alerts, and hover details."""
     go, make_subplots = _import_plotly()
     data = chart_data.sort_values("trade_date").reset_index(drop=True)
     if data.empty:
         raise ValueError("chart_data must not be empty")
+    if trade_backtest is None:
+        trade_backtest = build_short_trade_backtest(
+            data, as_of_date=str(data["trade_date"].max()),
+        )
+    stock_trades = [
+        trade for trade in trade_backtest["trades"] if trade["ts_code"] == stock_code
+    ]
+    stock_backtest = {"metadata": trade_backtest["metadata"], "trades": stock_trades}
     dates = data["date"]
     volume_colors = [
         RISE_COLOR if close >= open_ else FALL_COLOR
@@ -368,7 +362,7 @@ def build_stock_short_state_figure(
         col=1,
     )
 
-    intervals = build_short_state_intervals(data)
+    intervals = build_short_state_intervals(data, trades=stock_trades)
     for interval in intervals:
         start = pd.to_datetime(interval.start_date, format="%Y%m%d") - pd.Timedelta(
             hours=12
@@ -387,29 +381,13 @@ def build_stock_short_state_figure(
             col=1,
         )
 
-    interval_starts = {interval.start_date: interval for interval in intervals}
-    start_rows = data[data["trade_date"].isin(interval_starts)].copy()
-    if not start_rows.empty:
-        marker_text = []
-        for row in start_rows.itertuples(index=False):
-            interval = interval_starts[str(row.trade_date)]
-            confirmation = (
-                "<br>性质：事后确认"
-                if interval.state == int(StockShortState.HIGH_CONFIRMED)
-                else ""
-            )
-            marker_text.append(
-                f"{interval.state_description}{confirmation}"
-                f"<br>开始：{interval.start_date}"
-                f"<br>结束：{interval.end_date}"
-                f"<br>交易日：{interval.trading_days}"
-                f"<br>周期：{interval.cycle_id}"
-                f"<br>波峰序号：{interval.peak_number}"
-            )
+    if stock_trades:
         figure.add_trace(
             go.Scatter(
-                x=start_rows["date"],
-                y=start_rows["high"] * 1.02,
+                x=pd.to_datetime(
+                    [trade["entry_date"] for trade in stock_trades], format="%Y%m%d",
+                ),
+                y=[trade["entry_close"] for trade in stock_trades],
                 mode="markers",
                 marker={
                     "symbol": "triangle-down",
@@ -417,15 +395,38 @@ def build_stock_short_state_figure(
                     "color": "#ffd700",
                     "line": {"color": "#8a6d00", "width": 1.5},
                 },
-                text=marker_text,
+                text=[_trade_hover(trade) for trade in stock_trades],
                 hovertemplate="%{text}<extra></extra>",
-                name="做空区域开始",
+                name="做空开仓",
             ),
             row=1,
             col=1,
         )
 
-    alert_rows = data[data["state"].eq(ALERT_STATE)]
+    closed_trades = [trade for trade in stock_trades if trade["status"] == "COMPLETED"]
+    if closed_trades:
+        figure.add_trace(
+            go.Scatter(
+                x=pd.to_datetime(
+                    [trade["exit_date"] for trade in closed_trades], format="%Y%m%d",
+                ),
+                y=[trade["exit_close"] for trade in closed_trades],
+                mode="markers",
+                marker={
+                    "symbol": "triangle-up",
+                    "size": 12,
+                    "color": "#2563eb",
+                    "line": {"color": "#1e3a8a", "width": 1.5},
+                },
+                text=[f"买入平仓<br>{_trade_hover(trade)}" for trade in closed_trades],
+                hovertemplate="%{text}<extra></extra>",
+                name="做空平仓",
+            ),
+            row=1,
+            col=1,
+        )
+
+    alert_rows = _strategy_alert_rows(data, stock_backtest)
     if not alert_rows.empty:
         figure.add_trace(
             go.Scatter(
@@ -444,13 +445,30 @@ def build_stock_short_state_figure(
             col=1,
         )
 
+    trade_events: dict[str, list[str]] = {}
+    for trade in stock_trades:
+        trade_details = _trade_hover(trade)
+        trade_events.setdefault(str(trade["entry_date"]), []).append(
+            f"开仓记录<br>{trade_details}"
+        )
+        trade_events.setdefault(str(trade["evaluation_date"]), []).append(
+            f"结束/估值记录<br>{trade_details}"
+        )
+    hover_details = [
+        _state_hover(row)
+        + "".join(
+            f"<br><br>{details}"
+            for details in trade_events.get(str(row["trade_date"]), [])
+        )
+        for row in data.to_dict("records")
+    ]
     figure.add_trace(
         go.Scatter(
             x=dates,
             y=data["close"],
             mode="markers",
-            marker={"size": 12, "color": "rgba(0,0,0,0.001)"},
-            text=[_state_hover(row) for row in data.to_dict("records")],
+            marker={"size": 12, "color": "rgba(0,0,0,0)"},
+            text=hover_details,
             hovertemplate="%{text}<extra></extra>",
             name="状态详情",
             showlegend=False,
@@ -512,6 +530,7 @@ def write_stock_short_state_html(
     stock_code: str,
     stock_name: str = "",
     initial_bars: int | None = 250,
+    trade_backtest: dict[str, Any] | None = None,
 ) -> Path:
     """Write one stock chart HTML using a shared local Plotly bundle."""
     path = Path(output_path)
@@ -521,6 +540,7 @@ def write_stock_short_state_html(
         stock_code=stock_code,
         stock_name=stock_name,
         initial_bars=initial_bars,
+        trade_backtest=trade_backtest,
     )
     figure.write_html(
         path,
@@ -610,6 +630,7 @@ def generate_stock_short_state_charts(
             chart_data = merge_market_caps(chart_data, market_caps)
             stock_name = _latest_nonempty(stock_states["stock_name"])
             stock_trades = trades_by_code.get(code, [])
+            stock_backtest = {"metadata": backtest["metadata"], "trades": stock_trades}
             evaluated_returns = [
                 trade.get("return_pct")
                 if trade.get("status") == "COMPLETED"
@@ -633,26 +654,19 @@ def generate_stock_short_state_charts(
                 stock_code=code,
                 stock_name=stock_name,
                 initial_bars=initial_bars,
+                trade_backtest=stock_backtest,
             )
-            intervals = build_short_state_intervals(stock_states)
             latest = chart_data.sort_values("trade_date").iloc[-1]
             chart_rows.append(
                 {
                     "ts_code": code,
                     "stock_name": stock_name,
                     "latest_state": str(latest["state_description"]),
-                    "short_intervals": len(intervals),
+                    "short_intervals": len(stock_trades),
                     "peak_intervals": sum(
-                        interval.state
-                        in {
-                            int(StockShortState.PEAK_1),
-                            int(StockShortState.PEAK_2),
-                            int(StockShortState.PEAK_3),
-                            int(StockShortState.PEAK_N),
-                        }
-                        for interval in intervals
+                        int(trade["peak_number"]) > 0 for trade in stock_trades
                     ),
-                    "alerts": int(stock_states["state"].eq(ALERT_STATE).sum()),
+                    "alerts": len(_strategy_alert_rows(stock_states, stock_backtest)),
                     "total_mv": latest.get("total_mv"),
                     "circ_mv": latest.get("circ_mv"),
                     "filename": f"{category}/{filename}",
@@ -739,10 +753,10 @@ th{{background:#f5f5f5}}a{{color:#0969da}}code{{background:#f5f5f5;padding:2px 5
 </head>
 <body>
 <h1>策略五状态图表</h1>
-<p class="note">黄色背景表示可做空状态区域；K线继续保持红涨绿跌。</p>
+<p class="note">黄框表示回测开仓至平仓的区间，包含止损；持仓中延伸至最后数据日，失效交易截止失效日。黄色倒三角标记开仓，蓝色正三角标记平仓（包含止损），紫色叉号标记策略异常，其余状态及平仓原因通过鼠标悬停查看。K线保持红涨绿跌。</p>
 <p>状态来源：<code>{escape(str(states_csv))}</code></p>
 <table>
-<thead><tr><th>股票</th><th>名称</th><th>最新状态</th><th>做空区间</th><th>波峰区间</th><th>异常</th><th>总市值</th><th>流通市值</th><th>图表</th></tr></thead>
+<thead><tr><th>股票</th><th>名称</th><th>最新状态</th><th>回测交易</th><th>其中波峰交易</th><th>异常</th><th>总市值</th><th>流通市值</th><th>图表</th></tr></thead>
 <tbody>{''.join(rows)}</tbody>
 </table>
 {f'<h2>未生成项目</h2><ul>{error_items}</ul>' if errors else ''}
@@ -754,17 +768,45 @@ th{{background:#f5f5f5}}a{{color:#0969da}}code{{background:#f5f5f5;padding:2px 5
     return path
 
 
-def _finish_interval(active: dict[str, Any]) -> StateInterval:
-    return StateInterval(
-        start_date=active["start_date"],
-        end_date=active["end_date"],
-        state=active["state"],
-        state_name=active["state_name"],
-        state_description=active["state_description"],
-        cycle_id=active["cycle_id"],
-        peak_number=active["peak_number"],
-        trading_days=active["trading_days"],
+def _strategy_alert_rows(
+    states: pd.DataFrame, backtest: dict[str, Any],
+) -> pd.DataFrame:
+    invalidated_dates = [
+        trade["evaluation_date"]
+        for trade in backtest["trades"] if trade["status"] == "INVALIDATED"
+    ]
+    return states[
+        states["state_name"].eq(backtest["metadata"]["invalidation_state"])
+        | states["alert_code"].fillna("").astype(str).str.strip().ne("")
+        | states["trade_date"].isin(invalidated_dates)
+    ]
+
+
+def _trade_hover(trade: dict[str, Any]) -> str:
+    status = {
+        "COMPLETED": "已平仓", "OPEN": "持仓中", "INVALIDATED": "已失效",
+    }.get(trade["status"], trade["status"])
+    endpoint = {"COMPLETED": "平仓", "OPEN": "估值", "INVALIDATED": "失效"}.get(
+        trade["status"], "结束",
     )
+    details = (
+        f"开仓状态：{trade['entry_state']}"
+        f"<br>开仓：{trade['entry_date']} · {_format_number(trade['entry_close'])}"
+        f"<br>{endpoint}：{trade['evaluation_date']} · {_format_number(trade['evaluation_close'])}"
+        f"<br>交易状态：{status}"
+        f"<br>结束状态：{trade['exit_state'] if trade['status'] == 'COMPLETED' else '-'}"
+        f"<br>原因：{trade['status_reason']}"
+        f"<br>收益：{_format_percent(trade['mark_return_pct'])}"
+        f"<br>最大回撤：{_format_percent(trade['max_drawdown_pct'])}"
+        f"<br>持有交易日：{trade['holding_trade_days']}"
+        f"<br>周期：{trade['cycle_id']} · 波峰序号：{trade['peak_number']}"
+    )
+    if trade.get("stop_trigger_close") is not None:
+        details += (
+            f"<br>止损触发日收盘：{_format_number(trade['stop_trigger_close'])}"
+            "<br>平仓价按回测止损阈值模拟成交"
+        )
+    return details
 
 
 def _state_hover(row: dict[str, Any]) -> str:
@@ -793,8 +835,9 @@ def _state_hover(row: dict[str, Any]) -> str:
 
 def _alert_hover(row: dict[str, Any]) -> str:
     return (
-        "最高点判断失效"
+        "策略异常"
         f"<br>日期：{row.get('trade_date', '')}"
+        f"<br>状态：{row.get('state_name', '')} · {row.get('state_description', '')}"
         f"<br>收盘：{_format_number(row.get('close'))}"
         f"<br>总市值：{format_market_cap(row.get('total_mv'))}"
         f"<br>流通市值：{format_market_cap(row.get('circ_mv'))}"

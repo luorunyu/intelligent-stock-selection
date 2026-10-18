@@ -13,6 +13,8 @@ import pandas as pd
 
 from stock_selection.data.market_cap import format_market_cap
 from stock_selection.strategies.stock_short_high_state.screen import (
+    DEFAULT_HIGH_RISE_DAYS,
+    DEFAULT_MIN_HIGH_RISE_PCT,
     latest_stock_short_states,
 )
 
@@ -42,6 +44,8 @@ def build_stock_short_state_report(
     rebound_pct: float,
     high_heat_days: int,
     trough_confirm_days: int,
+    high_rise_days: int = DEFAULT_HIGH_RISE_DAYS,
+    min_high_rise_pct: float = DEFAULT_MIN_HIGH_RISE_PCT,
 ) -> dict[str, Any]:
     latest = latest_stock_short_states(states)
     alerts = (
@@ -59,6 +63,9 @@ def build_stock_short_state_report(
             "report_type": "stock_short_high_state",
             "as_of_date": as_of_date,
             "lookback_days": lookback_days,
+            "high_rise_days": high_rise_days,
+            "min_high_rise_pct": min_high_rise_pct,
+            "high_rise_formula": "close / close_shift_high_rise_days - 1",
             "candidate_pullback_pct": candidate_pullback_pct,
             "confirm_drawdown_pct": confirm_drawdown_pct,
             "rebound_pct": rebound_pct,
@@ -88,6 +95,7 @@ def render_stock_short_state_markdown(report: dict[str, Any]) -> str:
         "## 默认规则",
         "",
         f"- 半年窗口：{metadata['lookback_days']}个交易日",
+        f"- 高点候选涨幅门槛：相对{metadata.get('high_rise_days', DEFAULT_HIGH_RISE_DAYS)}个交易日前收盘价，涨幅严格超过{metadata.get('min_high_rise_pct', DEFAULT_MIN_HIGH_RISE_PCT):.1%}",
         f"- 候选回调起点：{metadata['candidate_pullback_pct']:.1%}",
         f"- 最高点确认回落：{metadata['confirm_drawdown_pct']:.1%}",
         f"- 波峰开启反弹：{metadata['rebound_pct']:.1%}",
@@ -168,6 +176,7 @@ def render_short_trade_backtest_markdown(
         "- 做空结束：`HIGH_CANDIDATE_PULLBACK` 对应首次进入 `TROUGH_CANDIDATE` 或 `TROUGH_REGION`；`PEAK_n` 对应重新进入相同波峰序号的 `TROUGH_REGION`。",
         *(f"- {rule}" for rule in _drawdown_stop_rules(metadata)),
         "- 新高失效或周期异常切换且未到结束状态的交易标记为失效；截至报告日未到结束状态的交易标记为持仓中。两者均不计入已完成交易的收益和胜率。",
+        "- 平均 / 中位收益统计本报告全部已完成交易，包含持平交易；正收益与负收益的平均 / 中位收益分别只统计盈利与亏损交易，沿用胜 / 负 / 平的划分口径（绝对收益不超过1e-12视为持平）。对应组没有交易时显示“-”。",
         "- 收益率按 `1 - 平仓价 / 开仓价` 计算。未计手续费、滑点、融券成本、涨跌停限制和实际可融券约束。",
         "- 波峰交易也受回撤止损约束，已完成交易可能包含止损亏损；胜率需结合持仓中、失效数量和回撤解读。",
         "- 逐笔复利和逐笔复利最大回撤按平仓日期依次连接所有已完成交易，只用于比较信号，不是考虑重叠持仓、仓位和资金占用的真实组合净值。",
@@ -206,6 +215,8 @@ def render_short_trade_backtest_markdown(
             f"- 胜 / 负 / 平：{summary['wins']} / {summary['losses']} / {summary['breakeven']}",
             f"- 胜率：{_format_percent(summary['win_rate'])}",
             f"- 平均 / 中位收益：{_format_percent(summary['average_return_pct'])} / {_format_percent(summary['median_return_pct'])}",
+            f"- 正收益平均 / 中位收益：{_format_percent(summary['average_positive_return_pct'])} / {_format_percent(summary['median_positive_return_pct'])}",
+            f"- 负收益平均 / 中位收益：{_format_percent(summary['average_negative_return_pct'])} / {_format_percent(summary['median_negative_return_pct'])}",
             f"- 最好 / 最差收益：{_format_percent(summary['best_return_pct'])} / {_format_percent(summary['worst_return_pct'])}",
             f"- 逐笔复利收益：{_format_percent(summary['compounded_return_pct'])}",
             f"- 逐笔复利最大回撤：{_format_percent(summary['sequential_max_drawdown_pct'])}",
@@ -315,6 +326,8 @@ def render_short_trade_backtest_html(backtest: dict[str, Any]) -> str:
         ("胜 / 负 / 平", f"{summary['wins']} / {summary['losses']} / {summary['breakeven']}"),
         ("胜率", _format_percent(summary["win_rate"])),
         ("平均 / 中位收益", f"{_format_percent(summary['average_return_pct'])} / {_format_percent(summary['median_return_pct'])}"),
+        ("正收益平均 / 中位收益", f"{_format_percent(summary['average_positive_return_pct'])} / {_format_percent(summary['median_positive_return_pct'])}"),
+        ("负收益平均 / 中位收益", f"{_format_percent(summary['average_negative_return_pct'])} / {_format_percent(summary['median_negative_return_pct'])}"),
         ("最好 / 最差收益", f"{_format_percent(summary['best_return_pct'])} / {_format_percent(summary['worst_return_pct'])}"),
         ("逐笔复利收益", _format_percent(summary["compounded_return_pct"])),
         ("逐笔复利最大回撤", _format_percent(summary["sequential_max_drawdown_pct"])),
@@ -423,6 +436,7 @@ th:first-child,td:first-child,th:nth-child(3),td:nth-child(3),th:nth-child(4),td
 {stop_rules_html}
 <li>候选交易只使用实际输出的 <code>HIGH_CANDIDATE_PULLBACK</code> 记录，不把事后回填的 <code>HIGH_CONFIRMED</code> 当作开仓信号。</li>
 <li>失效和持仓中交易不计入已完成交易的收益和胜率。</li>
+<li>平均 / 中位收益统计本报告全部已完成交易，包含持平交易；正收益与负收益的平均 / 中位收益分别只统计盈利与亏损交易，沿用胜 / 负 / 平的划分口径（绝对收益不超过1e-12视为持平）。对应组没有交易时显示“-”。</li>
 <li>收益率按“1 - 平仓价 / 开仓价”计算，未计手续费、滑点、融券成本、涨跌停限制和实际可融券约束。</li>
 <li>波峰交易也受回撤止损约束，已完成交易可能包含止损亏损；胜率需结合持仓中、失效数量和回撤解读。</li>
 <li>逐笔复利按平仓日期连接已完成交易，不是考虑重叠持仓、仓位和资金占用的真实组合净值。</li>

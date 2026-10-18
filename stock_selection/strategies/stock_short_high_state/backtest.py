@@ -441,8 +441,10 @@ def _build_trade(
 def _summarise_trades(trades: list[dict[str, Any]]) -> dict[str, Any]:
     completed = [trade for trade in trades if trade["status"] == "COMPLETED"]
     returns = np.array([trade["return_pct"] for trade in completed], dtype=float)
-    wins = int(np.sum(returns > 1e-12))
-    losses = int(np.sum(returns < -1e-12))
+    positive_returns = returns[returns > 1e-12]
+    negative_returns = returns[returns < -1e-12]
+    wins = int(len(positive_returns))
+    losses = int(len(negative_returns))
     breakeven = int(len(returns) - wins - losses)
     return {
         "signals": len(trades),
@@ -460,6 +462,10 @@ def _summarise_trades(trades: list[dict[str, Any]]) -> dict[str, Any]:
         "win_rate": _optional_stat(wins / len(completed) if completed else None),
         "average_return_pct": _array_stat(returns, np.mean),
         "median_return_pct": _array_stat(returns, np.median),
+        "average_positive_return_pct": _array_stat(positive_returns, np.mean),
+        "median_positive_return_pct": _array_stat(positive_returns, np.median),
+        "average_negative_return_pct": _array_stat(negative_returns, np.mean),
+        "median_negative_return_pct": _array_stat(negative_returns, np.median),
         "best_return_pct": _array_stat(returns, np.max),
         "worst_return_pct": _array_stat(returns, np.min),
         "compounded_return_pct": _compounded_return(returns),
