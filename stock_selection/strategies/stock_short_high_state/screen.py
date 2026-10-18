@@ -178,24 +178,40 @@ def latest_stock_short_states(states: pd.DataFrame) -> pd.DataFrame:
     )
 
 
+
+
 def read_cached_stock_daily(
     *,
     cache_root: str | Path | None = None,
+    start_date: str | None = None,
     as_of_date: str | None = None,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
-    """Read daily stock bars and optional stock-basic names from cache."""
+    """Read cached daily bars within inclusive bounds, without warm-up history."""
     root = Path(cache_root) if cache_root is not None else DEFAULT_CACHE_ROOT
     directory = root / "daily"
+    start = _normalise_date(start_date)
     target = _normalise_date(as_of_date)
-    if as_of_date is not None and not target:
-        raise ValueError("as_of_date must be a valid date")
+    for name, value, normalized in (
+        ("start_date", start_date, start),
+        ("as_of_date", as_of_date, target),
+    ):
+        if value is not None and (
+            not normalized
+            or pd.isna(pd.to_datetime(normalized, format="%Y%m%d", errors="coerce"))
+        ):
+            raise ValueError(f"{name} must be a valid date (YYYYMMDD or YYYY-MM-DD)")
+    if start and target and start > target:
+        raise ValueError("start_date must be on or before as_of_date")
     paths = [
         path
         for path in sorted(directory.glob("*.parquet"))
-        if not target or path.stem <= target
+        if (not start or path.stem >= start) and (not target or path.stem <= target)
     ]
     if not paths:
-        raise FileNotFoundError(f"no daily cache files found under {directory}")
+        raise FileNotFoundError(
+            f"no daily cache files found under {directory} "
+            f"for date range {start or 'earliest'} to {target or 'latest'}"
+        )
     daily = pd.concat((pd.read_parquet(path) for path in paths), ignore_index=True)
     basic_path = root / "static" / "stock_basic.parquet"
     basic = pd.read_parquet(basic_path) if basic_path.exists() else pd.DataFrame()

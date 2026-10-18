@@ -48,6 +48,11 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Classify close-only high regions and rebound-peak states."
     )
+    parser.add_argument(
+        "--start-date", default="20240901",
+        help="First cache date to load, inclusive (YYYYMMDD or YYYY-MM-DD); "
+        "recalculate states from this date, with no earlier history (default: 20240901).",
+    )
     parser.add_argument("--date", default=date.today().strftime("%Y%m%d"))
     parser.add_argument("--cache-root", default=None)
     parser.add_argument("--stock-code", action="append", default=None)

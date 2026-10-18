@@ -188,6 +188,24 @@ python scripts/screen_stock_short_high_state.py `
   --stock-code 000001.SZ
 ```
 
+## 状态画图
+
+在项目根目录运行：
+
+```bash
+.venv/bin/python -m stock_selection.strategies.stock_short_high_state.plot_stock_short_high_states
+```
+
+默认读取最新输出目录中的 `states.csv`。在 `strategy_five_chart_codes.txt` 中每行填写一个
+股票代码，只画清单中的股票；清单为空、只有空行或只有 `#` 注释时，绘制该 CSV 中的全部股票。
+如果清单填写了内容但全部代码格式无效，仍会报错。股票范围和日期范围以 CSV 为准，
+需要扩大范围时先运行策略 CLI 重新生成状态文件。
+
+图表保存在状态文件同目录的 `charts/` 中，打开 `charts/index.html` 查看。
+按回测汇总收益分入 `positive/`（正收益）和 `negative/`（非正收益）；没有回测交易或
+没有可用回测收益的股票也生成图表，放入 `unclassified/`。缺少行情或行情与状态价格
+不一致的股票会列在入口页的“未生成项目”中。
+
 #
 todo :后续可能还要考虑行业信息，由于每个票的结束点不一样，如果行业已经开始下行了，那么这个就不远了，思考如何充分利用行业数据以及行业内不同数据的不同的起飞和降落的时间差来做出判断
 

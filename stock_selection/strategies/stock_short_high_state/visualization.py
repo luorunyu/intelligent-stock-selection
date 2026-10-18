@@ -545,12 +545,16 @@ def generate_stock_short_state_charts(
     output_directory: str | Path | None = None,
     initial_bars: int | None = 250,
 ) -> dict[str, Any]:
-    """Generate return-classified charts plus HTML indexes."""
+    """Generate charts for the code list, or all saved stocks if the list is empty."""
     state_path = Path(states_csv)
     states = read_saved_states(state_path)
     codes, input_errors = _resolve_chart_codes(codes_file, stock_codes)
     if not codes:
-        raise ValueError("chart code file contains no valid stock codes")
+        if input_errors or stock_codes is not None:
+            raise ValueError("chart code file contains no valid stock codes")
+        codes = sorted(states["ts_code"].unique().tolist())
+        if not codes:
+            raise ValueError("states CSV contains no stocks to chart")
     selected_states = states[states["ts_code"].isin(codes)]
     if selected_states.empty:
         raise ValueError("none of the requested stock codes exist in the states CSV")
@@ -576,11 +580,13 @@ def generate_stock_short_state_charts(
     output.mkdir(parents=True, exist_ok=True)
     positive_output = output / "positive"
     negative_output = output / "negative"
+    unclassified_output = output / "unclassified"
     positive_output.mkdir(parents=True, exist_ok=True)
     negative_output.mkdir(parents=True, exist_ok=True)
+    unclassified_output.mkdir(parents=True, exist_ok=True)
 
     chart_rows: list[dict[str, Any]] = []
-    category_rows = {"positive": [], "negative": []}
+    category_rows = {"positive": [], "negative": [], "unclassified": []}
     errors = list(input_errors)
     backtest = build_short_trade_backtest(
         selected_states,
@@ -604,9 +610,6 @@ def generate_stock_short_state_charts(
             chart_data = merge_market_caps(chart_data, market_caps)
             stock_name = _latest_nonempty(stock_states["stock_name"])
             stock_trades = trades_by_code.get(code, [])
-            if not stock_trades:
-                errors.append(f"{code}: no backtest trade to classify return")
-                continue
             evaluated_returns = [
                 trade.get("return_pct")
                 if trade.get("status") == "COMPLETED"
@@ -618,14 +621,11 @@ def generate_stock_short_state_charts(
                 for value in evaluated_returns
                 if value is not None and np.isfinite(float(value))
             ]
-            if not finite_returns:
-                errors.append(f"{code}: no finite backtest return to classify")
-                continue
-            classified_return = float(sum(finite_returns))
-            category = "positive" if classified_return > 0 else "negative"
-            category_output = (
-                positive_output if category == "positive" else negative_output
-            )
+            classified_return = float(sum(finite_returns)) if finite_returns else None
+            category = "unclassified"
+            if classified_return is not None:
+                category = "positive" if classified_return > 0 else "negative"
+            category_output = output / category
             filename = f"{code.replace('.', '_')}.html"
             write_stock_short_state_html(
                 chart_data,
@@ -678,14 +678,22 @@ def generate_stock_short_state_charts(
         [],
         state_path,
     )
+    unclassified_index = _write_chart_index(
+        unclassified_output,
+        category_rows["unclassified"],
+        [],
+        state_path,
+    )
     index_path = _write_chart_index(output, chart_rows, errors, state_path)
     return {
         "index": str(index_path),
         "output_directory": str(output),
         "positive_directory": str(positive_output),
         "negative_directory": str(negative_output),
+        "unclassified_directory": str(unclassified_output),
         "positive_index": str(positive_index),
         "negative_index": str(negative_index),
+        "unclassified_index": str(unclassified_index),
         "charts": chart_rows,
         "errors": errors,
     }

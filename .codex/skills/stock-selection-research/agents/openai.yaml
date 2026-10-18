@@ -1,4 +1,0 @@
-interface:
-  display_name: "A 股观察池研究"
-  short_description: "基于资金、板块、新闻和风险构建可追溯的 A 股观察池"
-  default_prompt: "使用 $stock-selection-research，基于资金、板块、新闻和风险构建可追溯的 A 股观察池。"
