@@ -180,6 +180,14 @@ def test_explicit_missing_lending_file_does_not_silently_skip(tmp_path):
 
 def test_cli_defaults_to_whole_universe_and_preserves_explicit_selection(monkeypatch):
     monkeypatch.setattr(sys, "argv", ["cli"])
-    assert cli.parse_args().stock_code is None
-    monkeypatch.setattr(sys, "argv", ["cli", "--stock-code", "000068.SZ", "--stock-code", "000069.SZ"])
-    assert cli.parse_args().stock_code == ["000068.SZ", "000069.SZ"]
+    args = cli.parse_args()
+    assert args.stock_code is None
+    assert args.start_date == "20240901"
+    monkeypatch.setattr(sys, "argv", [
+        "cli", "--start-date", "20250101", "--date", "20261016",
+        "--stock-code", "000068.SZ", "--stock-code", "000069.SZ",
+    ])
+    args = cli.parse_args()
+    assert args.stock_code == ["000068.SZ", "000069.SZ"]
+    assert args.start_date == "20250101"
+    assert args.date == "20261016"

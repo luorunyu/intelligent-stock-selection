@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import json
 from pathlib import Path
+from time import time 
 import sys
 
 
@@ -41,6 +42,7 @@ def parse_args() -> argparse.Namespace:
 
 
 def main() -> int:
+    start_time = time()
     args = parse_args()
     states_csv = resolve_states_csv(
         states_csv=args.states_csv,
@@ -57,6 +59,8 @@ def main() -> int:
         lending_root=args.lending_root,
     )
     print(json.dumps(result, ensure_ascii=False, indent=2, default=str))
+    end_time = time()
+    print("画图耗费{end_time - start_time}秒")
     return 0
 
 

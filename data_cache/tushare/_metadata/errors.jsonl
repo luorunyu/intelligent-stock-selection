@@ -318,3 +318,5 @@
 {"recorded_at": "2026-10-14T09:59:54", "api_name": "daily", "params": {"trade_date": "20160909"}, "error": "token已过期"}
 {"recorded_at": "2026-10-14T09:59:55", "api_name": "sw_daily", "params": {"trade_date": "20160907"}, "error": "token已过期"}
 {"recorded_at": "2026-10-14T09:59:55", "api_name": "stk_limit", "params": {"trade_date": "20160908"}, "error": "token已过期"}
+{"recorded_at": "2026-10-18T00:22:39", "api_name": "moneyflow", "params": {"trade_date": "20170802"}, "error": "Response ended prematurely"}
+{"recorded_at": "2026-10-18T01:04:10", "api_name": "daily_basic", "params": {"trade_date": "20200826"}, "error": "Response ended prematurely"}
