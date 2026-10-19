@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import argparse
-from datetime import date
+from datetime import date, datetime
 import json
 from pathlib import Path
 import sys
@@ -24,6 +24,7 @@ from stock_selection.screening_schemes.plan_two.lending import (
 from stock_selection.strategies.stock_short_high_state.backtest import (
     build_short_trade_backtest,
     filter_short_trade_backtest_by_stock_pool,
+    sample_stock_trade_codes,
     split_short_trade_backtest_by_average_market_cap,
 )
 from stock_selection.strategies.stock_short_high_state.report import (
@@ -41,6 +42,9 @@ from stock_selection.strategies.stock_short_high_state.screen import (
     DEFAULT_TROUGH_CONFIRM_DAYS,
     calculate_stock_short_states,
     read_cached_stock_daily,
+)
+from stock_selection.strategies.stock_short_high_state.visualization import (
+    DEFAULT_CODES_FILE,
 )
 
 
@@ -80,6 +84,12 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--include-st", action="store_true")
     parser.add_argument("--write-report", action="store_true",default=True)
+    parser.add_argument(
+        "--sample-chart-codes",
+        action="store_true",
+        default=False,
+        help="Save up to 30 worst-loss and 30 smallest-gain stocks for charts.",
+    )
     parser.add_argument("--records-root", default=str(DEFAULT_OUTPUT_ROOT))
     parser.add_argument("--lending-file", default=None)
     parser.add_argument("--lending-root", default=str(DEFAULT_LENDING_ROOT))
@@ -139,6 +149,17 @@ def main() -> int:
             backtest,
             records_root=args.records_root,
         )
+        if args.sample_chart_codes:
+            sampled_codes = sample_stock_trade_codes(backtest["trades"])
+            if not sampled_codes:
+                raise ValueError("no positive or negative stock returns to sample")
+            codes_text = "\n".join(sampled_codes) + "\n"
+            snapshot_path = csv_path.parent / (
+                f"sampled_chart_codes_{datetime.now().strftime('%Y%m%d_%H%M%S_%f')}.txt"
+            )
+            with snapshot_path.open("x", encoding="utf-8") as snapshot:
+                snapshot.write(codes_text)
+            DEFAULT_CODES_FILE.write_text(codes_text, encoding="utf-8")
         market_cap_backtests = split_short_trade_backtest_by_average_market_cap(
             backtest
         )
