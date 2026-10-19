@@ -13,8 +13,6 @@ import pandas as pd
 
 from stock_selection.data.market_cap import format_market_cap
 from stock_selection.strategies.stock_short_high_state.screen import (
-    DEFAULT_HIGH_RISE_DAYS,
-    DEFAULT_MIN_HIGH_RISE_PCT,
     latest_stock_short_states,
 )
 
@@ -44,8 +42,6 @@ def build_stock_short_state_report(
     rebound_pct: float,
     high_heat_days: int,
     trough_confirm_days: int,
-    high_rise_days: int = DEFAULT_HIGH_RISE_DAYS,
-    min_high_rise_pct: float = DEFAULT_MIN_HIGH_RISE_PCT,
 ) -> dict[str, Any]:
     latest = latest_stock_short_states(states)
     alerts = (
@@ -63,9 +59,7 @@ def build_stock_short_state_report(
             "report_type": "stock_short_high_state",
             "as_of_date": as_of_date,
             "lookback_days": lookback_days,
-            "high_rise_days": high_rise_days,
-            "min_high_rise_pct": min_high_rise_pct,
-            "high_rise_formula": "close / close_shift_high_rise_days - 1",
+            "high_candidate_formula": "close >= max(previous lookback_days closes)",
             "candidate_pullback_pct": candidate_pullback_pct,
             "confirm_drawdown_pct": confirm_drawdown_pct,
             "rebound_pct": rebound_pct,
@@ -95,7 +89,7 @@ def render_stock_short_state_markdown(report: dict[str, Any]) -> str:
         "## 默认规则",
         "",
         f"- 半年窗口：{metadata['lookback_days']}个交易日",
-        f"- 高点候选涨幅门槛：相对{metadata.get('high_rise_days', DEFAULT_HIGH_RISE_DAYS)}个交易日前收盘价，涨幅严格超过{metadata.get('min_high_rise_pct', DEFAULT_MIN_HIGH_RISE_PCT):.1%}",
+        f"- 高点候选条件：当日收盘价达到或超过前{metadata['lookback_days']}个交易日最高收盘价（不含当日，包含等于）",
         f"- 候选回调起点：{metadata['candidate_pullback_pct']:.1%}",
         f"- 最高点确认回落：{metadata['confirm_drawdown_pct']:.1%}",
         f"- 波峰开启反弹：{metadata['rebound_pct']:.1%}",
@@ -173,7 +167,7 @@ def render_short_trade_backtest_markdown(
         "## 交易规则",
         "",
         "- 做空开仓：首次进入 `HIGH_CANDIDATE_PULLBACK`，或首次进入某个 `PEAK_n`。连续状态不重复开仓。",
-        "- 做空结束：`HIGH_CANDIDATE_PULLBACK` 对应首次进入 `TROUGH_CANDIDATE` 或 `TROUGH_REGION`；`PEAK_n` 对应重新进入相同波峰序号的 `TROUGH_REGION`。",
+        *(f"- {rule}" for rule in _normal_exit_rules(metadata)),
         *(f"- {rule}" for rule in _drawdown_stop_rules(metadata)),
         "- 新高失效或周期异常切换且未到结束状态的交易标记为失效；截至报告日未到结束状态的交易标记为持仓中。两者均不计入已完成交易的收益和胜率。",
         "- 平均 / 中位收益统计本报告全部已完成交易，包含持平交易；正收益与负收益的平均 / 中位收益分别只统计盈利与亏损交易，沿用胜 / 负 / 平的划分口径（绝对收益不超过1e-12视为持平）。对应组没有交易时显示“-”。",
@@ -279,6 +273,16 @@ def render_short_trade_backtest_markdown(
             f"{_format_percent(trade.get('max_drawdown_pct'))} | "
             f"{trade['holding_trade_days']} |"
         )
+    lines.extend([
+        "", "## 平仓参考核对", "",
+        "每笔列出结束/估值日实际可知的参考值；止损时偏离使用触发日实际收盘价，不使用模拟成交价。参考状态 AVAILABLE 表示可用，NO_VOLUME_EXPANSION 表示未找到放量，INSUFFICIENT_LOOKBACK 表示历史不足，NO_REFERENCE_HIGH 表示缺少有效参考高点。", "",
+        "| " + " | ".join(_REFERENCE_AUDIT_HEADERS) + " |",
+        "| " + " | ".join("---" for _ in _REFERENCE_AUDIT_HEADERS) + " |",
+    ])
+    for trade in backtest["trades"]:
+        lines.append("| " + " | ".join(_reference_audit_values(trade)) + " |")
+    if not backtest["trades"]:
+        lines.append("| " + " | ".join("-" for _ in _REFERENCE_AUDIT_HEADERS) + " |")
     return "\n".join(lines) + "\n"
 
 
@@ -399,6 +403,14 @@ def render_short_trade_backtest_html(backtest: dict[str, Any]) -> str:
     stop_rules_html = "".join(
         f"<li>{escape(rule)}</li>" for rule in _drawdown_stop_rules(metadata)
     )
+    normal_exit_rules_html = "".join(
+        f"<li>{escape(rule)}</li>" for rule in _normal_exit_rules(metadata)
+    )
+    audit_headers_html = "".join(f"<th>{escape(value)}</th>" for value in _REFERENCE_AUDIT_HEADERS)
+    audit_rows_html = "".join(
+        "<tr>" + "".join(f"<td>{escape(value)}</td>" for value in _reference_audit_values(trade)) + "</tr>"
+        for trade in backtest["trades"]
+    ) or f'<tr><td colspan="{len(_REFERENCE_AUDIT_HEADERS)}">没有逐笔交易</td></tr>'
     return f"""<!doctype html>
 <html lang="zh-CN">
 <head>
@@ -423,6 +435,8 @@ th:first-child,td:first-child,th:nth-child(3),td:nth-child(3),th:nth-child(4),td
 .state-table{{font-size:13px}}
 .trade-table{{table-layout:auto;font-size:10.5px}}
 .trade-table th,.trade-table td{{padding:5px 4px}}
+.audit-table{{table-layout:fixed;font-size:11px}}
+.audit-table th,.audit-table td{{white-space:normal;overflow-wrap:anywhere;padding:5px 4px}}
 @media print{{body{{padding:8mm}}th{{position:static}}}}
 </style>
 </head>
@@ -432,7 +446,7 @@ th:first-child,td:first-child,th:nth-child(3),td:nth-child(3),th:nth-child(4),td
 <h2>交易规则</h2>
 <ul class="rules">
 <li>做空开仓：首次进入 <code>HIGH_CANDIDATE_PULLBACK</code>，或首次进入某个 <code>PEAK_n</code>。连续状态不重复开仓。</li>
-<li>做空结束：<code>HIGH_CANDIDATE_PULLBACK</code> 对应首次进入 <code>TROUGH_CANDIDATE</code> 或 <code>TROUGH_REGION</code>；<code>PEAK_n</code> 对应重新进入相同波峰序号的 <code>TROUGH_REGION</code>。</li>
+{normal_exit_rules_html}
 {stop_rules_html}
 <li>候选交易只使用实际输出的 <code>HIGH_CANDIDATE_PULLBACK</code> 记录，不把事后回填的 <code>HIGH_CONFIRMED</code> 当作开仓信号。</li>
 <li>失效和持仓中交易不计入已完成交易的收益和胜率。</li>
@@ -453,6 +467,12 @@ th:first-child,td:first-child,th:nth-child(3),td:nth-child(3),th:nth-child(4),td
 <table class="trade-table">
 <thead><tr><th>股票</th><th>周期</th><th>开仓状态</th><th>信号来源</th><th>开仓日</th><th>开仓价</th><th>平均总市值</th><th>市值样本日</th><th>开仓总市值</th><th>开仓流通市值</th><th>结束状态</th><th>结束/估值日</th><th>结束/估值价</th><th>状态</th><th>已实现收益</th><th>浮动收益</th><th>MFE</th><th>MAE</th><th>最大回撤</th><th>持有日</th></tr></thead>
 <tbody>{''.join(trade_rows)}</tbody>
+</table>
+<h2>平仓参考核对</h2>
+<p class="note">每笔列出结束/估值日实际可知的参考值；止损时偏离使用触发日实际收盘价。AVAILABLE：可用；NO_VOLUME_EXPANSION：无符合条件的放量；INSUFFICIENT_LOOKBACK：历史不足；NO_REFERENCE_HIGH：缺少有效参考高点。</p>
+<table class="audit-table">
+<thead><tr>{audit_headers_html}</tr></thead>
+<tbody>{audit_rows_html}</tbody>
 </table>
 </main>
 </body>
@@ -503,6 +523,46 @@ def _json_safe(value: Any) -> Any:
     if pd.isna(value):
         return None
     return value
+
+
+_REFERENCE_AUDIT_HEADERS = (
+    "股票", "周期/波峰", "开仓日", "结束/估值日", "结束原因",
+    "当日实际状态 / 收盘", "参考可用性", "参考高点 / 回看天数",
+    "窗口低点 / 收盘", "放量三日", "三日成交量", "第三/第一量比",
+    "价格起点日期 / 参考价", "绝对偏离",
+)
+
+
+def _reference_audit_values(trade: dict[str, Any]) -> list[str]:
+    return [
+        f"{trade['ts_code']} {trade.get('stock_name') or ''}",
+        f"{trade['cycle_id']} / {trade['peak_number']}",
+        str(trade["entry_date"]),
+        str(trade["evaluation_date"]),
+        str(trade["status_reason"]),
+        f"{trade.get('evaluation_observed_state') or '-'} / {_format_number(trade.get('evaluation_actual_close'))}",
+        str(trade.get("price_origin_status") or "-"),
+        f"{trade.get('origin_high_date') or '-'} / {_format_number(trade.get('origin_high_close'))} / {trade.get('origin_lookback_days') or '-'}日",
+        f"{trade.get('origin_window_low_date') or '-'} / {_format_number(trade.get('origin_window_low_close'))}",
+        " / ".join(str(trade.get(key) or "-") for key in ("volume_start_date", "volume_middle_date", "volume_end_date")),
+        " / ".join(_format_number(trade.get(key)) for key in ("volume_first", "volume_second", "volume_third")),
+        _format_number(trade.get("volume_expansion_ratio")),
+        f"{trade.get('price_origin_date') or '-'} / {_format_number(trade.get('price_origin_close'))}",
+        _format_percent(trade.get("price_origin_gap_pct")),
+    ]
+
+
+def _normal_exit_rules(metadata: dict[str, Any]) -> list[str]:
+    rule = metadata["normal_exit_rule"]
+    states = " 或 ".join(rule["trough_states"])
+    multiple = f"{rule['volume_expansion_multiple']:g}"
+    gap = _format_percent(rule["max_price_origin_gap_pct"])
+    return [
+        f"正常平仓：候选和波峰交易统一要求开仓日之后，当日实际状态为 {states}，且 abs(当日收盘价 / 行情价格起点 - 1) 不超过{gap}（包含等于），按当日收盘价平仓。",
+        f"价格起点：以当日已知候选高点为终点，向前取 lookback_days 个个股交易日（不含高点日）的最低收盘价，重复最低取最后一次；在该低点至高点之间寻找连续三天 0 < V1 < V2 < V3 且 V3/V1 至少{multiple}倍的放量，取最后一组第三天收盘价作为参考。三天必须全部位于该区间。",
+        "候选高点更新时重算参考，高点确认后本周期固定；使用 observed_state 判断当日实际状态，不把事后回填的波谷日期作为已确认日期。候选波谷当日即可参与平仓判断，无需等待后续确认。",
+        f"绝对偏离超过{gap}视为暂时波谷，继续检查同一周期后续日期/波谷，不再要求相同波峰序号；低于参考价超过该比例也不平仓。历史不足、缺少成交量或无合格放量时不触发正常平仓，继续应用回撤止损和失效规则。",
+    ]
 
 
 def _drawdown_stop_rules(metadata: dict[str, Any]) -> list[str]:

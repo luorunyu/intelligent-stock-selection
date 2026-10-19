@@ -38,6 +38,10 @@ REQUIRED_STATE_COLUMNS = {
     "stock_name",
     "trade_date",
     "close",
+    "vol",
+    "lookback_days",
+    "observed_state",
+    "observed_state_name",
     "state",
     "state_name",
     "state_description",
@@ -150,6 +154,11 @@ def read_saved_states(path: str | Path) -> pd.DataFrame:
             "ts_code": str,
             "stock_name": str,
             "trade_date": str,
+            "state_start_date": str,
+            "reference_high_date": str,
+            "reference_low_date": str,
+            "trough_confirm_date": str,
+            "observed_state_name": str,
             "state_name": str,
             "state_description": str,
             "alert_code": str,
@@ -158,7 +167,11 @@ def read_saved_states(path: str | Path) -> pd.DataFrame:
     )
     missing = sorted(REQUIRED_STATE_COLUMNS.difference(data.columns))
     if missing:
-        raise ValueError(f"states CSV is missing columns: {', '.join(missing)}")
+        raise ValueError(
+            f"states CSV is missing columns: {', '.join(missing)}. "
+            "请先重新运行策略五 cli.py 生成新版 states.csv，再运行画图命令；"
+            "旧文件缺少当日实际状态或放量参考所需数据。"
+        )
     result = data.copy()
     result["ts_code"] = result["ts_code"].fillna("").astype(str).str.strip()
     result["trade_date"] = result["trade_date"].map(_normalise_date)
@@ -228,7 +241,9 @@ def merge_bars_and_states(
         raise ValueError(f"stock bars are missing columns: {', '.join(missing_bars)}")
     normalized_bars = bars.copy()
     normalized_bars["trade_date"] = normalized_bars["trade_date"].map(_normalise_date)
-    normalized_bars = normalized_bars.rename(columns={"close": "bar_close"})
+    normalized_bars = normalized_bars.rename(columns={"close": "bar_close", "vol": "bar_vol"})
+    # Preserve saved volume so figure-level backtests use the same inputs as
+    # reports, even if the OHLC cache was refreshed after states.csv was saved.
     state_view = states.rename(columns={"close": "state_close"})
     merge_keys = ["trade_date"]
     if "ts_code" in state_view.columns and "ts_code" in normalized_bars.columns:
@@ -351,7 +366,7 @@ def build_stock_short_state_figure(
     figure.add_trace(
         go.Bar(
             x=dates,
-            y=data["vol"],
+            y=data["bar_vol"] if "bar_vol" in data.columns else data["vol"],
             marker_color=volume_colors,
             marker_line_width=0,
             opacity=0.72,
@@ -800,6 +815,16 @@ def _trade_hover(trade: dict[str, Any]) -> str:
         f"<br>最大回撤：{_format_percent(trade['max_drawdown_pct'])}"
         f"<br>持有交易日：{trade['holding_trade_days']}"
         f"<br>周期：{trade['cycle_id']} · 波峰序号：{trade['peak_number']}"
+        f"<br>结束日实际状态：{trade.get('evaluation_observed_state', '-')}"
+        f"<br>参考状态：{trade.get('price_origin_status', '-')}"
+        f"<br>参考高点：{trade.get('origin_high_date') or '-'} · {_format_number(trade.get('origin_high_close'))}"
+        f"<br>前{trade.get('origin_lookback_days') or '-'}日最低收盘：{trade.get('origin_window_low_date') or '-'} · {_format_number(trade.get('origin_window_low_close'))}"
+        f"<br>三天放量：{trade.get('volume_start_date') or '-'} / {trade.get('volume_middle_date') or '-'} / {trade.get('volume_end_date') or '-'}"
+        f"<br>成交量：{_format_number(trade.get('volume_first'), digits=0)} / {_format_number(trade.get('volume_second'), digits=0)} / {_format_number(trade.get('volume_third'), digits=0)}"
+        f"<br>第三天/第一天量比：{_format_number(trade.get('volume_expansion_ratio'))}"
+        f"<br>行情价格起点：{trade.get('price_origin_date') or '-'} · {_format_number(trade.get('price_origin_close'))}"
+        f"<br>当日实际收盘：{_format_number(trade.get('evaluation_actual_close'))}"
+        f"<br>收盘价与参考价绝对偏离：{_format_percent(trade.get('price_origin_gap_pct'))}"
     )
     if trade.get("stop_trigger_close") is not None:
         details += (
@@ -819,9 +844,10 @@ def _state_hover(row: dict[str, Any]) -> str:
         f"<br>收盘：{_format_number(row.get('close'))}"
         f"<br>总市值：{format_market_cap(row.get('total_mv'))}"
         f"<br>流通市值：{format_market_cap(row.get('circ_mv'))}"
-        f"<br>成交量：{_format_number(row.get('vol'), digits=0)}"
+        f"<br>成交量：{_format_number(row.get('bar_vol', row.get('vol')), digits=0)}"
         f"<br>状态：{row.get('state_description', '')}"
         f"<br>枚举：{row.get('state_name', '')} ({row.get('state', '')})"
+        f"<br>当日实际状态：{row.get('observed_state_name', '')} ({row.get('observed_state', '')})"
         f"<br>周期：{_number_or_zero(row.get('cycle_id'))}"
         f"<br>波峰序号：{_number_or_zero(row.get('peak_number'))}"
         f"<br>热度：{heat}"

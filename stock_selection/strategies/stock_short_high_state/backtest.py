@@ -19,13 +19,12 @@ class ShortTradeBacktestConfig:
     candidate_entry_state: StockShortState = (
         StockShortState.HIGH_CANDIDATE_PULLBACK
     )
-    candidate_exit_states: frozenset[StockShortState] = frozenset(
+    trough_exit_states: frozenset[StockShortState] = frozenset(
         {
             StockShortState.TROUGH_CANDIDATE,
             StockShortState.TROUGH_REGION,
         }
     )
-    candidate_exit_label: str = "TROUGH_CANDIDATE_OR_REGION"
     peak_entry_states: frozenset[StockShortState] = frozenset(
         {
             StockShortState.PEAK_1,
@@ -34,13 +33,18 @@ class ShortTradeBacktestConfig:
             StockShortState.PEAK_N,
         }
     )
-    peak_exit_state: StockShortState = StockShortState.TROUGH_REGION
     invalidation_state: StockShortState = StockShortState.INVALID_HIGH_NEW_HIGH
     max_drawdown_pct: float = 0.50
+    volume_expansion_multiple: float = 3.0
+    max_price_origin_gap_pct: float = 0.30
 
     def __post_init__(self) -> None:
         if not np.isfinite(self.max_drawdown_pct) or not 0 < self.max_drawdown_pct < 1:
             raise ValueError("max_drawdown_pct must be a finite number between 0 and 1")
+        if not np.isfinite(self.volume_expansion_multiple) or self.volume_expansion_multiple <= 1:
+            raise ValueError("volume_expansion_multiple must be finite and greater than 1")
+        if not np.isfinite(self.max_price_origin_gap_pct) or self.max_price_origin_gap_pct < 0:
+            raise ValueError("max_price_origin_gap_pct must be finite and non-negative")
 
 
 BACKTEST_CONFIG = ShortTradeBacktestConfig()
@@ -52,6 +56,15 @@ PEAK_ENTRY_STATES = {int(state) for state in BACKTEST_CONFIG.peak_entry_states}
 INVALID_STATE = int(BACKTEST_CONFIG.invalidation_state)
 DEFAULT_MARKET_CAP_THRESHOLD = 3_000_000.0
 MAX_DRAWDOWN_STOP = "MAX_DRAWDOWN_STOP"
+VOLUME_REFERENCE_TROUGH_EXIT = "VOLUME_REFERENCE_TROUGH_EXIT"
+TROUGH_EXIT_LABEL = "VOLUME_REFERENCE_TROUGH"
+PRICE_ORIGIN_COLUMNS = (
+    "price_origin_status", "origin_high_date", "origin_high_close",
+    "origin_lookback_days", "origin_window_low_date", "origin_window_low_close",
+    "volume_start_date", "volume_middle_date", "volume_end_date",
+    "volume_first", "volume_second", "volume_third", "volume_expansion_ratio",
+    "price_origin_date", "price_origin_close", "price_origin_gap_pct",
+)
 
 
 def build_short_trade_backtest(
@@ -66,6 +79,7 @@ def build_short_trade_backtest(
     if not data.empty:
         for _, stock_rows in data.groupby("ts_code", sort=True):
             stock_rows = stock_rows.sort_values("trade_date").reset_index(drop=True)
+            stock_rows = _add_price_origins(stock_rows, config=config)
             trades.extend(_candidate_trades(stock_rows, config=config))
             trades.extend(_peak_trades(stock_rows, config=config))
 
@@ -89,21 +103,20 @@ def build_short_trade_backtest(
                     key=lambda state: int(state),
                 )),
             ],
-            "exit_states": list(
-                dict.fromkeys(
-                    [
-                        *(
-                            state.name
-                            for state in sorted(
-                                config.candidate_exit_states,
-                                key=lambda state: int(state),
-                            )
-                        ),
-                        config.peak_exit_state.name,
-                        MAX_DRAWDOWN_STOP,
-                    ]
-                )
-            ),
+            "exit_states": [
+                *(state.name for state in sorted(config.trough_exit_states, key=int)),
+                MAX_DRAWDOWN_STOP,
+            ],
+            "normal_exit_rule": {
+                "state_source": "observed_state",
+                "trough_states": [state.name for state in sorted(config.trough_exit_states, key=int)],
+                "volume_expansion_multiple": float(config.volume_expansion_multiple),
+                "max_price_origin_gap_pct": float(config.max_price_origin_gap_pct),
+                "price_origin_selection": "LAST_QUALIFYING_TRIPLE_THIRD_CLOSE",
+                "window": "lookback_days bars preceding running high, excluding high",
+                "gap_formula": "abs(current_close / price_origin_close - 1)",
+                "missing_reference_policy": "NO_NORMAL_EXIT",
+            },
             "invalidation_state": config.invalidation_state.name,
             "return_formula": "1 - exit_close / entry_close",
             "equity_formula": "2 - close / entry_close",
@@ -221,6 +234,94 @@ def filter_short_trade_backtest_by_stock_pool(
     }
 
 
+def _add_price_origins(
+    stock_rows: pd.DataFrame,
+    *,
+    config: ShortTradeBacktestConfig,
+) -> pd.DataFrame:
+    """Resolve each day's reference using only its running high and prior bars."""
+    dates = stock_rows["trade_date"].to_numpy()
+    closes = stock_rows["close"].to_numpy(dtype=float)
+    volumes = stock_rows["vol"].to_numpy(dtype=float)
+    positions = {date: position for position, date in enumerate(dates)}
+    cache: dict[tuple[int, int], dict[str, Any]] = {}
+    origins: list[dict[str, Any]] = []
+    for position, (high_date, lookback_days) in enumerate(zip(
+        stock_rows["reference_high_date"], stock_rows["lookback_days"],
+    )):
+        high_position = positions.get(high_date, -1)
+        window = int(lookback_days)
+        key = (high_position, window)
+        if high_position < 0 or high_position > position:
+            reference = {"price_origin_status": "NO_REFERENCE_HIGH"}
+        elif key in cache:
+            reference = cache[key]
+        else:
+            reference = {
+                "origin_high_date": str(dates[high_position]),
+                "origin_high_close": float(closes[high_position]),
+                "origin_lookback_days": window,
+                "price_origin_status": "INSUFFICIENT_LOOKBACK",
+            }
+            if high_position >= window:
+                window_closes = closes[high_position - window:high_position]
+                # Last minimum wins ties, keeping the origin in the latest upswing.
+                low_position = high_position - 1 - int(np.argmin(window_closes[::-1]))
+                reference.update({
+                    "origin_window_low_date": str(dates[low_position]),
+                    "origin_window_low_close": float(closes[low_position]),
+                    "price_origin_status": "NO_VOLUME_EXPANSION",
+                })
+                for third in range(high_position, low_position + 1, -1):
+                    first, second = third - 2, third - 1
+                    v1, v2, v3 = volumes[first:third + 1]
+                    if (
+                        np.isfinite([v1, v2, v3]).all()
+                        and 0 < v1 < v2 < v3
+                        and v3 / v1 + 1e-12 >= config.volume_expansion_multiple
+                    ):
+                        reference.update({
+                            "price_origin_status": "AVAILABLE",
+                            "volume_start_date": str(dates[first]),
+                            "volume_middle_date": str(dates[second]),
+                            "volume_end_date": str(dates[third]),
+                            "volume_first": float(v1),
+                            "volume_second": float(v2),
+                            "volume_third": float(v3),
+                            "volume_expansion_ratio": float(v3 / v1),
+                            "price_origin_date": str(dates[third]),
+                            "price_origin_close": float(closes[third]),
+                        })
+                        break
+            cache[key] = reference
+        origin_close = reference.get("price_origin_close")
+        origins.append({
+            **reference,
+            "price_origin_gap_pct": (
+                float(abs(closes[position] / origin_close - 1.0))
+                if origin_close is not None else None
+            ),
+        })
+    return pd.concat([
+        stock_rows,
+        pd.DataFrame(origins, columns=PRICE_ORIGIN_COLUMNS, index=stock_rows.index),
+    ], axis=1)
+
+
+def _qualifying_exits(
+    cycle_rows: pd.DataFrame,
+    entry_date: str,
+    *,
+    config: ShortTradeBacktestConfig,
+) -> pd.DataFrame:
+    """Candidate and peak trades share the same observable trough/price gate."""
+    return cycle_rows[
+        cycle_rows["observed_state"].isin([int(state) for state in config.trough_exit_states])
+        & cycle_rows["trade_date"].gt(entry_date)
+        & cycle_rows["price_origin_gap_pct"].le(config.max_price_origin_gap_pct + 1e-12)
+    ].sort_values("trade_date")
+
+
 def _candidate_trades(
     stock_rows: pd.DataFrame,
     *,
@@ -240,12 +341,7 @@ def _candidate_trades(
         entry_date = str(entry_row["trade_date"])
         entry_close = float(entry_row["close"])
 
-        exits = cycle_rows[
-            cycle_rows["state"].isin(
-                [int(state) for state in config.candidate_exit_states]
-            )
-            & cycle_rows["trade_date"].ge(entry_date)
-        ].sort_values("trade_date")
+        exits = _qualifying_exits(cycle_rows, entry_date, config=config)
         invalidations = cycle_rows[
             cycle_rows["state"].eq(int(config.invalidation_state))
             & cycle_rows["trade_date"].ge(entry_date)
@@ -260,7 +356,6 @@ def _candidate_trades(
                 entry_source="OBSERVED_HIGH_CANDIDATE_PULLBACK",
                 entry_date=entry_date,
                 entry_close=entry_close,
-                exit_state=config.candidate_exit_label,
                 exits=exits,
                 invalidations=invalidations,
                 max_drawdown_pct=config.max_drawdown_pct,
@@ -293,11 +388,7 @@ def _peak_trades(
         if entry_close is None:
             entry_close = float(signal["close"])
         cycle_rows = stock_rows[stock_rows["cycle_id"].eq(int(cycle_id))]
-        exits = cycle_rows[
-            cycle_rows["state"].eq(int(config.peak_exit_state))
-            & cycle_rows["peak_number"].eq(int(peak_number))
-            & cycle_rows["trade_date"].ge(entry_date)
-        ].sort_values("trade_date")
+        exits = _qualifying_exits(cycle_rows, entry_date, config=config)
         invalidations = cycle_rows[
             cycle_rows["state"].eq(int(config.invalidation_state))
             & cycle_rows["trade_date"].ge(entry_date)
@@ -312,7 +403,6 @@ def _peak_trades(
                 entry_source="OBSERVED_PEAK_START",
                 entry_date=entry_date,
                 entry_close=entry_close,
-                exit_state=config.peak_exit_state.name,
                 exits=exits,
                 invalidations=invalidations,
                 max_drawdown_pct=config.max_drawdown_pct,
@@ -331,7 +421,6 @@ def _build_trade(
     entry_source: str,
     entry_date: str,
     entry_close: float,
-    exit_state: str,
     exits: pd.DataFrame,
     invalidations: pd.DataFrame,
     max_drawdown_pct: float,
@@ -343,7 +432,7 @@ def _build_trade(
         or str(exit_row["trade_date"]) <= str(invalid_row["trade_date"])
     ):
         status = "COMPLETED"
-        status_reason = "EXIT_STATE_REACHED"
+        status_reason = VOLUME_REFERENCE_TROUGH_EXIT
         evaluation_row = exit_row
     elif invalid_row is not None:
         status = "INVALIDATED"
@@ -361,9 +450,9 @@ def _build_trade(
     evaluation_date = str(evaluation_row["trade_date"])
     evaluation_close = float(evaluation_row["close"])
     resolved_exit_state = (
-        str(exit_row["state_name"])
+        str(exit_row["observed_state_name"])
         if status == "COMPLETED" and exit_row is not None
-        else exit_state
+        else TROUGH_EXIT_LABEL
     )
     path = stock_rows[
         stock_rows["trade_date"].between(entry_date, evaluation_date)
@@ -402,6 +491,9 @@ def _build_trade(
         mark_return = 1.0 - evaluation_close / entry_close
 
     entry_row = _row_for_date(stock_rows, entry_date)
+    # Stops may precede the proposed normal exit. Audit the actual endpoint's
+    # reference and observed close, not the later exit or simulated stop fill.
+    evaluation_row = _row_for_date(stock_rows, evaluation_date)
     total_market_caps = pd.to_numeric(path["total_mv"], errors="coerce")
     total_market_caps = total_market_caps[
         total_market_caps.notna() & total_market_caps.gt(0)
@@ -429,6 +521,14 @@ def _build_trade(
         "evaluation_date": evaluation_date,
         "evaluation_close": evaluation_close,
         "stop_trigger_close": stop_trigger_close,
+        "evaluation_observed_state": str(evaluation_row["observed_state_name"]),
+        "evaluation_actual_close": float(evaluation_row["close"]),
+        **{
+            column: (
+                None if pd.isna(evaluation_row[column]) else evaluation_row[column]
+            )
+            for column in PRICE_ORIGIN_COLUMNS
+        },
         "return_pct": float(mark_return) if status == "COMPLETED" else None,
         "mark_return_pct": float(mark_return),
         "holding_trade_days": max(len(path_closes) - 1, 0),
@@ -500,12 +600,20 @@ def _summarise_by_entry_state(
 
 
 def _normalise_states(states: pd.DataFrame) -> pd.DataFrame:
-    required = {"ts_code", "trade_date", "close", "state", "cycle_id", "peak_number"}
+    required = {
+        "ts_code", "trade_date", "close", "state", "cycle_id", "peak_number",
+        "observed_state", "observed_state_name", "vol", "lookback_days",
+        "reference_high_date",
+    }
     if states is None or states.empty:
         return pd.DataFrame(columns=sorted(required))
     missing = sorted(required.difference(states.columns))
     if missing:
-        raise ValueError(f"states is missing required columns: {', '.join(missing)}")
+        raise ValueError(
+            f"states is missing required columns: {', '.join(missing)}. "
+            "请先重新运行策略五 cli.py 生成新版 states.csv，再生成报告或画图；"
+            "旧文件无法还原当日实际状态和成交量参考。"
+        )
     data = states.copy()
     for column, default in (
         ("stock_name", ""),
@@ -517,9 +625,21 @@ def _normalise_states(states: pd.DataFrame) -> pd.DataFrame:
         if column not in data.columns:
             data[column] = default
     data["ts_code"] = data["ts_code"].fillna("").astype(str).str.strip()
-    data["trade_date"] = data["trade_date"].fillna("").astype(str).str.strip()
-    for column in ("close", "state", "cycle_id", "peak_number"):
+    for column in ("trade_date", "state_start_date", "reference_high_date"):
+        data[column] = data[column].map(_valid_date)
+    for column in ("close", "state", "cycle_id", "peak_number", "observed_state", "vol", "lookback_days"):
         data[column] = pd.to_numeric(data[column], errors="coerce")
+    if (
+        ~data["observed_state"].isin({int(state) for state in StockShortState})
+        | ~np.isfinite(data["lookback_days"])
+        | data["lookback_days"].le(0)
+        | data["lookback_days"].mod(1).ne(0)
+    ).any():
+        raise ValueError("当日实际状态或 lookback_days 无效，请重新运行策略五 CLI 生成 states.csv")
+    data["observed_state"] = data["observed_state"].astype(int)
+    data["observed_state_name"] = data["observed_state"].map(
+        {int(state): state.name for state in StockShortState}
+    )
     data = data[
         data["ts_code"].ne("")
         & data["trade_date"].ne("")
@@ -544,8 +664,8 @@ def _row_for_date(rows: pd.DataFrame, trade_date: str) -> pd.Series:
 def _valid_date(value: Any) -> str:
     if value is None or pd.isna(value):
         return ""
-    text = str(value).strip()
-    return text if text and text.lower() != "nan" else ""
+    text = str(value).strip().replace("-", "")
+    return text[:8] if len(text) >= 8 and text[:8].isdigit() else ""
 
 
 def _positive_number(value: Any) -> float | None:

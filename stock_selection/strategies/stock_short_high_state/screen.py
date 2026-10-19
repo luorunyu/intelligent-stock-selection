@@ -14,7 +14,7 @@ from stock_selection.data.tushare_cache import DEFAULT_CACHE_ROOT
 """默认参数：
 
 - 半年窗口：120个交易日；
-- 高点候选门槛：达到前120个交易日最高收盘价，且10个交易日涨幅严格超过30%；
+- 高点候选门槛：收盘价达到或超过前120个交易日最高收盘价；
 - 最高点确认：从运行最高收盘价回落30%；
 - 候选回调：从运行最高收盘价回落15%；
 - 波峰开启：离开波谷区域并从区域下沿反弹10%；
@@ -23,8 +23,6 @@ from stock_selection.data.tushare_cache import DEFAULT_CACHE_ROOT
 - 波谷确认：候选低点后4个交易日的收盘价均不低于候选低点。"""
 
 DEFAULT_LOOKBACK_DAYS = 120
-DEFAULT_HIGH_RISE_DAYS = 10
-DEFAULT_MIN_HIGH_RISE_PCT = 0.30
 DEFAULT_CANDIDATE_PULLBACK_PCT = 0.15
 DEFAULT_CONFIRM_DRAWDOWN_PCT = 0.30
 DEFAULT_REBOUND_PCT = 0.10
@@ -81,11 +79,15 @@ OUTPUT_COLUMNS = [
     "stock_name",
     "trade_date",
     "close",
+    "vol",
+    "lookback_days",
     "total_mv",
     "circ_mv",
     "state",
     "state_name",
     "state_description",
+    "observed_state",
+    "observed_state_name",
     "cycle_id",
     "peak_number",
     "state_start_date",
@@ -107,8 +109,6 @@ def calculate_stock_short_states(
     *,
     as_of_date: str | None = None,
     lookback_days: int = DEFAULT_LOOKBACK_DAYS,
-    high_rise_days: int = DEFAULT_HIGH_RISE_DAYS,
-    min_high_rise_pct: float = DEFAULT_MIN_HIGH_RISE_PCT,
     candidate_pullback_pct: float = DEFAULT_CANDIDATE_PULLBACK_PCT,
     confirm_drawdown_pct: float = DEFAULT_CONFIRM_DRAWDOWN_PCT,
     rebound_pct: float = DEFAULT_REBOUND_PCT,
@@ -122,10 +122,9 @@ def calculate_stock_short_states(
     """Return one state row for every stock trading day.
 
     A high candidate starts when the close reaches the highest close of the
-    preceding ``lookback_days`` trading days and its return relative to the
-    close ``high_rise_days`` bars earlier strictly exceeds ``min_high_rise_pct``.
+    preceding ``lookback_days`` trading days, excluding the current day.
     This gate also applies when starting a new cycle after invalidation.
-    Existing candidates keep tracking new highs without repeating the rise gate.
+    Existing candidates keep tracking new highs.
     Pullback begins after price falls
     ``candidate_pullback_pct`` from the running high. The actual high is
     confirmed only after price falls ``confirm_drawdown_pct``. A trough region
@@ -137,8 +136,6 @@ def calculate_stock_short_states(
         trough_confirm_days = trough_heat_days
     _validate_parameters(
         lookback_days=lookback_days,
-        high_rise_days=high_rise_days,
-        min_high_rise_pct=min_high_rise_pct,
         candidate_pullback_pct=candidate_pullback_pct,
         confirm_drawdown_pct=confirm_drawdown_pct,
         rebound_pct=rebound_pct,
@@ -167,8 +164,6 @@ def calculate_stock_short_states(
                 ts_code=ts_code,
                 stock_name=_latest_name(group["stock_name"]),
                 lookback_days=lookback_days,
-                high_rise_days=high_rise_days,
-                min_high_rise_pct=min_high_rise_pct,
                 candidate_pullback_pct=candidate_pullback_pct,
                 confirm_drawdown_pct=confirm_drawdown_pct,
                 rebound_pct=rebound_pct,
@@ -236,8 +231,8 @@ def normalise_stock_daily(
     *,
     stock_basic: pd.DataFrame | None = None,
 ) -> pd.DataFrame:
-    """Normalize stock codes, names, dates, and close prices."""
-    columns = ["ts_code", "stock_name", "trade_date", "close"]
+    """Normalize stock codes, names, dates, close prices, and optional volume."""
+    columns = ["ts_code", "stock_name", "trade_date", "close", "vol"]
     if stock_daily is None or stock_daily.empty:
         return pd.DataFrame(columns=columns)
 
@@ -252,6 +247,10 @@ def normalise_stock_daily(
             ),
             "close": pd.to_numeric(
                 _series_from(stock_daily, ("close", "close_price"), None),
+                errors="coerce",
+            ),
+            "vol": pd.to_numeric(
+                _series_from(stock_daily, ("vol", "volume"), np.nan),
                 errors="coerce",
             ),
         }
@@ -318,8 +317,6 @@ def _calculate_one_stock(
     ts_code: str,
     stock_name: str,
     lookback_days: int,
-    high_rise_days: int,
-    min_high_rise_pct: float,
     candidate_pullback_pct: float,
     confirm_drawdown_pct: float,
     rebound_pct: float,
@@ -328,17 +325,14 @@ def _calculate_one_stock(
 ) -> list[dict[str, Any]]:
     ordered_group = group.sort_values("trade_date").reset_index(drop=True)
     closes = ordered_group["close"].to_numpy(dtype=float)
+    volumes = ordered_group["vol"].to_numpy(dtype=float)
     dates = ordered_group["trade_date"].astype(str).to_numpy()
     close_series = pd.Series(closes)
     previous_highs = close_series.shift(1).rolling(
         lookback_days, min_periods=lookback_days,
     ).max()
-    high_rises = close_series / close_series.shift(high_rise_days) - 1.0
     # Share one entry gate between the initial cycle and a restart after invalidation.
-    candidate_starts = (
-        close_series.ge(previous_highs)
-        & high_rises.gt(min_high_rise_pct + 1e-12)
-    ).to_numpy()
+    candidate_starts = close_series.ge(previous_highs).to_numpy()
     high_heat_means = (
         close_series
         .shift(1)
@@ -352,6 +346,8 @@ def _calculate_one_stock(
             stock_name=stock_name,
             trade_date=dates[position],
             close=closes[position],
+            vol=volumes[position],
+            lookback_days=lookback_days,
         )
         for position in range(len(ordered_group))
     ]
@@ -426,6 +422,7 @@ def _calculate_one_stock(
                 _set_record(
                     records[high_position],
                     StockShortState.HIGH_CONFIRMED,
+                    update_observed=False,
                     cycle_id=cycle_id,
                     state_start_position=candidate_start,
                     dates=dates,
@@ -518,6 +515,7 @@ def _calculate_one_stock(
                 _set_record(
                     records[historical_position],
                     StockShortState.TROUGH_REGION,
+                    update_observed=(historical_position == position),
                     cycle_id=cycle_id,
                     peak_number=peak_number,
                     state_start_position=trough_position,
@@ -628,6 +626,8 @@ def _base_record(
     stock_name: str,
     trade_date: str,
     close: float,
+    vol: float,
+    lookback_days: int,
 ) -> dict[str, Any]:
     state = StockShortState.NORMAL
     return {
@@ -635,11 +635,15 @@ def _base_record(
         "stock_name": stock_name,
         "trade_date": trade_date,
         "close": float(close),
+        "vol": float(vol),
+        "lookback_days": int(lookback_days),
         "total_mv": np.nan,
         "circ_mv": np.nan,
         "state": int(state),
         "state_name": state.name,
         "state_description": STATE_DESCRIPTIONS[state],
+        "observed_state": int(state),
+        "observed_state_name": state.name,
         "cycle_id": 0,
         "peak_number": 0,
         "state_start_date": "",
@@ -672,7 +676,12 @@ def _set_record(
     trough_confirm_position: int = -1,
     heat: float = np.nan,
     alert_code: str = "",
+    update_observed: bool = True,
 ) -> None:
+    # Historical labels may be backfilled; the state known that day must not be.
+    if update_observed:
+        record["observed_state"] = int(state)
+        record["observed_state_name"] = state.name
     record.update(
         {
             "state": int(state),
@@ -730,12 +739,9 @@ def _ratio_heat(value: float, reference: float) -> float:
 
 
 def _validate_parameters(**parameters: Any) -> None:
-    for name in ("lookback_days", "high_rise_days", "high_heat_days", "trough_confirm_days"):
+    for name in ("lookback_days", "high_heat_days", "trough_confirm_days"):
         if int(parameters[name]) <= 0:
             raise ValueError(f"{name} must be greater than zero")
-    min_high_rise_pct = float(parameters["min_high_rise_pct"])
-    if not np.isfinite(min_high_rise_pct) or min_high_rise_pct < 0:
-        raise ValueError("min_high_rise_pct must be a non-negative finite number")
     if int(parameters["trough_confirm_days"]) < 2:
         raise ValueError("trough_confirm_days must be at least two")
     for name in ("candidate_pullback_pct", "confirm_drawdown_pct", "rebound_pct"):

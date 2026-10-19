@@ -36,9 +36,7 @@ from stock_selection.strategies.stock_short_high_state.screen import (
     DEFAULT_CANDIDATE_PULLBACK_PCT,
     DEFAULT_CONFIRM_DRAWDOWN_PCT,
     DEFAULT_HIGH_HEAT_DAYS,
-    DEFAULT_HIGH_RISE_DAYS,
     DEFAULT_LOOKBACK_DAYS,
-    DEFAULT_MIN_HIGH_RISE_PCT,
     DEFAULT_REBOUND_PCT,
     DEFAULT_TROUGH_CONFIRM_DAYS,
     calculate_stock_short_states,
@@ -59,14 +57,6 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--cache-root", default=None)
     parser.add_argument("--stock-code", action="append", default=None)
     parser.add_argument("--lookback-days", type=int, default=DEFAULT_LOOKBACK_DAYS)
-    parser.add_argument(
-        "--high-rise-days", type=int, default=DEFAULT_HIGH_RISE_DAYS,
-        help="Trading-day window for the high-candidate rise gate (default: 10).",
-    )
-    parser.add_argument(
-        "--min-high-rise-pct", type=float, default=DEFAULT_MIN_HIGH_RISE_PCT,
-        help="High candidates require a rise strictly above this ratio (default: 0.30).",
-    )
     parser.add_argument(
         "--candidate-pullback-pct",
         type=float,
@@ -109,8 +99,6 @@ def main() -> int:
         daily,
         as_of_date=args.date,
         lookback_days=args.lookback_days,
-        high_rise_days=args.high_rise_days,
-        min_high_rise_pct=args.min_high_rise_pct,
         candidate_pullback_pct=args.candidate_pullback_pct,
         confirm_drawdown_pct=args.confirm_drawdown_pct,
         rebound_pct=args.rebound_pct,
@@ -134,8 +122,6 @@ def main() -> int:
         states,
         as_of_date=args.date,
         lookback_days=args.lookback_days,
-        high_rise_days=args.high_rise_days,
-        min_high_rise_pct=args.min_high_rise_pct,
         candidate_pullback_pct=args.candidate_pullback_pct,
         confirm_drawdown_pct=args.confirm_drawdown_pct,
         rebound_pct=args.rebound_pct,
