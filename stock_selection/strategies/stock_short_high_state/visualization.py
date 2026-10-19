@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from datetime import datetime
 from html import escape
 from pathlib import Path
 from typing import Any, Iterable
@@ -18,6 +19,7 @@ from stock_selection.data.market_cap import (
 from stock_selection.data.tushare_cache import DEFAULT_CACHE_ROOT
 from stock_selection.strategies.stock_short_high_state.backtest import (
     build_short_trade_backtest,
+    sum_evaluated_returns_by_stock,
 )
 from stock_selection.strategies.stock_short_high_state.report import (
     DEFAULT_OUTPUT_ROOT,
@@ -595,9 +597,11 @@ def generate_stock_short_state_charts(
     output = (
         Path(output_directory)
         if output_directory is not None
-        else state_path.parent / "charts"
+        else state_path.parent / (
+            f"charts_{datetime.now().strftime('%Y%m%d_%H%M%S_%f')}"
+        )
     )
-    output.mkdir(parents=True, exist_ok=True)
+    output.mkdir(parents=True, exist_ok=output_directory is not None)
     positive_output = output / "positive"
     negative_output = output / "negative"
     unclassified_output = output / "unclassified"
@@ -615,6 +619,7 @@ def generate_stock_short_state_charts(
     trades_by_code: dict[str, list[dict[str, Any]]] = {}
     for trade in backtest.get("trades", []):
         trades_by_code.setdefault(str(trade["ts_code"]), []).append(trade)
+    returns_by_stock = sum_evaluated_returns_by_stock(backtest.get("trades", []))
 
     for code in codes:
         stock_states = states[states["ts_code"].eq(code)].copy()
@@ -631,18 +636,7 @@ def generate_stock_short_state_charts(
             stock_name = _latest_nonempty(stock_states["stock_name"])
             stock_trades = trades_by_code.get(code, [])
             stock_backtest = {"metadata": backtest["metadata"], "trades": stock_trades}
-            evaluated_returns = [
-                trade.get("return_pct")
-                if trade.get("status") == "COMPLETED"
-                else trade.get("mark_return_pct")
-                for trade in stock_trades
-            ]
-            finite_returns = [
-                float(value)
-                for value in evaluated_returns
-                if value is not None and np.isfinite(float(value))
-            ]
-            classified_return = float(sum(finite_returns)) if finite_returns else None
+            classified_return = returns_by_stock.get(code)
             category = "unclassified"
             if classified_return is not None:
                 category = "positive" if classified_return > 0 else "negative"

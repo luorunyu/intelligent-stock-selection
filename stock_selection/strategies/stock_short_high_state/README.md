@@ -252,7 +252,16 @@ python scripts/screen_stock_short_high_state.py `
 如果清单填写了内容但全部代码格式无效，仍会报错。股票范围和日期范围以 CSV 为准，
 需要扩大范围时先运行策略 CLI 重新生成状态文件。
 
-图表保存在状态文件同目录的 `charts/` 中，打开 `charts/index.html` 查看。
+运行策略 CLI 时可加 `--sample-chart-codes`（默认关闭），按逐股回测汇总收益抽取
+亏损最多的30只和正收益最小的30只；不足30只则取实际数量，零收益和无有效收益不参与。
+已完成交易使用 `return_pct`，其余交易使用 `mark_return_pct`，逐股相加后排序，
+收益相同时按股票代码排序。采样结果每行一个代码，写入策略目录的
+`strategy_five_chart_codes.txt`，并在当次报告日期目录保存带时间戳的
+`sampled_chart_codes_YYYYMMDD_HHMMSS_ffffff.txt` 快照以便对比。
+关闭采样时不修改已有清单；没有正负收益样本时采样会报错。
+
+图表默认保存在状态文件同目录的 `charts_YYYYMMDD_HHMMSS_ffffff/` 中，
+打开该目录的 `index.html` 查看。显式传入 `--output` 时使用指定目录。
 按回测汇总收益分入 `positive/`（正收益）和 `negative/`（非正收益）；没有回测交易或
 没有可用回测收益的股票也生成图表，放入 `unclassified/`。缺少行情或行情与状态价格
 不一致的股票会列在入口页的“未生成项目”中。

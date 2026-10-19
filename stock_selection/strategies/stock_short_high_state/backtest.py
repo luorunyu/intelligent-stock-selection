@@ -116,6 +116,35 @@ def build_short_trade_backtest(
     }
 
 
+def sum_evaluated_returns_by_stock(
+    trades: list[dict[str, Any]],
+) -> dict[str, float]:
+    returns_by_stock: dict[str, float] = {}
+    for trade in trades:
+        value = (
+            trade.get("return_pct")
+            if trade.get("status") == "COMPLETED"
+            else trade.get("mark_return_pct")
+        )
+        if value is None or not np.isfinite(float(value)):
+            continue
+        code = str(trade["ts_code"])
+        returns_by_stock[code] = returns_by_stock.get(code, 0.0) + float(value)
+    return returns_by_stock
+
+
+def sample_stock_trade_codes(
+    trades: list[dict[str, Any]],
+    *,
+    count_per_group: int = 30,
+) -> list[str]:
+    returns_by_stock = sum_evaluated_returns_by_stock(trades)
+    ranked = sorted(returns_by_stock.items(), key=lambda item: (item[1], item[0]))
+    negative = [code for code, value in ranked if value < 0][:count_per_group]
+    positive = [code for code, value in ranked if value > 0][:count_per_group]
+    return negative + positive
+
+
 def split_short_trade_backtest_by_average_market_cap(
     backtest: dict[str, Any],
     *,
