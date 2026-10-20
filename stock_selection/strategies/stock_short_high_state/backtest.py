@@ -10,6 +10,8 @@ import numpy as np
 import pandas as pd
 
 from stock_selection.strategies.stock_short_high_state.screen import (
+    DEFAULT_CANDIDATE_PULLBACK_PCT,
+    DEFAULT_TROUGH_CONFIRM_DAYS,
     StockShortState,
 )
 
@@ -21,22 +23,16 @@ class ShortTradeBacktestConfig:
     )
     trough_exit_states: frozenset[StockShortState] = frozenset(
         {
-            StockShortState.TROUGH_CANDIDATE,
             StockShortState.TROUGH_REGION,
         }
     )
-    peak_entry_states: frozenset[StockShortState] = frozenset(
-        {
-            StockShortState.PEAK_1,
-            StockShortState.PEAK_2,
-            StockShortState.PEAK_3,
-            StockShortState.PEAK_N,
-        }
-    )
+    peak_entry_states: frozenset[StockShortState] = frozenset()
     invalidation_state: StockShortState = StockShortState.INVALID_HIGH_NEW_HIGH
     max_drawdown_pct: float = 0.50
     volume_expansion_multiple: float = 3.0
     max_price_origin_gap_pct: float = 0.30
+    profit_rebound_min_return_pct: float = 0.05
+    profit_rebound_up_days: int = 3
 
     def __post_init__(self) -> None:
         if not np.isfinite(self.max_drawdown_pct) or not 0 < self.max_drawdown_pct < 1:
@@ -45,6 +41,17 @@ class ShortTradeBacktestConfig:
             raise ValueError("volume_expansion_multiple must be finite and greater than 1")
         if not np.isfinite(self.max_price_origin_gap_pct) or self.max_price_origin_gap_pct < 0:
             raise ValueError("max_price_origin_gap_pct must be finite and non-negative")
+        if (
+            not np.isfinite(self.profit_rebound_min_return_pct)
+            or not 0 < self.profit_rebound_min_return_pct < 1
+        ):
+            raise ValueError("profit_rebound_min_return_pct must be finite and between 0 and 1")
+        if (
+            isinstance(self.profit_rebound_up_days, bool)
+            or not isinstance(self.profit_rebound_up_days, (int, np.integer))
+            or self.profit_rebound_up_days < 1
+        ):
+            raise ValueError("profit_rebound_up_days must be a positive integer")
 
 
 BACKTEST_CONFIG = ShortTradeBacktestConfig()
@@ -53,10 +60,23 @@ ENTRY_STATES = {
     *(int(state) for state in BACKTEST_CONFIG.peak_entry_states),
 }
 PEAK_ENTRY_STATES = {int(state) for state in BACKTEST_CONFIG.peak_entry_states}
+# State files retain events for every peak; config selects which can open trades.
+VALID_ENTRY_SIGNAL_STATES = {
+    0,
+    int(StockShortState.HIGH_CANDIDATE_PULLBACK),
+    int(StockShortState.PEAK_1),
+    int(StockShortState.PEAK_2),
+    int(StockShortState.PEAK_3),
+    int(StockShortState.PEAK_N),
+}
 INVALID_STATE = int(BACKTEST_CONFIG.invalidation_state)
 DEFAULT_MARKET_CAP_THRESHOLD = 3_000_000.0
 MAX_DRAWDOWN_STOP = "MAX_DRAWDOWN_STOP"
+PROFIT_REBOUND_EXIT = "PROFIT_REBOUND_EXIT"
 VOLUME_REFERENCE_TROUGH_EXIT = "VOLUME_REFERENCE_TROUGH_EXIT"
+TROUGH_EXIT_AFTER_FIRST_PEAK = "TROUGH_EXIT_AFTER_FIRST_PEAK"
+HIGH_INVALIDATION_EXIT = "HIGH_INVALIDATION_EXIT"
+CYCLE_CHANGE_EXIT = "CYCLE_CHANGE_EXIT"
 TROUGH_EXIT_LABEL = "VOLUME_REFERENCE_TROUGH"
 PRICE_ORIGIN_COLUMNS = (
     "price_origin_status", "origin_high_date", "origin_high_close",
@@ -75,13 +95,13 @@ def build_short_trade_backtest(
 ) -> dict[str, Any]:
     """Build state-transition short trades and aggregate performance metrics."""
     data = _normalise_states(states)
+    data = data[data["trade_date"].le(_valid_date(as_of_date))]
     trades: list[dict[str, Any]] = []
     if not data.empty:
         for _, stock_rows in data.groupby("ts_code", sort=True):
             stock_rows = stock_rows.sort_values("trade_date").reset_index(drop=True)
             stock_rows = _add_price_origins(stock_rows, config=config)
-            trades.extend(_candidate_trades(stock_rows, config=config))
-            trades.extend(_peak_trades(stock_rows, config=config))
+            trades.extend(_stock_trades(stock_rows, config=config))
 
     trades.sort(
         key=lambda trade: (
@@ -105,18 +125,57 @@ def build_short_trade_backtest(
             ],
             "exit_states": [
                 *(state.name for state in sorted(config.trough_exit_states, key=int)),
+                PROFIT_REBOUND_EXIT,
                 MAX_DRAWDOWN_STOP,
+                config.invalidation_state.name,
+                CYCLE_CHANGE_EXIT,
             ],
             "normal_exit_rule": {
                 "state_source": "observed_state",
+                "confirmation_rule": "ON_TROUGH_CONFIRM_DATE_ONLY",
+                "trough_confirm_days": (
+                    int(data["trough_confirm_days"].iloc[0])
+                    if not data.empty else DEFAULT_TROUGH_CONFIRM_DAYS
+                ),
+                "trough_min_up_days": (
+                    int(data["trough_min_up_days"].iloc[0])
+                    if not data.empty else max(1, DEFAULT_TROUGH_CONFIRM_DAYS - 2)
+                ),
+                "trough_up_rule": "LATEST_OBSERVATION_WINDOW_CLOSE_GT_PREVIOUS_CLOSE",
                 "trough_states": [state.name for state in sorted(config.trough_exit_states, key=int)],
                 "volume_expansion_multiple": float(config.volume_expansion_multiple),
                 "max_price_origin_gap_pct": float(config.max_price_origin_gap_pct),
                 "price_origin_selection": "LAST_QUALIFYING_TRIPLE_THIRD_CLOSE",
                 "window": "lookback_days bars preceding running high, excluding high",
                 "gap_formula": "abs(current_close / price_origin_close - 1)",
-                "missing_reference_policy": "NO_NORMAL_EXIT",
+                "missing_reference_policy": "NO_NORMAL_EXIT_BEFORE_FIRST_PEAK",
+                "disable_reference_after": "FIRST_OBSERVED_PEAK_IN_CYCLE",
             },
+            "profit_rebound_exit_rule": {
+                "reason": PROFIT_REBOUND_EXIT,
+                "min_return_pct": float(config.profit_rebound_min_return_pct),
+                "return_comparison": ">",
+                "consecutive_up_days": int(config.profit_rebound_up_days),
+                "up_rule": "CLOSE_GT_PREVIOUS_CLOSE_AFTER_ENTRY",
+                "return_formula": "1 - current_close / entry_close",
+                "requires_trough_state": False,
+                "requires_price_origin": False,
+                "execution": "CURRENT_CLOSE",
+                "priority": "AFTER_STOP_AND_INVALIDATION_BEFORE_TROUGH_EXIT",
+            },
+            "entry_rule": {
+                "candidate_pullback_pct": (
+                    float(data["candidate_pullback_pct"].iloc[0])
+                    if not data.empty else DEFAULT_CANDIDATE_PULLBACK_PCT
+                ),
+                "candidate_formula": "1 - close / running_high_close >= candidate_pullback_pct",
+                "signal_source": "entry_signal",
+                "one_candidate_signal_per_cycle": False,
+                "candidate_signal_rule": "EACH_CROSSING_INTO_PULLBACK",
+                "candidate_rearm_rule": "DRAWDOWN_BELOW_CANDIDATE_PULLBACK_PCT",
+            },
+            "position_rule": "ONE_POSITION_PER_STOCK_NO_SAME_DAY_REENTRY",
+            "invalidation_execution": "CURRENT_CLOSE_FORCE_EXIT_INCLUDED_IN_RETURNS",
             "invalidation_state": config.invalidation_state.name,
             "return_formula": "1 - exit_close / entry_close",
             "equity_formula": "2 - close / entry_close",
@@ -151,10 +210,21 @@ def sample_stock_trade_codes(
     *,
     count_per_group: int = 30,
 ) -> list[str]:
+    """Sample worst losses and both ends of gains, with gains descending."""
     returns_by_stock = sum_evaluated_returns_by_stock(trades)
     ranked = sorted(returns_by_stock.items(), key=lambda item: (item[1], item[0]))
     negative = [code for code, value in ranked if value < 0][:count_per_group]
-    positive = [code for code, value in ranked if value > 0][:count_per_group]
+    positive_ranked = [(code, value) for code, value in ranked if value > 0]
+    smallest_positive = [code for code, _ in positive_ranked[:count_per_group]]
+    largest_positive = [
+        code for code, _ in sorted(
+            positive_ranked, key=lambda item: (-item[1], item[0]),
+        )[:count_per_group]
+    ]
+    positive = sorted(
+        set(smallest_positive + largest_positive),
+        key=lambda code: (-returns_by_stock[code], code),
+    )
     return negative + positive
 
 
@@ -337,192 +407,165 @@ def _add_price_origins(
     ], axis=1)
 
 
-def _qualifying_exits(
-    cycle_rows: pd.DataFrame,
-    entry_date: str,
-    *,
-    config: ShortTradeBacktestConfig,
-) -> pd.DataFrame:
-    """Candidate and peak trades share the same observable trough/price gate."""
-    return cycle_rows[
-        cycle_rows["observed_state"].isin([int(state) for state in config.trough_exit_states])
-        & cycle_rows["trade_date"].gt(entry_date)
-        & cycle_rows["price_origin_gap_pct"].le(config.max_price_origin_gap_pct + 1e-12)
-    ].sort_values("trade_date")
-
-
-def _candidate_trades(
+def _stock_trades(
     stock_rows: pd.DataFrame,
     *,
     config: ShortTradeBacktestConfig,
 ) -> list[dict[str, Any]]:
+    """Process observable signals and one open position per stock chronologically."""
     trades: list[dict[str, Any]] = []
-    for cycle_id, cycle_rows in stock_rows[stock_rows["cycle_id"].gt(0)].groupby(
-        "cycle_id", sort=True
-    ):
-        candidate_rows = cycle_rows[
-            cycle_rows["state"].eq(int(config.candidate_entry_state))
-        ].sort_values("trade_date")
-        if candidate_rows.empty:
+    rows = stock_rows.to_dict("records")
+    first_peak_dates: dict[int, str] = {}
+    seen_peak_signals: set[tuple[int, int]] = set()
+    entry_states = {int(config.candidate_entry_state), *(int(state) for state in config.peak_entry_states)}
+    trough_states = {int(state) for state in config.trough_exit_states}
+    entry_position: int | None = None
+    reference_row: dict[str, Any] = {}
+    running_equity_peak = 1.0
+    consecutive_up_days = 0
+    skipped_entries: list[dict[str, Any]] = []
+
+    for position, row in enumerate(rows):
+        cycle_id = int(row["cycle_id"])
+        observed_state = int(row["observed_state"])
+        # The exit filter follows observed peaks independently of entry settings.
+        if cycle_id > 0 and observed_state == int(StockShortState.PEAK_1):
+            first_peak_dates.setdefault(cycle_id, str(row["trade_date"]))
+        signal = int(row["entry_signal"])
+        has_signal = signal in entry_states and cycle_id > 0
+        if has_signal and signal != int(config.candidate_entry_state):
+            signal_key = (cycle_id, int(row["peak_number"]))
+            has_signal = signal_key not in seen_peak_signals
+            if has_signal:
+                seen_peak_signals.add(signal_key)
+
+        if entry_position is None:
+            if has_signal:
+                entry_position = position
+                reference_row = row
+                running_equity_peak = 1.0
+                consecutive_up_days = 0
+                skipped_entries = []
             continue
 
-        entry_row = candidate_rows.iloc[0]
-        entry_date = str(entry_row["trade_date"])
-        entry_close = float(entry_row["close"])
+        entry_row = rows[entry_position]
+        entry_cycle = int(entry_row["cycle_id"])
+        if cycle_id == entry_cycle:
+            reference_row = row
+        current_close = float(row["close"])
+        current_return = 1.0 - current_close / float(entry_row["close"])
+        # Count only close-to-close changes after this trade's entry.
+        consecutive_up_days = (
+            consecutive_up_days + 1
+            if current_close > float(rows[position - 1]["close"]) else 0
+        )
+        equity = 1.0 + current_return
+        running_equity_peak = max(running_equity_peak, equity)
+        drawdown = 1.0 - equity / running_equity_peak
+        reason = ""
+        exit_state = str(row["observed_state_name"])
+        execution_close = float(row["close"])
+        stop_trigger_close = None
+        if drawdown + 1e-12 >= config.max_drawdown_pct:
+            reason = MAX_DRAWDOWN_STOP
+            exit_state = MAX_DRAWDOWN_STOP
+            stop_trigger_close = execution_close
+            stop_equity = running_equity_peak * (1.0 - config.max_drawdown_pct)
+            execution_close = float(entry_row["close"]) * (2.0 - stop_equity)
+        elif cycle_id != entry_cycle:
+            reason = CYCLE_CHANGE_EXIT
+            exit_state = CYCLE_CHANGE_EXIT
+        elif observed_state == int(config.invalidation_state):
+            reason = HIGH_INVALIDATION_EXIT
+        elif (
+            current_return > config.profit_rebound_min_return_pct + 1e-12
+            and consecutive_up_days >= config.profit_rebound_up_days
+        ):
+            reason = PROFIT_REBOUND_EXIT
+            exit_state = PROFIT_REBOUND_EXIT
+        elif (
+            observed_state in trough_states
+            and row["trough_confirm_date"] == row["trade_date"]
+        ):
+            # Only today's confirmed trough can exit, never backfilled lows
+            # or a later return to an already confirmed region.
+            gap = _optional_number(row.get("price_origin_gap_pct"))
+            if entry_cycle in first_peak_dates:
+                reason = TROUGH_EXIT_AFTER_FIRST_PEAK
+            elif gap is not None and gap <= config.max_price_origin_gap_pct + 1e-12:
+                reason = VOLUME_REFERENCE_TROUGH_EXIT
 
-        exits = _qualifying_exits(cycle_rows, entry_date, config=config)
-        invalidations = cycle_rows[
-            cycle_rows["state"].eq(int(config.invalidation_state))
-            & cycle_rows["trade_date"].ge(entry_date)
-        ].sort_values("trade_date")
-        trades.append(
-            _build_trade(
-                stock_rows,
-                cycle_rows=cycle_rows,
-                cycle_id=int(cycle_id),
-                peak_number=0,
-                entry_state=config.candidate_entry_state.name,
-                entry_source="OBSERVED_HIGH_CANDIDATE_PULLBACK",
-                entry_date=entry_date,
-                entry_close=entry_close,
-                exits=exits,
-                invalidations=invalidations,
-                max_drawdown_pct=config.max_drawdown_pct,
-            )
-        )
-    return trades
+        if has_signal:
+            skipped_entries.append({
+                "ts_code": str(row["ts_code"]),
+                "stock_name": str(row.get("stock_name") or ""),
+                "trade_date": str(row["trade_date"]),
+                "cycle_id": cycle_id,
+                "entry_state": StockShortState(signal).name,
+                "peak_number": int(row["peak_number"]),
+                "entry_signal_type": str(row["entry_signal_type"]),
+                "blocking_entry_date": str(entry_row["trade_date"]),
+                "reason": "EXIT_DAY" if reason else "POSITION_OPEN",
+            })
+        if reason:
+            trades.append(_build_trade(
+                stock_rows, entry_position=entry_position, evaluation_position=position,
+                status_reason=reason, exit_state=exit_state,
+                execution_close=execution_close, stop_trigger_close=stop_trigger_close,
+                first_peak_date=first_peak_dates.get(entry_cycle),
+                reference_row=reference_row, skipped_entries=skipped_entries,
+                consecutive_up_days=consecutive_up_days,
+            ))
+            entry_position = None
 
-
-def _peak_trades(
-    stock_rows: pd.DataFrame,
-    *,
-    config: ShortTradeBacktestConfig,
-) -> list[dict[str, Any]]:
-    peak_rows = stock_rows[
-        stock_rows["state"].isin(
-            [int(state) for state in config.peak_entry_states]
-        )
-    ]
-    trades: list[dict[str, Any]] = []
-    for (cycle_id, peak_number), rows in peak_rows.groupby(
-        ["cycle_id", "peak_number"], sort=True
-    ):
-        if int(cycle_id) <= 0 or int(peak_number) <= 0:
-            continue
-        signal = rows.sort_values("trade_date").iloc[0]
-        entry_date = _valid_date(signal.get("state_start_date")) or str(
-            signal["trade_date"]
-        )
-        entry_close = _positive_number(signal.get("state_start_close"))
-        if entry_close is None:
-            entry_close = float(signal["close"])
-        cycle_rows = stock_rows[stock_rows["cycle_id"].eq(int(cycle_id))]
-        exits = _qualifying_exits(cycle_rows, entry_date, config=config)
-        invalidations = cycle_rows[
-            cycle_rows["state"].eq(int(config.invalidation_state))
-            & cycle_rows["trade_date"].ge(entry_date)
-        ].sort_values("trade_date")
-        trades.append(
-            _build_trade(
-                stock_rows,
-                cycle_rows=cycle_rows,
-                cycle_id=int(cycle_id),
-                peak_number=int(peak_number),
-                entry_state=f"PEAK_{int(peak_number)}",
-                entry_source="OBSERVED_PEAK_START",
-                entry_date=entry_date,
-                entry_close=entry_close,
-                exits=exits,
-                invalidations=invalidations,
-                max_drawdown_pct=config.max_drawdown_pct,
-            )
-        )
+    if entry_position is not None:
+        trades.append(_build_trade(
+            stock_rows, entry_position=entry_position, evaluation_position=len(rows) - 1,
+            status_reason="AS_OF_DATE", exit_state=TROUGH_EXIT_LABEL,
+            execution_close=float(rows[-1]["close"]), stop_trigger_close=None,
+            first_peak_date=first_peak_dates.get(int(rows[entry_position]["cycle_id"])),
+            reference_row=reference_row, skipped_entries=skipped_entries,
+            consecutive_up_days=consecutive_up_days,
+        ))
     return trades
 
 
 def _build_trade(
     stock_rows: pd.DataFrame,
     *,
-    cycle_rows: pd.DataFrame,
-    cycle_id: int,
-    peak_number: int,
-    entry_state: str,
-    entry_source: str,
-    entry_date: str,
-    entry_close: float,
-    exits: pd.DataFrame,
-    invalidations: pd.DataFrame,
-    max_drawdown_pct: float,
+    entry_position: int,
+    evaluation_position: int,
+    status_reason: str,
+    exit_state: str,
+    execution_close: float,
+    stop_trigger_close: float | None,
+    first_peak_date: str | None,
+    reference_row: dict[str, Any],
+    skipped_entries: list[dict[str, Any]],
+    consecutive_up_days: int,
 ) -> dict[str, Any]:
-    exit_row = exits.iloc[0] if not exits.empty else None
-    invalid_row = invalidations.iloc[0] if not invalidations.empty else None
-    if exit_row is not None and (
-        invalid_row is None
-        or str(exit_row["trade_date"]) <= str(invalid_row["trade_date"])
-    ):
-        status = "COMPLETED"
-        status_reason = VOLUME_REFERENCE_TROUGH_EXIT
-        evaluation_row = exit_row
-    elif invalid_row is not None:
-        status = "INVALIDATED"
-        status_reason = "CONFIRMED_HIGH_BROKEN"
-        evaluation_row = invalid_row
-    elif int(stock_rows["cycle_id"].max()) > cycle_id:
-        status = "INVALIDATED"
-        status_reason = "CYCLE_CHANGED_WITHOUT_EXIT"
-        evaluation_row = cycle_rows.sort_values("trade_date").iloc[-1]
-    else:
-        status = "OPEN"
-        status_reason = "AS_OF_DATE"
-        evaluation_row = stock_rows.sort_values("trade_date").iloc[-1]
-
+    """Measure the executed holding path; stops replace only the endpoint price."""
+    entry_row = stock_rows.iloc[entry_position]
+    evaluation_row = stock_rows.iloc[evaluation_position]
+    entry_date = str(entry_row["trade_date"])
+    entry_close = float(entry_row["close"])
     evaluation_date = str(evaluation_row["trade_date"])
-    evaluation_close = float(evaluation_row["close"])
-    resolved_exit_state = (
-        str(exit_row["observed_state_name"])
-        if status == "COMPLETED" and exit_row is not None
-        else TROUGH_EXIT_LABEL
+    trough_confirm_date = _valid_date(evaluation_row["trough_confirm_date"])
+    known_trough_confirm_date = (
+        trough_confirm_date
+        if trough_confirm_date and trough_confirm_date <= evaluation_date else None
     )
-    path = stock_rows[
-        stock_rows["trade_date"].between(entry_date, evaluation_date)
-    ].sort_values("trade_date")
+    status = "OPEN" if status_reason == "AS_OF_DATE" else "COMPLETED"
+    path = stock_rows.iloc[entry_position:evaluation_position + 1]
     path_closes = path["close"].to_numpy(dtype=float, copy=True)
-    path_dates = path["trade_date"].astype(str).to_numpy()
-    if path.empty or str(path.iloc[0]["trade_date"]) != entry_date:
-        path_closes = np.insert(path_closes, 0, entry_close)
-        path_dates = np.insert(path_dates, 0, entry_date)
-    else:
-        path_closes[0] = entry_close
-
+    path_closes[-1] = execution_close
     equity = 2.0 - path_closes / entry_close
     running_max = np.maximum.accumulate(equity)
     drawdowns = 1.0 - equity / running_max
-    # Only inspect the holding period, up to the original exit/invalidation date.
-    # A threshold fill models the requested cap even when a daily close overshoots.
-    stop_positions = np.flatnonzero(drawdowns[1:] + 1e-12 >= max_drawdown_pct) + 1
-    stop_trigger_close = None
-    if len(stop_positions):
-        stop_position = int(stop_positions[0])
-        evaluation_date = str(path_dates[stop_position])
-        stop_trigger_close = float(path_closes[stop_position])
-        stop_equity = float(running_max[stop_position] * (1.0 - max_drawdown_pct))
-        evaluation_close = float(entry_close * (2.0 - stop_equity))
-        status = "COMPLETED"
-        status_reason = MAX_DRAWDOWN_STOP
-        resolved_exit_state = MAX_DRAWDOWN_STOP
-        path = path[path["trade_date"].le(evaluation_date)]
-        path_closes = path_closes[:stop_position + 1].copy()
-        path_closes[-1] = evaluation_close
-        drawdowns = drawdowns[:stop_position + 1].copy()
-        drawdowns[-1] = max_drawdown_pct
-        mark_return = stop_equity - 1.0
-    else:
-        mark_return = 1.0 - evaluation_close / entry_close
-
-    entry_row = _row_for_date(stock_rows, entry_date)
-    # Stops may precede the proposed normal exit. Audit the actual endpoint's
-    # reference and observed close, not the later exit or simulated stop fill.
-    evaluation_row = _row_for_date(stock_rows, evaluation_date)
+    mark_return = 1.0 - execution_close / entry_close
+    signal = int(entry_row["entry_signal"])
+    peak_number = 0 if signal == int(StockShortState.HIGH_CANDIDATE_PULLBACK) else int(entry_row["peak_number"])
+    origin_close = _positive_number(reference_row.get("price_origin_close"))
     total_market_caps = pd.to_numeric(path["total_mv"], errors="coerce")
     total_market_caps = total_market_caps[
         total_market_caps.notna() & total_market_caps.gt(0)
@@ -530,10 +573,13 @@ def _build_trade(
     return {
         "ts_code": str(stock_rows.iloc[0]["ts_code"]),
         "stock_name": str(stock_rows.iloc[-1].get("stock_name", "") or ""),
-        "cycle_id": cycle_id,
+        "cycle_id": int(entry_row["cycle_id"]),
         "peak_number": peak_number,
-        "entry_state": entry_state,
-        "entry_source": entry_source,
+        "entry_state": StockShortState(signal).name if peak_number == 0 else f"PEAK_{peak_number}",
+        "entry_source": str(entry_row["entry_signal_type"]),
+        "entry_pattern_start_date": _valid_date(entry_row["entry_pattern_start_date"]),
+        "entry_reference_high_close": _optional_number(entry_row["entry_reference_high_close"]),
+        "entry_candidate_pullback_pct": float(entry_row["candidate_pullback_pct"]),
         "entry_date": entry_date,
         "entry_close": float(entry_close),
         "entry_total_mv": _optional_number(entry_row.get("total_mv")),
@@ -542,22 +588,38 @@ def _build_trade(
             float(total_market_caps.mean()) if not total_market_caps.empty else None
         ),
         "market_cap_observation_days": int(len(total_market_caps)),
-        "exit_state": resolved_exit_state,
+        "exit_state": exit_state,
         "exit_date": evaluation_date if status == "COMPLETED" else None,
-        "exit_close": evaluation_close if status == "COMPLETED" else None,
+        "exit_close": execution_close if status == "COMPLETED" else None,
         "status": status,
         "status_reason": status_reason,
         "evaluation_date": evaluation_date,
-        "evaluation_close": evaluation_close,
+        "evaluation_close": execution_close,
         "stop_trigger_close": stop_trigger_close,
         "evaluation_observed_state": str(evaluation_row["observed_state_name"]),
+        "evaluation_trough_confirm_date": known_trough_confirm_date,
+        "evaluation_trough_up_days": (
+            int(evaluation_row["trough_up_days"])
+            if int(evaluation_row["observed_state"]) == int(StockShortState.TROUGH_CANDIDATE)
+            or known_trough_confirm_date == evaluation_date else None
+        ),
+        "trough_min_up_days": int(evaluation_row["trough_min_up_days"]),
         "evaluation_actual_close": float(evaluation_row["close"]),
+        "evaluation_consecutive_up_days": int(consecutive_up_days),
         **{
             column: (
-                None if pd.isna(evaluation_row[column]) else evaluation_row[column]
+                None if pd.isna(reference_row.get(column)) else reference_row[column]
             )
             for column in PRICE_ORIGIN_COLUMNS
         },
+        "price_origin_gap_pct": (
+            abs(float(evaluation_row["close"]) / origin_close - 1.0)
+            if origin_close is not None else None
+        ),
+        "price_origin_filter_required": first_peak_date is None,
+        "price_origin_filter_required_at_entry": first_peak_date is None or first_peak_date > entry_date,
+        "price_origin_filter_disabled_date": first_peak_date,
+        "skipped_entries": list(skipped_entries),
         "return_pct": float(mark_return) if status == "COMPLETED" else None,
         "mark_return_pct": float(mark_return),
         "holding_trade_days": max(len(path_closes) - 1, 0),
@@ -577,9 +639,30 @@ def _summarise_trades(trades: list[dict[str, Any]]) -> dict[str, Any]:
     breakeven = int(len(returns) - wins - losses)
     return {
         "signals": len(trades),
+        "skipped_entry_signals": sum(len(trade.get("skipped_entries", [])) for trade in trades),
+        "skipped_while_holding": sum(
+            item["reason"] == "POSITION_OPEN"
+            for trade in trades for item in trade.get("skipped_entries", [])
+        ),
+        "skipped_on_exit_day": sum(
+            item["reason"] == "EXIT_DAY"
+            for trade in trades for item in trade.get("skipped_entries", [])
+        ),
         "completed_trades": len(completed),
         "drawdown_stop_trades": sum(
             trade.get("status_reason") == MAX_DRAWDOWN_STOP for trade in completed
+        ),
+        "profit_rebound_exit_trades": sum(
+            trade.get("status_reason") == PROFIT_REBOUND_EXIT for trade in completed
+        ),
+        "invalidation_exit_trades": sum(
+            trade.get("status_reason") == HIGH_INVALIDATION_EXIT for trade in completed
+        ),
+        "cycle_change_exit_trades": sum(
+            trade.get("status_reason") == CYCLE_CHANGE_EXIT for trade in completed
+        ),
+        "trough_exits_after_first_peak": sum(
+            trade.get("status_reason") == TROUGH_EXIT_AFTER_FIRST_PEAK for trade in completed
         ),
         "open_trades": sum(trade["status"] == "OPEN" for trade in trades),
         "invalidated_trades": sum(
@@ -632,7 +715,10 @@ def _normalise_states(states: pd.DataFrame) -> pd.DataFrame:
     required = {
         "ts_code", "trade_date", "close", "state", "cycle_id", "peak_number",
         "observed_state", "observed_state_name", "vol", "lookback_days",
-        "reference_high_date",
+        "reference_high_date", "trough_confirm_date",
+        "open", "high", "entry_signal", "entry_signal_type",
+        "entry_pattern_start_date", "entry_reference_high_close", "candidate_pullback_pct",
+        "trough_confirm_days", "trough_min_up_days", "trough_up_days",
     }
     if states is None or states.empty:
         return pd.DataFrame(columns=sorted(required))
@@ -641,7 +727,7 @@ def _normalise_states(states: pd.DataFrame) -> pd.DataFrame:
         raise ValueError(
             f"states is missing required columns: {', '.join(missing)}. "
             "请先重新运行策略五 cli.py 生成新版 states.csv，再生成报告或画图；"
-            "旧文件无法还原当日实际状态和成交量参考。"
+            "旧文件无法还原当前跌幅规则、波谷上涨天数条件或当日实际状态。"
         )
     data = states.copy()
     for column, default in (
@@ -654,17 +740,50 @@ def _normalise_states(states: pd.DataFrame) -> pd.DataFrame:
         if column not in data.columns:
             data[column] = default
     data["ts_code"] = data["ts_code"].fillna("").astype(str).str.strip()
-    for column in ("trade_date", "state_start_date", "reference_high_date"):
+    for column in (
+        "trade_date", "state_start_date", "reference_high_date",
+        "entry_pattern_start_date", "trough_confirm_date",
+    ):
         data[column] = data[column].map(_valid_date)
-    for column in ("close", "state", "cycle_id", "peak_number", "observed_state", "vol", "lookback_days"):
+    data["entry_signal_type"] = data["entry_signal_type"].fillna("").astype(str)
+    for column in (
+        "close", "open", "high", "state", "cycle_id", "peak_number",
+        "observed_state", "vol", "lookback_days", "entry_signal",
+        "entry_reference_high_close", "candidate_pullback_pct",
+        "trough_confirm_days", "trough_min_up_days", "trough_up_days",
+    ):
         data[column] = pd.to_numeric(data[column], errors="coerce")
     if (
         ~data["observed_state"].isin({int(state) for state in StockShortState})
         | ~np.isfinite(data["lookback_days"])
         | data["lookback_days"].le(0)
         | data["lookback_days"].mod(1).ne(0)
+        | ~data["entry_signal"].isin(VALID_ENTRY_SIGNAL_STATES)
+        | ~np.isfinite(data["candidate_pullback_pct"])
+        | data["candidate_pullback_pct"].le(0)
+        | data["candidate_pullback_pct"].ge(1)
+        | ~np.isfinite(data["trough_confirm_days"])
+        | data["trough_confirm_days"].lt(2)
+        | data["trough_confirm_days"].mod(1).ne(0)
+        | data["trough_min_up_days"].ne((data["trough_confirm_days"] - 2).clip(lower=1))
+        | ~np.isfinite(data["trough_up_days"])
+        | data["trough_up_days"].lt(0)
+        | data["trough_up_days"].gt(data["trough_confirm_days"] - 1)
+        | data["trough_up_days"].mod(1).ne(0)
     ).any():
-        raise ValueError("当日实际状态或 lookback_days 无效，请重新运行策略五 CLI 生成 states.csv")
+        raise ValueError("实际状态、开仓信号或窗口无效，请重新运行策略五 CLI 生成 states.csv")
+    if data["candidate_pullback_pct"].nunique() > 1:
+        raise ValueError("states.csv 混用了不同候选回调阈值，请重新运行策略五 CLI")
+    if data["trough_confirm_days"].nunique() > 1:
+        raise ValueError("states.csv 混用了不同波谷确认窗口，请重新运行策略五 CLI")
+    confirmed_today = (
+        data["observed_state"].eq(int(StockShortState.TROUGH_REGION))
+        & data["trade_date"].eq(data["trough_confirm_date"])
+    )
+    if (confirmed_today & data["trough_up_days"].lt(data["trough_min_up_days"])).any():
+        raise ValueError("波谷确认日未满足上涨天数条件，请重新运行策略五 CLI 生成 states.csv")
+    if data["entry_signal_type"].isin({"SPIKE_THEN_GREEN", "THREE_GREEN_DAYS"}).any():
+        raise ValueError("states.csv 仍是绿K形态规则，请重新运行策略五 CLI 生成跌幅规则数据")
     data["observed_state"] = data["observed_state"].astype(int)
     data["observed_state_name"] = data["observed_state"].map(
         {int(state): state.name for state in StockShortState}
@@ -677,17 +796,12 @@ def _normalise_states(states: pd.DataFrame) -> pd.DataFrame:
         & data["cycle_id"].notna()
         & data["peak_number"].notna()
     ].copy()
-    data[["state", "cycle_id", "peak_number"]] = data[
-        ["state", "cycle_id", "peak_number"]
+    data[["state", "cycle_id", "peak_number", "entry_signal"]] = data[
+        ["state", "cycle_id", "peak_number", "entry_signal"]
     ].astype(int)
     return data.sort_values(["ts_code", "trade_date"]).drop_duplicates(
         ["ts_code", "trade_date"], keep="last"
     )
-
-
-def _row_for_date(rows: pd.DataFrame, trade_date: str) -> pd.Series:
-    matched = rows[rows["trade_date"].eq(trade_date)]
-    return matched.iloc[0] if not matched.empty else rows.iloc[0]
 
 
 def _valid_date(value: Any) -> str:

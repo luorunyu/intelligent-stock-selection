@@ -1,4 +1,4 @@
-"""Close-only high-region and rebound-peak state classification."""
+"""High regions, percentage pullbacks, and rebound-peak state classification."""
 
 from stock_selection.strategies.stock_short_high_state.screen import (
     DEFAULT_CANDIDATE_PULLBACK_PCT,

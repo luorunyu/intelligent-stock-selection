@@ -18,6 +18,7 @@ from stock_selection.data.market_cap import (
 )
 from stock_selection.data.tushare_cache import DEFAULT_CACHE_ROOT
 from stock_selection.strategies.stock_short_high_state.backtest import (
+    PROFIT_REBOUND_EXIT,
     build_short_trade_backtest,
     sum_evaluated_returns_by_stock,
 )
@@ -39,11 +40,18 @@ REQUIRED_STATE_COLUMNS = {
     "ts_code",
     "stock_name",
     "trade_date",
+    "open",
+    "high",
     "close",
     "vol",
     "lookback_days",
     "observed_state",
     "observed_state_name",
+    "entry_signal",
+    "entry_signal_type",
+    "entry_pattern_start_date",
+    "entry_reference_high_close",
+    "candidate_pullback_pct",
     "state",
     "state_name",
     "state_description",
@@ -54,6 +62,10 @@ REQUIRED_STATE_COLUMNS = {
     "reference_high_close",
     "reference_low_date",
     "reference_low_close",
+    "trough_confirm_date",
+    "trough_confirm_days",
+    "trough_min_up_days",
+    "trough_up_days",
     "alert_code",
 }
 
@@ -78,7 +90,7 @@ def resolve_states_csv(
     as_of_date: str | None = None,
     output_root: str | Path = DEFAULT_OUTPUT_ROOT,
 ) -> Path:
-    """Resolve an explicit states CSV, a dated output, or the latest output."""
+    """Resolve saved run states, including outputs from the legacy layout."""
     if states_csv is not None:
         path = Path(states_csv)
         if not path.exists():
@@ -90,15 +102,21 @@ def resolve_states_csv(
     if as_of_date is not None and not target:
         raise ValueError("as_of_date must be a valid date")
     if target:
-        path = root / f"{target[:4]}-{target[4:6]}-{target[6:8]}" / "states.csv"
-        if not path.exists():
-            raise FileNotFoundError(f"states CSV does not exist: {path}")
-        return path
-
-    candidates = sorted(root.glob("????-??-??/states.csv"))
+        date_directory = root / f"{target[:4]}-{target[4:6]}-{target[6:8]}"
+        candidates = list(date_directory.glob("charts_*/states.csv"))
+        legacy_path = date_directory / "states.csv"
+        if legacy_path.is_file():
+            candidates.append(legacy_path)
+    else:
+        candidates = list(root.glob("????-??-??/charts_*/states.csv"))
+        candidates.extend(root.glob("????-??-??/states.csv"))
+    candidates = [path for path in candidates if path.is_file()]
     if not candidates:
-        raise FileNotFoundError(f"no states.csv found under {root}")
-    return candidates[-1]
+        search_directory = date_directory if target else root
+        raise FileNotFoundError(f"no states.csv found under {search_directory}")
+    return max(candidates, key=lambda path: (
+        path.relative_to(root).parts[0], path.stat().st_mtime_ns, str(path),
+    ))
 
 
 def read_chart_codes(
@@ -161,6 +179,8 @@ def read_saved_states(path: str | Path) -> pd.DataFrame:
             "reference_low_date": str,
             "trough_confirm_date": str,
             "observed_state_name": str,
+            "entry_signal_type": str,
+            "entry_pattern_start_date": str,
             "state_name": str,
             "state_description": str,
             "alert_code": str,
@@ -172,11 +192,13 @@ def read_saved_states(path: str | Path) -> pd.DataFrame:
         raise ValueError(
             f"states CSV is missing columns: {', '.join(missing)}. "
             "请先重新运行策略五 cli.py 生成新版 states.csv，再运行画图命令；"
-            "旧文件缺少当日实际状态或放量参考所需数据。"
+            "旧文件缺少当前跌幅规则、波谷上涨天数条件或当日实际状态。"
         )
     result = data.copy()
     result["ts_code"] = result["ts_code"].fillna("").astype(str).str.strip()
     result["trade_date"] = result["trade_date"].map(_normalise_date)
+    for column in ("entry_signal_type", "entry_pattern_start_date"):
+        result[column] = result[column].fillna("").astype(str)
     result["state"] = pd.to_numeric(result["state"], errors="coerce")
     result["close"] = pd.to_numeric(result["close"], errors="coerce")
     invalid = result[
@@ -243,7 +265,9 @@ def merge_bars_and_states(
         raise ValueError(f"stock bars are missing columns: {', '.join(missing_bars)}")
     normalized_bars = bars.copy()
     normalized_bars["trade_date"] = normalized_bars["trade_date"].map(_normalise_date)
-    normalized_bars = normalized_bars.rename(columns={"close": "bar_close", "vol": "bar_vol"})
+    normalized_bars = normalized_bars.rename(columns={
+        "open": "bar_open", "high": "bar_high", "close": "bar_close", "vol": "bar_vol",
+    })
     # Preserve saved volume so figure-level backtests use the same inputs as
     # reports, even if the OHLC cache was refreshed after states.csv was saved.
     state_view = states.rename(columns={"close": "state_close"})
@@ -257,18 +281,17 @@ def merge_bars_and_states(
             f"OHLC cache is missing {len(missing_dates)} state dates, "
             f"first missing date: {missing_dates[0]}"
         )
-    close_matches = np.isclose(
-        merged["state_close"].astype(float),
-        merged["bar_close"].astype(float),
-        rtol=0.0,
-        atol=close_tolerance,
-    )
-    if not bool(close_matches.all()):
-        mismatch = merged.loc[~close_matches].iloc[0]
-        raise ValueError(
-            f"state close and OHLC close differ on {mismatch['trade_date']}: "
-            f"{mismatch['state_close']} != {mismatch['bar_close']}"
+    for saved_column, bar_column in (("state_close", "bar_close"), ("open", "bar_open"), ("high", "bar_high")):
+        matches = np.isclose(
+            merged[saved_column].astype(float), merged[bar_column].astype(float),
+            rtol=0.0, atol=close_tolerance,
         )
+        if not bool(matches.all()):
+            mismatch = merged.loc[~matches].iloc[0]
+            raise ValueError(
+                f"state {saved_column} and OHLC {bar_column} differ on {mismatch['trade_date']}: "
+                f"{mismatch[saved_column]} != {mismatch[bar_column]}"
+            )
     merged["close"] = merged["bar_close"].astype(float)
     merged["date"] = pd.to_datetime(merged["trade_date"], format="%Y%m%d")
     return merged.sort_values("trade_date").reset_index(drop=True)
@@ -471,6 +494,17 @@ def build_stock_short_state_figure(
         trade_events.setdefault(str(trade["evaluation_date"]), []).append(
             f"结束/估值记录<br>{trade_details}"
         )
+        for skipped in trade.get("skipped_entries", []):
+            skip_reason = (
+                "平仓当日不重新开仓"
+                if skipped["reason"] == "EXIT_DAY" else "已有持仓，不能重复开仓"
+            )
+            trade_events.setdefault(str(skipped["trade_date"]), []).append(
+                f"开仓信号已跳过：{skipped['entry_state']}"
+                f"<br>原因：{skip_reason}"
+                f"<br>原持仓开仓日：{skipped['blocking_entry_date']}"
+                "<br>该信号不延后补开"
+            )
     hover_details = [
         _state_hover(row)
         + "".join(
@@ -609,14 +643,19 @@ def generate_stock_short_state_charts(
         stock_codes=codes,
         cache_root=cache_root,
     )
+    use_run_directory = state_path.parent.name.startswith("charts_")
     output = (
         Path(output_directory)
         if output_directory is not None
+        else state_path.parent
+        if use_run_directory
         else state_path.parent / (
             f"charts_{datetime.now().strftime('%Y%m%d_%H%M%S_%f')}"
         )
     )
-    output.mkdir(parents=True, exist_ok=output_directory is not None)
+    output.mkdir(
+        parents=True, exist_ok=output_directory is not None or use_run_directory,
+    )
     positive_output = output / "positive"
     negative_output = output / "negative"
     unclassified_output = output / "unclassified"
@@ -635,6 +674,13 @@ def generate_stock_short_state_charts(
     for trade in backtest.get("trades", []):
         trades_by_code.setdefault(str(trade["ts_code"]), []).append(trade)
     returns_by_stock = sum_evaluated_returns_by_stock(backtest.get("trades", []))
+    positive_codes = sorted(
+        (code for code in codes if returns_by_stock.get(code, 0.0) > 0),
+        key=lambda code: (-returns_by_stock[code], code),
+    )
+    positive_code_set = set(positive_codes)
+    # Use the same descending gain order for generation and both HTML indexes.
+    codes = [code for code in codes if code not in positive_code_set] + positive_codes
 
     for code in codes:
         stock_states = states[states["ts_code"].eq(code)].copy()
@@ -734,6 +780,7 @@ def _write_chart_index(
             "<tr>"
             f"<td>{escape(item['ts_code'])}</td>"
             f"<td>{escape(item['stock_name'])}</td>"
+            f"<td>{_format_percent(item.get('classified_return_pct'))}</td>"
             f"<td>{escape(item['latest_state'])}</td>"
             f"<td>{item['short_intervals']}</td>"
             f"<td>{item['peak_intervals']}</td>"
@@ -744,8 +791,12 @@ def _write_chart_index(
             "</tr>"
         )
     if not rows:
-        rows.append("<tr><td colspan=\"9\">没有生成图表</td></tr>")
+        rows.append("<tr><td colspan=\"10\">没有生成图表</td></tr>")
     error_items = "".join(f"<li>{escape(error)}</li>" for error in errors)
+    report_links = " · ".join(
+        f'<a href="{escape(path.name)}">{escape(path.stem)}</a>'
+        for path in sorted(output_directory.glob("short_trade_backtest*.html"))
+    )
     html = f"""<!doctype html>
 <html lang="zh-CN">
 <head>
@@ -762,10 +813,12 @@ th{{background:#f5f5f5}}a{{color:#0969da}}code{{background:#f5f5f5;padding:2px 5
 </head>
 <body>
 <h1>策略五状态图表</h1>
-<p class="note">黄框表示回测开仓至平仓的区间，包含止损；持仓中延伸至最后数据日，失效交易截止失效日。黄色倒三角标记开仓，蓝色正三角标记平仓（包含止损），紫色叉号标记策略异常，其余状态及平仓原因通过鼠标悬停查看。K线保持红涨绿跌。</p>
+<p class="note">黄框表示每笔实际持仓，同一股票不重叠，包含盈利后连续上涨平仓、止损和失效强平；持仓中延伸至最后数据日。黄色倒三角标记实际开仓，蓝色正三角标记平仓，紫色叉号标记策略异常；开仓信号、参考价过滤取消日及平仓原因通过鼠标悬停查看。绿K为收盘低于开盘，候选回调仅按收盘价跌幅判断。</p>
 <p>状态来源：<code>{escape(str(states_csv))}</code></p>
+{f'<p>本次回测报告：{report_links}</p>' if report_links else ''}
+<p>正收益股票按汇总收益率从高到低排列，同收益按股票代码排序。汇总收益沿用逐股交易收益相加的口径，包含持仓中的浮动收益。</p>
 <table>
-<thead><tr><th>股票</th><th>名称</th><th>最新状态</th><th>回测交易</th><th>其中波峰交易</th><th>异常</th><th>总市值</th><th>流通市值</th><th>图表</th></tr></thead>
+<thead><tr><th>股票</th><th>名称</th><th>汇总收益率</th><th>最新状态</th><th>回测交易</th><th>其中波峰交易</th><th>异常</th><th>总市值</th><th>流通市值</th><th>图表</th></tr></thead>
 <tbody>{''.join(rows)}</tbody>
 </table>
 {f'<h2>未生成项目</h2><ul>{error_items}</ul>' if errors else ''}
@@ -782,7 +835,9 @@ def _strategy_alert_rows(
 ) -> pd.DataFrame:
     invalidated_dates = [
         trade["evaluation_date"]
-        for trade in backtest["trades"] if trade["status"] == "INVALIDATED"
+        for trade in backtest["trades"]
+        if trade["status"] == "INVALIDATED"
+        or trade.get("status_reason") in {"HIGH_INVALIDATION_EXIT", "CYCLE_CHANGE_EXIT"}
     ]
     return states[
         states["state_name"].eq(backtest["metadata"]["invalidation_state"])
@@ -800,6 +855,9 @@ def _trade_hover(trade: dict[str, Any]) -> str:
     )
     details = (
         f"开仓状态：{trade['entry_state']}"
+        f"<br>开仓信号：{trade['entry_source']}"
+        f"<br>信号参考起始日：{trade.get('entry_pattern_start_date') or '-'}"
+        f"<br>开仓判定高点：{_format_number(trade.get('entry_reference_high_close'))}"
         f"<br>开仓：{trade['entry_date']} · {_format_number(trade['entry_close'])}"
         f"<br>{endpoint}：{trade['evaluation_date']} · {_format_number(trade['evaluation_close'])}"
         f"<br>交易状态：{status}"
@@ -808,8 +866,11 @@ def _trade_hover(trade: dict[str, Any]) -> str:
         f"<br>收益：{_format_percent(trade['mark_return_pct'])}"
         f"<br>最大回撤：{_format_percent(trade['max_drawdown_pct'])}"
         f"<br>持有交易日：{trade['holding_trade_days']}"
+        f"<br>开仓后连续收盘上涨天数：{_format_number(trade.get('evaluation_consecutive_up_days'), digits=0)}"
         f"<br>周期：{trade['cycle_id']} · 波峰序号：{trade['peak_number']}"
         f"<br>结束日实际状态：{trade.get('evaluation_observed_state', '-')}"
+        f"<br>波谷确认日：{trade.get('evaluation_trough_confirm_date') or '-'}"
+        f"<br>结束日波谷观察上涨天数 / 最少：{_format_number(trade.get('evaluation_trough_up_days'), digits=0)} / {trade.get('trough_min_up_days', '-')}"
         f"<br>参考状态：{trade.get('price_origin_status', '-')}"
         f"<br>参考高点：{trade.get('origin_high_date') or '-'} · {_format_number(trade.get('origin_high_close'))}"
         f"<br>前{trade.get('origin_lookback_days') or '-'}日最低收盘：{trade.get('origin_window_low_date') or '-'} · {_format_number(trade.get('origin_window_low_close'))}"
@@ -819,7 +880,13 @@ def _trade_hover(trade: dict[str, Any]) -> str:
         f"<br>行情价格起点：{trade.get('price_origin_date') or '-'} · {_format_number(trade.get('price_origin_close'))}"
         f"<br>当日实际收盘：{_format_number(trade.get('evaluation_actual_close'))}"
         f"<br>收盘价与参考价绝对偏离：{_format_percent(trade.get('price_origin_gap_pct'))}"
+        f"<br>开仓时参考价过滤：{'启用' if trade.get('price_origin_filter_required_at_entry', True) else '已取消'}"
+        f"<br>结束/估值时参考价过滤：{'启用' if trade.get('price_origin_filter_required', True) else '已取消'}"
+        f"<br>参考价过滤取消日：{trade.get('price_origin_filter_disabled_date') or '-'}"
+        f"<br>持仓期间及平仓日跳过信号：{len(trade.get('skipped_entries', []))}"
     )
+    if trade.get("status_reason") == PROFIT_REBOUND_EXIT:
+        details += "<br>盈利后连续上涨平仓：独立于波谷确认和放量参考价"
     if trade.get("stop_trigger_close") is not None:
         details += (
             f"<br>止损触发日收盘：{_format_number(trade['stop_trigger_close'])}"
@@ -842,6 +909,11 @@ def _state_hover(row: dict[str, Any]) -> str:
         f"<br>状态：{row.get('state_description', '')}"
         f"<br>枚举：{row.get('state_name', '')} ({row.get('state', '')})"
         f"<br>当日实际状态：{row.get('observed_state_name', '')} ({row.get('observed_state', '')})"
+        f"<br>当日独立事件：{_number_or_zero(row.get('entry_signal'))} · {row.get('entry_signal_type') or '-'}"
+        "<br>实际开仓以黄色倒三角和交易记录为准"
+        f"<br>信号参考起始日：{row.get('entry_pattern_start_date') or '-'}"
+        f"<br>候选回调阈值：{_format_percent(row.get('candidate_pullback_pct'))}"
+        f"<br>波谷候选观察上涨天数 / 最少：{_number_or_zero(row.get('trough_up_days'))} / {_number_or_zero(row.get('trough_min_up_days'))}（候选及实际确认当天统计）"
         f"<br>周期：{_number_or_zero(row.get('cycle_id'))}"
         f"<br>波峰序号：{_number_or_zero(row.get('peak_number'))}"
         f"<br>热度：{heat}"

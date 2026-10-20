@@ -1,4 +1,4 @@
-"""Classify close-only high regions and rebound-peak states."""
+"""Classify high regions, percentage pullbacks, and rebound-peak states."""
 
 from __future__ import annotations
 
@@ -15,16 +15,16 @@ from stock_selection.data.tushare_cache import DEFAULT_CACHE_ROOT
 
 - 半年窗口：120个交易日；
 - 高点候选门槛：收盘价达到或超过前120个交易日最高收盘价；
-- 最高点确认：从运行最高收盘价回落30%；
-- 候选回调：从运行最高收盘价回落15%；
+- 最高点确认：从运行最高收盘价回落达到 confirm_drawdown_pct；
+- 候选回调：收盘价从运行最高收盘价回落至少 candidate_pullback_pct；
 - 波峰开启：离开波谷区域并从区域下沿反弹10%；
 - 波峰结束：收盘价重新进入第一波谷价格范围；
 - 最高点热度：当前收盘价相对前10个交易日均价的涨幅；
-- 波谷确认：候选低点后4个交易日的收盘价均不低于候选低点。"""
+- 波谷确认：低点后至少观察4个交易日、不创新低，最近4天至少3天收盘高于前一天。"""
 
 DEFAULT_LOOKBACK_DAYS = 120
-DEFAULT_CANDIDATE_PULLBACK_PCT = 0.15
-DEFAULT_CONFIRM_DRAWDOWN_PCT = 0.30
+DEFAULT_CANDIDATE_PULLBACK_PCT = 0.1
+DEFAULT_CONFIRM_DRAWDOWN_PCT = 0.2
 DEFAULT_REBOUND_PCT = 0.10
 DEFAULT_HIGH_HEAT_DAYS = 10
 DEFAULT_TROUGH_CONFIRM_DAYS = 5
@@ -78,9 +78,15 @@ OUTPUT_COLUMNS = [
     "ts_code",
     "stock_name",
     "trade_date",
+    "open",
+    "high",
     "close",
     "vol",
     "lookback_days",
+    "candidate_pullback_pct",
+    "trough_confirm_days",
+    "trough_min_up_days",
+    "trough_up_days",
     "total_mv",
     "circ_mv",
     "state",
@@ -88,6 +94,10 @@ OUTPUT_COLUMNS = [
     "state_description",
     "observed_state",
     "observed_state_name",
+    "entry_signal",
+    "entry_signal_type",
+    "entry_pattern_start_date",
+    "entry_reference_high_close",
     "cycle_id",
     "peak_number",
     "state_start_date",
@@ -125,11 +135,15 @@ def calculate_stock_short_states(
     preceding ``lookback_days`` trading days, excluding the current day.
     This gate also applies when starting a new cycle after invalidation.
     Existing candidates keep tracking new highs.
-    Pullback begins after price falls
-    ``candidate_pullback_pct`` from the running high. The actual high is
+    Pullback begins when the close falls at least ``candidate_pullback_pct``
+    from the running highest close. Entry signals are saved
+    separately from historical state labels. The actual high is
     confirmed only after price falls ``confirm_drawdown_pct``. A trough region
-    is confirmed when the following ``trough_confirm_days - 1`` closes do not
-    fall below its candidate low. Rebound peaks start after price leaves the
+    is confirmed after at least ``trough_confirm_days - 1`` bars without a
+    lower close, with at most one non-rising close in the latest such window.
+    A rise means close > previous close; a flat close is not a rise. Failed
+    windows keep the candidate low and roll forward until the rule passes.
+    Rebound peaks start after price leaves the
     trough region and rises ``rebound_pct`` from its lower bound.
     """
     if trough_heat_days is not None:
@@ -231,8 +245,8 @@ def normalise_stock_daily(
     *,
     stock_basic: pd.DataFrame | None = None,
 ) -> pd.DataFrame:
-    """Normalize stock codes, names, dates, close prices, and optional volume."""
-    columns = ["ts_code", "stock_name", "trade_date", "close", "vol"]
+    """Normalize OHLC inputs, excluding zero-price, zero-volume placeholders."""
+    columns = ["ts_code", "stock_name", "trade_date", "open", "high", "close", "vol"]
     if stock_daily is None or stock_daily.empty:
         return pd.DataFrame(columns=columns)
 
@@ -249,6 +263,8 @@ def normalise_stock_daily(
                 _series_from(stock_daily, ("close", "close_price"), None),
                 errors="coerce",
             ),
+            "open": pd.to_numeric(_series_from(stock_daily, ("open",), np.nan), errors="coerce"),
+            "high": pd.to_numeric(_series_from(stock_daily, ("high",), np.nan), errors="coerce"),
             "vol": pd.to_numeric(
                 _series_from(stock_daily, ("vol", "volume"), np.nan),
                 errors="coerce",
@@ -275,6 +291,26 @@ def normalise_stock_daily(
         & result["close"].notna()
         & result["close"].gt(0)
     ]
+    # Suspended/no-trade placeholders can retain the previous close while
+    # open, high and volume are zero. Remove them before candle validation
+    # and all stock trading-day windows; do not fabricate OHLC values.
+    non_trading_rows = (
+        result["vol"].eq(0)
+        & result["open"].eq(0)
+        & result["high"].eq(0)
+    )
+    result = result.loc[~non_trading_rows].copy()
+    invalid_candles = (
+        ~np.isfinite(result[["open", "high"]]).all(axis=1)
+        | result["open"].le(0)
+        | result["high"].lt(result[["open", "close"]].max(axis=1) - 1e-12)
+    )
+    if invalid_candles.any():
+        row = result.loc[invalid_candles].iloc[0]
+        raise ValueError(
+            f"策略五需要保存有效 open/high 供画图核对：{row['ts_code']} {row['trade_date']}；"
+            "请检查对应日期的本地行情缓存。"
+        )
     return result.drop_duplicates(
         ["ts_code", "trade_date"], keep="last"
     ).sort_values(["ts_code", "trade_date"]).reset_index(drop=True)
@@ -325,6 +361,8 @@ def _calculate_one_stock(
 ) -> list[dict[str, Any]]:
     ordered_group = group.sort_values("trade_date").reset_index(drop=True)
     closes = ordered_group["close"].to_numpy(dtype=float)
+    opens = ordered_group["open"].to_numpy(dtype=float)
+    highs = ordered_group["high"].to_numpy(dtype=float)
     volumes = ordered_group["vol"].to_numpy(dtype=float)
     dates = ordered_group["trade_date"].astype(str).to_numpy()
     close_series = pd.Series(closes)
@@ -346,8 +384,12 @@ def _calculate_one_stock(
             stock_name=stock_name,
             trade_date=dates[position],
             close=closes[position],
+            open_price=opens[position],
+            high=highs[position],
             vol=volumes[position],
             lookback_days=lookback_days,
+            candidate_pullback_pct=candidate_pullback_pct,
+            trough_confirm_days=trough_confirm_days,
         )
         for position in range(len(ordered_group))
     ]
@@ -367,6 +409,9 @@ def _calculate_one_stock(
     trough_confirm_position = -1
     peak_number = 0
     peak_start_position = -1
+    candidate_in_pullback = False
+    observation_days = trough_confirm_days - 1
+    min_up_days = max(1, observation_days - 1)
 
     for position, close in enumerate(closes):
         #normal阶段，判断是否进入HIGH_CANDIDATE状态
@@ -380,6 +425,7 @@ def _calculate_one_stock(
             high_close = close
             peak_number = 0
             phase = "candidate"
+            candidate_in_pullback = False
             _set_record(
                 records[position],
                 StockShortState.HIGH_CANDIDATE,
@@ -398,10 +444,21 @@ def _calculate_one_stock(
                 high_close = close
             drawdown = 1.0 - close / high_close
             state = (
-                StockShortState.HIGH_CANDIDATE
-                if drawdown + 1e-12 < candidate_pullback_pct
-                else StockShortState.HIGH_CANDIDATE_PULLBACK
+                StockShortState.HIGH_CANDIDATE_PULLBACK
+                if drawdown + 1e-12 >= candidate_pullback_pct
+                else StockShortState.HIGH_CANDIDATE
             )
+            in_pullback = state == StockShortState.HIGH_CANDIDATE_PULLBACK
+            # A fresh threshold crossing is a new event, even in the same cycle.
+            # The backtest alone decides whether an existing position blocks it.
+            if in_pullback and not candidate_in_pullback:
+                _set_entry_signal(
+                    records[position], state,
+                    signal_type="CANDIDATE_DRAWDOWN_THRESHOLD",
+                    pattern_start_date=str(dates[high_position]),
+                    reference_high_close=float(high_close),
+                )
+            candidate_in_pullback = in_pullback
             _set_record(
                 records[position],
                 state,
@@ -481,6 +538,7 @@ def _calculate_one_stock(
             trough_confirm_position = -1
             peak_number = 0
             peak_start_position = -1
+            candidate_in_pullback = False
             phase = "candidate"
             continue
         #进入到到HIGH_DRAWDOWN ，也意味着开始TROUGH_CANDIDATE，寻找TROUGH_REGION
@@ -490,7 +548,15 @@ def _calculate_one_stock(
                 trough_position = position
                 trough_close = close
             confirmation_end = trough_position + trough_confirm_days - 1
-            if position < confirmation_end:
+            # Count only the latest observation window, never accumulate rises
+            # across a longer falling/sideways interval. The low remains the
+            # anchor until a strictly lower close restarts the observation.
+            observation_start = max(trough_position, position - observation_days)
+            up_days = int(np.count_nonzero(
+                np.diff(closes[observation_start:position + 1]) > 0
+            ))
+            records[position]["trough_up_days"] = up_days
+            if position < confirmation_end or up_days < min_up_days:
                 _set_record(
                     records[position],
                     StockShortState.TROUGH_CANDIDATE,
@@ -503,7 +569,7 @@ def _calculate_one_stock(
                     reference_low_position=trough_position,
                 )
                 continue
-            #position 大于 confirmation_end 连续几天不创新低了
+            # Both the minimum observation period and the rise count pass today.
             trough_confirm_position = position
             trough_zone_low = trough_close
             trough_zone_high = float(
@@ -561,6 +627,11 @@ def _calculate_one_stock(
                 peak_start_position = position
                 phase = "peak"
                 state = state_for_peak(peak_number)
+                _set_entry_signal(
+                    records[position], state, signal_type="OBSERVED_PEAK_START",
+                    pattern_start_date=str(dates[position]),
+                    reference_high_close=float(high_close),
+                )
             else:
                 state = StockShortState.TROUGH_REGION
             _set_record(
@@ -626,8 +697,12 @@ def _base_record(
     stock_name: str,
     trade_date: str,
     close: float,
+    open_price: float,
+    high: float,
     vol: float,
     lookback_days: int,
+    candidate_pullback_pct: float,
+    trough_confirm_days: int,
 ) -> dict[str, Any]:
     state = StockShortState.NORMAL
     return {
@@ -635,8 +710,14 @@ def _base_record(
         "stock_name": stock_name,
         "trade_date": trade_date,
         "close": float(close),
+        "open": float(open_price),
+        "high": float(high),
         "vol": float(vol),
         "lookback_days": int(lookback_days),
+        "candidate_pullback_pct": float(candidate_pullback_pct),
+        "trough_confirm_days": int(trough_confirm_days),
+        "trough_min_up_days": max(1, int(trough_confirm_days) - 2),
+        "trough_up_days": 0,
         "total_mv": np.nan,
         "circ_mv": np.nan,
         "state": int(state),
@@ -644,6 +725,10 @@ def _base_record(
         "state_description": STATE_DESCRIPTIONS[state],
         "observed_state": int(state),
         "observed_state_name": state.name,
+        "entry_signal": 0,
+        "entry_signal_type": "",
+        "entry_pattern_start_date": "",
+        "entry_reference_high_close": np.nan,
         "cycle_id": 0,
         "peak_number": 0,
         "state_start_date": "",
@@ -658,6 +743,23 @@ def _base_record(
         "heat": np.nan,
         "alert_code": "",
     }
+
+
+def _set_entry_signal(
+    record: dict[str, Any],
+    state: StockShortState,
+    *,
+    signal_type: str,
+    pattern_start_date: str,
+    reference_high_close: float,
+) -> None:
+    """Save an observable event independently of backfilled daily labels."""
+    record.update({
+        "entry_signal": int(state),
+        "entry_signal_type": signal_type,
+        "entry_pattern_start_date": pattern_start_date,
+        "entry_reference_high_close": reference_high_close,
+    })
 
 
 def _set_record(
@@ -748,12 +850,8 @@ def _validate_parameters(**parameters: Any) -> None:
         value = float(parameters[name])
         if not 0 < value < 1:
             raise ValueError(f"{name} must be greater than zero and less than one")
-    if float(parameters["candidate_pullback_pct"]) >= float(
-        parameters["confirm_drawdown_pct"]
-    ):
-        raise ValueError(
-            "candidate_pullback_pct must be less than confirm_drawdown_pct"
-        )
+    if parameters["candidate_pullback_pct"] >= parameters["confirm_drawdown_pct"]:
+        raise ValueError("candidate_pullback_pct must be less than confirm_drawdown_pct")
 
 
 def _series_from(data: pd.DataFrame, choices: tuple[str, ...], default: Any) -> pd.Series:

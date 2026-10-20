@@ -30,6 +30,7 @@ from stock_selection.strategies.stock_short_high_state.backtest import (
 from stock_selection.strategies.stock_short_high_state.report import (
     DEFAULT_OUTPUT_ROOT,
     build_stock_short_state_report,
+    create_stock_short_run_directory,
     save_short_trade_backtest_report,
     save_stock_short_state_report,
 )
@@ -50,7 +51,7 @@ from stock_selection.strategies.stock_short_high_state.visualization import (
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Classify close-only high regions and rebound-peak states."
+        description="Classify high regions, percentage pullbacks, and rebound peaks."
     )
     parser.add_argument(
         "--start-date", default="20240901",
@@ -62,9 +63,9 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--stock-code", action="append", default=None)
     parser.add_argument("--lookback-days", type=int, default=DEFAULT_LOOKBACK_DAYS)
     parser.add_argument(
-        "--candidate-pullback-pct",
-        type=float,
+        "--candidate-pullback-pct", type=float,
         default=DEFAULT_CANDIDATE_PULLBACK_PCT,
+        help="Close-price pullback from the running candidate high (default: %(default)s).",
     )
     parser.add_argument(
         "--confirm-drawdown-pct",
@@ -88,7 +89,8 @@ def parse_args() -> argparse.Namespace:
         "--sample-chart-codes",
         action="store_true",
         default=False,
-        help="Save up to 30 worst-loss and 30 smallest-gain stocks for charts.",
+        help="Save up to 30 worst-loss, 30 smallest-gain and 30 largest-gain "
+        "stocks for charts; gains are ordered descending and duplicates removed.",
     )
     parser.add_argument("--records-root", default=str(DEFAULT_OUTPUT_ROOT))
     parser.add_argument("--lending-file", default=None)
@@ -140,14 +142,19 @@ def main() -> int:
     )
     if args.write_report:
         backtest = build_short_trade_backtest(states, as_of_date=args.date)
+        run_directory = create_stock_short_run_directory(
+            as_of_date=args.date, records_root=args.records_root,
+        )
         csv_path  = save_stock_short_state_report(
             report,
             states,
             records_root=args.records_root,
+            output_directory=run_directory,
         )
         backtest_path = save_short_trade_backtest_report(
             backtest,
             records_root=args.records_root,
+            output_directory=run_directory,
         )
         if args.sample_chart_codes:
             sampled_codes = sample_stock_trade_codes(backtest["trades"])
@@ -167,11 +174,13 @@ def main() -> int:
             market_cap_backtests["below"],
             records_root=args.records_root,
             filename="short_trade_backtest_avg_mv_below_300yi.md",
+            output_directory=run_directory,
         )
         at_least_300yi_path = save_short_trade_backtest_report(
             market_cap_backtests["at_least"],
             records_root=args.records_root,
             filename="short_trade_backtest_avg_mv_at_least_300yi.md",
+            output_directory=run_directory,
         )
         lending_path = _resolve_optional_lending_file(args)
         lending_backtest = None
@@ -206,6 +215,7 @@ def main() -> int:
                 lending_backtest,
                 records_root=args.records_root,
                 filename=f"short_trade_backtest_lendable_{args.date}.md",
+                output_directory=run_directory,
             )
         output = {
             "csv": str(csv_path),
@@ -229,6 +239,7 @@ def main() -> int:
         if lending_backtest is not None and lending_backtest_path is not None:
             output["short_trade_backtest_lendable"] = str(lending_backtest_path)
             output["backtest_summary_lendable"] = lending_backtest["summary"]
+        print(f"本次报告与图表目录：{run_directory}")
     # else:
         # output = report
     # print(json.dumps(output, ensure_ascii=False, indent=2, default=str))
