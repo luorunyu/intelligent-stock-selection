@@ -28,7 +28,7 @@ class ShortTradeBacktestConfig:
     )
     peak_entry_states: frozenset[StockShortState] = frozenset()
     invalidation_state: StockShortState = StockShortState.INVALID_HIGH_NEW_HIGH
-    max_drawdown_pct: float = 0.30
+    max_drawdown_pct: float = 0.20
     volume_expansion_multiple: float = 3.0
     max_price_origin_gap_pct: float = 0.30
     profit_rebound_min_return_pct: float = 0.05
