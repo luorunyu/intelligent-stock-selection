@@ -197,7 +197,7 @@ output/2026-10-20/charts_20261020_210000_123456/
 CLI 结束时会打印本次目录。重复运行 CLI 会创建新目录，同一报告日的历史报告和
 状态文件均保留。随后运行画图命令，会将 `index.html` 及 `positive/`、`negative/`、
 `unclassified/` 加到本批次目录；入口页提供本次回测 HTML 报告链接。
-报告使用完整股票范围，不受画图清单限制。
+报告使用 `--all-stocks` 和 `--stock-code` 指定的计算范围，不受画图清单限制。
 
 每笔交易的平均总市值，是从开仓日至平仓日、失效日或报告日之间，所有存在
 `daily_basic.total_mv` 的交易日取算术平均。Tushare 的单位为万元，因此300亿元对应
@@ -207,7 +207,14 @@ CLI 结束时会打印本次目录。重复运行 CLI 会创建新目录，同�
 
 可融券股票池默认从
 `data_cache/securities_lending/daily/YYYYMMDD.xls` 读取，也可通过
-`--lending-file` 指定。该报告使用报告日的融券快照筛选整段历史交易，适合回答“当前可融券
+`--lending-file` 指定。
+
+`--all-stocks True`（默认）计算全部股票；`--all-stocks False` 在状态计算之前，仅保留
+报告日融券状态正常且可用数量大于0的股票。后者生成的 `states.csv`、主回测、市值分组
+和图表采样均只包含该股票池；缺少同日期融券文件时会报错。两种模式都继续遵守
+`--stock-code` 和默认排除 ST 的设置；同时指定 `--stock-code` 时取交集。
+
+可融券股票池使用报告日的融券快照筛选整段历史，适合回答“当前可融券
 股票组成的池子中，策略历史表现如何”，但不能证明历史信号发生时同样有券源。报告没有计入
 历史可借数量变化、融券费率和强制归还风险。
 
@@ -314,11 +321,12 @@ python -m stock_selection.strategies.stock_short_high_state.cli `
   --write-report
 ```
 
-明确指定可融券文件：
+明确指定可融券文件，并只计算可融券股票：
 
 ```powershell
 python -m stock_selection.strategies.stock_short_high_state.cli `
   --date 20261009 `
+  --all-stocks False `
   --lending-file data_cache/securities_lending/daily/20261009.xls `
   --write-report
 ```

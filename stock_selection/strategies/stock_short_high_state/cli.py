@@ -49,6 +49,13 @@ from stock_selection.strategies.stock_short_high_state.visualization import (
 )
 
 
+def _parse_bool(value: str) -> bool:
+    normalized = value.strip().lower()
+    if normalized not in {"true", "false"}:
+        raise argparse.ArgumentTypeError("expected True or False")
+    return normalized == "true"
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Classify high regions, percentage pullbacks, and rebound peaks."
@@ -61,6 +68,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--date", default=date.today().strftime("%Y%m%d"))
     parser.add_argument("--cache-root", default=None)
     parser.add_argument("--stock-code", action="append", default=None)
+    parser.add_argument(
+        "--all-stocks", type=_parse_bool, default=True, metavar="True|False",
+        help="True: calculate all stocks (default); False: calculate only stocks "
+        "with normal lending status and positive available quantity on the report date. "
+        "--stock-code further restricts either selection.",
+    )
     parser.add_argument("--lookback-days", type=int, default=DEFAULT_LOOKBACK_DAYS)
     parser.add_argument(
         "--candidate-pullback-pct", type=float,
@@ -101,11 +114,43 @@ def parse_args() -> argparse.Namespace:
 def main() -> int:
     begin_time = time()
     args = parse_args()
+    lending_path = None
+    lending_data = None
+    eligible_codes: set[str] = set()
+    if not args.all_stocks or args.write_report:
+        lending_path = _resolve_optional_lending_file(args)
+        if lending_path is not None:
+            lending_data = read_lending_file(lending_path)
+            lending_dates = set(lending_data["lending_date"].dropna().astype(str))
+            if lending_dates != {str(args.date)}:
+                raise ValueError(
+                    "lending data date must match the strategy report date: "
+                    f"expected {args.date}, found {', '.join(sorted(lending_dates))}"
+                )
+            eligible_lending = lending_data[
+                lending_data["available_quantity"].gt(0)
+                & lending_data["lending_status"].eq("正常")
+                & lending_data["ts_code"].ne("")
+            ]
+            eligible_codes = set(eligible_lending["ts_code"])
+        elif not args.all_stocks:
+            raise FileNotFoundError(
+                "--all-stocks False requires a securities-lending file for "
+                f"{args.date}; specify --lending-file or --lending-root."
+            )
+    stock_codes = args.stock_code
+    if not args.all_stocks:
+        stock_codes = sorted(
+            eligible_codes if stock_codes is None
+            else eligible_codes.intersection(stock_codes)
+        )
     daily, basic = read_cached_stock_daily(
         cache_root=args.cache_root,
         start_date=args.start_date,
         as_of_date=args.date,
     )
+    if not args.all_stocks:
+        daily = daily[daily["ts_code"].isin(stock_codes)]
     data_cost_time = time()
     states = calculate_stock_short_states(
         daily,
@@ -116,7 +161,7 @@ def main() -> int:
         rebound_pct=args.rebound_pct,
         high_heat_days=args.high_heat_days,
         trough_confirm_days=args.trough_confirm_days,
-        stock_codes=args.stock_code,
+        stock_codes=stock_codes,
         stock_basic=basic,
         include_st=args.include_st,
     )
@@ -182,23 +227,9 @@ def main() -> int:
             filename="short_trade_backtest_avg_mv_at_least_300yi.md",
             output_directory=run_directory,
         )
-        lending_path = _resolve_optional_lending_file(args)
         lending_backtest = None
         lending_backtest_path = None
         if lending_path is not None:
-            lending_data = read_lending_file(lending_path)
-            lending_dates = set(lending_data["lending_date"].dropna().astype(str))
-            if lending_dates != {str(args.date)}:
-                raise ValueError(
-                    "lending data date must match the strategy report date: "
-                    f"expected {args.date}, found {', '.join(sorted(lending_dates))}"
-                )
-            eligible_lending = lending_data[
-                lending_data["available_quantity"].gt(0)
-                & lending_data["lending_status"].eq("正常")
-                & lending_data["ts_code"].ne("")
-            ].copy()
-            eligible_codes = set(eligible_lending["ts_code"])
             lending_backtest = filter_short_trade_backtest_by_stock_pool(
                 backtest,
                 eligible_codes,
