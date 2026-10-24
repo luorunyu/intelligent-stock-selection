@@ -303,13 +303,13 @@ CLI 结束时会打印本次目录。重复运行 CLI 会创建新目录，同�
 直接运行：
 
 ```powershell
-python scripts/screen_stock_short_high_state.py --date 20260930
+python -m stock_selection.strategies.stock_short_high_state.cli --date 20260930
 ```
 
 保存完整逐日状态 CSV 和状态做空回测 Markdown、HTML：
 
 ```powershell
-python scripts/screen_stock_short_high_state.py `
+python -m stock_selection.strategies.stock_short_high_state.cli `
   --date 20260930 `
   --write-report
 ```
@@ -317,7 +317,7 @@ python scripts/screen_stock_short_high_state.py `
 明确指定可融券文件：
 
 ```powershell
-python scripts/screen_stock_short_high_state.py `
+python -m stock_selection.strategies.stock_short_high_state.cli `
   --date 20261009 `
   --lending-file data_cache/securities_lending/daily/20261009.xls `
   --write-report
@@ -326,7 +326,7 @@ python scripts/screen_stock_short_high_state.py `
 只处理指定股票：
 
 ```powershell
-python scripts/screen_stock_short_high_state.py `
+python -m stock_selection.strategies.stock_short_high_state.cli `
   --date 20260930 `
   --stock-code 000001.SZ
 ```

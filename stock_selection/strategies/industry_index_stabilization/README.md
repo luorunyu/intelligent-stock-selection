@@ -101,7 +101,6 @@ max_forward_peak_ratio = 验证窗口最高收盘价 / decline_start_close
 - `report.py`：最新状态、历史成功率汇总以及输出文件保存。
 - `cli.py`：命令行参数和完整执行流程。
 - `visualization.py`：读取已保存状态并生成 K 线图和图表入口页。
-- `scripts/screen_industry_index_stabilization.py`：状态和报告入口。
 - `scripts/plot_industry_index_stabilization.py`：绘图入口。
 
 ## 运行方式
@@ -109,7 +108,7 @@ max_forward_peak_ratio = 验证窗口最高收盘价 / decline_start_close
 计算 L2 逐日状态和历史验证：
 
 ```bash
-./.venv/bin/python scripts/screen_industry_index_stabilization.py \
+./.venv/bin/python -m stock_selection.strategies.industry_index_stabilization.cli \
   --date 20261009 \
   --level L2 \
   --write-report
@@ -118,7 +117,7 @@ max_forward_peak_ratio = 验证窗口最高收盘价 / decline_start_close
 扫描 L3 或限定行业：
 
 ```bash
-./.venv/bin/python scripts/screen_industry_index_stabilization.py \
+./.venv/bin/python -m stock_selection.strategies.industry_index_stabilization.cli \
   --date 20261009 \
   --level L3 \
   --industry-code 850111.SI \

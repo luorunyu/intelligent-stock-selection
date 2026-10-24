@@ -85,14 +85,13 @@ stock_return = alpha + industry_beta * industry_return + error
 - `screen.py`：缓存读取、成分关系展开、交易日对齐、比例计算和阈值筛选。
 - `report.py`：报告汇总、数据质量统计和 CSV/JSON/Markdown 保存。
 - `cli.py`：命令行参数和完整执行流程。
-- `scripts/screen_stock_industry_direction.py`：项目根目录下的可执行入口。
 
 ## 运行方式
 
 一次生成截至指定日期的全部申万 L2 历史滚动关系：
 
 ```bash
-./.venv/bin/python scripts/screen_stock_industry_direction.py \
+./.venv/bin/python -m stock_selection.strategies.stock_industry_direction.cli \
   --date 20261009 \
   --level L2 \
   --window 20 \
@@ -107,7 +106,7 @@ stock_return = alpha + industry_beta * industry_return + error
 只计算指定的 L3 行业；`--industry-code` 可重复传入：
 
 ```bash
-./.venv/bin/python scripts/screen_stock_industry_direction.py \
+./.venv/bin/python -m stock_selection.strategies.stock_industry_direction.cli \
   --date 20261009 \
   --level L3 \
   --industry-code 851761.SI \

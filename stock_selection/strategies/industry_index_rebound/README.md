@@ -61,7 +61,6 @@
 - `report.py`：合格标记、申万一至三级树形报告以及 JSON/Markdown 保存。
 - `cli.py`：命令行参数和完整执行流程。
 - `visualization.py`：L1/L2/L3 行业 K 线、个股行业查询和静态入口页。
-- `scripts/screen_industry_index.py`：项目根目录下的可执行入口。
 - `scripts/plot_industry_index_rebound.py`：项目根目录下的全量画图入口。
 
 ## 运行方式
@@ -69,13 +68,13 @@
 只计算并在终端输出 JSON：
 
 ```bash
-./.venv/bin/python scripts/screen_industry_index.py --date 20261009 --window 20
+./.venv/bin/python -m stock_selection.strategies.industry_index_rebound.cli --date 20261009 --window 20
 ```
 
 例如，要求相对低点至少上涨5%、低点后至少3个交易日、其中至少2天上涨：
 
 ```bash
-./.venv/bin/python scripts/screen_industry_index.py \
+./.venv/bin/python -m stock_selection.strategies.industry_index_rebound.cli \
   --date 20261009 \
   --window 20 \
   --min-rise 0.05 \

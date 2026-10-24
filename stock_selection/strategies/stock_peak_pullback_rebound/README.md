@@ -108,7 +108,7 @@ drawdown_from_rebound_high = 当日收盘价 / rebound_high_close - 1
 
 `screen.py` 还保留了 `calculate_peak_pullback_rebounds()` 历史事件接口。它要求高点
 同时是前各默认120个交易日的局部最高收盘价，因此使用了高点之后的未来数据，
-只适合历史形态统计。当前 CLI `screen_stock_peak_pullback_rebound.py` 调用的是
+只适合历史形态统计。当前 `cli.py` 调用的是
 `calculate_peak_pullback_rebound_states()` 逐日状态接口，不使用未来数据。
 
 ## 代码位置
@@ -117,13 +117,12 @@ drawdown_from_rebound_high = 当日收盘价 / rebound_high_close - 1
 - `report.py`：最新状态、告警汇总以及输出文件保存。
 - `cli.py`：命令行参数和完整执行流程。
 - `visualization.py`：将已保存的状态与 OHLCV 合并，生成 K 线图和入口页。
-- `scripts/screen_stock_peak_pullback_rebound.py`：状态和报告入口。
 - `scripts/plot_stock_peak_pullback_rebound_states.py`：绘图入口。
 
 ## 生成逐日状态
 
 ```bash
-./.venv/bin/python scripts/screen_stock_peak_pullback_rebound.py \
+./.venv/bin/python -m stock_selection.strategies.stock_peak_pullback_rebound.cli \
   --date 20261009 \
   --write-report
 ```
@@ -131,7 +130,7 @@ drawdown_from_rebound_high = 当日收盘价 / rebound_high_close - 1
 只计算指定股票时，`--stock-code` 可重复传入：
 
 ```bash
-./.venv/bin/python scripts/screen_stock_peak_pullback_rebound.py \
+./.venv/bin/python -m stock_selection.strategies.stock_peak_pullback_rebound.cli \
   --date 20261009 \
   --stock-code 000001.SZ \
   --write-report
