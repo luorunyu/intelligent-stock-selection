@@ -268,8 +268,7 @@ def merge_bars_and_states(
     normalized_bars = normalized_bars.rename(columns={
         "open": "bar_open", "high": "bar_high", "close": "bar_close", "vol": "bar_vol",
     })
-    # Preserve saved volume so figure-level backtests use the same inputs as
-    # reports, even if the OHLC cache was refreshed after states.csv was saved.
+    # Preserve saved state fields alongside the refreshed OHLCV chart bars.
     state_view = states.rename(columns={"close": "state_close"})
     merge_keys = ["trade_date"]
     if "ts_code" in state_view.columns and "ts_code" in normalized_bars.columns:
@@ -813,7 +812,7 @@ th{{background:#f5f5f5}}a{{color:#0969da}}code{{background:#f5f5f5;padding:2px 5
 </head>
 <body>
 <h1>策略五状态图表</h1>
-<p class="note">黄框表示每笔实际持仓，同一股票不重叠，包含盈利后连续上涨平仓、止损和失效强平；持仓中延伸至最后数据日。黄色倒三角标记实际开仓，蓝色正三角标记平仓，紫色叉号标记策略异常；开仓信号、参考价过滤取消日及平仓原因通过鼠标悬停查看。绿K为收盘低于开盘，候选回调仅按收盘价跌幅判断。</p>
+<p class="note">黄框表示每笔实际持仓，同一股票不重叠，包含波谷确认平仓、盈利后连续上涨平仓、止损和失效强平；持仓中延伸至最后数据日。黄色倒三角标记实际开仓，蓝色正三角标记平仓，紫色叉号标记策略异常；开仓信号、波谷确认日及平仓原因通过鼠标悬停查看。绿K为收盘低于开盘，候选回调仅按收盘价跌幅判断。</p>
 <p>状态来源：<code>{escape(str(states_csv))}</code></p>
 {f'<p>本次回测报告：{report_links}</p>' if report_links else ''}
 <p>正收益股票按汇总收益率从高到低排列，同收益按股票代码排序。汇总收益沿用逐股交易收益相加的口径，包含持仓中的浮动收益。</p>
@@ -871,22 +870,11 @@ def _trade_hover(trade: dict[str, Any]) -> str:
         f"<br>结束日实际状态：{trade.get('evaluation_observed_state', '-')}"
         f"<br>波谷确认日：{trade.get('evaluation_trough_confirm_date') or '-'}"
         f"<br>结束日波谷观察上涨天数 / 最少：{_format_number(trade.get('evaluation_trough_up_days'), digits=0)} / {trade.get('trough_min_up_days', '-')}"
-        f"<br>参考状态：{trade.get('price_origin_status', '-')}"
-        f"<br>参考高点：{trade.get('origin_high_date') or '-'} · {_format_number(trade.get('origin_high_close'))}"
-        f"<br>前{trade.get('origin_lookback_days') or '-'}日最低收盘：{trade.get('origin_window_low_date') or '-'} · {_format_number(trade.get('origin_window_low_close'))}"
-        f"<br>三天放量：{trade.get('volume_start_date') or '-'} / {trade.get('volume_middle_date') or '-'} / {trade.get('volume_end_date') or '-'}"
-        f"<br>成交量：{_format_number(trade.get('volume_first'), digits=0)} / {_format_number(trade.get('volume_second'), digits=0)} / {_format_number(trade.get('volume_third'), digits=0)}"
-        f"<br>第三天/第一天量比：{_format_number(trade.get('volume_expansion_ratio'))}"
-        f"<br>行情价格起点：{trade.get('price_origin_date') or '-'} · {_format_number(trade.get('price_origin_close'))}"
         f"<br>当日实际收盘：{_format_number(trade.get('evaluation_actual_close'))}"
-        f"<br>收盘价与参考价绝对偏离：{_format_percent(trade.get('price_origin_gap_pct'))}"
-        f"<br>开仓时参考价过滤：{'启用' if trade.get('price_origin_filter_required_at_entry', True) else '已取消'}"
-        f"<br>结束/估值时参考价过滤：{'启用' if trade.get('price_origin_filter_required', True) else '已取消'}"
-        f"<br>参考价过滤取消日：{trade.get('price_origin_filter_disabled_date') or '-'}"
         f"<br>持仓期间及平仓日跳过信号：{len(trade.get('skipped_entries', []))}"
     )
     if trade.get("status_reason") == PROFIT_REBOUND_EXIT:
-        details += "<br>盈利后连续上涨平仓：独立于波谷确认和放量参考价"
+        details += "<br>盈利后连续上涨平仓：独立于波谷确认"
     if trade.get("stop_trigger_close") is not None:
         details += (
             f"<br>止损触发日收盘：{_format_number(trade['stop_trigger_close'])}"

@@ -235,7 +235,7 @@ def render_short_trade_backtest_markdown(
             f"- 持仓中：{summary['open_trades']}",
             f"- 其中新高失效平仓：{summary['invalidation_exit_trades']}",
             f"- 其中周期异常切换平仓：{summary['cycle_change_exit_trades']}",
-            f"- 其中第一波峰后取消参考价过滤的波谷平仓：{summary['trough_exits_after_first_peak']}",
+            f"- 其中波谷确认平仓：{summary['trough_exit_trades']}",
             f"- 胜 / 负 / 平：{summary['wins']} / {summary['losses']} / {summary['breakeven']}",
             f"- 胜率：{_format_percent(summary['win_rate'])}",
             f"- 平均 / 中位收益：{_format_percent(summary['average_return_pct'])} / {_format_percent(summary['median_return_pct'])}",
@@ -304,15 +304,15 @@ def render_short_trade_backtest_markdown(
             f"{trade['holding_trade_days']} |"
         )
     lines.extend([
-        "", "## 平仓参考核对", "",
-        "每笔列出结束/估值日实际可知的参考值；止损时偏离使用触发日实际收盘价，不使用模拟成交价。参考状态 AVAILABLE 表示可用，NO_VOLUME_EXPANSION 表示未找到放量，INSUFFICIENT_LOOKBACK 表示历史不足，NO_REFERENCE_HIGH 表示缺少有效参考高点。", "",
-        "| " + " | ".join(_REFERENCE_AUDIT_HEADERS) + " |",
-        "| " + " | ".join("---" for _ in _REFERENCE_AUDIT_HEADERS) + " |",
+        "", "## 开平仓核对", "",
+        "逐笔核对开仓信号、结束/估值日的实际状态、波谷确认日期和上涨天数；实际收盘与模拟止损成交价分别展示。", "",
+        "| " + " | ".join(_TRADE_AUDIT_HEADERS) + " |",
+        "| " + " | ".join("---" for _ in _TRADE_AUDIT_HEADERS) + " |",
     ])
     for trade in backtest["trades"]:
-        lines.append("| " + " | ".join(_reference_audit_values(trade)) + " |")
+        lines.append("| " + " | ".join(_trade_audit_values(trade)) + " |")
     if not backtest["trades"]:
-        lines.append("| " + " | ".join("-" for _ in _REFERENCE_AUDIT_HEADERS) + " |")
+        lines.append("| " + " | ".join("-" for _ in _TRADE_AUDIT_HEADERS) + " |")
     return "\n".join(lines) + "\n"
 
 
@@ -361,7 +361,7 @@ def render_short_trade_backtest_html(backtest: dict[str, Any]) -> str:
         ("持仓中", summary["open_trades"]),
         ("其中新高失效平仓", summary["invalidation_exit_trades"]),
         ("其中周期切换平仓", summary["cycle_change_exit_trades"]),
-        ("第一波峰后波谷平仓", summary["trough_exits_after_first_peak"]),
+        ("波谷确认平仓", summary["trough_exit_trades"]),
         ("胜 / 负 / 平", f"{summary['wins']} / {summary['losses']} / {summary['breakeven']}"),
         ("胜率", _format_percent(summary["win_rate"])),
         ("平均 / 中位收益", f"{_format_percent(summary['average_return_pct'])} / {_format_percent(summary['median_return_pct'])}"),
@@ -445,11 +445,11 @@ def render_short_trade_backtest_html(backtest: dict[str, Any]) -> str:
         f"<li>{escape(rule)}</li>" for rule in _profit_rebound_exit_rules(metadata)
     )
     entry_rules_html = "".join(f"<li>{escape(rule)}</li>" for rule in _entry_rules(metadata))
-    audit_headers_html = "".join(f"<th>{escape(value)}</th>" for value in _REFERENCE_AUDIT_HEADERS)
+    audit_headers_html = "".join(f"<th>{escape(value)}</th>" for value in _TRADE_AUDIT_HEADERS)
     audit_rows_html = "".join(
-        "<tr>" + "".join(f"<td>{escape(value)}</td>" for value in _reference_audit_values(trade)) + "</tr>"
+        "<tr>" + "".join(f"<td>{escape(value)}</td>" for value in _trade_audit_values(trade)) + "</tr>"
         for trade in backtest["trades"]
-    ) or f'<tr><td colspan="{len(_REFERENCE_AUDIT_HEADERS)}">没有逐笔交易</td></tr>'
+    ) or f'<tr><td colspan="{len(_TRADE_AUDIT_HEADERS)}">没有逐笔交易</td></tr>'
     return f"""<!doctype html>
 <html lang="zh-CN">
 <head>
@@ -508,8 +508,8 @@ th:first-child,td:first-child,th:nth-child(3),td:nth-child(3),th:nth-child(4),td
 <thead><tr><th>股票</th><th>周期</th><th>开仓状态</th><th>信号来源</th><th>开仓日</th><th>开仓价</th><th>平均总市值</th><th>市值样本日</th><th>开仓总市值</th><th>开仓流通市值</th><th>结束状态</th><th>结束/估值日</th><th>结束/估值价</th><th>状态</th><th>已实现收益</th><th>浮动收益</th><th>MFE</th><th>MAE</th><th>最大回撤</th><th>持有日</th></tr></thead>
 <tbody>{''.join(trade_rows)}</tbody>
 </table>
-<h2>平仓参考核对</h2>
-<p class="note">每笔列出结束/估值日实际可知的参考值；止损时偏离使用触发日实际收盘价。AVAILABLE：可用；NO_VOLUME_EXPANSION：无符合条件的放量；INSUFFICIENT_LOOKBACK：历史不足；NO_REFERENCE_HIGH：缺少有效参考高点。</p>
+<h2>开平仓核对</h2>
+<p class="note">逐笔核对开仓信号、结束/估值日的实际状态、波谷确认日期和上涨天数；实际收盘与模拟止损成交价分别展示。</p>
 <table class="audit-table">
 <thead><tr>{audit_headers_html}</tr></thead>
 <tbody>{audit_rows_html}</tbody>
@@ -569,18 +569,16 @@ def _json_safe(value: Any) -> Any:
     return value
 
 
-_REFERENCE_AUDIT_HEADERS = (
+_TRADE_AUDIT_HEADERS = (
     "股票", "周期/波峰", "开仓日", "结束/估值日", "结束原因",
-    "当日实际状态 / 收盘 / 波谷确认日", "参考可用性", "参考高点 / 回看天数",
-    "窗口低点 / 收盘", "放量三日", "三日成交量", "第三/第一量比",
-    "价格起点日期 / 参考价", "绝对偏离",
-    "开仓信号 / 参考起始日 / 判定高点", "参考价过滤 / 取消日", "跳过信号数",
+    "当日实际状态 / 收盘 / 波谷确认日",
+    "开仓信号 / 起始日 / 判定高点", "跳过信号数",
     "结束日波谷观察上涨天数 / 最少",
     "结束日开仓后连续收盘上涨天数",
 )
 
 
-def _reference_audit_values(trade: dict[str, Any]) -> list[str]:
+def _trade_audit_values(trade: dict[str, Any]) -> list[str]:
     return [
         f"{trade['ts_code']} {trade.get('stock_name') or ''}",
         f"{trade['cycle_id']} / {trade['peak_number']}",
@@ -588,16 +586,7 @@ def _reference_audit_values(trade: dict[str, Any]) -> list[str]:
         str(trade["evaluation_date"]),
         str(trade["status_reason"]),
         f"{trade.get('evaluation_observed_state') or '-'} / {_format_number(trade.get('evaluation_actual_close'))} / {trade.get('evaluation_trough_confirm_date') or '-'}",
-        str(trade.get("price_origin_status") or "-"),
-        f"{trade.get('origin_high_date') or '-'} / {_format_number(trade.get('origin_high_close'))} / {trade.get('origin_lookback_days') or '-'}日",
-        f"{trade.get('origin_window_low_date') or '-'} / {_format_number(trade.get('origin_window_low_close'))}",
-        " / ".join(str(trade.get(key) or "-") for key in ("volume_start_date", "volume_middle_date", "volume_end_date")),
-        " / ".join(_format_number(trade.get(key)) for key in ("volume_first", "volume_second", "volume_third")),
-        _format_number(trade.get("volume_expansion_ratio")),
-        f"{trade.get('price_origin_date') or '-'} / {_format_number(trade.get('price_origin_close'))}",
-        _format_percent(trade.get("price_origin_gap_pct")),
         f"{_ENTRY_SOURCE_LABELS.get(trade['entry_source'], trade['entry_source'])} / {trade.get('entry_pattern_start_date') or '-'} / {_format_number(trade.get('entry_reference_high_close'))}",
-        f"{'仍启用' if trade.get('price_origin_filter_required', True) else '已取消'} / {trade.get('price_origin_filter_disabled_date') or '-'}",
         str(len(trade.get("skipped_entries", []))),
         f"{_format_number(trade.get('evaluation_trough_up_days'), digits=0)} / {trade.get('trough_min_up_days', '-')}",
         _format_number(trade.get("evaluation_consecutive_up_days"), digits=0),
@@ -619,16 +608,11 @@ def _entry_rules(metadata: dict[str, Any]) -> list[str]:
 def _normal_exit_rules(metadata: dict[str, Any]) -> list[str]:
     rule = metadata["normal_exit_rule"]
     states = " 或 ".join(rule["trough_states"])
-    multiple = f"{rule['volume_expansion_multiple']:g}"
-    gap = _format_percent(rule["max_price_origin_gap_pct"])
     days = rule["trough_confirm_days"]
     min_up_days = rule["trough_min_up_days"]
     return [
         f"正常平仓：开仓日之后，当日实际状态为 {states} 且 trade_date 等于 trough_confirm_date，按确认日收盘价平仓。低点后至少观察{days - 1}个有效个股交易日、期间不创新低，最近{days - 1}天至少{min_up_days}天收盘价高于前一天；平盘不算上涨。最早含低点第{days}天确认，不满足则保持候选、滚动观察，新低重新计时。TROUGH_CANDIDATE 不正常平仓。",
-        f"本周期第一波峰实际出现前，正常平仓还要求 abs(确认日收盘价 / 行情价格起点 - 1) 不超过{gap}（包含等于）；确认日价格条件不满足则继续持仓，等待后续新的波谷确认日或强制平仓。",
-        f"价格起点：以当日已知候选高点为终点，向前取 lookback_days 个个股交易日（不含高点日）的最低收盘价，重复最低取最后一次；在该低点至高点之间寻找连续三天 0 < V1 < V2 < V3 且 V3/V1 至少{multiple}倍的放量，取最后一组第三天收盘价作为参考。三天必须全部位于该区间。",
-        "候选高点更新时重算参考，高点确认后本周期固定；使用 observed_state 和 trough_confirm_date 判断当天实际确认，历史回填的低点日、已确认区域的延续日或反弹后回到旧区域均不作为新的确认日。",
-        f"第一波峰前绝对偏离超过{gap}，或缺少参考时继续持仓，低于参考价超过该比例也不正常平仓。实际出现 PEAK_1 后，本周期永久取消价格过滤，后续新的波谷确认日可直接平仓，即使参考缺失。波峰本身不触发正常平仓，新周期重新启用过滤；全程保留回撤止损与失效强平。",
+        "使用 observed_state 和 trough_confirm_date 判断当天实际确认，历史回填的低点日、已确认区域的延续日或反弹后回到旧区域均不作为新的确认日。波峰本身不触发正常平仓；全程保留回撤止损与失效强平。",
     ]
 
 
@@ -640,7 +624,7 @@ def _profit_rebound_exit_rules(metadata: dict[str, Any]) -> list[str]:
     days = rule["consecutive_up_days"]
     return [
         f"独立盈利平仓：当日做空浮盈 1 - 当日收盘价 / 开仓价 严格大于{threshold}，且开仓后连续至少{days}个有效个股交易日 close > 前一天 close，按首次同时满足条件当天的收盘价平仓，结束原因记为 {rule['reason']}。恰好{threshold}不触发；只要求触发当天收益达标。",
-        "连续上涨从开仓后的第一天与开仓日收盘价比较开始计数，开仓前的上涨不计入；下跌或平盘清零。此规则独立于波谷状态和放量参考价，即使未确认波谷、缺少参考价或价格偏离超过上限也可平仓。",
+        "连续上涨从开仓后的第一天与开仓日收盘价比较开始计数，开仓前的上涨不计入；下跌或平盘清零。此规则独立于波谷状态，即使未确认波谷也可平仓。",
         "同日优先级：回撤止损、周期切换/新高失效强平、独立盈利平仓、波谷确认平仓；独立盈利平仓计入已完成交易、收益和胜率，平仓当日不开新仓。",
     ]
 
