@@ -378,6 +378,7 @@ def write_industry_chart_index(
     metric_by_code: Mapping[str, Mapping[str, Any]],
     as_of_date: str,
     window: int,
+    page_title: str = "策略一：申万行业近期低点反弹",
 ) -> Path:
     """Write the stock-search and L1/L2/L3 browse page."""
     output = Path(output_directory)
@@ -412,7 +413,7 @@ def write_industry_chart_index(
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>策略一申万行业图表 · {display_date}</title>
+<title>{escape(page_title)} · {display_date}</title>
 <style>
 :root{{--ink:#202428;--muted:#697077;--line:#dfe3e6;--soft:#f4f6f7;--link:#245ea8;--ok:#187657;--warn:#8a6810}}
 *{{box-sizing:border-box}}
@@ -454,7 +455,7 @@ tr:last-child td{{border-bottom:0}}
 </head>
 <body>
 <header><div class="wrap">
-<h1>策略一：申万行业近期低点反弹</h1>
+<h1>{escape(page_title)}</h1>
 <p>{display_date} · 最近 {window} 个交易日窗口</p>
 <div class="summary">
 <span><strong>{level_counts['L1']}</strong> 个 L1，{chart_counts['L1']} 个有图</span>
@@ -521,8 +522,10 @@ def generate_industry_rebound_charts(
     window: int = 20,
     dictionary_path: str | Path = DEFAULT_DICTIONARY_PATH,
     cache_root: str | Path | None = None,
+    output_root: str | Path = DEFAULT_OUTPUT_ROOT,
     output_directory: str | Path | None = None,
     initial_bars: int | None = 120,
+    page_title: str = "策略一：申万行业近期低点反弹",
 ) -> dict[str, Any]:
     """Generate all cached L1/L2/L3 charts and the static browse page."""
     if window < 1:
@@ -557,7 +560,7 @@ def generate_industry_rebound_charts(
     output = (
         Path(output_directory)
         if output_directory is not None
-        else DEFAULT_OUTPUT_ROOT
+        else Path(output_root)
         / f"{latest_date[:4]}-{latest_date[4:6]}-{latest_date[6:8]}"
         / "charts"
     )
@@ -601,6 +604,7 @@ def generate_industry_rebound_charts(
         metric_by_code=metric_by_code,
         as_of_date=latest_date,
         window=window,
+        page_title=page_title,
     )
     missing = [
         {"index_code": node["code"], "name": node["name"], "level": node["level"]}

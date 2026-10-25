@@ -101,7 +101,7 @@ max_forward_peak_ratio = 验证窗口最高收盘价 / decline_start_close
 - `report.py`：最新状态、历史成功率汇总以及输出文件保存。
 - `cli.py`：命令行参数和完整执行流程。
 - `visualization.py`：读取已保存状态并生成 K 线图和图表入口页。
-- `scripts/plot_industry_index_stabilization.py`：绘图入口。
+- `plot_industry_index_stabilization.py`：本目录下的绘图入口；`scripts/plot_industry_index_stabilization.py` 保留兼容转发。
 
 ## 运行方式
 
@@ -147,13 +147,25 @@ stock_selection/strategies/industry_index_stabilization/output/YYYY-MM-DD/
 stock_selection/strategies/industry_index_stabilization/strategy_three_chart_codes.txt
 ```
 
-然后运行：
+先运行策略 CLI 并添加 `--write-report` 保存 `states.csv` 和 `episodes.csv`。
+然后可在编辑器中直接运行本目录的 `plot_industry_index_stabilization.py`，或在项目根目录运行：
 
 ```bash
-./.venv/bin/python scripts/plot_industry_index_stabilization.py --date 20261009
+./.venv/bin/python -m stock_selection.strategies.industry_index_stabilization.plot_industry_index_stabilization --date 20261009
 ```
 
 图表保存在对应日期的 `charts/` 目录，`index.html` 是汇总入口：
+
+```text
+stock_selection/strategies/industry_index_stabilization/output/YYYY-MM-DD/charts/index.html
+```
+
+不传 `--date` 时读取最新已保存的状态文件；`--states-csv`、`--episodes-csv` 可指定输入。
+`--output-root` 指定状态文件所在根目录，`--output` 直接指定图表输出目录。
+所有相对路径均相对项目根目录，方便在编辑器中直接运行文件。
+旧的 `scripts/plot_industry_index_stabilization.py` 命令仍可使用，会转发到本目录入口。
+
+图中标记：
 
 - 浅蓝背景：`STABILIZING_CANDIDATE`。
 - 黄色背景：`STABILIZED`。

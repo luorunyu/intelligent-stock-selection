@@ -61,7 +61,7 @@
 - `report.py`：合格标记、申万一至三级树形报告以及 JSON/Markdown 保存。
 - `cli.py`：命令行参数和完整执行流程。
 - `visualization.py`：L1/L2/L3 行业 K 线、个股行业查询和静态入口页。
-- `scripts/plot_industry_index_rebound.py`：项目根目录下的全量画图入口。
+- `plot_industry_index_rebound.py`：本目录下的全量画图入口；`scripts/plot_industry_index_rebound.py` 保留兼容转发。
 
 ## 运行方式
 
@@ -87,10 +87,11 @@
 
 ### 生成 L1/L2/L3 行业图
 
-使用本地缓存为全部申万行业生成图表入口：
+可在编辑器中直接运行本策略目录下的 `plot_industry_index_rebound.py`，或在项目根目录
+使用以下命令，为全部申万行业生成图表入口：
 
 ```bash
-./.venv/bin/python scripts/plot_industry_index_rebound.py \
+./.venv/bin/python -m stock_selection.strategies.industry_index_rebound.plot_industry_index_rebound \
   --date 20261009 \
   --window 20
 ```
@@ -109,6 +110,10 @@ stock_selection/strategies/industry_index_rebound/output/YYYY-MM-DD/charts/index
 每张行业图包含日 K 线、成交量、最近 `window` 日窗口、窗口最低收盘价、
 最新收盘价，以及低点日期、低点后交易日数、反弹幅度和上涨/下跌天数。
 所有页面和 Plotly 脚本都保存在本地，打开 `index.html` 不需要联网。
+
+默认使用最新缓存日期；`--output-root` 可改输出根目录，`--output` 直接指定完整图表目录。
+缓存、字典和输出的相对路径均相对项目根目录，方便在编辑器中直接运行文件。
+旧的 `scripts/plot_industry_index_rebound.py` 命令会转发到本目录入口。
 
 行业字典包含的分类节点不一定都有 Tushare `sw_daily` 指数行情。入口页仍会
 列出这些行业并标记为“无缓存行情”，但不会伪造 K 线。个股行业归属使用当前
