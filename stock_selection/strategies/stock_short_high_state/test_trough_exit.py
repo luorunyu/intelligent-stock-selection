@@ -26,8 +26,8 @@ from stock_selection.strategies.stock_short_high_state.screen import (
 
 def _states(closes=None, *, lookback_days=3, volumes=1000):
     if closes is None:
-        # Three rising closes in four days confirms the trough; the intervening
-        # decline prevents the independent three-consecutive-up-days exit.
+        # Cross MA5 only on the final day; the intervening decline prevents
+        # the independent three-consecutive-up-days exit.
         closes = [70, 80, 90, 100, 79, 79.5, 80, 79.8, 80.2]
     return calculate_stock_short_states(
         pd.DataFrame({
@@ -41,6 +41,7 @@ def _states(closes=None, *, lookback_days=3, volumes=1000):
         }),
         lookback_days=lookback_days,
         high_heat_days=2,
+        trough_ma_days=5,
     )
 
 
@@ -76,15 +77,16 @@ def test_large_distance_from_former_volume_price_does_not_block_exit():
     closes = [20, 22, 23, 24, 25, 30, 50, 100, 79, 79.5, 80, 79.8, 80.2]
     volumes = [1000] * len(closes)
     # The former last qualifying volume triple ended at close 50, so the
-    # confirmation close 80.2 would previously fail the 30% distance filter.
+    # MA confirmation close 79.5 would previously fail the 30% distance filter.
     volumes[4:7] = [100, 200, 300]
     states = _states(closes, lookback_days=5, volumes=volumes)
 
     trade, = _backtest(states)["trades"]
 
-    assert abs(80.2 / 50 - 1) > 0.30
+    assert abs(79.5 / 50 - 1) > 0.30
     assert trade["status_reason"] == TROUGH_CONFIRM_EXIT
-    assert trade["exit_date"] == states["trade_date"].iloc[-1]
+    assert trade["exit_date"] == states.iloc[9]["trade_date"]
+    assert trade["exit_close"] == 79.5
 
 
 def test_backfilled_trough_does_not_exit_before_actual_confirmation():
@@ -160,6 +162,8 @@ def test_reports_remove_price_reference_and_keep_exit_diagnostics(empty):
                 assert old_label not in text
             assert "开平仓核对" in text
             assert "波谷确认日" in text
+            assert f"MA{backtest['metadata']['normal_exit_rule']['trough_ma_days']}" in text
+            assert "波谷观察上涨天数" not in text
     if not empty:
         assert "TROUGH_CONFIRM_EXIT" in render_short_trade_backtest_html(result)
         assert result["trades"][0]["entry_reference_high_close"] == 100
@@ -180,6 +184,8 @@ def test_chart_uses_same_confirmation_exit_without_price_reference():
     payload = figure.to_json()
 
     assert "TROUGH_CONFIRM_EXIT" in payload
+    ma_line, = [trace for trace in figure.data if trace.name == "MA5"]
+    assert ma_line.y[-1] == pytest.approx(79.7)
     for old_label in ("参考价", "行情价格起点", "三天放量", "参考状态"):
         assert old_label not in payload
     price_intervals = [shape for shape in figure.layout.shapes if shape.xref == "x"]

@@ -11,7 +11,7 @@ import pandas as pd
 
 from stock_selection.strategies.stock_short_high_state.screen import (
     DEFAULT_CANDIDATE_PULLBACK_PCT,
-    DEFAULT_TROUGH_CONFIRM_DAYS,
+    DEFAULT_TROUGH_MA_DAYS,
     StockShortState,
 )
 
@@ -117,15 +117,12 @@ def build_short_trade_backtest(
             "normal_exit_rule": {
                 "state_source": "observed_state",
                 "confirmation_rule": "ON_TROUGH_CONFIRM_DATE_ONLY",
-                "trough_confirm_days": (
-                    int(data["trough_confirm_days"].iloc[0])
-                    if not data.empty else DEFAULT_TROUGH_CONFIRM_DAYS
+                "trough_ma_days": (
+                    int(data["trough_ma_days"].iloc[0])
+                    if not data.empty else DEFAULT_TROUGH_MA_DAYS
                 ),
-                "trough_min_up_days": (
-                    int(data["trough_min_up_days"].iloc[0])
-                    if not data.empty else max(1, DEFAULT_TROUGH_CONFIRM_DAYS - 2)
-                ),
-                "trough_up_rule": "LATEST_OBSERVATION_WINDOW_CLOSE_GT_PREVIOUS_CLOSE",
+                "trough_confirmation_rule": "FIRST_CLOSE_ABOVE_TRAILING_MA_AFTER_LOW",
+                "ma_includes_current_close": True,
                 "trough_states": [state.name for state in sorted(config.trough_exit_states, key=int)],
             },
             "profit_rebound_exit_rule": {
@@ -483,12 +480,8 @@ def _build_trade(
         "stop_trigger_close": stop_trigger_close,
         "evaluation_observed_state": str(evaluation_row["observed_state_name"]),
         "evaluation_trough_confirm_date": known_trough_confirm_date,
-        "evaluation_trough_up_days": (
-            int(evaluation_row["trough_up_days"])
-            if int(evaluation_row["observed_state"]) == int(StockShortState.TROUGH_CANDIDATE)
-            or known_trough_confirm_date == evaluation_date else None
-        ),
-        "trough_min_up_days": int(evaluation_row["trough_min_up_days"]),
+        "evaluation_trough_ma_close": _optional_number(evaluation_row["trough_ma_close"]),
+        "trough_ma_days": int(evaluation_row["trough_ma_days"]),
         "evaluation_actual_close": float(evaluation_row["close"]),
         "evaluation_consecutive_up_days": int(consecutive_up_days),
         "skipped_entries": list(skipped_entries),
@@ -589,7 +582,7 @@ def _normalise_states(states: pd.DataFrame) -> pd.DataFrame:
         "observed_state", "observed_state_name", "trough_confirm_date",
         "open", "high", "entry_signal", "entry_signal_type",
         "entry_pattern_start_date", "entry_reference_high_close", "candidate_pullback_pct",
-        "trough_confirm_days", "trough_min_up_days", "trough_up_days",
+        "trough_ma_days", "trough_ma_close",
     }
     if states is None or states.empty:
         return pd.DataFrame(columns=sorted(required))
@@ -598,7 +591,7 @@ def _normalise_states(states: pd.DataFrame) -> pd.DataFrame:
         raise ValueError(
             f"states is missing required columns: {', '.join(missing)}. "
             "请先重新运行策略五 cli.py 生成新版 states.csv，再生成报告或画图；"
-            "旧文件无法还原当前跌幅规则、波谷上涨天数条件或当日实际状态。"
+            "旧文件无法还原均线确认波谷的规则或当日实际状态。"
         )
     data = states.copy()
     for column, default in (
@@ -621,7 +614,7 @@ def _normalise_states(states: pd.DataFrame) -> pd.DataFrame:
         "close", "open", "high", "state", "cycle_id", "peak_number",
         "observed_state", "entry_signal",
         "entry_reference_high_close", "candidate_pullback_pct",
-        "trough_confirm_days", "trough_min_up_days", "trough_up_days",
+        "trough_ma_days", "trough_ma_close",
     ):
         data[column] = pd.to_numeric(data[column], errors="coerce")
     if (
@@ -630,26 +623,27 @@ def _normalise_states(states: pd.DataFrame) -> pd.DataFrame:
         | ~np.isfinite(data["candidate_pullback_pct"])
         | data["candidate_pullback_pct"].le(0)
         | data["candidate_pullback_pct"].ge(1)
-        | ~np.isfinite(data["trough_confirm_days"])
-        | data["trough_confirm_days"].lt(2)
-        | data["trough_confirm_days"].mod(1).ne(0)
-        | data["trough_min_up_days"].ne((data["trough_confirm_days"] - 2).clip(lower=1))
-        | ~np.isfinite(data["trough_up_days"])
-        | data["trough_up_days"].lt(0)
-        | data["trough_up_days"].gt(data["trough_confirm_days"] - 1)
-        | data["trough_up_days"].mod(1).ne(0)
+        | ~np.isfinite(data["trough_ma_days"])
+        | data["trough_ma_days"].lt(2)
+        | data["trough_ma_days"].mod(1).ne(0)
+        | (data["trough_ma_close"].notna() & (
+            ~np.isfinite(data["trough_ma_close"]) | data["trough_ma_close"].le(0)
+        ))
     ).any():
         raise ValueError("实际状态、开仓信号或窗口无效，请重新运行策略五 CLI 生成 states.csv")
     if data["candidate_pullback_pct"].nunique() > 1:
         raise ValueError("states.csv 混用了不同候选回调阈值，请重新运行策略五 CLI")
-    if data["trough_confirm_days"].nunique() > 1:
-        raise ValueError("states.csv 混用了不同波谷确认窗口，请重新运行策略五 CLI")
+    if data["trough_ma_days"].nunique() > 1:
+        raise ValueError("states.csv 混用了不同波谷确认均线窗口，请重新运行策略五 CLI")
     confirmed_today = (
         data["observed_state"].eq(int(StockShortState.TROUGH_REGION))
         & data["trade_date"].eq(data["trough_confirm_date"])
     )
-    if (confirmed_today & data["trough_up_days"].lt(data["trough_min_up_days"])).any():
-        raise ValueError("波谷确认日未满足上涨天数条件，请重新运行策略五 CLI 生成 states.csv")
+    if (confirmed_today & (
+        ~np.isfinite(data["trough_ma_close"])
+        | data["close"].le(data["trough_ma_close"] + 1e-12)
+    )).any():
+        raise ValueError("波谷确认日收盘价未站上均线，请重新运行策略五 CLI 生成 states.csv")
     if data["entry_signal_type"].isin({"SPIKE_THEN_GREEN", "THREE_GREEN_DAYS"}).any():
         raise ValueError("states.csv 仍是绿K形态规则，请重新运行策略五 CLI 生成跌幅规则数据")
     data["observed_state"] = data["observed_state"].astype(int)

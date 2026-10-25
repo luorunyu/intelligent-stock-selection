@@ -43,7 +43,7 @@ def build_stock_short_state_report(
     confirm_drawdown_pct: float,
     rebound_pct: float,
     high_heat_days: int,
-    trough_confirm_days: int,
+    trough_ma_days: int,
 ) -> dict[str, Any]:
     latest = latest_stock_short_states(states)
     alerts = (
@@ -67,8 +67,9 @@ def build_stock_short_state_report(
             "confirm_drawdown_pct": confirm_drawdown_pct,
             "rebound_pct": rebound_pct,
             "high_heat_days": high_heat_days,
-            "trough_confirm_days": trough_confirm_days,
-            "trough_min_up_days": max(1, trough_confirm_days - 2),
+            "trough_ma_days": trough_ma_days,
+            "trough_confirmation_rule": "FIRST_CLOSE_ABOVE_TRAILING_MA_AFTER_LOW",
+            "ma_includes_current_close": True,
             "generated_at": datetime.now().astimezone().isoformat(timespec="seconds"),
         },
         "summary": {
@@ -98,8 +99,8 @@ def render_stock_short_state_markdown(report: dict[str, Any]) -> str:
         f"- 最高点确认回落：{metadata['confirm_drawdown_pct']:.1%}",
         f"- 波峰开启反弹：{metadata['rebound_pct']:.1%}",
         f"- 最高点热度窗口：{metadata['high_heat_days']}个交易日",
-        f"- 波谷确认窗口：{metadata['trough_confirm_days']}个交易日",
-        f"- 波谷企稳：低点后至少观察{metadata['trough_confirm_days'] - 1}个交易日，期间不创新低，最近观察窗口至少{metadata['trough_min_up_days']}天 close > 前一天 close；平盘不算上涨，不满足则保持候选并滚动观察",
+        f"- 波谷确认均线：MA{metadata['trough_ma_days']}，包含当日收盘价的最近{metadata['trough_ma_days']}个有效个股交易日收盘价算术平均，必须具备完整窗口",
+        "- 波谷确认：候选低点之后，首次收盘价严格高于均线当天确认；更低收盘价更新候选低点。确认后回标最低点至确认日，实际平仓仅使用确认当天收盘价",
         "",
         "## 汇总",
         "",
@@ -218,7 +219,7 @@ def render_short_trade_backtest_markdown(
             [
                 f"- 本报告股票池：{stock_pool_filter['label']}，快照日期 `{stock_pool_filter['pool_date']}`，筛选规则为“{stock_pool_filter['selection_rule']}”。",
                 f"- 股票池来源：`{stock_pool_filter['source_file']}`；源记录 {stock_pool_filter.get('source_record_count') or '-'} 条，符合条件代码 {stock_pool_filter['eligible_code_count']} 个，其中进入策略五状态数据 {matched_state_text} 只、产生交易信号 {stock_pool_filter['matched_trade_stock_count']} 只。",
-                "- 这是按报告日融券快照构成的固定股票池，只回答这些股票上的历史状态收益；它不能证明历史开仓日当时有券可借，也没有计入可借数量变化、融券费率和强制归还风险。",
+                "- 这是按上述券源快照构成的固定股票池，只回答这些股票上的历史状态收益；它不能证明历史开仓日当时有券可借，也没有计入可借数量变化、融券费率和强制归还风险。",
             ]
         )
     lines.extend(
@@ -305,7 +306,7 @@ def render_short_trade_backtest_markdown(
         )
     lines.extend([
         "", "## 开平仓核对", "",
-        "逐笔核对开仓信号、结束/估值日的实际状态、波谷确认日期和上涨天数；实际收盘与模拟止损成交价分别展示。", "",
+        "逐笔核对开仓信号、结束/估值日的实际状态、波谷确认日期及均线值；实际收盘与模拟止损成交价分别展示。", "",
         "| " + " | ".join(_TRADE_AUDIT_HEADERS) + " |",
         "| " + " | ".join("---" for _ in _TRADE_AUDIT_HEADERS) + " |",
     ])
@@ -347,7 +348,7 @@ def render_short_trade_backtest_html(backtest: dict[str, Any]) -> str:
             [
                 f"本报告股票池：{escape(str(stock_pool_filter['label']))}，快照日期 <code>{escape(str(stock_pool_filter['pool_date']))}</code>，筛选规则为“{escape(str(stock_pool_filter['selection_rule']))}”。",
                 f"股票池来源：<code>{escape(str(stock_pool_filter['source_file']))}</code>；源记录 {stock_pool_filter.get('source_record_count') or '-'} 条，符合条件代码 {int(stock_pool_filter['eligible_code_count'])} 个，其中进入策略五状态数据 {matched_state_text} 只、产生交易信号 {int(stock_pool_filter['matched_trade_stock_count'])} 只。",
-                "这是按报告日融券快照构成的固定股票池，只回答这些股票上的历史状态收益；它不能证明历史开仓日当时有券可借，也没有计入可借数量变化、融券费率和强制归还风险。",
+                "这是按上述券源快照构成的固定股票池，只回答这些股票上的历史状态收益；它不能证明历史开仓日当时有券可借，也没有计入可借数量变化、融券费率和强制归还风险。",
             ]
         )
 
@@ -509,7 +510,7 @@ th:first-child,td:first-child,th:nth-child(3),td:nth-child(3),th:nth-child(4),td
 <tbody>{''.join(trade_rows)}</tbody>
 </table>
 <h2>开平仓核对</h2>
-<p class="note">逐笔核对开仓信号、结束/估值日的实际状态、波谷确认日期和上涨天数；实际收盘与模拟止损成交价分别展示。</p>
+<p class="note">逐笔核对开仓信号、结束/估值日的实际状态、波谷确认日期及均线值；实际收盘与模拟止损成交价分别展示。</p>
 <table class="audit-table">
 <thead><tr>{audit_headers_html}</tr></thead>
 <tbody>{audit_rows_html}</tbody>
@@ -573,7 +574,7 @@ _TRADE_AUDIT_HEADERS = (
     "股票", "周期/波峰", "开仓日", "结束/估值日", "结束原因",
     "当日实际状态 / 收盘 / 波谷确认日",
     "开仓信号 / 起始日 / 判定高点", "跳过信号数",
-    "结束日波谷观察上涨天数 / 最少",
+    "结束日均线 / 数值",
     "结束日开仓后连续收盘上涨天数",
 )
 
@@ -588,7 +589,7 @@ def _trade_audit_values(trade: dict[str, Any]) -> list[str]:
         f"{trade.get('evaluation_observed_state') or '-'} / {_format_number(trade.get('evaluation_actual_close'))} / {trade.get('evaluation_trough_confirm_date') or '-'}",
         f"{_ENTRY_SOURCE_LABELS.get(trade['entry_source'], trade['entry_source'])} / {trade.get('entry_pattern_start_date') or '-'} / {_format_number(trade.get('entry_reference_high_close'))}",
         str(len(trade.get("skipped_entries", []))),
-        f"{_format_number(trade.get('evaluation_trough_up_days'), digits=0)} / {trade.get('trough_min_up_days', '-')}",
+        f"MA{trade['trough_ma_days']} / {_format_number(trade.get('evaluation_trough_ma_close'))}",
         _format_number(trade.get("evaluation_consecutive_up_days"), digits=0),
     ]
 
@@ -608,11 +609,10 @@ def _entry_rules(metadata: dict[str, Any]) -> list[str]:
 def _normal_exit_rules(metadata: dict[str, Any]) -> list[str]:
     rule = metadata["normal_exit_rule"]
     states = " 或 ".join(rule["trough_states"])
-    days = rule["trough_confirm_days"]
-    min_up_days = rule["trough_min_up_days"]
+    days = rule["trough_ma_days"]
     return [
-        f"正常平仓：开仓日之后，当日实际状态为 {states} 且 trade_date 等于 trough_confirm_date，按确认日收盘价平仓。低点后至少观察{days - 1}个有效个股交易日、期间不创新低，最近{days - 1}天至少{min_up_days}天收盘价高于前一天；平盘不算上涨。最早含低点第{days}天确认，不满足则保持候选、滚动观察，新低重新计时。TROUGH_CANDIDATE 不正常平仓。",
-        "使用 observed_state 和 trough_confirm_date 判断当天实际确认，历史回填的低点日、已确认区域的延续日或反弹后回到旧区域均不作为新的确认日。波峰本身不触发正常平仓；全程保留回撤止损与失效强平。",
+        f"正常平仓：候选低点之后，首次收盘价严格高于 MA{days} 当天确认波谷；均线为含当日在内最近{days}个有效个股交易日收盘价的算术平均，需完整窗口，等于均线不确认。开仓日之后，当日实际状态为 {states} 且 trade_date 等于 trough_confirm_date，按确认日收盘价平仓。",
+        "不设置低点后的最少等待天数或上涨天数条件；更低收盘价更新候选低点。确认后才将低点日至确认日回填为波谷区域，最低点是事后标记，不能按最低点日期或价格平仓。使用 observed_state 和 trough_confirm_date 判断当天实际确认，已确认区域的延续日或回到旧区域均不产生新的确认信号。波峰本身不触发正常平仓；全程保留回撤止损与失效强平。",
     ]
 
 

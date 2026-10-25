@@ -63,9 +63,8 @@ REQUIRED_STATE_COLUMNS = {
     "reference_low_date",
     "reference_low_close",
     "trough_confirm_date",
-    "trough_confirm_days",
-    "trough_min_up_days",
-    "trough_up_days",
+    "trough_ma_days",
+    "trough_ma_close",
     "alert_code",
 }
 
@@ -192,7 +191,7 @@ def read_saved_states(path: str | Path) -> pd.DataFrame:
         raise ValueError(
             f"states CSV is missing columns: {', '.join(missing)}. "
             "请先重新运行策略五 cli.py 生成新版 states.csv，再运行画图命令；"
-            "旧文件缺少当前跌幅规则、波谷上涨天数条件或当日实际状态。"
+            "旧文件缺少均线确认波谷的字段或当日实际状态。"
         )
     result = data.copy()
     result["ts_code"] = result["ts_code"].fillna("").astype(str).str.strip()
@@ -377,6 +376,20 @@ def build_stock_short_state_figure(
             decreasing_fillcolor=FALL_COLOR,
             name="K线",
             hoverinfo="skip",
+        ),
+        row=1,
+        col=1,
+    )
+    ma_days = int(data["trough_ma_days"].iloc[0])
+    figure.add_trace(
+        go.Scatter(
+            x=dates,
+            y=data["trough_ma_close"],
+            mode="lines",
+            name=f"MA{ma_days}",
+            line={"color": "#c77d16", "width": 1.5},
+            connectgaps=False,
+            hovertemplate=f"MA{ma_days}：%{{y:.2f}}<extra></extra>",
         ),
         row=1,
         col=1,
@@ -812,7 +825,7 @@ th{{background:#f5f5f5}}a{{color:#0969da}}code{{background:#f5f5f5;padding:2px 5
 </head>
 <body>
 <h1>策略五状态图表</h1>
-<p class="note">黄框表示每笔实际持仓，同一股票不重叠，包含波谷确认平仓、盈利后连续上涨平仓、止损和失效强平；持仓中延伸至最后数据日。黄色倒三角标记实际开仓，蓝色正三角标记平仓，紫色叉号标记策略异常；开仓信号、波谷确认日及平仓原因通过鼠标悬停查看。绿K为收盘低于开盘，候选回调仅按收盘价跌幅判断。</p>
+<p class="note">黄框表示每笔实际持仓，同一股票不重叠，包含波谷确认平仓、盈利后连续上涨平仓、止损和失效强平；持仓中延伸至最后数据日。黄色倒三角标记实际开仓，蓝色正三角标记平仓，紫色叉号标记策略异常；候选低点后首次收盘站上图中均线时确认波谷，最低点是事后回标，不能在最低点平仓。开仓信号、波谷确认日及平仓原因通过鼠标悬停查看。绿K为收盘低于开盘，候选回调仅按收盘价跌幅判断。</p>
 <p>状态来源：<code>{escape(str(states_csv))}</code></p>
 {f'<p>本次回测报告：{report_links}</p>' if report_links else ''}
 <p>正收益股票按汇总收益率从高到低排列，同收益按股票代码排序。汇总收益沿用逐股交易收益相加的口径，包含持仓中的浮动收益。</p>
@@ -869,7 +882,7 @@ def _trade_hover(trade: dict[str, Any]) -> str:
         f"<br>周期：{trade['cycle_id']} · 波峰序号：{trade['peak_number']}"
         f"<br>结束日实际状态：{trade.get('evaluation_observed_state', '-')}"
         f"<br>波谷确认日：{trade.get('evaluation_trough_confirm_date') or '-'}"
-        f"<br>结束日波谷观察上涨天数 / 最少：{_format_number(trade.get('evaluation_trough_up_days'), digits=0)} / {trade.get('trough_min_up_days', '-')}"
+        f"<br>结束日MA{trade['trough_ma_days']}：{_format_number(trade.get('evaluation_trough_ma_close'))}"
         f"<br>当日实际收盘：{_format_number(trade.get('evaluation_actual_close'))}"
         f"<br>持仓期间及平仓日跳过信号：{len(trade.get('skipped_entries', []))}"
     )
@@ -901,7 +914,8 @@ def _state_hover(row: dict[str, Any]) -> str:
         "<br>实际开仓以黄色倒三角和交易记录为准"
         f"<br>信号参考起始日：{row.get('entry_pattern_start_date') or '-'}"
         f"<br>候选回调阈值：{_format_percent(row.get('candidate_pullback_pct'))}"
-        f"<br>波谷候选观察上涨天数 / 最少：{_number_or_zero(row.get('trough_up_days'))} / {_number_or_zero(row.get('trough_min_up_days'))}（候选及实际确认当天统计）"
+        f"<br>MA{_number_or_zero(row.get('trough_ma_days'))}（含当日）：{_format_number(row.get('trough_ma_close'))}"
+        f"<br>波谷实际确认日：{row.get('trough_confirm_date') or '-'}"
         f"<br>周期：{_number_or_zero(row.get('cycle_id'))}"
         f"<br>波峰序号：{_number_or_zero(row.get('peak_number'))}"
         f"<br>热度：{heat}"

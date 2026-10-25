@@ -18,7 +18,6 @@ from stock_selection.data.market_cap import load_cached_market_caps, merge_marke
 
 from stock_selection.screening_schemes.plan_two.lending import (
     DEFAULT_LENDING_ROOT,
-    read_lending_file,
     resolve_lending_file,
 )
 from stock_selection.strategies.stock_short_high_state.backtest import (
@@ -40,13 +39,17 @@ from stock_selection.strategies.stock_short_high_state.screen import (
     DEFAULT_HIGH_HEAT_DAYS,
     DEFAULT_LOOKBACK_DAYS,
     DEFAULT_REBOUND_PCT,
-    DEFAULT_TROUGH_CONFIRM_DAYS,
+    DEFAULT_TROUGH_MA_DAYS,
     calculate_stock_short_states,
     read_cached_stock_daily,
 )
 from stock_selection.strategies.stock_short_high_state.visualization import (
     DEFAULT_CODES_FILE,
 )
+from stock_selection.strategies.stock_short_high_state.stock_pool import read_lending_stock_pool
+
+
+DEFAULT_LENDING_FILE = ROOT / "data_cache" / "htsc_margin_inventory" / "20261024.csv"
 
 
 def _parse_bool(value: str) -> bool:
@@ -69,9 +72,9 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--cache-root", default=None)
     parser.add_argument("--stock-code", action="append", default=None)
     parser.add_argument(
-        "--all-stocks", type=_parse_bool, default=True, metavar="True|False",
-        help="True: calculate all stocks (default); False: calculate only stocks "
-        "with normal lending status and positive available quantity on the report date. "
+        "--all-stocks", type=_parse_bool, default=False, metavar="True|False",
+        help="True: calculate all stocks; False: calculate only stocks in the "
+        "lendable pool with positive quantity (default). "
         "--stock-code further restricts either selection.",
     )
     parser.add_argument("--lookback-days", type=int, default=DEFAULT_LOOKBACK_DAYS)
@@ -90,11 +93,14 @@ def parse_args() -> argparse.Namespace:
         "--high-heat-days", type=int, default=DEFAULT_HIGH_HEAT_DAYS
     )
     parser.add_argument(
+        "--trough-ma-days",
         "--trough-confirm-days",
         "--trough-heat-days",
-        dest="trough_confirm_days",
+        dest="trough_ma_days",
         type=int,
-        default=DEFAULT_TROUGH_CONFIRM_DAYS,
+        default=DEFAULT_TROUGH_MA_DAYS,
+        help="Trailing close-price MA window for trough confirmation, including "
+        "today; confirm on the first later close above the MA (default: %(default)s).",
     )
     parser.add_argument("--include-st", action="store_true")
     parser.add_argument("--write-report", action="store_true",default=True)
@@ -106,7 +112,11 @@ def parse_args() -> argparse.Namespace:
         "stocks for charts; gains are ordered descending and duplicates removed.",
     )
     parser.add_argument("--records-root", default=str(DEFAULT_OUTPUT_ROOT))
-    parser.add_argument("--lending-file", default=None)
+    parser.add_argument(
+        "--lending-file", default=DEFAULT_LENDING_FILE,
+        help="HTSC inventory CSV or legacy broker lending export; snapshot date "
+        "may be on or before --date (default: %(default)s).",
+    )
     parser.add_argument("--lending-root", default=str(DEFAULT_LENDING_ROOT))
     return parser.parse_args()
 
@@ -116,26 +126,29 @@ def main() -> int:
     args = parse_args()
     lending_path = None
     lending_data = None
+    lending_date = None
     eligible_codes: set[str] = set()
     if not args.all_stocks or args.write_report:
         lending_path = _resolve_optional_lending_file(args)
         if lending_path is not None:
-            lending_data = read_lending_file(lending_path)
+            lending_data, lending_selection_rule = read_lending_stock_pool(lending_path)
             lending_dates = set(lending_data["lending_date"].dropna().astype(str))
-            if lending_dates != {str(args.date)}:
+            if len(lending_dates) != 1:
                 raise ValueError(
-                    "lending data date must match the strategy report date: "
-                    f"expected {args.date}, found {', '.join(sorted(lending_dates))}"
+                    "lending data must contain exactly one snapshot date: "
+                    f"found {', '.join(sorted(lending_dates)) or 'none'}"
                 )
-            eligible_lending = lending_data[
-                lending_data["available_quantity"].gt(0)
-                & lending_data["lending_status"].eq("正常")
-                & lending_data["ts_code"].ne("")
-            ]
+            lending_date = next(iter(lending_dates))
+            if lending_date > str(args.date).replace("-", ""):
+                raise ValueError(
+                    "lending data date must be on or before the strategy report date: "
+                    f"report {args.date}, snapshot {lending_date}"
+                )
+            eligible_lending = lending_data[lending_data["eligible"]]
             eligible_codes = set(eligible_lending["ts_code"])
         elif not args.all_stocks:
             raise FileNotFoundError(
-                "--all-stocks False requires a securities-lending file for "
+                "--all-stocks False requires a securities-lending file on or before "
                 f"{args.date}; specify --lending-file or --lending-root."
             )
     stock_codes = args.stock_code
@@ -160,7 +173,7 @@ def main() -> int:
         confirm_drawdown_pct=args.confirm_drawdown_pct,
         rebound_pct=args.rebound_pct,
         high_heat_days=args.high_heat_days,
-        trough_confirm_days=args.trough_confirm_days,
+        trough_ma_days=args.trough_ma_days,
         stock_codes=stock_codes,
         stock_basic=basic,
         include_st=args.include_st,
@@ -183,7 +196,7 @@ def main() -> int:
         confirm_drawdown_pct=args.confirm_drawdown_pct,
         rebound_pct=args.rebound_pct,
         high_heat_days=args.high_heat_days,
-        trough_confirm_days=args.trough_confirm_days,
+        trough_ma_days=args.trough_ma_days,
     )
     if args.write_report:
         backtest = build_short_trade_backtest(states, as_of_date=args.date)
@@ -233,10 +246,10 @@ def main() -> int:
             lending_backtest = filter_short_trade_backtest_by_stock_pool(
                 backtest,
                 eligible_codes,
-                pool_label=f"{args.date}可融券股票池",
-                pool_date=args.date,
+                pool_label=f"{lending_date}可融券股票池",
+                pool_date=lending_date,
                 source_file=str(lending_path),
-                selection_rule="融券状态正常且可用数量大于0",
+                selection_rule=lending_selection_rule,
                 source_record_count=len(lending_data),
                 matched_state_stock_count=len(
                     eligible_codes.intersection(set(states["ts_code"]))
@@ -285,6 +298,7 @@ def _resolve_optional_lending_file(args: argparse.Namespace) -> Path | None:
             as_of_date=args.date,
             lending_file=args.lending_file,
             lending_root=args.lending_root,
+            allow_previous=True,
         )
     except FileNotFoundError:
         if args.lending_file is not None:
