@@ -11,10 +11,24 @@ from typing import Any
 import numpy as np
 import pandas as pd
 
+from stock_selection.strategies.stock_short_high_state.industry_state import (
+    BLOCK_NAMES, industry_filter_metadata, industry_rule_notes,
+)
+
+from stock_selection.strategies.stock_short_high_state.cost_zone import (
+    DEFAULT_COST_PEAK_WINDOW_DAYS, BREAKOUT_REASON_LABELS, COST_ZONE_STATUS_LABELS,
+    cost_zone_rule_notes, format_cost_peaks,
+)
 from stock_selection.data.market_cap import format_market_cap
 from stock_selection.strategies.stock_short_high_state.screen import (
+    BREAKOUT_BASELINE_RULE,
     DEFAULT_CANDIDATE_PULLBACK_PCT,
+    DEFAULT_MIN_BREAKOUT_GAIN_PCT,
     latest_stock_short_states,
+)
+from stock_selection.strategies.stock_short_high_state.stock_pool import (
+    SHORTABLE_STAGES,
+    SHORTABLE_STOCK_COLUMNS,
 )
 
 
@@ -40,6 +54,8 @@ def build_stock_short_state_report(
     as_of_date: str,
     lookback_days: int,
     candidate_pullback_pct: float = DEFAULT_CANDIDATE_PULLBACK_PCT,
+    min_breakout_gain_pct: float = DEFAULT_MIN_BREAKOUT_GAIN_PCT,
+    cost_peak_window_days: int = DEFAULT_COST_PEAK_WINDOW_DAYS,
     confirm_drawdown_pct: float,
     rebound_pct: float,
     high_heat_days: int,
@@ -59,11 +75,15 @@ def build_stock_short_state_report(
     return {
         "metadata": {
             "report_type": "stock_short_high_state",
+            "industry_filter": industry_filter_metadata(states),
             "as_of_date": as_of_date,
             "lookback_days": lookback_days,
             "high_candidate_formula": "close >= max(previous lookback_days closes)",
             "candidate_pullback_rule": "DRAWDOWN_FROM_RUNNING_HIGH_CLOSE",
             "candidate_pullback_pct": candidate_pullback_pct,
+            "min_breakout_gain_pct": min_breakout_gain_pct,
+            "breakout_baseline": BREAKOUT_BASELINE_RULE,
+            "cost_peak_window_days": cost_peak_window_days,
             "confirm_drawdown_pct": confirm_drawdown_pct,
             "rebound_pct": rebound_pct,
             "high_heat_days": high_heat_days,
@@ -93,9 +113,11 @@ def render_stock_short_state_markdown(report: dict[str, Any]) -> str:
         "",
         "## 默认规则",
         "",
+        *(f"- {rule}" for rule in industry_rule_notes(metadata)),
         f"- 半年窗口：{metadata['lookback_days']}个交易日",
         f"- 高点候选条件：当日收盘价达到或超过前{metadata['lookback_days']}个交易日最高收盘价（不含当日，包含等于）",
         f"- 候选回调：收盘价从运行最高收盘价回落至少{metadata['candidate_pullback_pct']:.1%}，不要求K线颜色或连续下跌天数",
+        f"- {cost_zone_rule_notes(metadata['cost_peak_window_days'])}最低突破涨幅：{metadata['min_breakout_gain_pct']:.1%}",
         f"- 最高点确认回落：{metadata['confirm_drawdown_pct']:.1%}",
         f"- 波峰开启反弹：{metadata['rebound_pct']:.1%}",
         f"- 最高点热度窗口：{metadata['high_heat_days']}个交易日",
@@ -110,11 +132,11 @@ def render_stock_short_state_markdown(report: dict[str, Any]) -> str:
         "",
         "## 最新状态",
         "",
-        "| 股票 | 日期 | 收盘价 | 总市值 | 流通市值 | 枚举值 | 状态 | 波峰序号 | 热度 |",
-        "| --- | --- | ---: | ---: | ---: | ---: | --- | ---: | ---: |",
+        "| 股票 | 日期 | 收盘价 | 总市值 | 流通市值 | 枚举值 | 状态 | 波峰序号 | 热度 | 历史峰值 | 成本区 | 峰值均值 | 冻结日期 | 突破涨幅 | 过滤原因 |",
+        "| --- | --- | ---: | ---: | ---: | ---: | --- | ---: | ---: | --- | --- | ---: | --- | ---: | --- |",
     ]
     if not report["latest_states"]:
-        lines.append("| - | - | - | - | - | - | - | - | - |")
+        lines.append("| " + " | ".join(["-"] * 15) + " |")
     for row in report["latest_states"]:
         heat = "-" if row.get("heat") is None else f"{row['heat']:.2%}"
         lines.append(
@@ -122,7 +144,11 @@ def render_stock_short_state_markdown(report: dict[str, Any]) -> str:
             f"{row['trade_date']} | {row['close']:.2f} | "
             f"{format_market_cap(row.get('total_mv'))} | "
             f"{format_market_cap(row.get('circ_mv'))} | {row['state']} | "
-            f"{row['state_description']} | {row['peak_number']} | {heat} |"
+            f"{row['state_description']} | {row['peak_number']} | {heat} | "
+            f"{format_cost_peaks(row.get('cost_peak_points'))} | "
+            f"{_format_number(row.get('cost_zone_low'))}～{_format_number(row.get('cost_zone_high'))} | "
+            f"{_format_number(row.get('breakout_base_close'))} | {row.get('cost_zone_freeze_date') or '-'} | "
+            f"{_format_percent(row.get('breakout_gain_pct'))} | {BREAKOUT_REASON_LABELS.get(row.get('entry_breakout_reason'), '-')} |"
         )
     return "\n".join(lines) + "\n"
 
@@ -228,6 +254,7 @@ def render_short_trade_backtest_markdown(
             "## 总体统计",
             "",
             f"- 实际开仓数：{summary['signals']}",
+            *([f"- 空仓时被行业过滤拦截的信号：{summary['industry_blocked_signals']}（原始信号与原因见同批次 industry_blocked_entries.csv）"] if "industry_blocked_signals" in summary else []),
             f"- 因已有持仓跳过的开仓信号：{summary['skipped_while_holding']}",
             f"- 因平仓当日跳过的开仓信号：{summary['skipped_on_exit_day']}",
             f"- 已完成：{summary['completed_trades']}",
@@ -354,6 +381,7 @@ def render_short_trade_backtest_html(backtest: dict[str, Any]) -> str:
 
     summary_items = [
         ("实际开仓数", summary["signals"]),
+        *([("空仓时行业拦截信号", summary["industry_blocked_signals"])] if "industry_blocked_signals" in summary else []),
         ("持仓期间跳过信号", summary["skipped_while_holding"]),
         ("平仓当日跳过信号", summary["skipped_on_exit_day"]),
         ("已完成", summary["completed_trades"]),
@@ -499,6 +527,7 @@ th:first-child,td:first-child,th:nth-child(3),td:nth-child(3),th:nth-child(4),td
 {notes_html}
 <h2>总体统计</h2>
 <div class="metrics">{summary_html}</div>
+<p><a href="industry_blocked_entries.csv">下载本批次行业拦截明细 CSV</a>（含二级行业、当日状态、回撤、反弹与阻止原因；市值分组的拦截数见主报告）</p>
 <h2>按开仓状态统计</h2>
 <table class="state-table">
 <thead><tr><th>开仓状态</th><th>实际开仓</th><th>完成</th><th>持仓中</th><th>失效平仓</th><th>胜率</th><th>平均收益</th><th>中位收益</th><th>最差收益</th><th>平均持有日</th></tr></thead>
@@ -556,6 +585,162 @@ def _records(data: pd.DataFrame) -> list[dict[str, Any]]:
     return [_json_safe(record) for record in data.to_dict("records")]
 
 
+def save_shortable_stock_list(
+    report: dict[str, Any], *, output_directory: str | Path,
+) -> dict[str, Path]:
+    """Save the current lendable stock list beside this run's backtest reports."""
+    directory = Path(output_directory)
+    directory.mkdir(parents=True, exist_ok=True)
+    paths = {suffix: directory / f"shortable_stocks.{suffix}" for suffix in ("csv", "md", "html")}
+    pd.DataFrame(report["stocks"], columns=SHORTABLE_STOCK_COLUMNS).to_csv(
+        paths["csv"], index=False, encoding="utf-8-sig",
+    )
+    paths["md"].write_text(render_shortable_stocks_markdown(report), encoding="utf-8")
+    paths["html"].write_text(render_shortable_stocks_html(report), encoding="utf-8")
+    return paths
+
+
+_SHORTABLE_HEADERS = (
+    "股票代码", "名称", "阶段", "阶段说明", "实际状态", "行情日期", "收盘价",
+    "高点日期", "本轮高点", "回落幅度", "均线", "均线值", "波峰序号",
+    "可融券数量（股）", "实际可融数量（股）", "核验状态", "查询时间", "券源日期",
+    "峰值窗口", "已确认峰值（日期、价格、确认日期）", "峰值数量", "成本区下沿", "成本区上沿", "成本均值",
+    "成本区状态", "冻结日期", "冻结以来最高收盘价", "突破过滤原因",
+    "突破涨幅", "最低突破涨幅", "突破过滤", "行情日开仓信号",
+    "二级行业", "行业状态", "行业数据状态", "行业收盘价", "行业窗口最高收盘价", "行业窗口最低收盘价",
+    "行业回撤", "行业反弹", "行业过滤", "行业阻止原因",
+)
+
+
+def _shortable_values(row: dict[str, Any]) -> list[str]:
+    return [
+        row["ts_code"], row["stock_name"], row["stage_label"], row["stage_detail"],
+        f"{row['observed_state_name']} ({row['observed_state']})", row["trade_date"],
+        _format_number(row["close"]), row["reference_high_date"],
+        _format_number(row["reference_high_close"]), _format_percent(row["drawdown_from_high_pct"]),
+        f"MA{row['trough_ma_days']}", _format_number(row["trough_ma_close"]),
+        str(row["peak_number"]), str(row["lendable_qty"]),
+        str(row["actual_sellable_qty"]) if row["actual_sellable_qty"] is not None else "未知",
+        {"available": "核验有券", "zero": "核验无券", "error": "查询失败", "unverified": "未核验"}.get(row["verification_status"], row["verification_status"]),
+        row["queried_at"] or "-", row["lending_date"],
+        _format_number(row.get("cost_peak_window_days"), digits=0), format_cost_peaks(row.get("cost_peak_points")),
+        _format_number(row.get("cost_peak_count"), digits=0), _format_number(row.get("cost_zone_low")),
+        _format_number(row.get("cost_zone_high")), _format_number(row.get("breakout_base_close")),
+        COST_ZONE_STATUS_LABELS.get(row.get("cost_zone_status"), "-"), row.get("cost_zone_freeze_date") or "-",
+        _format_number(row.get("cost_zone_high_close")), BREAKOUT_REASON_LABELS.get(row.get("entry_breakout_reason"), "-"),
+        _format_percent(row.get("breakout_gain_pct")),
+        _format_percent(row.get("min_breakout_gain_pct")),
+        "通过" if row.get("entry_breakout_qualified") else "未通过",
+        "是" if row["has_entry_signal"] else "否",
+        f"{row.get('industry_name') or '-'} {row.get('industry_code') or ''}",
+        row.get("industry_state_name") or "-", row.get("industry_data_status") or "-",
+        _format_number(row.get("industry_close")), _format_number(row.get("industry_high_close")),
+        _format_number(row.get("industry_low_close")), _format_percent(row.get("industry_drawdown_pct")),
+        _format_percent(row.get("industry_rebound_pct")),
+        "关闭" if not row.get("industry_filter_enabled") else ("通过" if row.get("entry_industry_qualified") else "拦截"),
+        BLOCK_NAMES.get(row.get("entry_blocked_reason"), row.get("entry_blocked_reason") or "-"),
+    ]
+
+
+def _shortable_notes(report: dict[str, Any]) -> list[str]:
+    metadata = report["metadata"]
+    summary = report["summary"]
+    excluded = "；".join(f"{reason} {count}只" for reason, count in summary["excluded"].items()) or "无"
+    notes = [
+        f"报告日期：{metadata['as_of_date']}；券源快照日期：{metadata['pool_date']}。可融券数量与实际可融数量分别列示。",
+        f"券源文件：{metadata['source_file']}；筛选规则：{metadata['selection_rule']}。",
+        *industry_rule_notes(metadata),
+        f"范围内可融券名单证券 {summary['eligible_stocks_in_scope']}只，列入以下阶段 {summary['stocks']}只；未列入：{excluded}。",
+        f"候选回落阈值 {_format_percent(metadata['candidate_pullback_pct'])}，高点确认阈值 {_format_percent(metadata['confirm_drawdown_pct'])}。确认回撤、波谷和反弹按当日实际状态划分。",
+        "行情日期为各股票最近的有效交易日，可能早于报告日期。阶段使用当日实际状态，不使用事后回标的高低点标签。",
+        "开仓信号对应表中行情日期的候选回调事件；是否实际开仓仍由持仓规则判断。",
+        cost_zone_rule_notes(metadata.get("cost_peak_window_days", DEFAULT_COST_PEAK_WINDOW_DAYS)),
+    ]
+    if metadata.get("actual_quantity_verified"):
+        notes.append(
+            f"按可融券名单计算，不按数量或核验状态筛选；文件内实际数量为0 {summary['zero_actual_quantity']}只，查询失败 {summary['unverified_quantity']}只，均保留参与计算。列表仍按上述阶段展示，查询失败的实际数量显示未知。数量仅代表各行查询时间的结果。"
+        )
+    else:
+        notes.append("此文件未包含实际数量核验结果，名单中的证券均参与计算，包括可融券数量为0的证券；实际可融数量显示未知。")
+    if metadata.get("partial_snapshot"):
+        notes.append("使用最新查询断点文件，扫描尚未完成；未查询或查询失败的证券不能据此认定有券。")
+    return notes
+
+
+def render_shortable_stocks_markdown(report: dict[str, Any]) -> str:
+    lines = [
+        f"# 策略五：可做空股票状态列表 - {report['metadata']['as_of_date']}",
+        "", "[打开彩色 HTML 列表](./shortable_stocks.html) · [下载 CSV](./shortable_stocks.csv)",
+        "", *(f"- {note}" for note in _shortable_notes(report)), "",
+    ]
+    for stage, label in SHORTABLE_STAGES.items():
+        rows = [row for row in report["stocks"] if row["stage"] == stage]
+        lines.extend([
+            f"## {label}（{len(rows)}只）", "",
+            "| " + " | ".join(_SHORTABLE_HEADERS) + " |",
+            "| " + " | ".join("---" for _ in _SHORTABLE_HEADERS) + " |",
+        ])
+        for row in rows:
+            values = [escape(value).replace("|", "&#124;").replace("\n", " ") for value in _shortable_values(row)]
+            lines.append("| " + " | ".join(values) + " |")
+        if not rows:
+            lines.append("| " + " | ".join("-" for _ in _SHORTABLE_HEADERS) + " |")
+        lines.append("")
+    return "\n".join(lines)
+
+
+def render_shortable_stocks_html(report: dict[str, Any]) -> str:
+    title = f"策略五：可做空股票状态列表 - {report['metadata']['as_of_date']}"
+    notes = "".join(f"<li>{escape(note)}</li>" for note in _shortable_notes(report))
+    cards = "".join(
+        f'<a class="card {stage}" href="#{stage}">{escape(label)} '
+        f'<strong>{report["summary"]["by_stage"][stage]}</strong>只</a>'
+        for stage, label in SHORTABLE_STAGES.items()
+    )
+    headers = "".join(f"<th>{escape(value)}</th>" for value in _SHORTABLE_HEADERS)
+    sections = []
+    for stage, label in SHORTABLE_STAGES.items():
+        rows = [row for row in report["stocks"] if row["stage"] == stage]
+        body = "".join(
+            '<tr>' + ''.join(f'<td>{escape(value)}</td>' for value in _shortable_values(row)) + '</tr>'
+            for row in rows
+        ) or f'<tr><td colspan="{len(_SHORTABLE_HEADERS)}">此阶段暂无股票</td></tr>'
+        sections.append(
+            f'<section id="{stage}" class="{stage}"><h2>{escape(label)}（{len(rows)}只）</h2>'
+            f'<div class="table-wrap"><table><thead><tr>{headers}</tr></thead><tbody>{body}</tbody></table></div></section>'
+        )
+    return f"""<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{escape(title)}</title>
+<style>
+body{{font-family:Arial,"Microsoft YaHei",sans-serif;margin:24px;color:#182230;background:#f8fafc}}
+a{{color:#0969da}}.cards{{display:flex;gap:12px;flex-wrap:wrap;margin:24px 0}}
+.card{{padding:16px;border:1px solid #cbd5e1;border-radius:8px;text-decoration:none;color:#182230}}
+.card strong{{font-size:24px;margin-left:12px}}li{{margin:7px 0}}section{{margin:28px 0}}
+section h2{{padding:12px 16px;border-radius:8px 8px 0 0;margin:0}}
+.HIGH_NO_PULLBACK.card,.HIGH_NO_PULLBACK h2{{background:#dbeafe}}
+.PULLBACK.card,.PULLBACK h2{{background:#fef3c7}}
+.CONFIRMED_PULLBACK.card,.CONFIRMED_PULLBACK h2{{background:#fee2e2}}
+.BOTTOM_REBOUND.card,.BOTTOM_REBOUND h2{{background:#dcfce7}}
+.table-wrap{{overflow-x:auto;background:white}}table{{border-collapse:collapse;width:100%;white-space:nowrap}}
+th,td{{border:1px solid #e2e8f0;padding:10px;text-align:left;font-variant-numeric:tabular-nums}}
+th{{background:#f1f5f9}}tbody tr:hover{{background:#f8fafc}}
+</style>
+</head>
+<body>
+<h1>{escape(title)}</h1>
+<p><a href="shortable_stocks.csv">下载 CSV</a> · <a href="shortable_stocks.md">查看 Markdown</a> · <a href="short_trade_backtest.html">本次回测报告</a></p>
+<ul>{notes}</ul>
+<nav class="cards">{cards}</nav>
+{''.join(sections)}
+</body>
+</html>
+"""
+
+
 def _json_safe(value: Any) -> Any:
     if isinstance(value, dict):
         return {key: _json_safe(item) for key, item in value.items()}
@@ -573,9 +758,10 @@ def _json_safe(value: Any) -> Any:
 _TRADE_AUDIT_HEADERS = (
     "股票", "周期/波峰", "开仓日", "结束/估值日", "结束原因",
     "当日实际状态 / 收盘 / 波谷确认日",
-    "开仓信号 / 起始日 / 判定高点", "跳过信号数",
+    "开仓信号 / 起始日 / 判定高点", "历史峰值 / 成本区及均值 / 冻结日期 / 突破涨幅", "跳过信号数",
     "结束日均线 / 数值",
     "结束日开仓后连续收盘上涨天数",
+    "开仓时二级行业 / 状态 / 回撤 / 反弹",
 )
 
 
@@ -588,18 +774,23 @@ def _trade_audit_values(trade: dict[str, Any]) -> list[str]:
         str(trade["status_reason"]),
         f"{trade.get('evaluation_observed_state') or '-'} / {_format_number(trade.get('evaluation_actual_close'))} / {trade.get('evaluation_trough_confirm_date') or '-'}",
         f"{_ENTRY_SOURCE_LABELS.get(trade['entry_source'], trade['entry_source'])} / {trade.get('entry_pattern_start_date') or '-'} / {_format_number(trade.get('entry_reference_high_close'))}",
+        f"{format_cost_peaks(trade.get('entry_cost_peak_points'))} / 区域 {_format_number(trade.get('entry_cost_zone_low'))}～{_format_number(trade.get('entry_cost_zone_high'))} / 历史峰值均值 {_format_number(trade.get('entry_breakout_base_close'))} / 冻结 {trade.get('entry_cost_zone_freeze_date') or '-'} / {_format_percent(trade.get('entry_breakout_gain_pct'))}",
         str(len(trade.get("skipped_entries", []))),
         f"MA{trade['trough_ma_days']} / {_format_number(trade.get('evaluation_trough_ma_close'))}",
         _format_number(trade.get("evaluation_consecutive_up_days"), digits=0),
+        f"{trade.get('entry_industry_name') or '-'} {trade.get('entry_industry_code') or ''} / {trade.get('entry_industry_state_name') or '-'} / {_format_percent(trade.get('entry_industry_drawdown_pct'))} / {_format_percent(trade.get('entry_industry_rebound_pct'))}",
     ]
 
 
 def _entry_rules(metadata: dict[str, Any]) -> list[str]:
     pullback = _format_percent(metadata["entry_rule"]["candidate_pullback_pct"])
+    breakout = _format_percent(metadata["entry_rule"].get("min_breakout_gain_pct", DEFAULT_MIN_BREAKOUT_GAIN_PCT))
     entry_states = "、".join(metadata["entry_states"])
     return [
         f"参与做空的开仓状态：{entry_states}。未列入范围的波峰保留状态和事件，但不新开仓，也不计入持仓冲突跳过信号数。",
+        *industry_rule_notes(metadata),
         f"候选回调：1 - 当日收盘价 / 本轮运行最高收盘价 至少{pullback}时触发，包含等于；不要求冲高、绿K或连续下跌天数。",
+        cost_zone_rule_notes(metadata["entry_rule"].get("cost_peak_window_days", DEFAULT_COST_PEAK_WINDOW_DAYS)) + f"最低突破涨幅：{breakout}。",
         "候选阶段每天按跌幅输出状态：达到候选回调阈值为15，回升到阈值以内为10；每次从阈值以内重新达到阈值时保存新的候选回调信号，同一行情周期内可多次触发。连续停留在回调区间不逐日重复触发；收盘达到或超过候选高点时更新高点。每个实际 PEAK_n 序号只保存首次事件，是否开仓由上述范围决定。",
         "按开仓范围内的独立 entry_signal 在当日收盘开仓，不回填到高点日；同日即使状态转为41，开仓信号仍保留，开仓当天不正常平仓。",
         "每只股票同时只持有一笔；持仓期间或平仓当日的新开仓信号跳过，不延后补开。平仓后可接受同一行情周期内后续新的候选回调信号，无需等待新周期，也不要求先创新高。旧信号不重放，连续回调不因空仓自动重开。不同股票独立处理。",

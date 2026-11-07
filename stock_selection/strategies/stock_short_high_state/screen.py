@@ -9,7 +9,13 @@ from typing import Any, Iterable
 import numpy as np
 import pandas as pd
 
+from stock_selection.strategies.stock_short_high_state.industry_state import attach_industry_states
+
 from stock_selection.data.tushare_cache import DEFAULT_CACHE_ROOT
+from stock_selection.strategies.stock_short_high_state.cost_zone import (
+    BREAKOUT_BASELINE_RULE, BREAKOUT_BASE_KIND_LABELS, COST_ZONE_COLUMNS,
+    DEFAULT_COST_PEAK_WINDOW_DAYS, iter_cost_zone_fields,
+)
 
 """默认参数：
 
@@ -24,6 +30,7 @@ from stock_selection.data.tushare_cache import DEFAULT_CACHE_ROOT
 
 DEFAULT_LOOKBACK_DAYS = 120
 DEFAULT_CANDIDATE_PULLBACK_PCT = 0.1
+DEFAULT_MIN_BREAKOUT_GAIN_PCT = 0.5
 DEFAULT_CONFIRM_DRAWDOWN_PCT = 0.2
 DEFAULT_REBOUND_PCT = 0.10
 DEFAULT_HIGH_HEAT_DAYS = 10
@@ -86,6 +93,16 @@ OUTPUT_COLUMNS = [
     "vol",
     "lookback_days",
     "candidate_pullback_pct",
+    "min_breakout_gain_pct",
+    "breakout_baseline_rule",
+    *COST_ZONE_COLUMNS,
+    "breakout_base_date",
+    "breakout_base_close",
+    "breakout_base_kind",
+    "breakout_base_start_date",
+    "breakout_base_days",
+    "breakout_gain_pct",
+    "entry_breakout_qualified",
     "trough_ma_days",
     "trough_ma_close",
     "total_mv",
@@ -121,6 +138,8 @@ def calculate_stock_short_states(
     as_of_date: str | None = None,
     lookback_days: int = DEFAULT_LOOKBACK_DAYS,
     candidate_pullback_pct: float = DEFAULT_CANDIDATE_PULLBACK_PCT,
+    min_breakout_gain_pct: float = DEFAULT_MIN_BREAKOUT_GAIN_PCT,
+    cost_peak_window_days: int = DEFAULT_COST_PEAK_WINDOW_DAYS,
     confirm_drawdown_pct: float = DEFAULT_CONFIRM_DRAWDOWN_PCT,
     rebound_pct: float = DEFAULT_REBOUND_PCT,
     high_heat_days: int = DEFAULT_HIGH_HEAT_DAYS,
@@ -138,7 +157,15 @@ def calculate_stock_short_states(
     This gate also applies when starting a new cycle after invalidation.
     Existing candidates keep tracking new highs.
     Pullback begins when the close falls at least ``candidate_pullback_pct``
-    from the running highest close. Entry signals are saved
+    from the running highest close. Candidate entry also requires that high
+    to rise at least ``min_breakout_gain_pct`` above the mean of confirmed
+    local closing peaks in the preceding lookback. A strict close above their
+    upper boundary freezes that set, independently of stock-state cycles.
+    It only unfreezes when the close returns to that original upper boundary;
+    rolling reconstruction resumes the next day. Local peaks are confirmed
+    using the full ``cost_peak_window_days`` window and only enter the next
+    day's baseline, so subsequent data cannot rewrite historical entries.
+    Entry signals are saved
     separately from historical state labels. The actual high is
     confirmed only after price falls ``confirm_drawdown_pct``. A trough region
     is confirmed on the first later close strictly above the trailing
@@ -159,6 +186,8 @@ def calculate_stock_short_states(
     _validate_parameters(
         lookback_days=lookback_days,
         candidate_pullback_pct=candidate_pullback_pct,
+        min_breakout_gain_pct=min_breakout_gain_pct,
+        cost_peak_window_days=cost_peak_window_days,
         confirm_drawdown_pct=confirm_drawdown_pct,
         rebound_pct=rebound_pct,
         high_heat_days=high_heat_days,
@@ -176,7 +205,7 @@ def calculate_stock_short_states(
     if not include_st:
         data = data[~data["stock_name"].map(_is_st_name)]
     if data.empty:
-        return pd.DataFrame(columns=OUTPUT_COLUMNS)
+        return attach_industry_states(pd.DataFrame(columns=OUTPUT_COLUMNS), enabled=False)
 
     rows: list[dict[str, Any]] = []
     for ts_code, group in data.groupby("ts_code", sort=True):
@@ -187,15 +216,19 @@ def calculate_stock_short_states(
                 stock_name=_latest_name(group["stock_name"]),
                 lookback_days=lookback_days,
                 candidate_pullback_pct=candidate_pullback_pct,
+                min_breakout_gain_pct=min_breakout_gain_pct,
+                cost_peak_window_days=cost_peak_window_days,
                 confirm_drawdown_pct=confirm_drawdown_pct,
                 rebound_pct=rebound_pct,
                 high_heat_days=high_heat_days,
                 trough_ma_days=trough_ma_days,
             )
         )
-    return pd.DataFrame(rows, columns=OUTPUT_COLUMNS).sort_values(
+    result = pd.DataFrame(rows, columns=OUTPUT_COLUMNS).sort_values(
         ["trade_date", "ts_code"], ascending=[True, True]
     ).reset_index(drop=True)
+    # Stock signals are independent; the CLI attaches the shared industry gate.
+    return attach_industry_states(result, enabled=False)
 
 
 def latest_stock_short_states(states: pd.DataFrame) -> pd.DataFrame:
@@ -362,6 +395,8 @@ def _calculate_one_stock(
     stock_name: str,
     lookback_days: int,
     candidate_pullback_pct: float,
+    min_breakout_gain_pct: float,
+    cost_peak_window_days: int,
     confirm_drawdown_pct: float,
     rebound_pct: float,
     high_heat_days: int,
@@ -400,13 +435,17 @@ def _calculate_one_stock(
             vol=volumes[position],
             lookback_days=lookback_days,
             candidate_pullback_pct=candidate_pullback_pct,
+            min_breakout_gain_pct=min_breakout_gain_pct,
             trough_ma_days=trough_ma_days,
             trough_ma_close=trough_means[position],
         )
         for position in range(len(ordered_group))
     ]
-    """
-    """
+    for record, fields in zip(records, iter_cost_zone_fields(
+        closes, dates, lookback_days=lookback_days,
+        peak_window_days=cost_peak_window_days, min_gain_pct=min_breakout_gain_pct,
+    )):
+        record.update(fields)
 
     phase = "normal"  #判断当前属于哪个阶段
     next_cycle_id = 0
@@ -461,7 +500,7 @@ def _calculate_one_stock(
             in_pullback = state == StockShortState.HIGH_CANDIDATE_PULLBACK
             # A fresh threshold crossing is a new event, even in the same cycle.
             # The backtest alone decides whether an existing position blocks it.
-            if in_pullback and not candidate_in_pullback:
+            if in_pullback and not candidate_in_pullback and records[position]["entry_breakout_qualified"]:
                 _set_entry_signal(
                     records[position], state,
                     signal_type="CANDIDATE_DRAWDOWN_THRESHOLD",
@@ -709,6 +748,7 @@ def _base_record(
     vol: float,
     lookback_days: int,
     candidate_pullback_pct: float,
+    min_breakout_gain_pct: float,
     trough_ma_days: int,
     trough_ma_close: float,
 ) -> dict[str, Any]:
@@ -723,6 +763,15 @@ def _base_record(
         "vol": float(vol),
         "lookback_days": int(lookback_days),
         "candidate_pullback_pct": float(candidate_pullback_pct),
+        "min_breakout_gain_pct": float(min_breakout_gain_pct),
+        "breakout_baseline_rule": BREAKOUT_BASELINE_RULE,
+        "breakout_base_date": "",
+        "breakout_base_close": np.nan,
+        "breakout_base_kind": "",
+        "breakout_base_start_date": "",
+        "breakout_base_days": 0,
+        "breakout_gain_pct": np.nan,
+        "entry_breakout_qualified": False,
         "trough_ma_days": int(trough_ma_days),
         "trough_ma_close": float(trough_ma_close),
         "total_mv": np.nan,
@@ -848,6 +897,12 @@ def _ratio_heat(value: float, reference: float) -> float:
 
 
 def _validate_parameters(**parameters: Any) -> None:
+    minimum = float(parameters["min_breakout_gain_pct"])
+    if not np.isfinite(minimum) or minimum < 0:
+        raise ValueError("min_breakout_gain_pct must be a finite non-negative number")
+    peak_window = parameters["cost_peak_window_days"]
+    if isinstance(peak_window, bool) or not isinstance(peak_window, (int, np.integer)) or peak_window < 3:
+        raise ValueError("cost_peak_window_days must be an integer of at least three")
     for name in ("lookback_days", "high_heat_days", "trough_ma_days"):
         if int(parameters[name]) <= 0:
             raise ValueError(f"{name} must be greater than zero")

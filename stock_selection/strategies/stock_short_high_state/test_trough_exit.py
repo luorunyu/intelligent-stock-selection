@@ -40,6 +40,8 @@ def _states(closes=None, *, lookback_days=3, volumes=1000):
             "vol": volumes,
         }),
         lookback_days=lookback_days,
+        # Exercise exits even when this short fixture has no 50% breakout.
+        min_breakout_gain_pct=0,
         high_heat_days=2,
         trough_ma_days=5,
     )

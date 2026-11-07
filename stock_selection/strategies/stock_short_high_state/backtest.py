@@ -9,8 +9,17 @@ from typing import Any, Iterable
 import numpy as np
 import pandas as pd
 
+from stock_selection.strategies.stock_short_high_state.industry_state import (
+    INDUSTRY_COLUMNS, industry_filter_metadata, validate_industry_fields,
+)
+
+from stock_selection.strategies.stock_short_high_state.cost_zone import (
+    COST_ZONE_COLUMNS, DEFAULT_COST_PEAK_WINDOW_DAYS, validate_cost_zone_fields,
+)
 from stock_selection.strategies.stock_short_high_state.screen import (
+    BREAKOUT_BASELINE_RULE,
     DEFAULT_CANDIDATE_PULLBACK_PCT,
+    DEFAULT_MIN_BREAKOUT_GAIN_PCT,
     DEFAULT_TROUGH_MA_DAYS,
     StockShortState,
 )
@@ -82,10 +91,11 @@ def build_short_trade_backtest(
     data = _normalise_states(states)
     data = data[data["trade_date"].le(_valid_date(as_of_date))]
     trades: list[dict[str, Any]] = []
+    industry_blocked_entries: list[dict[str, Any]] = []
     if not data.empty:
         for _, stock_rows in data.groupby("ts_code", sort=True):
             stock_rows = stock_rows.sort_values("trade_date").reset_index(drop=True)
-            trades.extend(_stock_trades(stock_rows, config=config))
+            trades.extend(_stock_trades(stock_rows, config=config, industry_blocked_entries=industry_blocked_entries))
 
     trades.sort(
         key=lambda trade: (
@@ -142,12 +152,21 @@ def build_short_trade_backtest(
                     if not data.empty else DEFAULT_CANDIDATE_PULLBACK_PCT
                 ),
                 "candidate_formula": "1 - close / running_high_close >= candidate_pullback_pct",
+                "min_breakout_gain_pct": (
+                    float(data["min_breakout_gain_pct"].iloc[0])
+                    if not data.empty else DEFAULT_MIN_BREAKOUT_GAIN_PCT
+                ),
+                "cost_peak_window_days": int(data["cost_peak_window_days"].iloc[0]) if not data.empty else DEFAULT_COST_PEAK_WINDOW_DAYS,
+                "lookback_days": int(data["lookback_days"].iloc[0]) if not data.empty and "lookback_days" in data else 120,
+                "breakout_formula": "cost_zone_high_close / breakout_base_close - 1 >= min_breakout_gain_pct",
+                "breakout_baseline": BREAKOUT_BASELINE_RULE,
                 "signal_source": "entry_signal",
                 "one_candidate_signal_per_cycle": False,
                 "candidate_signal_rule": "EACH_CROSSING_INTO_PULLBACK",
                 "candidate_rearm_rule": "DRAWDOWN_BELOW_CANDIDATE_PULLBACK_PCT",
             },
             "position_rule": "ONE_POSITION_PER_STOCK_NO_SAME_DAY_REENTRY",
+            "industry_filter": industry_filter_metadata(data),
             "invalidation_execution": "CURRENT_CLOSE_FORCE_EXIT_INCLUDED_IN_RETURNS",
             "invalidation_state": config.invalidation_state.name,
             "return_formula": "1 - exit_close / entry_close",
@@ -155,9 +174,10 @@ def build_short_trade_backtest(
             "max_drawdown_stop_pct": float(config.max_drawdown_pct),
             "stop_execution": "DAILY_CLOSE_TRIGGER_THRESHOLD_PRICE_FILL",
         },
-        "summary": _summarise_trades(trades),
+        "summary": {**_summarise_trades(trades), "industry_blocked_signals": len(industry_blocked_entries)},
         "by_entry_state": _summarise_by_entry_state(trades),
         "trades": trades,
+        "industry_blocked_entries": industry_blocked_entries,
     }
 
 
@@ -283,6 +303,7 @@ def filter_short_trade_backtest_by_stock_pool(
         trade for trade in backtest.get("trades", []) if trade.get("ts_code") in codes
     ]
     matched_trade_codes = {trade["ts_code"] for trade in trades}
+    blocked = [event for event in backtest.get("industry_blocked_entries", []) if event["ts_code"] in codes]
     return {
         "metadata": {
             **backtest.get("metadata", {}),
@@ -300,9 +321,10 @@ def filter_short_trade_backtest_by_stock_pool(
                 - len(trades),
             },
         },
-        "summary": _summarise_trades(trades),
+        "summary": {**_summarise_trades(trades), "industry_blocked_signals": len(blocked)},
         "by_entry_state": _summarise_by_entry_state(trades),
         "trades": trades,
+        "industry_blocked_entries": blocked,
     }
 
 
@@ -310,6 +332,7 @@ def _stock_trades(
     stock_rows: pd.DataFrame,
     *,
     config: ShortTradeBacktestConfig,
+    industry_blocked_entries: list[dict[str, Any]],
 ) -> list[dict[str, Any]]:
     """Process observable signals and one open position per stock chronologically."""
     trades: list[dict[str, Any]] = []
@@ -335,6 +358,14 @@ def _stock_trades(
 
         if entry_position is None:
             if has_signal:
+                if not row["entry_industry_qualified"]:
+                    industry_blocked_entries.append({
+                        "ts_code": row["ts_code"], "stock_name": row.get("stock_name", ""),
+                        "trade_date": row["trade_date"], "cycle_id": cycle_id,
+                        "entry_signal_type": row["entry_signal_type"],
+                        **{column: row[column] for column in INDUSTRY_COLUMNS},
+                    })
+                    continue
                 entry_position = position
                 running_equity_peak = 1.0
                 consecutive_up_days = 0
@@ -462,6 +493,20 @@ def _build_trade(
         "entry_pattern_start_date": _valid_date(entry_row["entry_pattern_start_date"]),
         "entry_reference_high_close": _optional_number(entry_row["entry_reference_high_close"]),
         "entry_candidate_pullback_pct": float(entry_row["candidate_pullback_pct"]),
+        **{f"entry_{column}": None if pd.isna(entry_row[column]) else entry_row[column].item() if isinstance(entry_row[column], np.generic) else entry_row[column] for column in COST_ZONE_COLUMNS},
+        "entry_breakout_base_close": _optional_number(entry_row["breakout_base_close"]),
+        "entry_breakout_base_date": _valid_date(entry_row["breakout_base_date"]),
+        "entry_breakout_base_kind": str(entry_row["breakout_base_kind"]),
+        "entry_breakout_base_start_date": _valid_date(entry_row["breakout_base_start_date"]),
+        "entry_breakout_base_days": int(entry_row["breakout_base_days"]),
+        "entry_breakout_gain_pct": _optional_number(entry_row["breakout_gain_pct"]),
+        "min_breakout_gain_pct": float(entry_row["min_breakout_gain_pct"]),
+        "entry_industry_code": str(entry_row["industry_code"]),
+        "entry_industry_name": str(entry_row["industry_name"]),
+        "entry_industry_state": str(entry_row["industry_state"]),
+        "entry_industry_state_name": str(entry_row["industry_state_name"]),
+        "entry_industry_drawdown_pct": _optional_number(entry_row["industry_drawdown_pct"]),
+        "entry_industry_rebound_pct": _optional_number(entry_row["industry_rebound_pct"]),
         "entry_date": entry_date,
         "entry_close": float(entry_close),
         "entry_total_mv": _optional_number(entry_row.get("total_mv")),
@@ -578,22 +623,28 @@ def _summarise_by_entry_state(
 
 def _normalise_states(states: pd.DataFrame) -> pd.DataFrame:
     required = {
+        *INDUSTRY_COLUMNS, *COST_ZONE_COLUMNS,
         "ts_code", "trade_date", "close", "state", "cycle_id", "peak_number",
         "observed_state", "observed_state_name", "trough_confirm_date",
         "open", "high", "entry_signal", "entry_signal_type",
         "entry_pattern_start_date", "entry_reference_high_close", "candidate_pullback_pct",
+        "min_breakout_gain_pct", "breakout_base_close", "breakout_gain_pct", "entry_breakout_qualified",
+        "breakout_baseline_rule", "breakout_base_date",
+        "breakout_base_kind", "breakout_base_start_date", "breakout_base_days",
         "trough_ma_days", "trough_ma_close",
     }
     if states is None or states.empty:
+        if states is not None and set(INDUSTRY_COLUMNS).issubset(states):
+            return validate_industry_fields(states)
         return pd.DataFrame(columns=sorted(required))
     missing = sorted(required.difference(states.columns))
     if missing:
         raise ValueError(
             f"states is missing required columns: {', '.join(missing)}. "
             "请先重新运行策略五 cli.py 生成新版 states.csv，再生成报告或画图；"
-            "旧文件无法还原均线确认波谷的规则或当日实际状态。"
+            "旧文件无法还原成本区突破涨幅过滤、均线确认波谷的规则或当日实际状态。"
         )
-    data = states.copy()
+    data = validate_cost_zone_fields(validate_industry_fields(states))
     for column, default in (
         ("stock_name", ""),
         ("state_start_date", ""),
@@ -607,13 +658,17 @@ def _normalise_states(states: pd.DataFrame) -> pd.DataFrame:
     for column in (
         "trade_date", "state_start_date",
         "entry_pattern_start_date", "trough_confirm_date",
+        "breakout_base_date", "breakout_base_start_date",
     ):
         data[column] = data[column].map(_valid_date)
     data["entry_signal_type"] = data["entry_signal_type"].fillna("").astype(str)
+    data["breakout_base_kind"] = data["breakout_base_kind"].fillna("").astype(str)
     for column in (
         "close", "open", "high", "state", "cycle_id", "peak_number",
         "observed_state", "entry_signal",
         "entry_reference_high_close", "candidate_pullback_pct",
+        "min_breakout_gain_pct", "breakout_base_close", "breakout_gain_pct",
+        "breakout_base_days",
         "trough_ma_days", "trough_ma_close",
     ):
         data[column] = pd.to_numeric(data[column], errors="coerce")
@@ -623,6 +678,8 @@ def _normalise_states(states: pd.DataFrame) -> pd.DataFrame:
         | ~np.isfinite(data["candidate_pullback_pct"])
         | data["candidate_pullback_pct"].le(0)
         | data["candidate_pullback_pct"].ge(1)
+        | ~np.isfinite(data["min_breakout_gain_pct"])
+        | data["min_breakout_gain_pct"].lt(0)
         | ~np.isfinite(data["trough_ma_days"])
         | data["trough_ma_days"].lt(2)
         | data["trough_ma_days"].mod(1).ne(0)
@@ -633,6 +690,21 @@ def _normalise_states(states: pd.DataFrame) -> pd.DataFrame:
         raise ValueError("实际状态、开仓信号或窗口无效，请重新运行策略五 CLI 生成 states.csv")
     if data["candidate_pullback_pct"].nunique() > 1:
         raise ValueError("states.csv 混用了不同候选回调阈值，请重新运行策略五 CLI")
+    if data["min_breakout_gain_pct"].nunique() > 1:
+        raise ValueError("states.csv 混用了不同突破涨幅阈值，请重新运行策略五 CLI")
+    if not data["breakout_baseline_rule"].eq(BREAKOUT_BASELINE_RULE).all():
+        raise ValueError("states.csv 未采用历史峰值成本区冻结的突破涨幅过滤规则，请重新运行策略五 CLI")
+    candidate_signals = data["entry_signal"].eq(int(StockShortState.HIGH_CANDIDATE_PULLBACK))
+    if (candidate_signals & data["min_breakout_gain_pct"].gt(0) & (
+        ~np.isfinite(data["breakout_base_close"]) | data["breakout_base_close"].le(0)
+        | data["breakout_base_date"].eq("")
+        | ~data["breakout_base_kind"].eq("COST_PEAK_MEAN")
+        | data["breakout_base_start_date"].eq("")
+        | data["breakout_base_start_date"].gt(data["breakout_base_date"])
+        | ~np.isfinite(data["breakout_gain_pct"])
+        | (data["breakout_gain_pct"] + 1e-12).lt(data["min_breakout_gain_pct"])
+    )).any():
+        raise ValueError("开仓信号未通过突破涨幅过滤，请重新运行策略五 CLI")
     if data["trough_ma_days"].nunique() > 1:
         raise ValueError("states.csv 混用了不同波谷确认均线窗口，请重新运行策略五 CLI")
     confirmed_today = (

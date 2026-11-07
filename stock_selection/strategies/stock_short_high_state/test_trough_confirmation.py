@@ -14,6 +14,8 @@ from stock_selection.strategies.stock_short_high_state.screen import (
 def _states(closes, **kwargs):
     # Keep the existing short MA5 fixtures explicit; MA8 cases override below.
     kwargs.setdefault("trough_ma_days", 5)
+    # These fixtures isolate confirmation/exits from the breakout entry filter.
+    kwargs.setdefault("min_breakout_gain_pct", 0)
     return calculate_stock_short_states(
         pd.DataFrame({
             "ts_code": "000001.SZ",

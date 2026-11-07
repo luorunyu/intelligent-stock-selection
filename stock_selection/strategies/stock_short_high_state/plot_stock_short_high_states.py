@@ -16,7 +16,6 @@ from stock_selection.strategies.stock_short_high_state.report import (
     DEFAULT_OUTPUT_ROOT,
 )
 from stock_selection.strategies.stock_short_high_state.visualization import (
-    DEFAULT_CODES_FILE,
     generate_stock_short_state_charts,
     resolve_states_csv,
 )
@@ -26,7 +25,11 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--date", default=None, help="State date, YYYYMMDD")
     parser.add_argument("--states-csv", default=None)
-    parser.add_argument("--codes-file", default=str(DEFAULT_CODES_FILE))
+    parser.add_argument(
+        "--codes-file", default=None,
+        help="Explicit stock-code list; an empty file draws all saved stocks. "
+        "By default use this run's chart_codes.txt or sample its own backtest.",
+    )
     parser.add_argument("--cache-root", default=None)
     parser.add_argument("--output-root", default=str(DEFAULT_OUTPUT_ROOT))
     parser.add_argument("--output", default=None)
