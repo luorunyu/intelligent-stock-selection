@@ -40,6 +40,7 @@ _TRADE_STATUS_LABELS = {
     "INVALIDATED": "已失效",
 }
 _ENTRY_SOURCE_LABELS = {
+    "PROFIT_REBOUND_REENTRY": "盈利平仓后上涨再回落重开",
     "PEAK_1_HIGH_RETEST_PULLBACK": "双峰反弹后回落达阈值",
     "PEAK_1_CONFIRMED_HIGH_THRESHOLD": "双峰接近确认高点",
     "CANDIDATE_DRAWDOWN_THRESHOLD": "候选高点回落达阈值",
@@ -256,6 +257,7 @@ def render_short_trade_backtest_markdown(
             "## 总体统计",
             "",
             f"- 实际开仓数：{summary['signals']}",
+            f"- 其中盈利平仓后上涨再回落重开：{summary.get('profit_rebound_reentry_trades', 0)}",
             *([f"- 空仓时被行业过滤拦截的信号：{summary['industry_blocked_signals']}（原始信号与原因见同批次 industry_blocked_entries.csv）"] if "industry_blocked_signals" in summary else []),
             f"- 因已有持仓跳过的开仓信号：{summary['skipped_while_holding']}",
             f"- 因平仓当日跳过的开仓信号：{summary['skipped_on_exit_day']}",
@@ -383,6 +385,7 @@ def render_short_trade_backtest_html(backtest: dict[str, Any]) -> str:
 
     summary_items = [
         ("实际开仓数", summary["signals"]),
+        ("盈利平仓后上涨再回落重开", summary.get("profit_rebound_reentry_trades", 0)),
         *([("空仓时行业拦截信号", summary["industry_blocked_signals"])] if "industry_blocked_signals" in summary else []),
         ("持仓期间跳过信号", summary["skipped_while_holding"]),
         ("平仓当日跳过信号", summary["skipped_on_exit_day"]),
@@ -764,6 +767,7 @@ _TRADE_AUDIT_HEADERS = (
     "第一波峰高点日期 / 收盘价 / 回落比例",
     "结束日均线 / 数值",
     "结束日开仓后连续收盘上涨天数",
+    "重开关联平仓日 / 价 / 上涨门槛 / 达标日 / 最高收盘",
     "开仓时二级行业 / 状态 / 回撤 / 反弹",
 )
 
@@ -782,6 +786,7 @@ def _trade_audit_values(trade: dict[str, Any]) -> list[str]:
         f"{trade.get('entry_peak_1_high_date') or '-'} / {_format_number(trade.get('entry_peak_1_high_close'))} / {_format_percent(trade.get('entry_peak_1_drawdown_pct'))}",
         f"MA{trade['trough_ma_days']} / {_format_number(trade.get('evaluation_trough_ma_close'))}",
         _format_number(trade.get("evaluation_consecutive_up_days"), digits=0),
+        f"{trade.get('entry_reentry_exit_date') or '-'} / {_format_number(trade.get('entry_reentry_exit_close'))} / {_format_number(trade.get('entry_reentry_rise_threshold_close'))} / {trade.get('entry_reentry_rise_qualified_date') or '-'} / {_format_number(trade.get('entry_reentry_high_close'))}",
         f"{trade.get('entry_industry_name') or '-'} {trade.get('entry_industry_code') or ''} / {trade.get('entry_industry_state_name') or '-'} / {_format_percent(trade.get('entry_industry_drawdown_pct'))} / {_format_percent(trade.get('entry_industry_rebound_pct'))}",
     ]
 
@@ -797,8 +802,19 @@ def _entry_rules(metadata: dict[str, Any]) -> list[str]:
         cost_zone_rule_notes(metadata["entry_rule"].get("cost_peak_window_days", DEFAULT_COST_PEAK_WINDOW_DAYS)) + f"最低突破涨幅：{breakout}。",
         "候选阶段每天按跌幅输出状态：达到候选回调阈值为15，回升到阈值以内为10；每次从阈值以内重新达到阈值时保存新的候选回调信号，同一行情周期内可多次触发。连续停留在回调区间不逐日重复触发；收盘达到或超过候选高点时更新高点。PEAK_1 事件按下述双峰高度条件触发，其余实际 PEAK_n 序号只保存首次开始事件，是否开仓由上述范围决定。",
         *_peak_1_entry_rules(metadata),
+        *_profit_rebound_reentry_rules(metadata),
         "按开仓范围内的独立 entry_signal 在当日收盘开仓，不回填到高点日；同日即使状态转为41，开仓信号仍保留，开仓当天不正常平仓。",
         "每只股票同时只持有一笔；持仓期间或平仓当日的新开仓信号跳过，不延后补开。平仓后可接受同一行情周期内后续新的候选回调信号，无需等待新周期，也不要求先创新高。旧信号不重放，连续回调不因空仓自动重开。不同股票独立处理。",
+    ]
+
+
+def _profit_rebound_reentry_rules(metadata: dict[str, Any]) -> list[str]:
+    rule = metadata["entry_rule"].get("profit_rebound_reentry_rule")
+    if not rule:
+        return []
+    return [
+        f"盈利平仓后重开：仅实际因 {rule['exit_reason']} 平仓后观察，以该笔实际平仓价为固定基准。从平仓后下一交易日开始，收盘价先上涨至少{_format_percent(rule['min_rise_pct'])}（包含等于），再收盘回到该平仓价或以下，按回落当日实际收盘价开仓，来源 {rule['signal_type']}。跳空跌破时按当天实际收盘价成交；盘中高价和此前持仓期间的上涨不计入。",
+        "这项补充开仓不要求原候选高点状态、原周期或再次通过成本区涨幅过滤，没有观察期限；仍执行当日行业过滤（若启用），重开后的平仓与止损规则沿用现有配置。普通开仓可先触发，任意实际开仓即结束旧观察；同日两类信号均满足时只开一笔并记为此类重开。首次重开触发若被行业过滤拦截则消耗此次观察，不延后补开。只有再次因盈利反弹条件平仓才建立以新平仓价为基准的新观察。",
     ]
 
 

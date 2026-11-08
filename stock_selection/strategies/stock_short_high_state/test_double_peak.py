@@ -93,6 +93,10 @@ def test_running_peak_updates_before_entry_and_is_not_the_original_high():
 ])
 def test_pullback_can_trigger_on_leaving_peak_one_for_a_trough(close, state):
     states = _states([66, 90, close])
+    # Isolate PEAK_1 execution: an earlier profitable candidate exit would
+    # otherwise also qualify for the added return-to-exit-price reentry.
+    states.loc[4, "entry_signal"] = 0
+    states.loc[4, "entry_signal_type"] = ""
     assert states.iloc[-1].observed_state == state
     trade, = _peaks(_run(states))
     assert trade["entry_close"] == close

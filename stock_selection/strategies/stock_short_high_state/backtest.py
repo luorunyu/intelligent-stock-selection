@@ -46,6 +46,7 @@ class ShortTradeBacktestConfig:
     max_drawdown_pct: float = 0.20
     profit_rebound_min_return_pct: float = 0.05
     profit_rebound_up_days: int = 3
+    profit_rebound_reentry_min_rise_pct: float = 0.10
 
     def __post_init__(self) -> None:
         if not np.isfinite(self.max_drawdown_pct) or not 0 < self.max_drawdown_pct < 1:
@@ -61,6 +62,14 @@ class ShortTradeBacktestConfig:
             or self.profit_rebound_up_days < 1
         ):
             raise ValueError("profit_rebound_up_days must be a positive integer")
+        rise_pct = self.profit_rebound_reentry_min_rise_pct
+        if (
+            isinstance(rise_pct, bool)
+            or not isinstance(rise_pct, (int, float, np.integer, np.floating))
+            or not np.isfinite(rise_pct)
+            or not 0 < rise_pct < 1
+        ):
+            raise ValueError("profit_rebound_reentry_min_rise_pct must be finite and between 0 and 1")
         if (
             isinstance(self.peak_1_min_high_ratio, bool)
             or not isinstance(self.peak_1_min_high_ratio, (int, float, np.integer, np.floating))
@@ -96,6 +105,7 @@ INVALID_STATE = int(BACKTEST_CONFIG.invalidation_state)
 DEFAULT_MARKET_CAP_THRESHOLD = 3_000_000.0
 MAX_DRAWDOWN_STOP = "MAX_DRAWDOWN_STOP"
 PROFIT_REBOUND_EXIT = "PROFIT_REBOUND_EXIT"
+PROFIT_REBOUND_REENTRY = "PROFIT_REBOUND_REENTRY"
 TROUGH_CONFIRM_EXIT = "TROUGH_CONFIRM_EXIT"
 HIGH_INVALIDATION_EXIT = "HIGH_INVALIDATION_EXIT"
 CYCLE_CHANGE_EXIT = "CYCLE_CHANGE_EXIT"
@@ -198,6 +208,23 @@ def build_short_trade_backtest(
                     "state_source": "observed_state",
                     "signal_type": PEAK_1_PULLBACK_SIGNAL,
                     "one_signal_per_cycle": True,
+                    "execution": "CURRENT_CLOSE",
+                },
+                "profit_rebound_reentry_rule": {
+                    "signal_type": PROFIT_REBOUND_REENTRY,
+                    "exit_reason": PROFIT_REBOUND_EXIT,
+                    "reference": "ACTUAL_PROFIT_REBOUND_EXIT_CLOSE",
+                    "entry_formula": "post_exit_high_close >= exit_close * (1 + min_rise_pct) THEN close <= exit_close",
+                    "min_rise_pct": float(config.profit_rebound_reentry_min_rise_pct),
+                    "requires_post_exit_rise": True,
+                    "allow_first_day_after_exit": False,
+                    "observation_start": "FIRST_TRADING_DAY_AFTER_EXIT",
+                    "expiry_trade_days": None,
+                    "requires_same_cycle": False,
+                    "requires_entry_state_or_cost_gate": False,
+                    "honours_industry_filter": True,
+                    "consume_on": "ANY_ACTUAL_ENTRY_OR_FIRST_REENTRY_TRIGGER",
+                    "priority": "BEFORE_NORMAL_ENTRY_WHEN_BOTH_TRIGGER",
                     "execution": "CURRENT_CLOSE",
                 },
             },
@@ -380,6 +407,8 @@ def _stock_trades(
     running_equity_peak = 1.0
     consecutive_up_days = 0
     skipped_entries: list[dict[str, Any]] = []
+    pending_reentry: dict[str, Any] | None = None
+    entry_reentry_context: dict[str, Any] | None = None
 
     for position, row in enumerate(rows):
         cycle_id = int(row["cycle_id"])
@@ -393,12 +422,35 @@ def _stock_trades(
                 seen_peak_signals.add(signal_key)
 
         if entry_position is None:
-            if has_signal:
+            reentry_trigger = False
+            if pending_reentry is not None:
+                close = float(row["close"])
+                if close > pending_reentry["entry_reentry_high_close"]:
+                    pending_reentry["entry_reentry_high_close"] = close
+                    pending_reentry["entry_reentry_high_date"] = str(row["trade_date"])
+                if (
+                    pending_reentry["entry_reentry_rise_qualified_date"] is None
+                    and close >= pending_reentry["entry_reentry_rise_threshold_close"] - 1e-12
+                ):
+                    pending_reentry["entry_reentry_rise_qualified_date"] = str(row["trade_date"])
+                reentry_trigger = (
+                    pending_reentry["entry_reentry_rise_qualified_date"] is not None
+                    and close <= pending_reentry["entry_reentry_exit_close"] + 1e-12
+                )
+            if has_signal or reentry_trigger:
+                reentry_context = pending_reentry.copy() if reentry_trigger else None
+                if reentry_context is not None:
+                    reentry_context["entry_reentry_previous_close"] = float(rows[position - 1]["close"])
+                # Each observation can trigger once. Industry-blocked attempts
+                # follow the same no-replay policy as ordinary entry signals.
+                if reentry_trigger:
+                    pending_reentry = None
                 if not row["entry_industry_qualified"]:
                     industry_blocked_entries.append({
                         "ts_code": row["ts_code"], "stock_name": row.get("stock_name", ""),
                         "trade_date": row["trade_date"], "cycle_id": cycle_id,
-                        "entry_signal_type": row["entry_signal_type"],
+                        "entry_signal_type": PROFIT_REBOUND_REENTRY if reentry_trigger else row["entry_signal_type"],
+                        **(reentry_context or {}),
                         **{column: row[column] for column in INDUSTRY_COLUMNS},
                     })
                     continue
@@ -406,6 +458,10 @@ def _stock_trades(
                 running_equity_peak = 1.0
                 consecutive_up_days = 0
                 skipped_entries = []
+                entry_reentry_context = reentry_context
+                # A normal entry may occur before this setup finishes. Never
+                # carry its old exit reference into another holding period.
+                pending_reentry = None
             continue
 
         entry_row = rows[entry_position]
@@ -468,8 +524,20 @@ def _stock_trades(
                 execution_close=execution_close, stop_trigger_close=stop_trigger_close,
                 skipped_entries=skipped_entries,
                 consecutive_up_days=consecutive_up_days,
+                reentry_context=entry_reentry_context,
             ))
+            if reason == PROFIT_REBOUND_EXIT:
+                pending_reentry = {
+                    "entry_reentry_origin_entry_date": str(entry_row["trade_date"]),
+                    "entry_reentry_exit_date": str(row["trade_date"]),
+                    "entry_reentry_exit_close": execution_close,
+                    "entry_reentry_rise_threshold_close": execution_close * (1.0 + config.profit_rebound_reentry_min_rise_pct),
+                    "entry_reentry_rise_qualified_date": None,
+                    "entry_reentry_high_date": str(row["trade_date"]),
+                    "entry_reentry_high_close": execution_close,
+                }
             entry_position = None
+            entry_reentry_context = None
 
     if entry_position is not None:
         trades.append(_build_trade(
@@ -478,6 +546,7 @@ def _stock_trades(
             execution_close=float(rows[-1]["close"]), stop_trigger_close=None,
             skipped_entries=skipped_entries,
             consecutive_up_days=consecutive_up_days,
+            reentry_context=entry_reentry_context,
         ))
     return trades
 
@@ -493,6 +562,7 @@ def _build_trade(
     stop_trigger_close: float | None,
     skipped_entries: list[dict[str, Any]],
     consecutive_up_days: int,
+    reentry_context: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Measure the executed holding path; stops replace only the endpoint price."""
     entry_row = stock_rows.iloc[entry_position]
@@ -514,7 +584,17 @@ def _build_trade(
     drawdowns = 1.0 - equity / running_max
     mark_return = 1.0 - execution_close / entry_close
     signal = int(entry_row["entry_signal"])
-    peak_number = 0 if signal == int(StockShortState.HIGH_CANDIDATE_PULLBACK) else int(entry_row["peak_number"])
+    if reentry_context:
+        peak_number = 0
+        entry_state = entry_source = PROFIT_REBOUND_REENTRY
+        entry_pattern_start_date = reentry_context["entry_reentry_high_date"]
+        entry_reference_high_close = reentry_context["entry_reentry_high_close"]
+    else:
+        peak_number = 0 if signal == int(StockShortState.HIGH_CANDIDATE_PULLBACK) else int(entry_row["peak_number"])
+        entry_state = StockShortState(signal).name if peak_number == 0 else f"PEAK_{peak_number}"
+        entry_source = str(entry_row["entry_signal_type"])
+        entry_pattern_start_date = _valid_date(entry_row["entry_pattern_start_date"])
+        entry_reference_high_close = _optional_number(entry_row["entry_reference_high_close"])
     total_market_caps = pd.to_numeric(path["total_mv"], errors="coerce")
     total_market_caps = total_market_caps[
         total_market_caps.notna() & total_market_caps.gt(0)
@@ -524,10 +604,12 @@ def _build_trade(
         "stock_name": str(stock_rows.iloc[-1].get("stock_name", "") or ""),
         "cycle_id": int(entry_row["cycle_id"]),
         "peak_number": peak_number,
-        "entry_state": StockShortState(signal).name if peak_number == 0 else f"PEAK_{peak_number}",
-        "entry_source": str(entry_row["entry_signal_type"]),
-        "entry_pattern_start_date": _valid_date(entry_row["entry_pattern_start_date"]),
-        "entry_reference_high_close": _optional_number(entry_row["entry_reference_high_close"]),
+        "entry_state": entry_state,
+        "entry_source": entry_source,
+        "entry_observed_state": str(entry_row["observed_state_name"]),
+        "entry_pattern_start_date": entry_pattern_start_date,
+        "entry_reference_high_close": entry_reference_high_close,
+        **(reentry_context or {}),
         "entry_peak_1_high_close": _optional_number(entry_row.get("peak_1_high_close")),
         "entry_peak_1_high_date": _valid_date(entry_row.get("peak_1_high_date")),
         "entry_peak_1_drawdown_pct": _optional_number(entry_row.get("peak_1_drawdown_pct")),
@@ -588,6 +670,9 @@ def _summarise_trades(trades: list[dict[str, Any]]) -> dict[str, Any]:
     breakeven = int(len(returns) - wins - losses)
     return {
         "signals": len(trades),
+        "profit_rebound_reentry_trades": sum(
+            trade.get("entry_source") == PROFIT_REBOUND_REENTRY for trade in trades
+        ),
         "skipped_entry_signals": sum(len(trade.get("skipped_entries", [])) for trade in trades),
         "skipped_while_holding": sum(
             item["reason"] == "POSITION_OPEN"

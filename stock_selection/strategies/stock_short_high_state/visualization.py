@@ -30,6 +30,7 @@ from stock_selection.data.tushare_chips import load_chip_net_payload
 from stock_selection.strategies.stock_short_high_state.chip_detail import chip_detail_script
 from stock_selection.strategies.stock_short_high_state.backtest import (
     PROFIT_REBOUND_EXIT,
+    PROFIT_REBOUND_REENTRY,
     build_short_trade_backtest,
     sample_stock_trade_codes,
     sum_evaluated_returns_by_stock,
@@ -998,7 +999,7 @@ th{{background:#f5f5f5}}a{{color:#0969da}}code{{background:#f5f5f5;padding:2px 5
 </head>
 <body>
 <h1>策略五状态图表</h1>
-<p class="note">黄框表示每笔实际持仓，同一股票不重叠，包含波谷确认平仓、盈利后连续上涨平仓、止损和失效强平；持仓中延伸至最后数据日。黄色倒三角标记实际开仓，蓝色正三角标记平仓，紫色叉号标记策略异常；候选低点后首次收盘站上图中均线时确认波谷，最低点是事后回标，不能在最低点平仓。开仓信号、波谷确认日及平仓原因通过鼠标悬停查看。绿K为收盘低于开盘，候选回调仅按收盘价跌幅判断。</p>
+<p class="note">黄框表示每笔实际持仓，同一股票不重叠，包含波谷确认平仓、盈利后连续上涨平仓、止损和失效强平；持仓中延伸至最后数据日。黄色倒三角标记实际开仓，蓝色正三角标记平仓，紫色叉号标记策略异常；候选低点后首次收盘站上波谷确认均线时确认波谷，最低点是事后回标，不能在最低点平仓。独立盈利平仓要求平仓当天做空浮盈严格超过5%，且开仓后连续3个交易日收盘价高于前一交易日；下跌或平盘清零。此类平仓后，后续收盘先从该次实际平仓价上涨至少10%，再回到该平仓价或以下时可重开。开仓信号、连续上涨天数、重开关联平仓价及上涨达标日、波谷确认日和平仓原因通过鼠标悬停查看。绿K为收盘低于开盘，候选回调仅按收盘价跌幅判断。</p>
 <p>状态来源：<code>{escape(str(states_csv))}</code></p>
 {f'<p>本次报告：{report_links}</p>' if report_links else ''}
 <p>正收益股票按汇总收益率从高到低排列，同收益按股票代码排序。汇总收益沿用逐股交易收益相加的口径，包含持仓中的浮动收益。</p>
@@ -1051,6 +1052,14 @@ def _trade_hover(trade: dict[str, Any]) -> str:
             f"第一波峰最高收盘：{trade.get('entry_peak_1_high_date') or '-'} · {_format_number(trade.get('entry_peak_1_high_close'))}"
         )
         lines.append(f"开仓时距第一波峰高点回落：{_format_percent(trade.get('entry_peak_1_drawdown_pct'))}")
+    elif trade.get("entry_source") == PROFIT_REBOUND_REENTRY:
+        lines.extend([
+            f"开仓来源：盈利平仓后上涨再回落重开（{PROFIT_REBOUND_REENTRY}）",
+            f"关联原开仓日：{trade.get('entry_reentry_origin_entry_date') or '-'}",
+            f"关联盈利平仓：{trade.get('entry_reentry_exit_date') or '-'} · {_format_number(trade.get('entry_reentry_exit_close'))}",
+            f"平仓后上涨门槛：{_format_number(trade.get('entry_reentry_rise_threshold_close'))} · 上涨达标日：{trade.get('entry_reentry_rise_qualified_date') or '-'}",
+            f"平仓后最高收盘：{trade.get('entry_reentry_high_date') or '-'} · {_format_number(trade.get('entry_reentry_high_close'))}",
+        ])
     reason = trade.get("status_reason")
     if reason in EXIT_REASON_LABELS:
         lines.append(
@@ -1073,7 +1082,7 @@ def _trade_hover(trade: dict[str, Any]) -> str:
         f"开仓判定高点：{trade.get('entry_pattern_start_date') or '-'}"
         f" · {_format_number(trade.get('entry_reference_high_close'))}"
     )
-    if _number_or_zero(trade.get("entry_cost_peak_count")):
+    if trade.get("entry_source") != PROFIT_REBOUND_REENTRY and _number_or_zero(trade.get("entry_cost_peak_count")):
         lines.extend([
             f"成本区：{_format_number(trade.get('entry_cost_zone_low'))} ～ {_format_number(trade.get('entry_cost_zone_high'))}",
             f"历史峰值均值：{_format_number(trade.get('entry_breakout_base_close'))}",
