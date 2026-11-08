@@ -20,6 +20,7 @@ from stock_selection.strategies.stock_short_high_state.screen import (
     DEFAULT_CANDIDATE_PULLBACK_PCT,
     DEFAULT_CONFIRM_DRAWDOWN_PCT,
     StockShortState,
+    apply_peak_1_entry_signals,
     latest_stock_short_states,
 )
 
@@ -179,7 +180,9 @@ def build_shortable_stock_list(
         inventory = inventory[inventory["ts_code"].isin(set(stock_codes))]
 
     latest = latest_stock_short_states(
-        states[states["trade_date"].astype(str).le(target)] if not states.empty else states,
+        apply_peak_1_entry_signals(
+            states[states["trade_date"].astype(str).le(target)] if not states.empty else states,
+        ),
     ).set_index("ts_code")
     basic_names = {}
     if stock_basic is not None and {"ts_code", "name"}.issubset(stock_basic.columns):
@@ -248,8 +251,10 @@ def build_shortable_stock_list(
             "entry_breakout_qualified": bool(row.get("entry_breakout_qualified", False)),
             "entry_signal": int(row["entry_signal"]),
             **{column: row.get(column) for column in [*INDUSTRY_COLUMNS, *COST_ZONE_COLUMNS]},
-            # Peak events remain observable, but are outside the entry range.
-            "has_entry_signal": int(row["entry_signal"]) == int(StockShortState.HIGH_CANDIDATE_PULLBACK),
+            # Only the first peak's high retest joins candidate entries.
+            "has_entry_signal": int(row["entry_signal"]) in {
+                int(StockShortState.HIGH_CANDIDATE_PULLBACK), int(StockShortState.PEAK_1),
+            },
         })
     order = {stage: position for position, stage in enumerate(SHORTABLE_STAGES)}
     stocks.sort(key=lambda row: (

@@ -36,7 +36,8 @@ from stock_selection.strategies.stock_short_high_state.report import (
     DEFAULT_OUTPUT_ROOT,
 )
 from stock_selection.strategies.stock_short_high_state.screen import (
-    BREAKOUT_BASELINE_RULE, STATE_DESCRIPTIONS, StockShortState,
+    BREAKOUT_BASELINE_RULE, PEAK_1_PULLBACK_SIGNAL,
+    STATE_DESCRIPTIONS, StockShortState, apply_peak_1_entry_signals,
 )
 
 
@@ -252,7 +253,9 @@ def read_saved_states(path: str | Path) -> pd.DataFrame:
         raise ValueError("states CSV contains duplicate stock/date rows")
     result["state"] = result["state"].astype(int)
     result = validate_cost_zone_fields(validate_industry_fields(result))
-    return result.sort_values(["ts_code", "trade_date"]).reset_index(drop=True)
+    return apply_peak_1_entry_signals(
+        result.sort_values(["ts_code", "trade_date"]).reset_index(drop=True),
+    )
 
 
 def load_cached_stock_bars(
@@ -1033,6 +1036,12 @@ def _trade_hover(trade: dict[str, Any]) -> str:
         f"收益：{_format_percent(trade['mark_return_pct'])} · 持有 {trade['holding_trade_days']} 个交易日",
         f"最大回撤：{_format_percent(trade['max_drawdown_pct'])}",
     ]
+    if trade.get("entry_source") == PEAK_1_PULLBACK_SIGNAL:
+        lines.append("开仓来源：第一波反弹接近确认高点后回落")
+        lines.append(
+            f"第一波峰最高收盘：{trade.get('entry_peak_1_high_date') or '-'} · {_format_number(trade.get('entry_peak_1_high_close'))}"
+        )
+        lines.append(f"开仓时距第一波峰高点回落：{_format_percent(trade.get('entry_peak_1_drawdown_pct'))}")
     reason = trade.get("status_reason")
     if reason in EXIT_REASON_LABELS:
         lines.append(
@@ -1111,6 +1120,13 @@ def _state_hover(row: dict[str, Any]) -> str:
         lines.append(f"事后标记：{row.get('state_description', '')}")
     if _number_or_zero(row.get("entry_signal")) == int(StockShortState.HIGH_CANDIDATE_PULLBACK):
         lines.append("回调信号：已触发，实际开仓见黄色标记")
+    elif row.get("entry_signal_type") == PEAK_1_PULLBACK_SIGNAL:
+        lines.append("双峰信号：第一波反弹达到确认高点90%后回落至少10%，实际开仓见黄色标记")
+    if _number_or_zero(row.get("peak_1_high_close")) > 0:
+        lines.append(
+            f"第一波峰最高收盘：{row.get('peak_1_high_date') or '-'} · {_format_number(row.get('peak_1_high_close'))}"
+            f" · 距高点回落 {_format_percent(row.get('peak_1_drawdown_pct'))}"
+        )
     if _normalise_date(row.get("reference_high_date")):
         lines.append(
             f"本轮高点：{row['reference_high_date']}"

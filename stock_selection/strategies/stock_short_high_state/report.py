@@ -40,6 +40,8 @@ _TRADE_STATUS_LABELS = {
     "INVALIDATED": "已失效",
 }
 _ENTRY_SOURCE_LABELS = {
+    "PEAK_1_HIGH_RETEST_PULLBACK": "双峰反弹后回落达阈值",
+    "PEAK_1_CONFIRMED_HIGH_THRESHOLD": "双峰接近确认高点",
     "CANDIDATE_DRAWDOWN_THRESHOLD": "候选高点回落达阈值",
     "OBSERVED_HIGH_CANDIDATE": "实时候选",
     "OBSERVED_HIGH_CANDIDATE_PULLBACK": "候选回调",
@@ -653,7 +655,7 @@ def _shortable_notes(report: dict[str, Any]) -> list[str]:
         f"范围内可融券名单证券 {summary['eligible_stocks_in_scope']}只，列入以下阶段 {summary['stocks']}只；未列入：{excluded}。",
         f"候选回落阈值 {_format_percent(metadata['candidate_pullback_pct'])}，高点确认阈值 {_format_percent(metadata['confirm_drawdown_pct'])}。确认回撤、波谷和反弹按当日实际状态划分。",
         "行情日期为各股票最近的有效交易日，可能早于报告日期。阶段使用当日实际状态，不使用事后回标的高低点标签。",
-        "开仓信号对应表中行情日期的候选回调事件；是否实际开仓仍由持仓规则判断。",
+        "开仓信号对应表中行情日期的候选回调事件，或第一波反弹达到确认高点90%后、从该波最高收盘价回落至少10%的双峰事件；是否实际开仓仍由持仓规则判断。",
         cost_zone_rule_notes(metadata.get("cost_peak_window_days", DEFAULT_COST_PEAK_WINDOW_DAYS)),
     ]
     if metadata.get("actual_quantity_verified"):
@@ -759,6 +761,7 @@ _TRADE_AUDIT_HEADERS = (
     "股票", "周期/波峰", "开仓日", "结束/估值日", "结束原因",
     "当日实际状态 / 收盘 / 波谷确认日",
     "开仓信号 / 起始日 / 判定高点", "历史峰值 / 成本区及均值 / 冻结日期 / 突破涨幅", "跳过信号数",
+    "第一波峰高点日期 / 收盘价 / 回落比例",
     "结束日均线 / 数值",
     "结束日开仓后连续收盘上涨天数",
     "开仓时二级行业 / 状态 / 回撤 / 反弹",
@@ -776,6 +779,7 @@ def _trade_audit_values(trade: dict[str, Any]) -> list[str]:
         f"{_ENTRY_SOURCE_LABELS.get(trade['entry_source'], trade['entry_source'])} / {trade.get('entry_pattern_start_date') or '-'} / {_format_number(trade.get('entry_reference_high_close'))}",
         f"{format_cost_peaks(trade.get('entry_cost_peak_points'))} / 区域 {_format_number(trade.get('entry_cost_zone_low'))}～{_format_number(trade.get('entry_cost_zone_high'))} / 历史峰值均值 {_format_number(trade.get('entry_breakout_base_close'))} / 冻结 {trade.get('entry_cost_zone_freeze_date') or '-'} / {_format_percent(trade.get('entry_breakout_gain_pct'))}",
         str(len(trade.get("skipped_entries", []))),
+        f"{trade.get('entry_peak_1_high_date') or '-'} / {_format_number(trade.get('entry_peak_1_high_close'))} / {_format_percent(trade.get('entry_peak_1_drawdown_pct'))}",
         f"MA{trade['trough_ma_days']} / {_format_number(trade.get('evaluation_trough_ma_close'))}",
         _format_number(trade.get("evaluation_consecutive_up_days"), digits=0),
         f"{trade.get('entry_industry_name') or '-'} {trade.get('entry_industry_code') or ''} / {trade.get('entry_industry_state_name') or '-'} / {_format_percent(trade.get('entry_industry_drawdown_pct'))} / {_format_percent(trade.get('entry_industry_rebound_pct'))}",
@@ -791,9 +795,21 @@ def _entry_rules(metadata: dict[str, Any]) -> list[str]:
         *industry_rule_notes(metadata),
         f"候选回调：1 - 当日收盘价 / 本轮运行最高收盘价 至少{pullback}时触发，包含等于；不要求冲高、绿K或连续下跌天数。",
         cost_zone_rule_notes(metadata["entry_rule"].get("cost_peak_window_days", DEFAULT_COST_PEAK_WINDOW_DAYS)) + f"最低突破涨幅：{breakout}。",
-        "候选阶段每天按跌幅输出状态：达到候选回调阈值为15，回升到阈值以内为10；每次从阈值以内重新达到阈值时保存新的候选回调信号，同一行情周期内可多次触发。连续停留在回调区间不逐日重复触发；收盘达到或超过候选高点时更新高点。每个实际 PEAK_n 序号只保存首次事件，是否开仓由上述范围决定。",
+        "候选阶段每天按跌幅输出状态：达到候选回调阈值为15，回升到阈值以内为10；每次从阈值以内重新达到阈值时保存新的候选回调信号，同一行情周期内可多次触发。连续停留在回调区间不逐日重复触发；收盘达到或超过候选高点时更新高点。PEAK_1 事件按下述双峰高度条件触发，其余实际 PEAK_n 序号只保存首次开始事件，是否开仓由上述范围决定。",
+        *_peak_1_entry_rules(metadata),
         "按开仓范围内的独立 entry_signal 在当日收盘开仓，不回填到高点日；同日即使状态转为41，开仓信号仍保留，开仓当天不正常平仓。",
         "每只股票同时只持有一笔；持仓期间或平仓当日的新开仓信号跳过，不延后补开。平仓后可接受同一行情周期内后续新的候选回调信号，无需等待新周期，也不要求先创新高。旧信号不重放，连续回调不因空仓自动重开。不同股票独立处理。",
+    ]
+
+
+def _peak_1_entry_rules(metadata: dict[str, Any]) -> list[str]:
+    rule = metadata["entry_rule"].get("peak_1_rule")
+    if not rule or not rule["enabled"]:
+        return []
+    return [
+        f"双峰开仓：本周期第一波反弹 PEAK_1 的最高收盘价先达到已确认高点收盘价的{_format_percent(rule['min_high_ratio'])}（包含等于），再等待当日收盘价从该波动态最高收盘价回落至少{_format_percent(rule['pullback_pct'])}（包含等于），首次满足时按当日实际收盘价开仓，来源 PEAK_1_HIGH_RETEST_PULLBACK。反弹继续走高时更新本波高点；仅达到高度条件不立即开仓，不按盘中最高价触发，也不使用未来最终波峰计算回落。",
+        "回落当天即使已转入波谷候选或波谷区域，只要仍属于第一波反弹后的回落也可触发，不要求继续显示 PEAK_1；出现原高点失效、周期切换或进入 PEAK_2 后取消本波资格。开仓收盘价可以低于原高点的90%，高度条件只约束此前的反弹高点。",
+        "每只股票每个周期仅产生一次双峰事件；持仓中、平仓当天或被当日行业过滤拦截时跳过，不延后补开。收盘超过确认高点时按原新高失效规则处理。默认仅开放 PEAK_1，PEAK_2 及后续波峰继续只标记状态。候选回调的成本区过滤和平仓规则沿用现有配置。",
     ]
 
 

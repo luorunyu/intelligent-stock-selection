@@ -35,6 +35,9 @@ DEFAULT_CONFIRM_DRAWDOWN_PCT = 0.2
 DEFAULT_REBOUND_PCT = 0.10
 DEFAULT_HIGH_HEAT_DAYS = 10
 DEFAULT_TROUGH_MA_DAYS = 8
+DEFAULT_PEAK_1_MIN_HIGH_RATIO = 0.90
+DEFAULT_PEAK_1_PULLBACK_PCT = 0.10
+PEAK_1_PULLBACK_SIGNAL = "PEAK_1_HIGH_RETEST_PULLBACK"
 # Compatibility for plan-two callers: these now specify the MA length.
 DEFAULT_TROUGH_CONFIRM_DAYS = DEFAULT_TROUGH_MA_DAYS
 DEFAULT_TROUGH_HEAT_DAYS = DEFAULT_TROUGH_MA_DAYS
@@ -116,6 +119,9 @@ OUTPUT_COLUMNS = [
     "entry_signal_type",
     "entry_pattern_start_date",
     "entry_reference_high_close",
+    "peak_1_high_close",
+    "peak_1_high_date",
+    "peak_1_drawdown_pct",
     "cycle_id",
     "peak_number",
     "state_start_date",
@@ -175,6 +181,9 @@ def calculate_stock_short_states(
     observable confirmation and executable exits remain on confirmation day.
     Rebound peaks start after price leaves the
     trough region and rises ``rebound_pct`` from its lower bound.
+    The first peak must reach 90% of the confirmed high, then pull back 10%
+    from its own running closing high before emitting one entry event.
+    Later peaks retain their start events.
 
     Legacy ``trough_confirm_days``/``trough_heat_days`` arguments configure
     the MA length, not a waiting period or a rising-day count.
@@ -228,7 +237,88 @@ def calculate_stock_short_states(
         ["trade_date", "ts_code"], ascending=[True, True]
     ).reset_index(drop=True)
     # Stock signals are independent; the CLI attaches the shared industry gate.
-    return attach_industry_states(result, enabled=False)
+    return attach_industry_states(apply_peak_1_entry_signals(result), enabled=False)
+
+
+def apply_peak_1_entry_signals(
+    states: pd.DataFrame,
+    *,
+    min_high_ratio: float = DEFAULT_PEAK_1_MIN_HIGH_RATIO,
+    pullback_pct: float = DEFAULT_PEAK_1_PULLBACK_PCT,
+) -> pd.DataFrame:
+    """Emit the first pullback after peak one retests the confirmed high.
+
+    Reconstruct from daily observed states so saved CSVs with the older
+    peak-start events use the same entry dates as freshly calculated states.
+    Only one event per stock/cycle is emitted, even if execution is blocked.
+    """
+    if (
+        isinstance(min_high_ratio, bool)
+        or not isinstance(min_high_ratio, (int, float, np.integer, np.floating))
+        or not np.isfinite(min_high_ratio)
+        or not 0 < min_high_ratio <= 1
+    ):
+        raise ValueError("peak_1_min_high_ratio must be finite and between 0 (exclusive) and 1")
+    if (
+        isinstance(pullback_pct, bool)
+        or not isinstance(pullback_pct, (int, float, np.integer, np.floating))
+        or not np.isfinite(pullback_pct)
+        or not 0 < pullback_pct < 1
+    ):
+        raise ValueError("peak_1_pullback_pct must be finite and between 0 and 1")
+    result = states.copy()
+    result["peak_1_high_close"] = np.nan
+    result["peak_1_high_date"] = ""
+    result["peak_1_drawdown_pct"] = np.nan
+    if result.empty:
+        return result
+    peak_one = (
+        result["observed_state"].eq(int(StockShortState.PEAK_1))
+        & result["peak_number"].eq(1)
+        & result["cycle_id"].gt(0)
+    )
+    old_events = result["entry_signal"].eq(int(StockShortState.PEAK_1))
+    if not peak_one.any() and not old_events.any():
+        return result
+    result.loc[old_events, "entry_signal"] = 0
+    result.loc[old_events, "entry_signal_type"] = ""
+    result.loc[old_events, "entry_pattern_start_date"] = ""
+    result.loc[old_events, "entry_reference_high_close"] = np.nan
+    ordered = result.sort_values(["ts_code", "trade_date"])
+    keys = [ordered["ts_code"], ordered["cycle_id"]]
+    high = pd.to_numeric(ordered["reference_high_close"], errors="coerce")
+    close = pd.to_numeric(ordered["close"], errors="coerce")
+    # Update the anchor only while PEAK_1 is active. Forward-fill it into
+    # that first peak's decline, including a return to/break of the trough.
+    peak_high = close.where(peak_one.loc[ordered.index]).groupby(keys, sort=False).cummax()
+    peak_high = peak_high.groupby(keys, sort=False).ffill()
+    peak_date = ordered["trade_date"].where(
+        peak_one.loc[ordered.index] & close.ge(peak_high - 1e-12),
+    ).groupby(keys, sort=False).ffill()
+    first_peak_window = (
+        ordered["peak_number"].eq(1) & ordered["cycle_id"].gt(0)
+        & ordered["observed_state"].isin({
+            int(StockShortState.PEAK_1), int(StockShortState.PEAK_1_PULLBACK),
+            int(StockShortState.TROUGH_REGION), int(StockShortState.TROUGH_CANDIDATE),
+        })
+        & peak_high.notna()
+    )
+    drawdown = (1.0 - close / peak_high).clip(lower=0)
+    tracked = ordered.index[first_peak_window]
+    result.loc[tracked, "peak_1_high_close"] = peak_high.loc[tracked]
+    result.loc[tracked, "peak_1_high_date"] = peak_date.loc[tracked]
+    result.loc[tracked, "peak_1_drawdown_pct"] = drawdown.loc[tracked]
+    eligible = ordered.loc[
+        first_peak_window & np.isfinite(high) & high.gt(0)
+        & peak_high.add(1e-12).ge(high * min_high_ratio)
+        & close.le(high + 1e-12) & drawdown.add(1e-12).ge(pullback_pct)
+    ]
+    first = eligible.drop_duplicates(["ts_code", "cycle_id"], keep="first").index
+    result.loc[first, "entry_signal"] = int(StockShortState.PEAK_1)
+    result.loc[first, "entry_signal_type"] = PEAK_1_PULLBACK_SIGNAL
+    result.loc[first, "entry_pattern_start_date"] = result.loc[first, "reference_high_date"]
+    result.loc[first, "entry_reference_high_close"] = high.loc[first]
+    return result
 
 
 def latest_stock_short_states(states: pd.DataFrame) -> pd.DataFrame:
@@ -785,6 +875,9 @@ def _base_record(
         "entry_signal_type": "",
         "entry_pattern_start_date": "",
         "entry_reference_high_close": np.nan,
+        "peak_1_high_close": np.nan,
+        "peak_1_high_date": "",
+        "peak_1_drawdown_pct": np.nan,
         "cycle_id": 0,
         "peak_number": 0,
         "state_start_date": "",

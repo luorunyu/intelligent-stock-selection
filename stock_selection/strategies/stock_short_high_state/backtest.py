@@ -20,8 +20,12 @@ from stock_selection.strategies.stock_short_high_state.screen import (
     BREAKOUT_BASELINE_RULE,
     DEFAULT_CANDIDATE_PULLBACK_PCT,
     DEFAULT_MIN_BREAKOUT_GAIN_PCT,
+    DEFAULT_PEAK_1_MIN_HIGH_RATIO,
+    DEFAULT_PEAK_1_PULLBACK_PCT,
     DEFAULT_TROUGH_MA_DAYS,
+    PEAK_1_PULLBACK_SIGNAL,
     StockShortState,
+    apply_peak_1_entry_signals,
 )
 
 
@@ -35,7 +39,9 @@ class ShortTradeBacktestConfig:
             StockShortState.TROUGH_REGION,
         }
     )
-    peak_entry_states: frozenset[StockShortState] = frozenset()
+    peak_entry_states: frozenset[StockShortState] = frozenset({StockShortState.PEAK_1})
+    peak_1_min_high_ratio: float = DEFAULT_PEAK_1_MIN_HIGH_RATIO
+    peak_1_pullback_pct: float = DEFAULT_PEAK_1_PULLBACK_PCT
     invalidation_state: StockShortState = StockShortState.INVALID_HIGH_NEW_HIGH
     max_drawdown_pct: float = 0.20
     profit_rebound_min_return_pct: float = 0.05
@@ -55,6 +61,20 @@ class ShortTradeBacktestConfig:
             or self.profit_rebound_up_days < 1
         ):
             raise ValueError("profit_rebound_up_days must be a positive integer")
+        if (
+            isinstance(self.peak_1_min_high_ratio, bool)
+            or not isinstance(self.peak_1_min_high_ratio, (int, float, np.integer, np.floating))
+            or not np.isfinite(self.peak_1_min_high_ratio)
+            or not 0 < self.peak_1_min_high_ratio <= 1
+        ):
+            raise ValueError("peak_1_min_high_ratio must be finite and between 0 (exclusive) and 1")
+        if (
+            isinstance(self.peak_1_pullback_pct, bool)
+            or not isinstance(self.peak_1_pullback_pct, (int, float, np.integer, np.floating))
+            or not np.isfinite(self.peak_1_pullback_pct)
+            or not 0 < self.peak_1_pullback_pct < 1
+        ):
+            raise ValueError("peak_1_pullback_pct must be finite and between 0 and 1")
 
 
 BACKTEST_CONFIG = ShortTradeBacktestConfig()
@@ -90,6 +110,9 @@ def build_short_trade_backtest(
     """Build state-transition short trades and aggregate performance metrics."""
     data = _normalise_states(states)
     data = data[data["trade_date"].le(_valid_date(as_of_date))]
+    data = apply_peak_1_entry_signals(
+        data, min_high_ratio=config.peak_1_min_high_ratio, pullback_pct=config.peak_1_pullback_pct,
+    )
     trades: list[dict[str, Any]] = []
     industry_blocked_entries: list[dict[str, Any]] = []
     if not data.empty:
@@ -164,6 +187,19 @@ def build_short_trade_backtest(
                 "one_candidate_signal_per_cycle": False,
                 "candidate_signal_rule": "EACH_CROSSING_INTO_PULLBACK",
                 "candidate_rearm_rule": "DRAWDOWN_BELOW_CANDIDATE_PULLBACK_PCT",
+                "peak_1_rule": {
+                    "enabled": StockShortState.PEAK_1 in config.peak_entry_states,
+                    "min_high_ratio": float(config.peak_1_min_high_ratio),
+                    "pullback_pct": float(config.peak_1_pullback_pct),
+                    "height_formula": "peak_1_high_close >= reference_high_close * min_high_ratio",
+                    "formula": "1 - close / peak_1_high_close >= pullback_pct",
+                    "peak_high_rule": "RUNNING_MAX_CLOSE_OBSERVED_IN_PEAK_1",
+                    "allow_peak_1_decline_outside_peak_state": True,
+                    "state_source": "observed_state",
+                    "signal_type": PEAK_1_PULLBACK_SIGNAL,
+                    "one_signal_per_cycle": True,
+                    "execution": "CURRENT_CLOSE",
+                },
             },
             "position_rule": "ONE_POSITION_PER_STOCK_NO_SAME_DAY_REENTRY",
             "industry_filter": industry_filter_metadata(data),
@@ -492,6 +528,9 @@ def _build_trade(
         "entry_source": str(entry_row["entry_signal_type"]),
         "entry_pattern_start_date": _valid_date(entry_row["entry_pattern_start_date"]),
         "entry_reference_high_close": _optional_number(entry_row["entry_reference_high_close"]),
+        "entry_peak_1_high_close": _optional_number(entry_row.get("peak_1_high_close")),
+        "entry_peak_1_high_date": _valid_date(entry_row.get("peak_1_high_date")),
+        "entry_peak_1_drawdown_pct": _optional_number(entry_row.get("peak_1_drawdown_pct")),
         "entry_candidate_pullback_pct": float(entry_row["candidate_pullback_pct"]),
         **{f"entry_{column}": None if pd.isna(entry_row[column]) else entry_row[column].item() if isinstance(entry_row[column], np.generic) else entry_row[column] for column in COST_ZONE_COLUMNS},
         "entry_breakout_base_close": _optional_number(entry_row["breakout_base_close"]),
@@ -649,6 +688,8 @@ def _normalise_states(states: pd.DataFrame) -> pd.DataFrame:
         ("stock_name", ""),
         ("state_start_date", ""),
         ("state_start_close", np.nan),
+        ("reference_high_date", ""),
+        ("reference_high_close", np.nan),
         ("total_mv", np.nan),
         ("circ_mv", np.nan),
     ):

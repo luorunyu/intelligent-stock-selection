@@ -73,7 +73,7 @@ def test_classifies_four_stages_and_keeps_latest_quantities(data):
     assert rows["000004.SZ"]["stage"] == "CONFIRMED_PULLBACK"
     assert rows["000005.SZ"]["stage_detail"] == "波谷区域（均线已确认）"
     assert rows["000006.SZ"]["stage_detail"] == "第1波反弹"
-    assert rows["000006.SZ"]["entry_signal"] == StockShortState.PEAK_1
+    assert rows["000006.SZ"]["entry_signal"] == 0  # 100 < confirmed high 120 * 90%.
     assert rows["000006.SZ"]["has_entry_signal"] is False
     assert rows["000005.SZ"]["lendable_qty"] == 1000
     assert rows["000005.SZ"]["trough_ma_close"] == 92.5
