@@ -26,6 +26,8 @@ from stock_selection.data.market_cap import (
     merge_market_caps,
 )
 from stock_selection.data.tushare_cache import DEFAULT_CACHE_ROOT
+from stock_selection.data.tushare_chips import load_chip_net_payload
+from stock_selection.strategies.stock_short_high_state.chip_detail import chip_detail_script
 from stock_selection.strategies.stock_short_high_state.backtest import (
     PROFIT_REBOUND_EXIT,
     build_short_trade_backtest,
@@ -424,7 +426,7 @@ def build_stock_short_state_figure(
             increasing_fillcolor=RISE_COLOR,
             decreasing_fillcolor=FALL_COLOR,
             name="K线",
-            hoverinfo="skip",
+            hoverinfo="none",
         ),
         row=1,
         col=1,
@@ -664,6 +666,7 @@ def write_stock_short_state_html(
     stock_name: str = "",
     initial_bars: int | None = 250,
     trade_backtest: dict[str, Any] | None = None,
+    cache_root: str | Path | None = None,
 ) -> Path:
     """Write one stock chart HTML using a shared local Plotly bundle."""
     path = Path(output_path)
@@ -675,10 +678,15 @@ def write_stock_short_state_html(
         initial_bars=initial_bars,
         trade_backtest=trade_backtest,
     )
+    dates = chart_data.sort_values("trade_date")["trade_date"].astype(str).tolist()
+    chips = load_chip_net_payload(stock_code, dates, cache_root=cache_root)
+    bars = [{"date": str(row["trade_date"]), "close": float(row["close"])}
+            for row in chart_data.sort_values("trade_date").to_dict("records")]
     figure.write_html(
         path,
         include_plotlyjs="directory",
         full_html=True,
+        post_script=chip_detail_script(chips, bars) if chips else None,
         config={
             "displaylogo": False,
             "responsive": True,
@@ -879,6 +887,7 @@ def generate_stock_short_state_charts(
                 stock_name=stock_name,
                 initial_bars=initial_bars,
                 trade_backtest=stock_backtest,
+                cache_root=cache_root,
             )
             latest = chart_data.sort_values("trade_date").iloc[-1]
             chart_rows.append(
